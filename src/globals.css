@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS CUSTOM PROPERTIES ─────────────────────────────────────────────────────
+   Source of truth for runtime theming. These mirror the token values in
+   src/tokens/colors.js — if you change a color there, update it here too.
+   Components use var(--color-*) when Tailwind classes aren't enough.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Brand */
+  --color-brand:         #6b65ff;
+  --color-brand-light:   #60a5fa;
+  --color-brand-dark:    #354786;
+  --color-brand-subtle:  #f4faff;
+  --color-brand-muted:   #f0f8ff;
+
+  /* Surface */
+  --color-surface:         #ffffff;
+  --color-surface-raised:  #fdfdfd;
+  --color-surface-sunken:  #f8f8f8;
+  --color-surface-overlay: #242526;
+
+  /* Border */
+  --color-border:        #eff0f0;
+  --color-border-strong: #d7d8d9;
+  --color-border-subtle: #f8f8f8;
+  --color-border-focus:  #6b65ff;
+
+  /* Text */
+  --color-text:           #242526;
+  --color-text-secondary: #6b6e70;
+  --color-text-tertiary:  #8f9295;
+  --color-text-disabled:  #d7d8d9;
+  --color-text-invert:    #ffffff;
+  --color-text-brand:     #354786;
+
+  /* Status */
+  --color-success:      #22c55e;
+  --color-success-bg:   #ebffe6;
+  --color-success-text: #15803d;
+  --color-warning:      #ffc50e;
+  --color-warning-bg:   #fff9dd;
+  --color-warning-text: #dfb104;
+  --color-error:        #f75942;
+  --color-error-bg:     #feeae7;
+  --color-error-text:   #b91c1c;
+  --color-info:         #6b65ff;
+  --color-info-bg:      #f4faff;
+  --color-info-text:    #354786;
+
+  /* Gamification */
+  --color-gold:        #c2f054;
+  --color-gold-light:  #d2ff66;
+  --color-gold-bg:     #fffcec;
+  --color-purple:      #8b5cf6;
+  --color-purple-light: #a78bfa;
+  --color-purple-bg:   #ede9fe;
+
+  /* Radius */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-2: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-3: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-4: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Transition */
+  --transition-fast:   150ms ease;
+  --transition-base:   200ms ease;
+  --transition-slow:   300ms ease;
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── BASE ──────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply font-sans text-base text-[var(--color-text)] bg-[var(--color-surface)];
+    margin: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold leading-tight;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* ─── UTILITIES ─────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
