@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Set base to '/raptive-design-system/' for GitHub Pages
-// Change to '/' if deploying to Vercel/Netlify root
+// Set base to the GitHub Pages repo path.
+// Change to '/' if deploying to a root domain instead.
 export default defineConfig({
   plugins: [react()],
-  base: '/raptive-design-system/',
+  base: '/raptive-ds/',
 })
