@@ -53,6 +53,7 @@ export function Avatar({
   count = null,
   shape = 'circle',
   className = '',
+  style,
 }) {
   const s = sizes[size]
   const initials = getInitials(name)
@@ -60,7 +61,7 @@ export function Avatar({
   const shapeClass = shape === 'square' ? 'rounded-lg' : 'rounded-full'
 
   return (
-    <div className={`relative inline-flex flex-shrink-0 ${className}`}>
+    <div className={`relative inline-flex flex-shrink-0 rounded-full ${className}`} style={style}>
       <div
         className={[
           'flex items-center justify-center overflow-hidden',
@@ -115,6 +116,8 @@ export function AvatarGroup({ avatars = [], max = 4, size = 'sm' }) {
   const visible = avatars.slice(0, max)
   const overflow = avatars.length - max
 
+  const total = visible.length + (overflow > 0 ? 1 : 0)
+
   return (
     <div className="flex items-center -space-x-2">
       {visible.map((av, i) => (
@@ -123,6 +126,7 @@ export function AvatarGroup({ avatars = [], max = 4, size = 'sm' }) {
           {...av}
           size={size}
           className="ring-2 ring-white"
+          style={{ zIndex: total - i }}
         />
       ))}
       {overflow > 0 && (
@@ -133,6 +137,7 @@ export function AvatarGroup({ avatars = [], max = 4, size = 'sm' }) {
             sizes[size].container,
             sizes[size].text,
           ].join(' ')}
+          style={{ zIndex: 0 }}
         >
           +{overflow}
         </div>

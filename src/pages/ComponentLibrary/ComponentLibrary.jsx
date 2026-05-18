@@ -35,6 +35,13 @@ import { RadioGroup } from '../../components/RadioGroup/RadioGroup.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
+import { AuthorRow } from '../../components/AuthorRow/AuthorRow.jsx'
+import { StreakBadge } from '../../components/StreakBadge/StreakBadge.jsx'
+import { MediaGallery } from '../../components/MediaGallery/MediaGallery.jsx'
+import { PostContent } from '../../components/PostContent/PostContent.jsx'
+import { PostActionBar } from '../../components/PostActionBar/PostActionBar.jsx'
+import { FeedPost } from '../../components/FeedPost/FeedPost.jsx'
+import { Comment } from '../../components/Comment/Comment.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
@@ -655,6 +662,149 @@ export function ComponentLibrary() {
                   max={4}
                 />
               </Row>
+            </Section>
+          </>
+        )}
+
+        {/* ── AUTHOR ROW ────────────────────────────────────────────────── */}
+        {activeSection === 'Avatars' && (
+          <>
+            <Section title="Streak Badges" description="Gradient role badges for community gamification.">
+              <Row>
+                <StreakBadge variant="leader" label="Community Leader" />
+                <StreakBadge variant="superfan" label="Superfan" />
+                <StreakBadge variant="tastemaker" label="Tastemaker" />
+              </Row>
+            </Section>
+
+            <Section title="Author Row" description="Community member row from Figma: molecules/rows/author.">
+              <div className="max-w-md border border-border rounded-xs overflow-hidden">
+                <AuthorRow
+                  name="Jane Doe"
+                  showFriendsIcon
+                  badges={[
+                    { variant: 'leader', label: 'Community Leader' },
+                    { variant: 'superfan', label: 'Superfan' },
+                    { variant: 'tastemaker', label: 'Tastemaker' },
+                  ]}
+                  onMore={() => {}}
+                />
+              </div>
+              <div className="max-w-md border border-border rounded-xs overflow-hidden mt-4">
+                <AuthorRow
+                  name="Julia Child"
+                  badges={[
+                    { variant: 'superfan', label: 'Superfan' },
+                  ]}
+                  onMore={() => {}}
+                />
+              </div>
+            </Section>
+
+            <Section title="Media Gallery" description="Image gallery from Figma: molecules/media/gallery. Single or 5+ grid layout.">
+              <Row label="Single image">
+                <MediaGallery
+                  images={[
+                    { src: new URL('../../assets/entry-illustration.png', import.meta.url).href, alt: 'Entry' },
+                  ]}
+                />
+              </Row>
+              <Row label="5+ grid with overflow" className="mt-4">
+                <MediaGallery
+                  images={[
+                    { src: new URL('../../assets/entry-illustration.png', import.meta.url).href, alt: 'Entry' },
+                    { src: new URL('../../assets/recognition-illustration.png', import.meta.url).href, alt: 'Recognition' },
+                    { src: new URL('../../assets/preview-illustration.png', import.meta.url).href, alt: 'Preview' },
+                    { src: new URL('../../assets/verification-illustration.png', import.meta.url).href, alt: 'Verification' },
+                    { src: new URL('../../assets/submission-illustration.png', import.meta.url).href, alt: 'Submission' },
+                    { src: new URL('../../assets/entry-illustration.png', import.meta.url).href, alt: 'Extra' },
+                  ]}
+                />
+              </Row>
+            </Section>
+
+            <Section title="Post Content" description="Community post body from Figma: post-content. Optional title, attachment card, and read more.">
+              <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                <PostContent
+                  title="This is the post title"
+                  body="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+                  readMore={{ label: 'read more', onClick: () => {} }}
+                />
+              </div>
+              <div className="max-w-2xl border border-border rounded-xs overflow-hidden mt-4">
+                <PostContent
+                  title="Post with attachment card"
+                  body="Slow cooker recipes are the best for busy weeknights. Here's one I've been making on repeat."
+                  attachment={{
+                    authorName: 'Skinnytaste',
+                    date: '2 October 12',
+                    title: 'Slow Cooker Pork and Green Chili Stew',
+                    excerpt: 'Slow Cooker Pork and Green Chili Stew - Chunks of lean pork, slow cooked...',
+                    readingTime: 'Estimated reading time: 3 minutes',
+                  }}
+                  readMore={{ label: 'read more', onClick: () => {} }}
+                />
+              </div>
+            </Section>
+
+            <Section title="Post Action Bar" description="Post engagement bar from Figma: molecules/actionbar/post/desktop/feed.">
+              <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                <PostActionBar
+                  reactionCount={31}
+                  shareCount={13}
+                  commentCount={12}
+                  topReactions={['helpful', 'insightful', 'uplifting']}
+                  showCommentField
+                  commentAvatarName="Julia Child"
+                  onReact={() => {}}
+                  onShare={() => {}}
+                  onComment={() => {}}
+                />
+              </div>
+            </Section>
+
+            <Section title="Feed Post" description="Full post card from Figma: organisms/posts/desktop/feed. Composes AuthorRow, image, PostContent, and PostActionBar.">
+              <div className="max-w-xl">
+                <FeedPost
+                  author={{
+                    name: 'Shari Patterson',
+                  }}
+                  images={[
+                    { src: new URL('../../assets/entry-illustration.png', import.meta.url).href, alt: 'Food spread' },
+                  ]}
+                  title="If you're looking to curry flavor with your family"
+                  body="Look no further! Two great and super simple recipes from the OG book will curry your tastebuds to a far off land! (Chickpea and Potato Curry, pg. 260 and Turmeric-Roasted Cauliflower, pg. 270). I served this with homemade naan instead of rice. What I love about these recipes is that they use pantry and fridge staples and come together quickly. Oh… and they taste amazing!"
+                  reactionCount={31}
+                  shareCount={13}
+                  commentCount={12}
+                  topReactions={['helpful', 'insightful', 'uplifting']}
+                  onMore={() => {}}
+                  onReact={() => {}}
+                  onShare={() => {}}
+                  onComment={() => {}}
+                />
+              </div>
+            </Section>
+
+            <Section title="Comment" description="Threaded comment from Figma: organisms/comment/post.">
+              <div className="max-w-md border border-border rounded-xs overflow-hidden">
+                <Comment
+                  authorName="First Last"
+                  username="username"
+                  timestamp="2h"
+                  isAuthor
+                  badges={[
+                    { variant: 'leader', label: 'Community Leader' },
+                  ]}
+                  body="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                  reactionCount={4}
+                  shareCount={13}
+                  onMore={() => {}}
+                  onReact={() => {}}
+                  onShare={() => {}}
+                  onReply={() => {}}
+                />
+              </div>
             </Section>
           </>
         )}
