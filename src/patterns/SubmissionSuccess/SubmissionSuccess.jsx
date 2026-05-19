@@ -1,9 +1,7 @@
 import submissionIllustrationUrl from '../../assets/submission-illustration.png'
-import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 
 export function SubmissionSuccess({
-  eyebrow = 'Submit',
   title,
   description,
   progressMeter = null,
@@ -21,9 +19,8 @@ export function SubmissionSuccess({
             {progressMeter}
 
             <div className="space-y-4">
-              <Badge variant="gold" size="sm">{eyebrow}</Badge>
               <div className="space-y-3">
-                <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-text">
+                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
                   {title}
                 </h2>
                 {description && (

@@ -9,6 +9,7 @@ export const typography = {
   fontFamily: {
     sans:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
     display: ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+    newsreader: ['"Newsreader"', 'ui-serif', 'Georgia', 'serif'],
     mono:    ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
   },
 
@@ -21,6 +22,7 @@ export const typography = {
     'heading-2':  ['1.125rem', { lineHeight: '1.5rem', letterSpacing: '-0.00625rem' }], // 18/24
     'heading-1':  ['1.5rem',   { lineHeight: '1.75rem', letterSpacing: '-0.00625rem' }], // 24/28
     display:      ['2rem',     { lineHeight: '2.625rem', letterSpacing: '0' }], // 32/42
+    hero:         ['3rem',     { lineHeight: '3.25rem', letterSpacing: '-0.02em' }], // 48/52
 
     // Tailwind-friendly aliases for the existing scaffold
     '2xs': ['0.625rem', { lineHeight: '1rem', letterSpacing: '-0.0125rem' }],

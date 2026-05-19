@@ -1,12 +1,10 @@
 import { Link2 } from 'lucide-react'
 import entryIllustrationUrl from '../../assets/entry-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
-import { Badge } from '../../components/Badge/Badge.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 
 export function SingleFieldIntake({
-  eyebrow = 'Creator Application',
   title,
   description,
   progressMeter = null,
@@ -27,9 +25,8 @@ export function SingleFieldIntake({
             {progressMeter}
 
             <div className="space-y-4">
-              <Badge variant="brand" size="sm">{eyebrow}</Badge>
               <div className="space-y-3">
-                <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-text">
+                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
                   {title}
                 </h2>
                 {description && (

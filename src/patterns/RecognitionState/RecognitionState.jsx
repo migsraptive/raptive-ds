@@ -1,7 +1,19 @@
 import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
+import { AnimatePresence, motion } from 'motion/react'
 import { Avatar } from '../../components/Avatar/Avatar.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
+
+const sectionTransition = {
+  duration: 0.34,
+  ease: [0.22, 1, 0.36, 1],
+}
+
+const cardSpring = {
+  type: 'spring',
+  stiffness: 280,
+  damping: 28,
+}
 
 function SkeletonLine({ width }) {
   return (
@@ -27,8 +39,13 @@ export function RecognitionState({
   return (
     <section className="overflow-hidden rounded-[36px] border border-border bg-white shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.1fr)_360px]">
-        <div className="space-y-8 p-8 lg:p-12">
-          <div className="space-y-4">
+        <motion.div
+          className="space-y-8 p-8 lg:p-12"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={sectionTransition}
+        >
+          <motion.div className="space-y-4" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={sectionTransition}>
             <Badge variant={loading ? 'warning' : 'brand'} size="sm">
               {eyebrow}
             </Badge>
@@ -42,11 +59,23 @@ export function RecognitionState({
                 </p>
               )}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="rounded-[32px] border border-border bg-surface-raised p-6">
-            {loading ? (
-              <div className="space-y-5">
+          <motion.div
+            className="rounded-[32px] border border-border bg-surface-raised p-6"
+            layout
+            transition={cardSpring}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {loading ? (
+                <motion.div
+                  key="recognition-loading"
+                  className="space-y-5"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={sectionTransition}
+                >
                 <div className="flex items-center gap-4">
                   <div className="h-16 w-16 rounded-3xl bg-surface-sunken animate-pulse" />
                   <div className="space-y-3">
@@ -71,10 +100,17 @@ export function RecognitionState({
                     <SkeletonLine width="65%" />
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="space-y-5">
-                <div className="flex items-center gap-4">
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="recognition-loaded"
+                  className="space-y-5"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={sectionTransition}
+                >
+                <motion.div className="flex items-center gap-4" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...sectionTransition, delay: 0.04 }}>
                   <Avatar
                     src={profile?.avatar}
                     name={profile?.name}
@@ -86,22 +122,29 @@ export function RecognitionState({
                     <p className="text-sm text-text-secondary">{profile?.summary}</p>
                     {profile?.domain && <p className="text-sm text-text-secondary">{profile.domain}</p>}
                   </div>
-                </div>
+                </motion.div>
 
                 <div className="grid gap-3 md:grid-cols-3">
-                  {signals.map((signal) => (
-                    <div key={signal.label} className="rounded-3xl border border-border bg-white p-4">
+                  {signals.map((signal, index) => (
+                    <motion.div
+                      key={signal.label}
+                      className="rounded-3xl border border-border bg-white p-4"
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ ...sectionTransition, delay: 0.08 + index * 0.06 }}
+                    >
                       <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{signal.label}</p>
                       <p className="mt-2 text-sm font-medium text-text">{signal.value}</p>
                       {signal.help && <p className="mt-1 text-sm text-text-secondary">{signal.help}</p>}
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
-            )}
-          </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <motion.div className="flex flex-wrap items-center gap-3" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...sectionTransition, delay: 0.12 }}>
             {secondaryAction && (
               <Button variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
@@ -112,10 +155,15 @@ export function RecognitionState({
                 {primaryAction.label}
               </Button>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
+        <motion.aside
+          className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}
+          initial={{ opacity: 0, x: 18 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ ...sectionTransition, delay: 0.08 }}
+        >
           <div className={showAside ? 'space-y-4' : 'h-full'}>
             <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-white shadow-xs' : 'relative h-full'].join(' ')}>
               <div className={['relative', showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]'].join(' ')}>
@@ -145,7 +193,7 @@ export function RecognitionState({
               </>
             )}
           </div>
-        </aside>
+        </motion.aside>
       </div>
     </section>
   )

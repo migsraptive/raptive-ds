@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { BadgeCheck, Mail, Rocket, ShieldCheck } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Badge } from '../../components/Badge/Badge.jsx'
-import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
+import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
+import { InstagramDmVerificationDetail } from '../../patterns/InstagramDmVerificationDetail/InstagramDmVerificationDetail.jsx'
+import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
@@ -13,25 +16,92 @@ import { VerificationStep } from '../../patterns/VerificationStep/VerificationSt
 
 const flowSteps = [
   { id: 'entry', label: 'Entry' },
+  { id: 'gather', label: 'Gather' },
   { id: 'fetch', label: 'Fetch' },
+  { id: 'projections', label: 'Projections' },
   { id: 'review', label: 'Review' },
   { id: 'preview', label: 'Preview' },
   { id: 'verify', label: 'Verify' },
   { id: 'submit', label: 'Submit' },
 ]
 
-function FlowProgressMeter({ label, progress }) {
+function currentStepChipLabel(activeStep, recognitionLoading) {
+  if (activeStep === 0) return 'Creator Application'
+  if (activeStep === 1) return 'Gathering signals'
+  if (activeStep === 2) return recognitionLoading ? 'Fetching identity' : 'Confirm details'
+  if (activeStep === 3) return 'Projections'
+  if (activeStep === 4) return 'Review'
+  if (activeStep === 5) return 'Preview'
+  if (activeStep === 6) return 'Verify'
+  if (activeStep === 7) return 'Submit'
+  return 'Current stage'
+}
+
+function currentStepChipVariant(activeStep, recognitionLoading) {
+  if (activeStep === 0) return 'brand'
+  if (activeStep === 1) return 'warning'
+  if (activeStep === 2) return recognitionLoading ? 'warning' : 'brand'
+  if (activeStep === 3) return 'info'
+  if (activeStep === 4) return 'warning'
+  if (activeStep === 5) return 'gold'
+  if (activeStep === 6) return 'success'
+  if (activeStep === 7) return 'gold'
+  return 'outline'
+}
+
+const stepTransition = {
+  duration: 0.42,
+  ease: [0.22, 1, 0.36, 1],
+}
+
+const stepSpring = {
+  type: 'spring',
+  stiffness: 260,
+  damping: 26,
+}
+
+function FlowProgressMeter({
+  label,
+  variant,
+  progress,
+  loading = false,
+  trackColor = null,
+  fillColor = null,
+}) {
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between text-sm text-text-secondary">
-        <span>{label}</span>
-        <span>{progress}%</span>
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <Badge variant={variant} size="sm">{label}</Badge>
+        <span className="text-sm text-text-secondary">{progress}%</span>
       </div>
-      <div className="h-2 rounded-full bg-surface-sunken">
-        <div
-          className="h-full rounded-full bg-brand transition-[width] duration-300"
-          style={{ width: `${progress}%` }}
-        />
+      <div
+        className={trackColor ? 'h-2 rounded-full' : 'h-2 rounded-full bg-surface-sunken'}
+        style={trackColor ? { backgroundColor: trackColor } : undefined}
+      >
+        {loading ? (
+          <div className="relative h-full overflow-hidden rounded-full">
+            <motion.div
+              className={fillColor ? 'absolute inset-y-0 rounded-full' : 'absolute inset-y-0 rounded-full bg-brand'}
+              style={fillColor ? { backgroundColor: fillColor, width: '42%' } : { width: '42%' }}
+              initial={{ x: '-58%' }}
+              animate={{ x: ['-58%', '138%'] }}
+              transition={{
+                repeat: Infinity,
+                repeatType: 'mirror',
+                duration: 1.4,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            />
+          </div>
+        ) : (
+          <motion.div
+            className={fillColor ? 'h-full rounded-full transition-[width] duration-300' : 'h-full rounded-full bg-brand transition-[width] duration-300'}
+            style={fillColor ? { backgroundColor: fillColor } : undefined}
+            initial={false}
+            animate={{ width: `${progress}%` }}
+            transition={stepSpring}
+          />
+        )}
       </div>
     </div>
   )
@@ -42,8 +112,9 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/juliachild')
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [recognitionLoading, setRecognitionLoading] = useState(false)
-  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
-  const [verificationConfirmed, setVerificationConfirmed] = useState(true)
+  const [verificationMethod, setVerificationMethod] = useState(null)
+  const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [verificationStage, setVerificationStage] = useState('choose')
   const [reviewFields, setReviewFields] = useState({
     name: 'Julia Child',
     url: 'instagram.com/juliachild',
@@ -92,13 +163,32 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     return () => window.clearTimeout(timeoutId)
   }, [recognitionLoading])
 
+  useEffect(() => {
+    if (activeStep !== 1) return undefined
+
+    const timeoutId = window.setTimeout(() => {
+      setActiveStep(2)
+    }, 5000)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [activeStep])
+
   const progress = useMemo(
     () => Math.round(((activeStep + 1) / flowSteps.length) * 100),
     [activeStep],
   )
-  const currentStepLabel = flowSteps[activeStep]?.label ?? 'Current stage'
+  const currentStepLabel = currentStepChipLabel(activeStep, recognitionLoading)
+  const currentStepVariant = currentStepChipVariant(activeStep, recognitionLoading)
+  const activeStepId = activeStep === 6
+    ? `${flowSteps[activeStep]?.id ?? 'verify'}-${verificationStage}`
+    : flowSteps[activeStep]?.id ?? 'current-step'
   const progressMeter = (
-    <FlowProgressMeter label={currentStepLabel} progress={progress} />
+    <FlowProgressMeter
+      label={currentStepLabel}
+      variant={currentStepVariant}
+      progress={progress}
+      loading={activeStep === 1}
+    />
   )
 
   const updateReviewField = (key, value) => {
@@ -148,6 +238,35 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     }
   }
 
+  const addAccount = () => {
+    const nextId = `manual-${Date.now()}`
+    const nextAccount = {
+      id: nextId,
+      platform: 'Instagram',
+      handle: '@newhandle',
+      url: 'https://instagram.com/newhandle',
+      followers: 'Follower count pending',
+    }
+
+    setAccounts((current) => [...current, nextAccount])
+    setEditingField(nextId)
+    setEditDraft(nextAccount)
+  }
+
+  const handleVerificationMethodChange = (value) => {
+    setVerificationMethod(value)
+    setVerificationStage('choose')
+  }
+
+  const handleVerificationContinue = () => {
+    if (verificationMethod === 'instagram-dm') {
+      setVerificationStage('instagram-dm')
+      return
+    }
+
+    setActiveStep(7)
+  }
+
   let content = null
 
   if (activeStep === 0) {
@@ -162,28 +281,24 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         loading={intakeLoading}
         helperText="No long application form up front."
         showAside={false}
-        trustPoints={[
-          {
-            title: 'Recognition first',
-            description: 'The first response should feel intelligent, not administrative.',
-          },
-          {
-            title: 'Reviewable output',
-            description: 'Every fetched detail can be corrected before commitment.',
-          },
-          {
-            title: 'Exclusive finish',
-            description: 'The final submit should feel intentional and worth the wait.',
-          },
-        ]}
       />
     )
   }
 
   if (activeStep === 1) {
     content = (
+      <DataGatheringLoader
+        progressMeter={progressMeter}
+        creatorUrl={creatorUrl}
+        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(0) }}
+      />
+    )
+  }
+
+  if (activeStep === 2) {
+    content = (
       <FetchConfirmation
-        loading={recognitionLoading}
+        loading={false}
         progressMeter={progressMeter}
         creator={{
           name: reviewFields.name,
@@ -191,7 +306,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           reachDetail: estimatedReach.detail,
         }}
         website={reviewFields.url}
-        newsletter={newsletter}
         accounts={accounts}
         editingField={editingField}
         editDraft={editDraft}
@@ -199,21 +313,54 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         onStartEditing={startEditing}
         onCancelEditing={cancelEditing}
         onSaveEditing={saveEditing}
+        onAddAccount={addAccount}
         onRemoveAccount={removeAccount}
         secondaryAction={{
-          label: 'Needs edits',
+          label: 'Back',
           variant: 'ghost',
-          onClick: () => setActiveStep(2),
+          onClick: () => setActiveStep(1),
         }}
         primaryAction={{
-          label: recognitionLoading ? 'Fetching…' : 'Looks right',
-          onClick: recognitionLoading ? undefined : () => setActiveStep(2),
+          label: 'Looks right',
+          onClick: () => setActiveStep(3),
         }}
       />
     )
   }
 
-  if (activeStep === 2) {
+  if (activeStep === 3) {
+    content = (
+      <ProjectionPreview
+        progressMeter={progressMeter}
+        title="Before we ask for edits, here’s the scale this creator could unlock."
+        description="These early projections should make the opportunity legible without pretending they are final. The goal is confidence, not false precision."
+        stats={[
+          {
+            label: 'Combined followers before overlap',
+            value: '526,000',
+            sublabel: 'Cross-platform raw total',
+            detail: 'This is the total audience signal pulled across the connected creator profiles before shared followers are removed.',
+          },
+          {
+            label: 'Estimated unique reach',
+            value: '315.6K to 420.8K',
+            sublabel: 'Overlap reduced',
+            detail: 'This assumes meaningful cross-platform overlap and reframes the audience as a more realistic blended reach range.',
+          },
+          {
+            label: 'Potential monthly ad revenue',
+            value: '$426 to $3,787',
+            sublabel: 'Monthly modeled range',
+            detail: 'This models an early monthly revenue range from projected traffic, based on how much of that reach returns as readership.',
+          },
+        ]}
+        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(2) }}
+        primaryAction={{ label: 'Continue to review', onClick: () => setActiveStep(4) }}
+      />
+    )
+  }
+
+  if (activeStep === 4) {
     content = (
       <ReviewCorrection
         progressMeter={progressMeter}
@@ -221,15 +368,19 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         description="This should feel like refining a strong starting point, not filling out a form from scratch."
         fields={reviewFields}
         onFieldChange={updateReviewField}
+        brandAssets={{
+          palette: ['#171717', '#D2FF66', '#F4EFE6'],
+          items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
+        }}
         note="If this step feels bureaucratic, the recognition stage failed to earn trust."
         showAside={false}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(1) }}
-        primaryAction={{ label: 'Continue to preview', onClick: () => setActiveStep(3) }}
+        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(3) }}
+        primaryAction={{ label: 'Continue to preview', onClick: () => setActiveStep(5) }}
       />
     )
   }
 
-  if (activeStep === 3) {
+  if (activeStep === 5) {
     content = (
       <CommunityPreviewCard
         progressMeter={progressMeter}
@@ -260,14 +411,40 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
-        secondaryAction={{ label: 'Back to edits', variant: 'ghost', onClick: () => setActiveStep(2) }}
-        primaryAction={{ label: 'Continue to verification', onClick: () => setActiveStep(4) }}
+        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(4) }}
+        primaryAction={{
+          label: 'Continue to verification',
+          onClick: () => {
+            setVerificationStage('choose')
+            setActiveStep(6)
+          },
+        }}
       />
     )
   }
 
-  if (activeStep === 4) {
-    content = (
+  if (activeStep === 6) {
+    content = verificationStage === 'instagram-dm' ? (
+      <InstagramDmVerificationDetail
+        progressMeter={progressMeter}
+        title="A quick handshake. Pick whichever path is easier."
+        description="Both confirm it’s really you. The Instagram DM is fastest, but creator email works too."
+        code="BRY-453"
+        destinationHandle="@raptive_community"
+        originHandle={accounts.find((account) => account.platform === 'Instagram')?.handle ?? '@juliachild'}
+        creatorEmail="hello@juliachild.com"
+        secondaryAction={{
+          label: 'Back',
+          variant: 'ghost',
+          onClick: () => setVerificationStage('choose'),
+        }}
+        onConfirmSent={() => setActiveStep(7)}
+        onUseEmailInstead={() => {
+          setVerificationMethod('email-domain')
+          setActiveStep(7)
+        }}
+      />
+    ) : (
       <VerificationStep
         progressMeter={progressMeter}
         title="One last check so we know this request is really coming from the creator."
@@ -279,9 +456,15 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
             title: 'Confirm with an Instagram DM',
             description: 'We send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long.',
           },
+          {
+            value: 'email-domain',
+            icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
+            title: 'Confirm with a creator email',
+            description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+          },
         ]}
         selectedMethod={verificationMethod}
-        onSelectMethod={setVerificationMethod}
+        onSelectMethod={handleVerificationMethodChange}
         confirmed={verificationConfirmed}
         onConfirmChange={setVerificationConfirmed}
         reassurance={[
@@ -302,13 +485,20 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
-        secondaryAction={{ label: 'Back to preview', variant: 'ghost', onClick: () => setActiveStep(3) }}
-        primaryAction={{ label: 'Confirm and submit', onClick: () => setActiveStep(5) }}
+        secondaryAction={{
+          label: 'Back',
+          variant: 'ghost',
+          onClick: () => {
+            setVerificationStage('choose')
+            setActiveStep(5)
+          },
+        }}
+        primaryAction={{ label: 'Continue', onClick: handleVerificationContinue }}
       />
     )
   }
 
-  if (activeStep === 5) {
+  if (activeStep === 7) {
     content = (
       <SubmissionSuccess
         progressMeter={progressMeter}
@@ -349,7 +539,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
-        secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: () => setActiveStep(0) }}
+        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(6) }}
         primaryAction={{ label: 'Open library', onClick: onOpenLibrary }}
       />
     )
@@ -357,49 +547,22 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-surface-sunken via-surface to-brand-subtle">
-      <header className="border-b border-border/80 bg-surface/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <BrandLogo size="lg" />
-              <Badge variant="outline" size="sm">Desktop First</Badge>
-            </div>
-            <p className="text-sm text-text-secondary">
-              Creator application flow: entry, fetch, review, preview, verify, submit.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Button size="lg" variant="ghost" onClick={onOpenLibrary}>Component library</Button>
-          </div>
+      <main className="mx-auto max-w-6xl px-6 py-4">
+        <div className="mb-4 flex justify-end">
+          <Button size="sm" variant="ghost" onClick={onOpenLibrary}>Component library</Button>
         </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        <div className="mb-8 rounded-[28px] border border-border bg-surface/80 p-5 shadow-xs backdrop-blur">
-          <div className="space-y-2">
-            <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Flow progress</p>
-            <div className="flex flex-wrap gap-2">
-              {flowSteps.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={[
-                    'rounded-full border px-3 py-1.5 text-sm transition-colors',
-                    index === activeStep
-                      ? 'border-brand bg-brand-subtle text-brand-dark'
-                      : index < activeStep
-                        ? 'border-border bg-surface-raised text-text'
-                        : 'border-border bg-surface text-text-secondary',
-                  ].join(' ')}
-                >
-                  {String(index + 1).padStart(2, '0')} {step.label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {content}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeStepId}
+            initial={{ opacity: 0, y: 42, scale: 0.985, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -28, scale: 0.985, filter: 'blur(8px)' }}
+            transition={stepTransition}
+            className="will-change-transform"
+          >
+            {content}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   )

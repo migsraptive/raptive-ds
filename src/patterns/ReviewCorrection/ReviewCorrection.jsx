@@ -1,17 +1,33 @@
-import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
+import { FormField } from '../../components/FormField/FormField.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
 
+function PaletteTile({ value }) {
+  return (
+    <div className="w-full">
+      <div
+        className="flex h-24 w-full items-end rounded-md border border-border p-2 shadow-xs"
+        style={{ backgroundColor: value }}
+        title={value}
+      >
+        <p className="rounded bg-black/20 px-1.5 py-0.5 text-2xs font-mono leading-none text-white backdrop-blur-sm">
+          {value}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export function ReviewCorrection({
-  eyebrow = 'Review',
   title,
   description,
   progressMeter = null,
   fields = {},
   onFieldChange,
   showAside = true,
+  brandAssets = null,
   primaryAction = { label: 'Continue to preview' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
   note = null,
@@ -24,9 +40,8 @@ export function ReviewCorrection({
             {progressMeter}
 
             <div className="space-y-4">
-              <Badge variant="warning" size="sm">{eyebrow}</Badge>
               <div className="space-y-3">
-                <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-text">
+                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
                   {title}
                 </h2>
                 {description && (
@@ -37,18 +52,21 @@ export function ReviewCorrection({
               </div>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className={['grid gap-5', brandAssets ? 'lg:grid-cols-[280px_minmax(0,1fr)_minmax(0,1fr)]' : 'md:grid-cols-2'].join(' ')}>
               <TextInput
+                className={brandAssets ? 'lg:col-start-2 lg:row-start-1' : ''}
                 label="Creator name"
                 value={fields.name ?? ''}
                 onChange={(event) => onFieldChange?.('name', event.target.value)}
               />
               <TextInput
+                className={brandAssets ? 'lg:col-start-3 lg:row-start-1' : ''}
                 label="Primary URL"
                 value={fields.url ?? ''}
                 onChange={(event) => onFieldChange?.('url', event.target.value)}
               />
               <Select
+                className={brandAssets ? 'lg:col-start-3 lg:row-start-2' : ''}
                 label="Primary vertical"
                 value={fields.vertical ?? ''}
                 onChange={(event) => onFieldChange?.('vertical', event.target.value)}
@@ -61,11 +79,40 @@ export function ReviewCorrection({
                 ]}
               />
               <TextInput
+                className={brandAssets ? 'lg:col-start-2 lg:row-start-2' : ''}
                 label="Audience signal"
                 value={fields.audience ?? ''}
                 onChange={(event) => onFieldChange?.('audience', event.target.value)}
               />
-              <div className="md:col-span-2">
+              {brandAssets && (
+                <div className="lg:col-start-1 lg:row-start-1 lg:row-span-3">
+                  <FormField label="Brand assets detected" className="h-full">
+                    <div className="grid h-full w-full grid-cols-1 gap-3">
+                      {brandAssets.palette?.map((color) => (
+                        <PaletteTile key={color} value={color} />
+                      ))}
+                    </div>
+                  </FormField>
+                </div>
+              )}
+              {brandAssets && (
+                <FormField
+                  className="lg:col-start-3 lg:row-start-3"
+                  label="Asset signals"
+                >
+                  <div className="flex flex-wrap gap-2">
+                    {brandAssets.items?.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full bg-surface-raised px-2.5 py-1 text-xs text-text-secondary"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </FormField>
+              )}
+              <div className={brandAssets ? 'lg:col-start-2 lg:row-start-3' : 'md:col-span-2'}>
                 <Textarea
                   label="Positioning summary"
                   value={fields.summary ?? ''}

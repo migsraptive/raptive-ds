@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Award,
   Baby,
@@ -50,8 +50,12 @@ import { RightRailCommunityRulesCard } from '../../components/RightRailCommunity
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
+import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
+import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
-import { RecognitionState } from '../../patterns/RecognitionState/RecognitionState.jsx'
+import { InstagramDmVerificationDetail } from '../../patterns/InstagramDmVerificationDetail/InstagramDmVerificationDetail.jsx'
+import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
+import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
@@ -99,7 +103,7 @@ function Row({ label, children, className = '' }) {
 }
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
-const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns']
+const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const celebrationIcon = (Icon) => <LucideIcon icon={Icon} size="xl" stroke="display" />
@@ -137,7 +141,14 @@ function pxFromRemString(remString) {
 }
 
 export function ComponentLibrary() {
-  const [activeSection, setActiveSection] = useState('Colors')
+  const [activeSection, setActiveSection] = useState(() => {
+    if (typeof window === 'undefined') {
+      return 'Colors'
+    }
+
+    const sectionParam = new URLSearchParams(window.location.search).get('section')
+    return sections.includes(sectionParam) ? sectionParam : 'Colors'
+  })
   const [modalOpen, setModalOpen] = useState(false)
   const [modalType, setModalType] = useState('badge')
   const [goalValue, setGoalValue] = useState('grow-audience')
@@ -148,7 +159,6 @@ export function ComponentLibrary() {
   const [selectedCategories, setSelectedCategories] = useState(['food', 'parenting'])
   const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/juliachild')
   const [intakeLoading, setIntakeLoading] = useState(false)
-  const [recognitionLoading, setRecognitionLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
   const [verificationConfirmed, setVerificationConfirmed] = useState(true)
   const [reviewFields, setReviewFields] = useState({
@@ -217,6 +227,12 @@ export function ComponentLibrary() {
   const updateReviewField = (key, value) => {
     setReviewFields((current) => ({ ...current, [key]: value }))
   }
+
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('section', activeSection)
+    window.history.replaceState({}, '', url)
+  }, [activeSection])
 
   return (
     <div className="min-h-screen bg-surface-raised">
@@ -340,6 +356,10 @@ export function ComponentLibrary() {
                       <span className="text-xs font-mono text-text-tertiary">family.font family</span>
                       <span className="font-sans text-sm text-text">DM Sans</span>
                     </div>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span className="text-xs font-mono text-text-tertiary">family.newsreader</span>
+                      <span className="font-newsreader text-sm text-text">Newsreader</span>
+                    </div>
                     {[
                       ['light', typographyTokens.fontWeight.light],
                       ['regular', typographyTokens.fontWeight.normal],
@@ -380,6 +400,7 @@ export function ComponentLibrary() {
 
               <div className="space-y-6 divide-y divide-border">
               {[
+                { label: `${tokenTypographyLabel('hero')} · text-color.primary`, className: 'font-newsreader text-hero font-normal text-text', sample: 'Bring creators in with confidence' },
                 { label: `${tokenTypographyLabel('display')} · text-color.primary`, className: 'font-display text-4xl font-bold text-text', sample: 'Community First' },
                 { label: `${tokenTypographyLabel('heading-1')} · text-color.primary`, className: 'font-display text-2xl font-bold text-text', sample: 'Welcome Back, Maria' },
                 { label: `${tokenTypographyLabel('heading-2')} · text-color.primary`, className: 'font-display text-lg font-medium text-text', sample: 'Your Achievements' },
@@ -1036,64 +1057,87 @@ export function ComponentLibrary() {
                 }}
                 loading={intakeLoading}
                 helperText="No long application form up front."
-                trustPoints={[
-                  {
-                    title: 'Recognition first',
-                    description: 'The first response should feel intelligent, not administrative.',
-                  },
-                  {
-                    title: 'Reviewable output',
-                    description: 'Every fetched detail can be corrected before commitment.',
-                  },
-                  {
-                    title: 'Exclusive finish',
-                    description: 'The final submit should feel intentional and worth the wait.',
-                  },
-                ]}
               />
             </Section>
 
-            <Section title="Recognition State" description="Second-step reveal pattern for fetched creator identity and confidence-building recognition.">
-              <RecognitionState
-                eyebrow={recognitionLoading ? 'Fetching identity' : 'Recognition'}
-                title={recognitionLoading ? 'We’re pulling the first identity signals now.' : 'We found a strong starting point for this creator.'}
-                description={
-                  recognitionLoading
-                    ? 'This should feel like a short, confident reveal rather than a generic loading wait.'
-                    : 'Logo, display name, domain, and positioning are recognized first so the creator can confirm or correct with context.'
-                }
-                loading={recognitionLoading}
-                profile={{
-                  name: 'Julia Child',
-                  summary: 'Food creator and community builder',
-                  domain: 'instagram.com/juliachild',
+            <Section title="Data Gathering Loader" description="Dedicated in-between loading step that confirms creator data is being gathered before the fetch confirmation appears.">
+              <DataGatheringLoader
+                creatorUrl={creatorUrl}
+                secondaryAction={{ label: 'Back', variant: 'ghost' }}
+              />
+            </Section>
+
+            <Section title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before projections.">
+              <FetchConfirmation
+                loading={false}
+                creator={{
+                  name: reviewFields.name,
+                  reach: '526K',
+                  reachDetail: '526,000 combined followers',
                 }}
-                signals={[
+                website={reviewFields.url}
+                accounts={[
                   {
-                    label: 'Display name',
-                    value: 'Julia Child',
-                    help: 'Pulled from the creator profile and social identity.',
+                    id: 'instagram',
+                    platform: 'Instagram',
+                    handle: '@juliachild',
+                    url: 'https://instagram.com/juliachild',
+                    followers: '318,000 followers',
                   },
                   {
-                    label: 'Primary vertical',
-                    value: 'Food',
-                    help: 'Based on recent profile content and creator positioning.',
+                    id: 'tiktok',
+                    platform: 'TikTok',
+                    handle: '@juliachild',
+                    url: 'https://tiktok.com/@juliachild',
+                    followers: '124,000 followers',
                   },
                   {
-                    label: 'Audience signal',
-                    value: 'Community-led',
-                    help: 'Content tone suggests relationship-building over broadcast only.',
+                    id: 'pinterest',
+                    platform: 'Pinterest',
+                    handle: '@juliachild',
+                    url: 'https://pinterest.com/juliachild',
+                    followers: '84,000 followers',
                   },
                 ]}
-                secondaryAction={{
-                  label: recognitionLoading ? 'Pause' : 'Needs edits',
-                  variant: 'ghost',
-                  onClick: () => setRecognitionLoading(false),
-                }}
-                primaryAction={{
-                  label: recognitionLoading ? 'Fetching…' : 'Looks right',
-                  onClick: () => setRecognitionLoading((current) => !current),
-                }}
+                editingField={null}
+                editDraft=""
+                onEditDraftChange={() => {}}
+                onStartEditing={() => {}}
+                onCancelEditing={() => {}}
+                onSaveEditing={() => {}}
+                onAddAccount={() => {}}
+                onRemoveAccount={() => {}}
+                secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                primaryAction={{ label: 'Looks right' }}
+              />
+            </Section>
+
+            <Section title="Projection Preview" description="Current projections step with staged pipeline reveal from combined followers through reach and modeled revenue.">
+              <ProjectionPreview
+                title="Before we ask for edits, here’s the scale this creator could unlock."
+                description="These early projections should make the opportunity legible without pretending they are final. The goal is confidence, not false precision."
+                stats={[
+                  {
+                    label: 'Combined followers before overlap',
+                    value: '526,000',
+                    sublabel: 'Cross-platform raw total',
+                    detail: 'This is the total audience signal pulled across the connected creator profiles before shared followers are removed.',
+                  },
+                  {
+                    label: 'Estimated unique reach',
+                    value: '315.6K to 420.8K',
+                    sublabel: 'Overlap reduced',
+                    detail: 'This assumes meaningful cross-platform overlap and reframes the audience as a more realistic blended reach range.',
+                  },
+                  {
+                    label: 'Potential monthly ad revenue',
+                    value: '$426 to $3,787',
+                    sublabel: 'Monthly modeled range',
+                    detail: 'This models an early monthly revenue range from projected traffic, based on how much of that reach returns as readership.',
+                  },
+                ]}
+                secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                primaryAction={{ label: 'Continue to review' }}
               />
             </Section>
 
@@ -1103,7 +1147,12 @@ export function ComponentLibrary() {
                 description="This should feel like refining a strong starting point, not filling out a form from scratch."
                 fields={reviewFields}
                 onFieldChange={updateReviewField}
+                brandAssets={{
+                  palette: ['#171717', '#D2FF66', '#F4EFE6'],
+                  items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
+                }}
                 note="If this step feels bureaucratic, the recognition stage failed to earn trust."
+                showAside={false}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{ label: 'Continue to preview' }}
               />
@@ -1177,6 +1226,20 @@ export function ComponentLibrary() {
                 ]}
                 secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
                 primaryAction={{ label: 'Confirm and submit' }}
+              />
+            </Section>
+
+            <Section title="Instagram DM Verification Detail" description="Follow-on verification screen for the Instagram DM path, with the alternate email route still visible.">
+              <InstagramDmVerificationDetail
+                title="A quick handshake. Pick whichever path is easier."
+                description="Both confirm it’s really you. The Instagram DM is fastest, but creator email works too."
+                code="BRY-453"
+                destinationHandle="@raptive_community"
+                originHandle="@juliachild"
+                creatorEmail="hello@juliachild.com"
+                secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                onConfirmSent={() => {}}
+                onUseEmailInstead={() => {}}
               />
             </Section>
 
@@ -1326,6 +1389,17 @@ export function ComponentLibrary() {
                 <p>• "Maybe Later" dismisses — don't suppress it, community members should opt in to sharing</p>
                 <p>• Confetti is CSS-only, no library dependency</p>
               </div>
+            </Section>
+          </>
+        )}
+
+        {activeSection === 'Animation' && (
+          <>
+            <Section
+              title="Projection Motion Lab"
+              description="Exploration area for animated data storytelling patterns before they are introduced into creator onboarding flows."
+            >
+              <ProjectionMotionShowcase />
             </Section>
           </>
         )}

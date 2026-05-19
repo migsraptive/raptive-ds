@@ -1,10 +1,14 @@
 import previewIllustrationUrl from '../../assets/preview-illustration.png'
-import { Badge } from '../../components/Badge/Badge.jsx'
+import { motion } from 'motion/react'
 import { Button } from '../../components/Button/Button.jsx'
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 
+const revealTransition = {
+  duration: 0.38,
+  ease: [0.22, 1, 0.36, 1],
+}
+
 export function CommunityPreviewCard({
-  eyebrow = 'Preview',
   title,
   description,
   progressMeter = null,
@@ -19,14 +23,18 @@ export function CommunityPreviewCard({
   return (
     <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex h-full flex-col p-8 lg:p-12">
+        <motion.div
+          className="flex h-full flex-col p-8 lg:p-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={revealTransition}
+        >
           <div className="space-y-8">
             {progressMeter}
 
-            <div className="space-y-4">
-              <Badge variant="gold" size="sm">{eyebrow}</Badge>
+            <motion.div className="space-y-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={revealTransition}>
               <div className="space-y-3">
-                <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-text">
+                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
                   {title}
                 </h2>
                 {description && (
@@ -35,10 +43,15 @@ export function CommunityPreviewCard({
                   </p>
                 )}
               </div>
-            </div>
+            </motion.div>
 
-            <div className="relative h-[451px] w-[634px] overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-              <div
+            <motion.div
+              className="relative h-[451px] w-[634px] overflow-hidden rounded-2xl border border-border bg-surface shadow-sm will-change-transform"
+              initial={{ opacity: 0, y: 22, scale: 0.975 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ ...revealTransition, delay: 0.08 }}
+            >
+              <motion.div
                 className="absolute left-0 top-0"
                 style={{
                   width: '1440px',
@@ -46,6 +59,8 @@ export function CommunityPreviewCard({
                   transform: 'scale(0.44)',
                   transformOrigin: 'top left',
                 }}
+                animate={{ y: [8, 0], scale: [0.435, 0.44] }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.14 }}
               >
                 <HomeFeedPageTemplate
                   brandName={creator.name}
@@ -78,11 +93,11 @@ export function CommunityPreviewCard({
                     primaryLabel: 'This feels right',
                   }}
                 />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
+          <motion.div className="mt-auto flex flex-wrap items-center gap-3 pt-8" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.16 }}>
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
@@ -93,10 +108,15 @@ export function CommunityPreviewCard({
                 {primaryAction.label}
               </Button>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
+        <motion.aside
+          className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}
+          initial={{ opacity: 0, x: 18 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ ...revealTransition, delay: 0.1 }}
+        >
           <div className={showAside ? 'space-y-4' : 'h-full'}>
             <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
               <div className={['relative', showAside ? 'aspect-[3/2]' : 'h-full min-h-[720px]'].join(' ')}>
@@ -126,7 +146,7 @@ export function CommunityPreviewCard({
               </>
             )}
           </div>
-        </aside>
+        </motion.aside>
       </div>
     </section>
   )
