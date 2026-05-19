@@ -54,6 +54,7 @@ export function StepLayout({
           <footer className="mt-auto flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
             {secondaryAction ? (
               <Button
+                size="lg"
                 variant={secondaryAction.variant ?? 'ghost'}
                 onClick={secondaryAction.onClick}
               >
@@ -63,6 +64,7 @@ export function StepLayout({
 
             {primaryAction ? (
               <Button
+                size="lg"
                 variant={primaryAction.variant ?? 'primary'}
                 onClick={primaryAction.onClick}
               >

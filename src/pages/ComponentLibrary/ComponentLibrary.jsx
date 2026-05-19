@@ -42,6 +42,11 @@ import { PostContent } from '../../components/PostContent/PostContent.jsx'
 import { PostActionBar } from '../../components/PostActionBar/PostActionBar.jsx'
 import { FeedPost } from '../../components/FeedPost/FeedPost.jsx'
 import { Comment } from '../../components/Comment/Comment.jsx'
+import { CommunitySidebar } from '../../components/CommunitySidebar/CommunitySidebar.jsx'
+import { CommunityTopNavigation } from '../../components/CommunityTopNavigation/CommunityTopNavigation.jsx'
+import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
+import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
+import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
@@ -94,11 +99,29 @@ function Row({ label, children, className = '' }) {
 }
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
-const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Patterns']
+const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const celebrationIcon = (Icon) => <LucideIcon icon={Icon} size="xl" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
+const avatarImageSet = [
+  {
+    name: 'Julia Child',
+    src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=128&q=80',
+  },
+  {
+    name: 'Nicole PM',
+    src: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=128&q=80',
+  },
+  {
+    name: 'Brynne B',
+    src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=128&q=80',
+  },
+  {
+    name: 'Cyle C',
+    src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=128&q=80',
+  },
+]
 
 function tokenTypographyLabel(tokenName) {
   const token = typographyTokens.fontSize[tokenName]
@@ -223,7 +246,12 @@ export function ComponentLibrary() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10 space-y-14">
+      <main
+        className={[
+          activeSection === 'Pages' ? 'max-w-none' : 'max-w-5xl',
+          'mx-auto px-6 py-10 space-y-14',
+        ].join(' ')}
+      >
 
         {/* ── COLORS ─────────────────────────────────────────────────────── */}
         {activeSection === 'Colors' && (
@@ -642,12 +670,13 @@ export function ComponentLibrary() {
         {/* ── BUTTONS ────────────────────────────────────────────────────── */}
         {activeSection === 'Buttons' && (
           <>
-            <Section title="Variants" description="Five semantic variants covering all use cases.">
+            <Section title="Variants" description="Six semantic variants covering all use cases. Secondary maps to the Figma outline treatment.">
               <Row>
                 <Button variant="primary">Primary</Button>
                 <Button variant="secondary">Secondary</Button>
                 <Button variant="ghost">Ghost</Button>
                 <Button variant="danger">Danger</Button>
+                <Button variant="black">Black</Button>
                 <Button variant="link">Link</Button>
               </Row>
             </Section>
@@ -658,12 +687,6 @@ export function ComponentLibrary() {
                   className="bg-transparent text-text hover:bg-surface-sunken active:bg-neutral-100"
                 >
                   Naked
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="bg-white border-neutral-400 hover:border-neutral-500"
-                >
-                  Outline
                 </Button>
                 <Button
                   variant="secondary"
@@ -688,12 +711,8 @@ export function ComponentLibrary() {
                 >
                   Naked / Small
                 </Button>
-                <Button
-                  size="md"
-                  variant="secondary"
-                  className="bg-white border-neutral-400 hover:border-neutral-500"
-                >
-                  Outline / Medium
+                <Button size="md" variant="secondary">
+                  Secondary / Outline
                 </Button>
                 <Button
                   size="lg"
@@ -774,6 +793,18 @@ export function ComponentLibrary() {
                 ))}
               </Row>
             </Section>
+            <Section title="Image Variant" description="Avatar with photo source instead of initials fallback.">
+              <Row>
+                {['xs','sm','md','lg'].map((size, index) => (
+                  <Avatar
+                    key={size}
+                    name={avatarImageSet[index].name}
+                    src={avatarImageSet[index].src}
+                    size={size}
+                  />
+                ))}
+              </Row>
+            </Section>
             <Section title="With Status">
               <Row>
                 <Avatar name="Nicole PM" size="md" status="online" />
@@ -794,10 +825,10 @@ export function ComponentLibrary() {
                 <AvatarGroup
                   size="sm"
                   avatars={[
-                    { name: 'Julia Child' },
-                    { name: 'Nicole PM' },
-                    { name: 'Brynne B' },
-                    { name: 'Cyle C' },
+                    avatarImageSet[0],
+                    avatarImageSet[1],
+                    avatarImageSet[2],
+                    avatarImageSet[3],
                     { name: 'Kimm SVP' },
                     { name: 'Will CPO' },
                   ]}
@@ -878,7 +909,7 @@ export function ComponentLibrary() {
                   title="Post with attachment card"
                   body="Slow cooker recipes are the best for busy weeknights. Here's one I've been making on repeat."
                   attachment={{
-                    authorName: 'Skinnytaste',
+                    authorName: 'Julia Child',
                     date: '2 October 12',
                     title: 'Slow Cooker Pork and Green Chili Stew',
                     excerpt: 'Slow Cooker Pork and Green Chili Stew - Chunks of lean pork, slow cooked...',
@@ -949,6 +980,45 @@ export function ComponentLibrary() {
               </div>
             </Section>
           </>
+        )}
+
+        {/* ── NAVIGATION ─────────────────────────────────────────────────── */}
+        {activeSection === 'Navigation' && (
+          <>
+            <Section title="Community Top Navigation" description="Logged-out desktop top navigation adapted from Figma: organisms/navigation/top/desktop/default.">
+              <div className="overflow-hidden rounded-[20px] border border-border-strong bg-white shadow-xs">
+                <CommunityTopNavigation />
+              </div>
+            </Section>
+
+            <Section title="Community Sidebar" description="Desktop community navigation sidebar adapted from Figma: organisms/navigation/desktop/sidebar.">
+              <div className="overflow-hidden rounded-[20px] border border-border-strong bg-white shadow-xs">
+                <CommunitySidebar />
+              </div>
+            </Section>
+
+            <Section title="Right Rail Modules" description="Home feed right-rail stack adapted from Figma: welcome card plus community rules module.">
+              <div className="inline-flex flex-col gap-4 overflow-hidden rounded-[20px] border border-border-strong bg-surface-raised p-4 shadow-xs">
+                <RightRailWelcomeCard />
+                <RightRailCommunityRulesCard />
+              </div>
+            </Section>
+          </>
+        )}
+
+        {/* ── PAGES ─────────────────────────────────────────────────────── */}
+        {activeSection === 'Pages' && (
+          <div className="mx-auto flex w-[1440px] flex-col gap-4">
+            <div className="space-y-1 text-left">
+              <h3 className="text-base font-semibold text-text">Home Feed Template</h3>
+              <p className="text-sm text-text-secondary">
+                Edge-to-edge top navigation with left community sidebar, center stacked feed posts, and right-rail support modules.
+              </p>
+            </div>
+            <div className="overflow-hidden rounded-[28px] border border-border-strong bg-surface-raised shadow-xs">
+              <HomeFeedPageTemplate />
+            </div>
+          </div>
         )}
 
         {/* ── PATTERNS ───────────────────────────────────────────────────── */}

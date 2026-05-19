@@ -81,7 +81,7 @@ export function Avatar({
             onError={(e) => { e.currentTarget.style.display = 'none' }}
           />
         ) : (
-          <span className={`${s.text} leading-none`}>
+          <span className={`flex h-full w-full items-center justify-center ${s.text} leading-none`}>
             {initials || '?'}
           </span>
         )}

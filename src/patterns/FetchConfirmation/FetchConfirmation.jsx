@@ -57,14 +57,14 @@ function FieldRow({ label, value, onChange, onSave, onCancel, editing, multiline
         <TextInput value={value} onChange={(event) => onChange(event.target.value)} />
       )}
       <div className="flex flex-wrap gap-3">
-        <Button variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
-        <Button variant="secondary" onClick={onSave}>Save</Button>
+        <Button size="lg" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
+        <Button size="lg" variant="secondary" onClick={onSave}>Save</Button>
       </div>
     </div>
   ) : (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <p className="min-w-0 flex-1 text-base leading-relaxed text-text">{label}</p>
-      <Button variant="secondary" onClick={onSave}>
+      <Button size="lg" variant="secondary" onClick={onSave}>
         Edit
       </Button>
     </div>
@@ -109,8 +109,8 @@ function AccountCard({
                   onChange={(event) => onDraftChange({ ...draft, followers: event.target.value })}
                 />
                 <div className="flex flex-wrap gap-3 lg:justify-end">
-                  <Button variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
-                  <Button variant="secondary" onClick={onConfirm}>Save</Button>
+                  <Button size="lg" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
+                  <Button size="lg" variant="secondary" onClick={onConfirm}>Save</Button>
                 </div>
               </div>
             ) : (
@@ -123,8 +123,8 @@ function AccountCard({
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3 lg:justify-end">
-                  <Button variant="secondary" onClick={onStartEdit}>Edit</Button>
-                  <Button variant="ghost" className="text-text-action-subtle" onClick={onRemove}>Remove</Button>
+                  <Button size="lg" variant="secondary" onClick={onStartEdit}>Edit</Button>
+                  <Button size="lg" variant="ghost" className="text-text-action-subtle" onClick={onRemove}>Remove</Button>
                 </div>
               </div>
             )}
@@ -241,12 +241,12 @@ export function FetchConfirmation({
 
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
             {secondaryAction && (
-              <Button variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
+              <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
-              <Button variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading}>
                 {primaryAction.label}
               </Button>
             )}

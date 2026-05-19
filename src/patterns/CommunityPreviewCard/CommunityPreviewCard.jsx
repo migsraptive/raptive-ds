@@ -1,25 +1,7 @@
 import previewIllustrationUrl from '../../assets/preview-illustration.png'
-import { Avatar } from '../../components/Avatar/Avatar.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
-
-function PreviewPost({ author, title, excerpt, meta }) {
-  return (
-    <article className="rounded-3xl border border-border bg-surface p-4 shadow-xs">
-      <div className="flex items-center gap-3">
-        <Avatar name={author} size="sm" />
-        <div className="space-y-0.5">
-          <p className="text-sm font-medium text-text">{author}</p>
-          <p className="text-xs text-text-tertiary">{meta}</p>
-        </div>
-      </div>
-      <div className="mt-3 space-y-2">
-        <h4 className="text-sm font-medium text-text">{title}</h4>
-        <p className="text-sm leading-relaxed text-text-secondary">{excerpt}</p>
-      </div>
-    </article>
-  )
-}
+import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 
 export function CommunityPreviewCard({
   eyebrow = 'Preview',
@@ -55,51 +37,59 @@ export function CommunityPreviewCard({
               </div>
             </div>
 
-            <div className="rounded-[32px] border border-border bg-gradient-to-br from-brand-subtle via-white to-gamification-purple-bg p-6">
-              <div className="rounded-[28px] border border-border bg-surface p-5 shadow-sm">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <Avatar name={creator.name} size="xl" />
-                    <div className="space-y-1">
-                      <p className="text-xl font-semibold text-text">{creator.name}</p>
-                      <p className="text-sm text-text-secondary">{creator.summary}</p>
-                    </div>
-                  </div>
-                  <Badge variant="brand" size="sm">Preview</Badge>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {categories.map((category) => (
-                    <Badge key={category} variant="brand">{category}</Badge>
-                  ))}
-                </div>
-
-                <div className="mt-5 grid gap-3 md:grid-cols-3">
-                  {stats.map((stat) => (
-                    <div key={stat.label} className="rounded-2xl bg-surface-raised px-4 py-3">
-                      <p className="text-lg font-semibold text-text">{stat.value}</p>
-                      <p className="text-xs uppercase tracking-caps text-text-tertiary">{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-5 grid gap-3 md:grid-cols-2">
-                  {posts.map((post) => (
-                    <PreviewPost key={post.title} {...post} />
-                  ))}
-                </div>
+            <div className="relative h-[451px] w-[634px] overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+              <div
+                className="absolute left-0 top-0"
+                style={{
+                  width: '1440px',
+                  height: '1024px',
+                  transform: 'scale(0.44)',
+                  transformOrigin: 'top left',
+                }}
+              >
+                <HomeFeedPageTemplate
+                  brandName={creator.name}
+                  audienceLabel={stats.find((stat) => stat.label === 'Early members')?.value ? `${stats.find((stat) => stat.label === 'Early members')?.value} members` : '186 members'}
+                  onlineCount="117"
+                  selectedCommunity={creator.name}
+                  mode="preview"
+                  posts={posts.map((post, index) => ({
+                    author: {
+                      name: post.author,
+                      badges: index === 0 ? [{ variant: 'superfan', label: 'Superfan' }] : [],
+                    },
+                    images: index === 0 ? [{
+                      src: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80',
+                      alt: 'Community preview food post',
+                    }] : [],
+                    title: post.title,
+                    body: post.excerpt,
+                    reactionCount: index === 0 ? 31 : 18,
+                    shareCount: index === 0 ? 13 : 4,
+                    commentCount: index === 0 ? 12 : 18,
+                    commentAvatarName: post.author,
+                  }))}
+                  rightRail={{
+                    title: `Welcome to the ${creator.name} Community!`,
+                    description: creator.summary,
+                    highlight: `Make genuine connections, discover ${categories.join(', ').toLowerCase()}, ask questions, and share your favorite ideas.`,
+                    closing: 'This preview should feel real enough to imagine joining right away.',
+                    readerCount: stats.find((stat) => stat.label === 'Early members')?.value ?? '186',
+                    primaryLabel: 'This feels right',
+                  }}
+                />
               </div>
             </div>
           </div>
 
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
             {secondaryAction && (
-              <Button variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
+              <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
-              <Button variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick}>
                 {primaryAction.label}
               </Button>
             )}

@@ -3,7 +3,7 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 /**
  * Button
- * Variants: primary | secondary | ghost | danger | link
+ * Variants: primary | secondary | ghost | danger | black | link
  * Sizes: xs | sm | md | lg
  * States: default | hover | active | disabled | loading
  */
@@ -17,10 +17,10 @@ const variants = {
   ].join(' '),
 
   secondary: [
-    'bg-white text-text border border-border',
-    'hover:bg-surface-raised hover:border-border-strong active:bg-surface-sunken',
+    'border border-text-placeholder bg-white text-text',
+    'hover:border-brand hover:bg-white active:border-border-strong active:bg-surface-sunken',
     'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
-    'disabled:opacity-40 disabled:cursor-not-allowed',
+    'disabled:border-border disabled:bg-white disabled:text-text-disabled disabled:cursor-not-allowed',
   ].join(' '),
 
   ghost: [
@@ -35,6 +35,13 @@ const variants = {
     'hover:bg-status-error-text active:bg-red-800',
     'focus-visible:ring-2 focus-visible:ring-status-error focus-visible:ring-offset-2',
     'disabled:opacity-40 disabled:cursor-not-allowed',
+  ].join(' '),
+
+  black: [
+    'bg-neutral-950 text-white',
+    'hover:bg-neutral-900 active:bg-neutral-800',
+    'focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2',
+    'disabled:bg-neutral-300 disabled:text-text-disabled disabled:cursor-not-allowed',
   ].join(' '),
 
   link: [
@@ -85,7 +92,7 @@ export function Button({
   const isLink = variant === 'link'
 
   const base = [
-    'inline-flex items-center justify-center font-medium',
+    'inline-flex items-center justify-center font-bold',
     'transition-all duration-150',
     'select-none whitespace-nowrap',
     fullWidth ? 'w-full' : '',

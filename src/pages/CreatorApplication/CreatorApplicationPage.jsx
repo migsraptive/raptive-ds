@@ -370,7 +370,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={onOpenLibrary}>Component library</Button>
+            <Button size="lg" variant="ghost" onClick={onOpenLibrary}>Component library</Button>
           </div>
         </div>
       </header>

@@ -66,12 +66,13 @@ export function VerificationStep({
 
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
             {secondaryAction && (
-              <Button variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
+              <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
               <Button
+                size="lg"
                 variant={primaryAction.variant ?? 'primary'}
                 onClick={primaryAction.onClick}
                 disabled={!selectedMethod || !confirmed}
