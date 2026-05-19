@@ -1,0 +1,138 @@
+schema_version: 0.1
+name: Badge
+status: pilot
+source:
+  repo: community-ds
+  path: src/components/Badge/Badge.jsx
+purpose: >
+  Badge labels metadata, status, category, or lightweight achievement context.
+  It is compact, non-primary, and should not carry complex interaction by default.
+do_not_use_for:
+  - Primary calls to action.
+  - Long explanatory text.
+  - Navigation tabs.
+anatomy:
+  - name: root
+    required: true
+    description: Inline-flex label container.
+  - name: dot
+    required: false
+    description: Small status indicator.
+  - name: icon
+    required: false
+    description: Decorative or semantic icon.
+  - name: label
+    required: true
+    description: Short visible text.
+  - name: remove_button
+    required: false
+    description: Optional dismiss affordance for removable badges.
+variants:
+  default:
+    description: Neutral metadata.
+    token_intent:
+      background: color.surface.sunken
+      text: color.text.secondary
+      border: color.border.default
+  brand:
+    description: Branded system label.
+    token_intent:
+      background: color.surface.raised
+      text: color.action.primary
+  success:
+    description: Positive status.
+    token_intent:
+      background: color.status.success
+      text: color.text.primary
+  warning:
+    description: Warning or attention state.
+    token_intent:
+      background: color.status.warning
+      text: color.text.primary
+  error:
+    description: Error or destructive state.
+    token_intent:
+      background: color.status.error
+      text: color.text.primary
+  info:
+    description: Informational state.
+    token_intent:
+      background: color.status.info
+      text: color.text.primary
+  gold:
+    description: Achievement or gamification emphasis.
+    token_intent:
+      background: color.surface.raised
+      text: color.action.primary
+  purple:
+    description: Role or special recognition emphasis.
+    token_intent:
+      background: color.surface.raised
+      text: color.action.primary
+  outline:
+    description: Neutral outlined label.
+    token_intent:
+      background: transparent
+      text: color.text.primary
+      border: color.border.default
+sizes:
+  xs:
+    min_height: 16px
+    typography: type.label.sm
+  sm:
+    min_height: 20px
+    typography: type.label.md
+  md:
+    min_height: 24px
+    typography: type.label.md
+states:
+  default:
+    description: Static badge.
+  hover:
+    description: Only applies when removable or otherwise interactive.
+  focus_visible:
+    description: Required for remove button.
+  disabled:
+    description: Only applies if a target implementation makes badge interactive.
+props:
+  variant:
+    type: enum
+    values: [default, brand, success, warning, error, info, gold, purple, outline]
+    default: default
+  size:
+    type: enum
+    values: [xs, sm, md]
+    default: sm
+  dot:
+    type: boolean
+    default: false
+  icon:
+    type: node
+    default: null
+  removable:
+    type: boolean
+    default: false
+content_guidelines:
+  - Use one to three words where possible.
+  - Prefer sentence case unless the label is a product/category name.
+  - Avoid making the badge carry the only explanation of an important state.
+token_intent:
+  radius:
+    default: radius.sm
+  spacing:
+    inline_padding: spacing.xs
+    content_gap: spacing.xxs
+accessibility:
+  role: none
+  keyboard:
+    - Badge itself is static unless removable.
+  requirements:
+    - Remove affordance must be a native button.
+    - Remove button requires an accessible label that includes the badge text when possible.
+    - Dot-only meaning must also be present in text.
+translation_notes:
+  - Community implementation can be a leaf Glimmer component with SCSS.
+  - Do not port Tailwind classes.
+  - Keep removable behavior optional in the first pilot.
+open_questions:
+  - Which Badge variants are needed for the creator application first?

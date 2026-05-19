@@ -1,0 +1,62 @@
+schema_version: 0.1
+name: ComponentName
+status: draft
+source:
+  repo: community-ds
+  path: src/components/ComponentName/ComponentName.jsx
+purpose: >
+  One-paragraph description of what this component is for and when it should be used.
+do_not_use_for:
+  - Cases where this component is not the right pattern.
+anatomy:
+  - name: root
+    required: true
+    description: Root element and layout behavior.
+  - name: label
+    required: false
+    description: Visible text or accessible name source.
+variants:
+  variant_name:
+    description: What this variant communicates.
+    token_intent:
+      background: color.surface.default
+      text: color.text.primary
+sizes:
+  md:
+    description: Default size.
+    min_height: 44px
+states:
+  default:
+    description: Rest state.
+  hover:
+    description: Pointer hover state.
+  focus_visible:
+    description: Keyboard focus state.
+  disabled:
+    description: Non-interactive state.
+props:
+  propName:
+    type: string
+    required: false
+    default: null
+    description: Public behavior or content input.
+content_guidelines:
+  - Keep labels concise.
+token_intent:
+  color:
+    text: color.text.primary
+    background: color.surface.default
+    border: color.border.default
+  spacing:
+    inline_padding: spacing.s
+  radius:
+    default: radius.md
+accessibility:
+  role: native
+  keyboard:
+    - Native keyboard behavior is expected.
+  requirements:
+    - Component must have an accessible name when interactive.
+translation_notes:
+  - Target frameworks should map token intent to local tokens instead of copying Tailwind classes.
+open_questions: []
