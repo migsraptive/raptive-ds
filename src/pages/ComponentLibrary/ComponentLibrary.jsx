@@ -55,6 +55,7 @@ import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirm
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
+import { PreviewBuilderStudio } from '../../patterns/PreviewBuilderStudio/PreviewBuilderStudio.jsx'
 import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
@@ -1066,7 +1067,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before projections.">
+            <Section title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before review.">
               <FetchConfirmation
                 loading={false}
                 creator={{
@@ -1111,7 +1112,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Projection Preview" description="Current projections step with staged pipeline reveal from combined followers through reach and modeled revenue.">
+            <Section title="Archive · Projection Preview" description="Archived projections step kept for reference, with staged pipeline reveal from combined followers through reach and modeled revenue.">
               <ProjectionPreview
                 title="Before we ask for edits, here’s the scale this creator could unlock."
                 description="These early projections should make the opportunity legible without pretending they are final. The goal is confidence, not false precision."
@@ -1157,6 +1158,16 @@ export function ComponentLibrary() {
               />
             </Section>
 
+            <Section title="Exploration · Split Studio" description="Merged review + live preview exploration where meaningful edits update the mocked creator community experience immediately.">
+              <PreviewBuilderStudio
+                initialFields={reviewFields}
+                brandAssets={{
+                  palette: ['#171717', '#D2FF66', '#F4EFE6'],
+                  items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
+                }}
+              />
+            </Section>
+
             <Section title="Community Preview Card" description="Aspirational preview moment that turns corrected inputs into something the creator can want.">
               <CommunityPreviewCard
                 title="This is what the creator experience could start to look like."
@@ -1199,7 +1210,7 @@ export function ComponentLibrary() {
                     value: 'instagram-dm',
                     icon: tileIcon(Mail),
                     title: 'Confirm with an Instagram DM',
-                    description: 'We send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long.',
+                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @juliachild.',
                   },
                   {
                     value: 'email-domain',
@@ -1219,7 +1230,6 @@ export function ComponentLibrary() {
                   confirmSentPending: false,
                 }}
                 onConfirmDmSent={() => {}}
-                onUseEmailInstead={() => setVerificationMethod('email-domain')}
                 reassurance={[
                   {
                     icon: miniIcon(BadgeCheck),
@@ -1397,7 +1407,7 @@ export function ComponentLibrary() {
                     value: 'instagram-dm',
                     icon: tileIcon(Mail),
                     title: 'Confirm with an Instagram DM',
-                    description: 'We send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long.',
+                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @juliachild.',
                   },
                   {
                     value: 'email-domain',

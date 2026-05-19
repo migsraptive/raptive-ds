@@ -3,7 +3,7 @@
 Desktop-first design system prototype and creator-application flow for Raptive Community.
 
 Repository:
-- `https://github.com/migsraptive/raptive-ds`
+- `https://github.com/migsraptive/community-ds`
 
 This repo is being used for:
 - token alignment with Figma
@@ -148,10 +148,10 @@ npm run build
 ```
 
 Local dev:
-- `http://127.0.0.1:3700/raptive-ds/`
+- `http://127.0.0.1:3700/community-ds/`
 
 GitHub Pages:
-- `https://migsraptive.github.io/raptive-ds/`
+- `https://migsraptive.github.io/community-ds/`
 
 ## Figma
 

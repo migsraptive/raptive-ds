@@ -58,7 +58,7 @@ export function CommunityPreviewCard({
             </motion.div>
 
             <motion.div
-              className="relative h-[451px] w-[634px] overflow-hidden rounded-2xl border border-border bg-surface shadow-sm will-change-transform"
+              className="relative h-[451px] w-[634px] overflow-hidden rounded-[16px] border border-border bg-surface shadow-sm will-change-transform"
               initial={{ opacity: 0, y: 22, scale: 0.975 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ ...revealTransition, delay: 0.08 }}
@@ -141,8 +141,8 @@ export function CommunityPreviewCard({
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
               </div>
-              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-6 py-6'}>
-                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'text-sm leading-relaxed text-white/92'}>
+              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'hidden'}>
+                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'hidden'}>
                   This is the emotional peak: aspirational art can make the mocked future feel worth pursuing.
                 </p>
               </div>

@@ -1,14 +1,14 @@
 # Raptive Design System
 
 ## Project
-- **Directory**: `~/raptive-ds`
+- **Directory**: `~/community-ds`
 - **Port**: 3700
-- **Repo**: `migsraptive/raptive-ds`
-- **GitHub Pages**: `https://migsraptive.github.io/raptive-ds/`
+- **Repo**: `migsraptive/community-ds`
+- **GitHub Pages**: `https://migsraptive.github.io/community-ds/`
 
 ## Stack
 - React 18 (JSX, not TypeScript)
-- Vite 5 with base path `/raptive-ds/`
+- Vite 5 with base path `/community-ds/`
 - Tailwind CSS v3
 - Lucide React for icons
 - No shadcn/ui — custom components
@@ -49,5 +49,5 @@ npm run build
 ## Dev Server
 ```bash
 npm run dev
-# http://127.0.0.1:3700/raptive-ds/
+# http://127.0.0.1:3700/community-ds/
 ```

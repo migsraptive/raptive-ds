@@ -13,7 +13,7 @@ Use this document during:
 - Discourse implementation conversations
 - token naming translation when reviewing mockups or specs
 
-This document is intentionally shorter than the full audit in [token-mapping-2026-05-18.md](/Users/miguelarias/raptive-ds/docs/token-mapping-2026-05-18.md).
+This document is intentionally shorter than the full audit in [token-mapping-2026-05-18.md](/Users/miguelarias/community-ds/docs/token-mapping-2026-05-18.md).
 
 ## How To Use It
 
