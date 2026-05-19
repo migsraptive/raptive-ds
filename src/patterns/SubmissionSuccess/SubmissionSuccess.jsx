@@ -5,62 +5,123 @@ export function SubmissionSuccess({
   title,
   description,
   progressMeter = null,
-  highlights = [],
+  summary = null,
   timeline = [],
   showAside = true,
   primaryAction = { label: 'View creator dashboard' },
   secondaryAction = { label: 'Back to library', variant: 'ghost' },
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-[36px] border border-neutral-800 bg-neutral-950 shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex h-full flex-col bg-gradient-to-br from-brand-subtle via-white to-gamification-gold-bg p-8 lg:p-12">
+        <div className="flex h-full flex-col bg-[radial-gradient(circle_at_top,_rgba(210,255,102,0.14),_transparent_42%),linear-gradient(160deg,_#111111_0%,_#050505_100%)] p-8 lg:p-12">
           <div className="space-y-8">
-            {progressMeter}
+            {progressMeter && (
+              <div className="[&_.text-text-secondary]:!text-white/84 [&_.text-text-tertiary]:!text-white/72 [&_.bg-surface-sunken]:bg-white/10">
+                {progressMeter}
+              </div>
+            )}
 
             <div className="space-y-4">
               <div className="space-y-3">
-                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
+                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-white">
                   {title}
                 </h2>
                 {description && (
-                  <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
+                  <p className="max-w-2xl text-base leading-relaxed text-white/84">
                     {description}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="rounded-[32px] border border-border bg-surface/90 p-6 shadow-sm backdrop-blur">
-              <div className="grid gap-4 md:grid-cols-3">
-                {highlights.map((item) => (
-                  <div key={item.label} className="rounded-3xl border border-border bg-surface px-4 py-5">
-                    <p className="text-2xl font-semibold text-text">{item.value}</p>
-                    <p className="mt-1 text-sm font-medium text-text">{item.label}</p>
-                    {item.help && <p className="mt-2 text-sm leading-relaxed text-text-secondary">{item.help}</p>}
-                  </div>
-                ))}
+            {summary && (
+              <div className="max-w-2xl">
+                <p className="text-base leading-relaxed text-white">{summary}</p>
               </div>
-            </div>
+            )}
+
+            {showAside && (
+              <>
+                <div className="max-w-2xl">
+                  <p className="text-sm font-medium text-white">What happens now</p>
+                </div>
+
+                {timeline.length > 0 ? (
+                  <div className="max-w-2xl space-y-3">
+                    {timeline.map((item) => (
+                      <div key={item.step} className="flex gap-3 rounded-[24px] border border-white/10 bg-white/5 p-4">
+                        <span
+                          className={[
+                            'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
+                            item.current
+                              ? 'border-[#D2FF66]/30 bg-[#D2FF66]/16'
+                              : 'border-white/10 bg-white/5',
+                          ].join(' ')}
+                        >
+                          <span
+                            className={[
+                              'h-2.5 w-2.5 rounded-full',
+                              item.current ? 'bg-[#D2FF66]' : 'bg-white/28',
+                            ].join(' ')}
+                          />
+                        </span>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-white">{item.title}</p>
+                          <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="max-w-2xl rounded-[24px] border border-white/10 bg-white/5 p-4">
+                    <p className="text-sm leading-relaxed text-white/80">
+                      We&apos;ll email the next update as soon as review is complete.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
             {secondaryAction && (
-              <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
+              <Button
+                size="lg"
+                variant={secondaryAction.variant ?? 'ghost'}
+                onClick={secondaryAction.onClick}
+                className={
+                  secondaryAction.variant === 'secondary'
+                    ? '!border-white/16 !bg-transparent !text-white hover:!bg-white/8'
+                    : '!text-white hover:!bg-white/10'
+                }
+              >
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick}>
+              <Button
+                size="lg"
+                variant={primaryAction.variant ?? 'primary'}
+                onClick={primaryAction.onClick}
+                disabled={primaryAction.disabled}
+                success={primaryAction.success}
+                successLabel={primaryAction.successLabel}
+                className={
+                  primaryAction.variant === 'black'
+                    ? '!border !border-white/12 !bg-neutral-950 !text-white hover:!bg-neutral-900'
+                    : ''
+                }
+              >
                 {primaryAction.label}
               </Button>
             )}
           </div>
         </div>
 
-        <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
+        <aside className={['border-t border-neutral-800 lg:border-l lg:border-t-0', showAside ? 'bg-neutral-900 p-8 lg:p-10' : 'bg-black/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-white/10 bg-neutral-950 shadow-xs' : 'relative h-full'].join(' ')}>
               <div className={['relative', showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
                   src={submissionIllustrationUrl}
@@ -69,38 +130,14 @@ export function SubmissionSuccess({
                   loading="eager"
                   decoding="async"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
               </div>
-              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-6 py-6'}>
-                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'text-sm leading-relaxed text-white/92'}>
+              <div className={showAside ? 'border-t border-white/10 bg-neutral-950 px-4 py-3' : 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-6 py-6'}>
+                <p className={showAside ? 'text-sm leading-relaxed text-white/68' : 'text-sm leading-relaxed text-white/92'}>
                   A memorable closing visual that makes the final state feel exclusive and worth the wait.
                 </p>
               </div>
             </div>
-            {showAside && (
-              <>
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-text">What happens now</p>
-                <p className="text-sm leading-relaxed text-text-secondary">
-                  The closing state should feel memorable and exclusive. It is the last thing the creator sees, so it should reward the effort they just made.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                {timeline.map((item) => (
-                  <div key={item.step} className="flex gap-3 rounded-[24px] border border-border bg-surface p-4">
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-brand-subtle text-sm font-medium text-brand-dark">
-                      {item.step}
-                    </span>
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-text">{item.title}</p>
-                      <p className="text-sm leading-relaxed text-text-secondary">{item.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              </>
-            )}
           </div>
         </aside>
       </div>

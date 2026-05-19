@@ -346,7 +346,7 @@ export function FetchConfirmation({
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel}>
                 {primaryAction.label}
               </Button>
             )}

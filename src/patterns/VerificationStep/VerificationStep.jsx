@@ -1,7 +1,74 @@
+import { useEffect, useState } from 'react'
+import { Copy } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
-import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
+import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
+
+function InstagramDmInlineDetail({
+  code,
+  destinationHandle,
+  originHandle,
+  confirmed,
+  confirmSentPending,
+  onConfirmSent,
+}) {
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (!copied) return undefined
+
+    const timeoutId = window.setTimeout(() => setCopied(false), 1600)
+    return () => window.clearTimeout(timeoutId)
+  }, [copied])
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, height: 0, y: -8 }}
+      animate={{ opacity: 1, height: 'auto', y: 0 }}
+      exit={{ opacity: 0, height: 0, y: -8 }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      className="overflow-hidden"
+    >
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-3">
+          <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
+            Your code
+          </p>
+          <p className="font-mono text-5xl font-medium tracking-tight text-text">
+            {code}
+          </p>
+          <p className="text-sm leading-relaxed text-text">
+            DM this code to <span className="font-semibold">{destinationHandle}</span> from <span className="font-semibold">{originHandle}</span>.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2 lg:flex-shrink-0">
+          <Button size="sm" onClick={onConfirmSent} success={confirmSentPending} successLabel="Sent" disabled={!confirmed}>
+            I&apos;ve sent it
+          </Button>
+          <Button size="sm" variant="secondary" onClick={handleCopyCode} success={copied} successLabel="Copied">
+            <span className="inline-flex items-center gap-2">
+              <LucideIcon icon={Copy} size="sm" stroke="standard" />
+              <span>Copy code</span>
+            </span>
+          </Button>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
 
 export function VerificationStep({
   title,
@@ -14,6 +81,9 @@ export function VerificationStep({
   onConfirmChange,
   reassurance = [],
   showAside = true,
+  instagramDmDetail = null,
+  onConfirmDmSent,
+  onUseEmailInstead,
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
@@ -38,18 +108,120 @@ export function VerificationStep({
             </div>
 
             <div className="grid gap-4">
-              {methods.map((method) => (
-                <OptionTile
-                  key={method.value}
-                  title={method.title}
-                  description={method.description}
-                  icon={method.icon}
-                  selected={selectedMethod === method.value}
-                  selectionStyle="radio"
-                  onClick={() => onSelectMethod?.(method.value)}
-                  className="min-h-[148px]"
-                />
-              ))}
+              {methods.length > 0 ? methods.map((method) => {
+                const isSelected = selectedMethod === method.value
+                const dmExpanded = method.value === 'instagram-dm' && isSelected && instagramDmDetail
+                const compressOtherRows = selectedMethod === 'instagram-dm' && method.value !== 'instagram-dm'
+
+                return (
+                  <motion.div
+                    key={method.value}
+                    layout
+                    transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+                    className={[
+                      'overflow-hidden rounded-3xl border px-5 py-4 transition-all duration-150',
+                      isSelected
+                        ? 'border-brand bg-brand-subtle shadow-brand-glow'
+                        : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
+                    ].join(' ')}
+                  >
+                    <motion.button
+                      type="button"
+                      onClick={() => onSelectMethod?.(method.value)}
+                      className={[
+                        'flex w-full flex-col items-start gap-3 text-left',
+                        compressOtherRows ? 'min-h-[112px]' : dmExpanded ? 'min-h-[132px]' : 'min-h-[148px]',
+                      ].join(' ')}
+                      whileHover={{ y: -2, scale: 1.01 }}
+                      whileTap={{ scale: 0.985 }}
+                    >
+                      <span className="flex w-full items-start justify-between gap-3">
+                        {method.icon ? (
+                          <motion.span
+                            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised text-xl"
+                            animate={{
+                              rotate: isSelected ? -4 : 0,
+                              scale: isSelected ? 1.05 : 1,
+                            }}
+                            transition={{
+                              type: 'spring',
+                              stiffness: 340,
+                              damping: 24,
+                            }}
+                          >
+                            {method.icon}
+                          </motion.span>
+                        ) : <span />}
+                        <motion.span
+                          animate={{
+                            scale: isSelected ? 1 : 0.92,
+                          }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 380,
+                            damping: 24,
+                          }}
+                          className={[
+                            'flex h-6 w-6 items-center justify-center rounded-full border',
+                            isSelected ? 'border-brand bg-surface' : 'border-border bg-surface',
+                          ].join(' ')}
+                        >
+                          <motion.span
+                            animate={{
+                              opacity: isSelected ? 1 : 0,
+                              scale: isSelected ? 1 : 0.45,
+                            }}
+                            transition={{ duration: 0.18, ease: 'easeOut' }}
+                            className="h-3 w-3 rounded-full bg-brand"
+                          />
+                        </motion.span>
+                      </span>
+                      <span className="space-y-1">
+                        <motion.span
+                          className="block text-base font-medium text-text"
+                          animate={{ x: isSelected ? 2 : 0 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 320,
+                            damping: 28,
+                          }}
+                        >
+                          {method.title}
+                        </motion.span>
+                        {method.description && <span className="block text-sm text-text-secondary">{method.description}</span>}
+                      </span>
+                    </motion.button>
+
+                    <AnimatePresence initial={false}>
+                      {dmExpanded ? (
+                        <motion.div
+                          key="detail"
+                          initial={{ opacity: 0, height: 0, y: -8 }}
+                          animate={{ opacity: 1, height: 'auto', y: 0 }}
+                          exit={{ opacity: 0, height: 0, y: -8 }}
+                          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                          className="overflow-hidden pt-3"
+                        >
+                          <InstagramDmInlineDetail
+                            code={instagramDmDetail.code}
+                            destinationHandle={instagramDmDetail.destinationHandle}
+                            originHandle={instagramDmDetail.originHandle}
+                            confirmed={confirmed}
+                            confirmSentPending={instagramDmDetail.confirmSentPending}
+                            onConfirmSent={onConfirmDmSent}
+                          />
+                        </motion.div>
+                      ) : null}
+                    </AnimatePresence>
+                  </motion.div>
+                )
+              }) : (
+                <div className="rounded-[28px] border border-border bg-surface-raised p-5">
+                  <p className="text-sm leading-relaxed text-text-secondary">
+                    Verification methods will appear here once a creator contact path is available.
+                  </p>
+                </div>
+              )}
             </div>
 
             <Checkbox
@@ -67,16 +239,18 @@ export function VerificationStep({
                 {secondaryAction.label}
               </Button>
             )}
-            {primaryAction && (
+            {primaryAction ? (
               <Button
                 size="lg"
                 variant={primaryAction.variant ?? 'primary'}
                 onClick={primaryAction.onClick}
-                disabled={!selectedMethod || !confirmed}
+                disabled={methods.length === 0 || !selectedMethod || !confirmed || primaryAction.disabled}
+                success={primaryAction.success}
+                successLabel={primaryAction.successLabel}
               >
                 {primaryAction.label}
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
 

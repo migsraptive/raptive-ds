@@ -1,4 +1,4 @@
-import { Link2 } from 'lucide-react'
+import { Link2, LoaderCircle } from 'lucide-react'
 import entryIllustrationUrl from '../../assets/entry-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
@@ -15,6 +15,8 @@ export function SingleFieldIntake({
   trustPoints = [],
   helperText = null,
   ctaLabel = 'Continue',
+  ctaSuccessLabel = null,
+  ctaDisabled = false,
   showAside = true,
 }) {
   return (
@@ -43,7 +45,11 @@ export function SingleFieldIntake({
                 value={value}
                 onChange={onChange}
                 prefix={<LucideIcon icon={Link2} size="md" stroke="display" />}
-                suffix={loading ? 'Checking…' : null}
+                suffix={loading ? (
+                  <span className="flex items-center text-text-tertiary">
+                    <LucideIcon icon={LoaderCircle} size="sm" stroke="standard" className="animate-spin" />
+                  </span>
+                ) : null}
                 inputClassName="text-lg"
               />
             </div>
@@ -62,7 +68,7 @@ export function SingleFieldIntake({
 
           <div className="mt-auto pt-8">
             <div className="flex flex-wrap items-center gap-3">
-              <Button size="lg" onClick={onSubmit} loading={loading}>
+              <Button size="lg" onClick={onSubmit} success={loading} successLabel={ctaSuccessLabel} disabled={ctaDisabled}>
                 {ctaLabel}
               </Button>
               {helperText && <p className="text-sm text-text-secondary">{helperText}</p>}

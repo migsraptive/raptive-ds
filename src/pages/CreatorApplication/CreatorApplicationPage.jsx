@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BadgeCheck, Mail, Rocket, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Badge } from '../../components/Badge/Badge.jsx'
@@ -7,7 +7,6 @@ import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
-import { InstagramDmVerificationDetail } from '../../patterns/InstagramDmVerificationDetail/InstagramDmVerificationDetail.jsx'
 import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
@@ -25,6 +24,38 @@ const flowSteps = [
   { id: 'submit', label: 'Submit' },
 ]
 
+const initialCreatorUrl = 'https://instagram.com/juliachild'
+const initialReviewFields = {
+  name: 'Julia Child',
+  url: 'instagram.com/juliachild',
+  vertical: 'food',
+  audience: 'Community-led',
+  summary: 'Food creator and community builder helping families cook smarter and gather more often.',
+}
+const initialAccounts = [
+  {
+    id: 'instagram',
+    platform: 'Instagram',
+    handle: '@juliachild',
+    url: 'https://instagram.com/juliachild',
+    followers: '318,000 followers',
+  },
+  {
+    id: 'tiktok',
+    platform: 'TikTok',
+    handle: '@juliachild',
+    url: 'https://tiktok.com/@juliachild',
+    followers: '124,000 followers',
+  },
+  {
+    id: 'pinterest',
+    platform: 'Pinterest',
+    handle: '@juliachild',
+    url: 'https://pinterest.com/juliachild',
+    followers: '84,000 followers',
+  },
+]
+
 function currentStepChipLabel(activeStep, recognitionLoading) {
   if (activeStep === 0) return 'Creator Application'
   if (activeStep === 1) return 'Gathering signals'
@@ -38,15 +69,7 @@ function currentStepChipLabel(activeStep, recognitionLoading) {
 }
 
 function currentStepChipVariant(activeStep, recognitionLoading) {
-  if (activeStep === 0) return 'brand'
-  if (activeStep === 1) return 'warning'
-  if (activeStep === 2) return recognitionLoading ? 'warning' : 'brand'
-  if (activeStep === 3) return 'info'
-  if (activeStep === 4) return 'warning'
-  if (activeStep === 5) return 'gold'
-  if (activeStep === 6) return 'success'
-  if (activeStep === 7) return 'gold'
-  return 'outline'
+  return 'brand'
 }
 
 const stepTransition = {
@@ -109,49 +132,23 @@ function FlowProgressMeter({
 
 export function CreatorApplicationPage({ onOpenLibrary }) {
   const [activeStep, setActiveStep] = useState(0)
-  const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/juliachild')
+  const [creatorUrl, setCreatorUrl] = useState(initialCreatorUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [recognitionLoading, setRecognitionLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationStage, setVerificationStage] = useState('choose')
-  const [reviewFields, setReviewFields] = useState({
-    name: 'Julia Child',
-    url: 'instagram.com/juliachild',
-    vertical: 'food',
-    audience: 'Community-led',
-    summary: 'Food creator and community builder helping families cook smarter and gather more often.',
-  })
+  const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
+  const [reviewFields, setReviewFields] = useState(initialReviewFields)
   const [estimatedReach] = useState({
     value: '526K',
     detail: '526,000 combined followers',
   })
   const [newsletter, setNewsletter] = useState('ConvertKit')
-  const [accounts, setAccounts] = useState([
-    {
-      id: 'instagram',
-      platform: 'Instagram',
-      handle: '@juliachild',
-      url: 'https://instagram.com/juliachild',
-      followers: '318,000 followers',
-    },
-    {
-      id: 'tiktok',
-      platform: 'TikTok',
-      handle: '@juliachild',
-      url: 'https://tiktok.com/@juliachild',
-      followers: '124,000 followers',
-    },
-    {
-      id: 'pinterest',
-      platform: 'Pinterest',
-      handle: '@juliachild',
-      url: 'https://pinterest.com/juliachild',
-      followers: '84,000 followers',
-    },
-  ])
+  const [accounts, setAccounts] = useState(initialAccounts)
   const [editingField, setEditingField] = useState(null)
   const [editDraft, setEditDraft] = useState('')
+  const actionTimeoutRef = useRef(null)
 
   useEffect(() => {
     if (!recognitionLoading) return undefined
@@ -162,6 +159,14 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
     return () => window.clearTimeout(timeoutId)
   }, [recognitionLoading])
+
+  useEffect(() => (
+    () => {
+      if (actionTimeoutRef.current) {
+        window.clearTimeout(actionTimeoutRef.current)
+      }
+    }
+  ), [])
 
   useEffect(() => {
     if (activeStep !== 1) return undefined
@@ -179,9 +184,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   )
   const currentStepLabel = currentStepChipLabel(activeStep, recognitionLoading)
   const currentStepVariant = currentStepChipVariant(activeStep, recognitionLoading)
-  const activeStepId = activeStep === 6
-    ? `${flowSteps[activeStep]?.id ?? 'verify'}-${verificationStage}`
-    : flowSteps[activeStep]?.id ?? 'current-step'
+  const activeStepId = flowSteps[activeStep]?.id ?? 'current-step'
   const progressMeter = (
     <FlowProgressMeter
       label={currentStepLabel}
@@ -196,6 +199,8 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   }
 
   const handleIntakeSubmit = () => {
+    if (intakeLoading || !creatorUrl.trim()) return
+
     setIntakeLoading(true)
 
     window.setTimeout(() => {
@@ -256,6 +261,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const handleVerificationMethodChange = (value) => {
     setVerificationMethod(value)
     setVerificationStage('choose')
+    setVerificationConfirmed(false)
   }
 
   const handleVerificationContinue = () => {
@@ -265,6 +271,43 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     }
 
     setActiveStep(7)
+  }
+
+  const triggerPrimaryAction = ({ key, delay = 1100, run }) => {
+    if (pendingPrimaryAction === key) return
+
+    if (actionTimeoutRef.current) {
+      window.clearTimeout(actionTimeoutRef.current)
+    }
+
+    setPendingPrimaryAction(key)
+
+    actionTimeoutRef.current = window.setTimeout(() => {
+      setPendingPrimaryAction(null)
+      actionTimeoutRef.current = null
+      run()
+    }, delay)
+  }
+
+  const resetApplicationFlow = () => {
+    if (actionTimeoutRef.current) {
+      window.clearTimeout(actionTimeoutRef.current)
+      actionTimeoutRef.current = null
+    }
+
+    setPendingPrimaryAction(null)
+    setIntakeLoading(false)
+    setRecognitionLoading(false)
+    setCreatorUrl(initialCreatorUrl)
+    setReviewFields(initialReviewFields)
+    setNewsletter('ConvertKit')
+    setAccounts(initialAccounts)
+    setEditingField(null)
+    setEditDraft('')
+    setVerificationMethod(null)
+    setVerificationConfirmed(false)
+    setVerificationStage('choose')
+    setActiveStep(0)
   }
 
   let content = null
@@ -280,6 +323,9 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         onSubmit={handleIntakeSubmit}
         loading={intakeLoading}
         helperText="No long application form up front."
+        ctaLabel="Continue"
+        ctaSuccessLabel="Starting now"
+        ctaDisabled={!creatorUrl.trim()}
         showAside={false}
       />
     )
@@ -322,7 +368,13 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         }}
         primaryAction={{
           label: 'Looks right',
-          onClick: () => setActiveStep(3),
+          disabled: pendingPrimaryAction === 'fetch-primary',
+          success: pendingPrimaryAction === 'fetch-primary',
+          successLabel: 'Nice match',
+          onClick: () => triggerPrimaryAction({
+            key: 'fetch-primary',
+            run: () => setActiveStep(3),
+          }),
         }}
       />
     )
@@ -355,7 +407,16 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(2) }}
-        primaryAction={{ label: 'Continue to review', onClick: () => setActiveStep(4) }}
+        primaryAction={{
+          label: 'Continue to review',
+          disabled: pendingPrimaryAction === 'projections-primary',
+          success: pendingPrimaryAction === 'projections-primary',
+          successLabel: 'Into review',
+          onClick: () => triggerPrimaryAction({
+            key: 'projections-primary',
+            run: () => setActiveStep(4),
+          }),
+        }}
       />
     )
   }
@@ -375,7 +436,16 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         note="If this step feels bureaucratic, the recognition stage failed to earn trust."
         showAside={false}
         secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(3) }}
-        primaryAction={{ label: 'Continue to preview', onClick: () => setActiveStep(5) }}
+        primaryAction={{
+          label: 'Continue to preview',
+          disabled: pendingPrimaryAction === 'review-primary',
+          success: pendingPrimaryAction === 'review-primary',
+          successLabel: 'Preview next',
+          onClick: () => triggerPrimaryAction({
+            key: 'review-primary',
+            run: () => setActiveStep(5),
+          }),
+        }}
       />
     )
   }
@@ -414,37 +484,23 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(4) }}
         primaryAction={{
           label: 'Continue to verification',
-          onClick: () => {
-            setVerificationStage('choose')
-            setActiveStep(6)
-          },
+          disabled: pendingPrimaryAction === 'preview-primary',
+          success: pendingPrimaryAction === 'preview-primary',
+          successLabel: 'Verify next',
+          onClick: () => triggerPrimaryAction({
+            key: 'preview-primary',
+            run: () => {
+              setVerificationStage('choose')
+              setActiveStep(6)
+            },
+          }),
         }}
       />
     )
   }
 
   if (activeStep === 6) {
-    content = verificationStage === 'instagram-dm' ? (
-      <InstagramDmVerificationDetail
-        progressMeter={progressMeter}
-        title="A quick handshake. Pick whichever path is easier."
-        description="Both confirm it’s really you. The Instagram DM is fastest, but creator email works too."
-        code="BRY-453"
-        destinationHandle="@raptive_community"
-        originHandle={accounts.find((account) => account.platform === 'Instagram')?.handle ?? '@juliachild'}
-        creatorEmail="hello@juliachild.com"
-        secondaryAction={{
-          label: 'Back',
-          variant: 'ghost',
-          onClick: () => setVerificationStage('choose'),
-        }}
-        onConfirmSent={() => setActiveStep(7)}
-        onUseEmailInstead={() => {
-          setVerificationMethod('email-domain')
-          setActiveStep(7)
-        }}
-      />
-    ) : (
+    content = (
       <VerificationStep
         progressMeter={progressMeter}
         title="One last check so we know this request is really coming from the creator."
@@ -485,6 +541,17 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
+        instagramDmDetail={{
+          code: 'CHILD-453',
+          destinationHandle: '@raptive_community',
+          originHandle: accounts.find((account) => account.platform === 'Instagram')?.handle ?? '@juliachild',
+          confirmSentPending: pendingPrimaryAction === 'verify-dm-primary',
+        }}
+        onConfirmDmSent={() => triggerPrimaryAction({
+          key: 'verify-dm-primary',
+          run: () => setActiveStep(7),
+        })}
+        onUseEmailInstead={() => setVerificationMethod('email-domain')}
         secondaryAction={{
           label: 'Back',
           variant: 'ghost',
@@ -493,7 +560,16 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
             setActiveStep(5)
           },
         }}
-        primaryAction={{ label: 'Continue', onClick: handleVerificationContinue }}
+        primaryAction={verificationMethod === 'instagram-dm' ? null : {
+          label: 'Continue',
+          disabled: pendingPrimaryAction === 'verify-primary',
+          success: pendingPrimaryAction === 'verify-primary',
+          successLabel: 'Almost there',
+          onClick: () => triggerPrimaryAction({
+            key: 'verify-primary',
+            run: handleVerificationContinue,
+          }),
+        }}
       />
     )
   }
@@ -503,44 +579,42 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
       <SubmissionSuccess
         progressMeter={progressMeter}
         title="You’re on the list. We’ll take it from here."
-        description="The request is in, the creator identity is confirmed, and the final screen should feel worth the wait rather than procedural."
-        highlights={[
-          {
-            value: 'Submitted',
-            label: 'Application status',
-            help: 'The creator request has been received and routed for review.',
-          },
-          {
-            value: '< 24h',
-            label: 'Expected follow-up',
-            help: 'Fast confirmation keeps the ending sharp instead of vague.',
-          },
-          {
-            value: 'Warm',
-            label: 'Momentum',
-            help: 'The closing copy should preserve the confidence built in preview and verification.',
-          },
-        ]}
+        summary="Hold application ID CHILD-453 for reference. Next, we’ll review the setup across brand, audience, and community fit before making a decision. Expect a follow-up by email within 24–48 hours."
         timeline={[
           {
-            step: '1',
-            title: 'Confirmation lands first',
-            description: 'A short follow-up confirms the creator request is officially in motion.',
+            step: 'submitted',
+            title: 'Submitted',
+            description: 'Today we received your details.',
+            current: true,
           },
           {
-            step: '2',
-            title: 'Team review stays invisible',
-            description: 'Internal evaluation happens behind the scenes so the user does not have to think about operations.',
+            step: 'approved',
+            title: 'Approved',
+            description: 'In 1-2 weeks we’ll send word.',
           },
           {
-            step: '3',
-            title: 'Decision arrives with context',
-            description: 'The eventual response should feel curated and deliberate, not auto-generated.',
+            step: 'live',
+            title: 'Live',
+            description: 'When you’re ready.',
           },
         ]}
         showAside={false}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(6) }}
-        primaryAction={{ label: 'Open library', onClick: onOpenLibrary }}
+        secondaryAction={{
+          label: 'Start new application',
+          variant: 'secondary',
+          onClick: resetApplicationFlow,
+        }}
+        primaryAction={{
+          label: 'Close',
+          variant: 'black',
+          disabled: pendingPrimaryAction === 'submit-primary',
+          success: pendingPrimaryAction === 'submit-primary',
+          successLabel: 'All set',
+          onClick: () => triggerPrimaryAction({
+            key: 'submit-primary',
+            run: onOpenLibrary,
+          }),
+        }}
       />
     )
   }

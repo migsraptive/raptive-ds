@@ -16,11 +16,22 @@ const pulseTransition = {
 function SignalRow({ label, value, delay = 0 }) {
   return (
     <motion.div
-      className="flex items-center justify-between gap-4 rounded-[22px] border border-border bg-surface px-4 py-3"
+      className="relative overflow-hidden flex items-center justify-between gap-4 rounded-[22px] border border-border bg-surface px-4 py-3"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ ...revealTransition, delay }}
     >
+      <motion.span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/55 to-transparent"
+        animate={{ x: ['0%', '420%'] }}
+        transition={{
+          repeat: Infinity,
+          duration: 1.6,
+          ease: 'easeInOut',
+          delay,
+        }}
+      />
       <div className="space-y-1">
         <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{label}</p>
         <p className="text-sm text-text-secondary">{value}</p>

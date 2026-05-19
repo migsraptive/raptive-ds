@@ -20,6 +20,18 @@ export function CommunityPreviewCard({
   primaryAction = { label: 'This feels right' },
   secondaryAction = { label: 'Edit details', variant: 'ghost' },
 }) {
+  const creatorName = creator?.name ?? 'Creator'
+  const creatorSummary = creator?.summary ?? 'A creator-led community preview will appear here once the profile details are ready.'
+  const communityCategories = categories.length > 0 ? categories.join(', ').toLowerCase() : 'this creator community'
+  const previewPosts = posts.length > 0 ? posts : [
+    {
+      author: creatorName,
+      title: 'Welcome to the first community thread',
+      excerpt: 'This preview fills in a starter post so the screen still feels complete when creator content is sparse.',
+    },
+  ]
+  const earlyMembersValue = stats.find((stat) => stat.label === 'Early members')?.value ?? '186'
+
   return (
     <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -63,12 +75,12 @@ export function CommunityPreviewCard({
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.14 }}
               >
                 <HomeFeedPageTemplate
-                  brandName={creator.name}
-                  audienceLabel={stats.find((stat) => stat.label === 'Early members')?.value ? `${stats.find((stat) => stat.label === 'Early members')?.value} members` : '186 members'}
+                  brandName={creatorName}
+                  audienceLabel={`${earlyMembersValue} members`}
                   onlineCount="117"
-                  selectedCommunity={creator.name}
+                  selectedCommunity={creatorName}
                   mode="preview"
-                  posts={posts.map((post, index) => ({
+                  posts={previewPosts.map((post, index) => ({
                     author: {
                       name: post.author,
                       badges: index === 0 ? [{ variant: 'superfan', label: 'Superfan' }] : [],
@@ -85,11 +97,11 @@ export function CommunityPreviewCard({
                     commentAvatarName: post.author,
                   }))}
                   rightRail={{
-                    title: `Welcome to the ${creator.name} Community!`,
-                    description: creator.summary,
-                    highlight: `Make genuine connections, discover ${categories.join(', ').toLowerCase()}, ask questions, and share your favorite ideas.`,
+                    title: `Welcome to the ${creatorName} Community!`,
+                    description: creatorSummary,
+                    highlight: `Make genuine connections, discover ${communityCategories}, ask questions, and share your favorite ideas.`,
                     closing: 'This preview should feel real enough to imagine joining right away.',
-                    readerCount: stats.find((stat) => stat.label === 'Early members')?.value ?? '186',
+                    readerCount: earlyMembersValue,
                     primaryLabel: 'This feels right',
                   }}
                 />
@@ -104,7 +116,7 @@ export function CommunityPreviewCard({
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel}>
                 {primaryAction.label}
               </Button>
             )}
