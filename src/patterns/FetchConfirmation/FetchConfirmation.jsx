@@ -1,12 +1,24 @@
+import { useEffect, useRef } from 'react'
 import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
+import { AnimatePresence, motion } from 'motion/react'
+import { Trash2 } from 'lucide-react'
 import instagramRoundLogoUrl from '../../assets/social/instagram-round.jpg'
 import pinterestRoundLogoUrl from '../../assets/social/pinterest-round.png'
 import tiktokRoundLogoUrl from '../../assets/social/tiktok-round.png'
-import { Avatar } from '../../components/Avatar/Avatar.jsx'
-import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
+
+const revealTransition = {
+  duration: 0.32,
+  ease: [0.22, 1, 0.36, 1],
+}
+
+const layoutSpring = {
+  type: 'spring',
+  stiffness: 280,
+  damping: 28,
+}
 
 function SocialPlatformMark({ platform }) {
   const logoMap = {
@@ -34,9 +46,13 @@ function SocialPlatformMark({ platform }) {
 
 function SectionCard({ children, className = '' }) {
   return (
-    <div className={['rounded-[28px] border border-border bg-surface p-5 shadow-xs', className].join(' ')}>
+    <motion.div
+      layout
+      transition={layoutSpring}
+      className={['rounded-[28px] border border-border bg-surface p-5 shadow-xs', className].join(' ')}
+    >
       {children}
-    </div>
+    </motion.div>
   )
 }
 
@@ -48,26 +64,59 @@ function SectionLabel({ children }) {
   )
 }
 
-function FieldRow({ label, value, onChange, onSave, onCancel, editing, multiline = false }) {
-  return editing ? (
-    <div className="space-y-4">
-      {multiline ? (
-        <Textarea value={value} onChange={(event) => onChange(event.target.value)} rows={3} />
+function FieldRow({ label, value, onChange, onSave, onCancel, editing, multiline = false, compact = false }) {
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      {editing ? (
+        <motion.div
+          key="field-editing"
+          className="space-y-4"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={revealTransition}
+        >
+          {multiline ? (
+            <Textarea value={value} onChange={(event) => onChange(event.target.value)} rows={3} />
+          ) : (
+            <TextInput value={value} onChange={(event) => onChange(event.target.value)} />
+          )}
+          <div className="flex flex-wrap gap-3">
+            <Button size="sm" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
+            <Button size="sm" variant="secondary" onClick={onSave}>Save</Button>
+          </div>
+        </motion.div>
       ) : (
-        <TextInput value={value} onChange={(event) => onChange(event.target.value)} />
+        <motion.div
+          key="field-display"
+          className={[
+            'flex flex-col',
+            compact ? 'gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center' : 'gap-4 lg:flex-row lg:items-center lg:justify-between',
+          ].join(' ')}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={revealTransition}
+        >
+          <div className="min-w-0 flex-1">
+            {compact && (
+              <SectionLabel>{label}</SectionLabel>
+            )}
+            <p
+              className={[
+                'min-w-0 text-text',
+                compact ? 'mt-1 truncate text-sm leading-relaxed text-text-secondary' : 'flex-1 text-base leading-relaxed',
+              ].join(' ')}
+            >
+              {value}
+            </p>
+          </div>
+          <Button size={compact ? 'sm' : 'lg'} variant="secondary" onClick={onSave}>
+            Edit
+          </Button>
+        </motion.div>
       )}
-      <div className="flex flex-wrap gap-3">
-        <Button size="lg" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
-        <Button size="lg" variant="secondary" onClick={onSave}>Save</Button>
-      </div>
-    </div>
-  ) : (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-      <p className="min-w-0 flex-1 text-base leading-relaxed text-text">{label}</p>
-      <Button size="lg" variant="secondary" onClick={onSave}>
-        Edit
-      </Button>
-    </div>
+    </AnimatePresence>
   )
 }
 
@@ -81,57 +130,93 @@ function AccountCard({
   onConfirm,
   onRemove,
 }) {
-  return (
-    <SectionCard>
-      <div className="space-y-4">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-transparent text-sm font-semibold uppercase tracking-caps text-text-secondary">
-            <SocialPlatformMark platform={account.platform} />
-          </div>
-          <div className="min-w-0 flex-1">
-            <SectionLabel>{account.platform}</SectionLabel>
+  const handleInputRef = useRef(null)
 
-            {isEditing ? (
-              <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)_180px_auto] lg:items-end">
-                <TextInput
-                  label="Handle"
-                  value={draft.handle}
-                  onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
-                />
-                <TextInput
-                  label="URL"
-                  value={draft.url}
-                  onChange={(event) => onDraftChange({ ...draft, url: event.target.value })}
-                />
-                <TextInput
-                  label="Followers"
-                  value={draft.followers}
-                  onChange={(event) => onDraftChange({ ...draft, followers: event.target.value })}
-                />
-                <div className="flex flex-wrap gap-3 lg:justify-end">
-                  <Button size="lg" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
-                  <Button size="lg" variant="secondary" onClick={onConfirm}>Save</Button>
+  useEffect(() => {
+    if (!isEditing || !handleInputRef.current) {
+      return
+    }
+
+    const input = handleInputRef.current
+    const position = input.value.length
+    input.focus()
+    input.setSelectionRange(position, position)
+  }, [isEditing])
+
+  return (
+    <motion.div
+      layout
+      transition={layoutSpring}
+      className="px-4 py-3"
+    >
+      <div className="space-y-3">
+        <div className="flex items-start gap-3">
+          <motion.div
+            className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-transparent text-sm font-semibold uppercase tracking-caps text-text-secondary"
+            animate={{ scale: isEditing ? 1.05 : 1, rotate: isEditing ? -3 : 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+          >
+            <SocialPlatformMark platform={account.platform} />
+          </motion.div>
+          <div className="min-w-0 flex-1">
+            <motion.div
+              className="flex flex-col gap-3"
+              initial={false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={revealTransition}
+            >
+              <div className="min-w-0">
+                <div className="flex items-end justify-between gap-3">
+                  <SectionLabel>{account.platform}</SectionLabel>
+                  <span className="text-xs font-medium text-text-secondary whitespace-nowrap">
+                    {account.followers}
+                  </span>
                 </div>
-              </div>
-            ) : (
-              <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xl font-semibold tracking-tight text-text">{account.handle}</p>
-                  <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-secondary">
-                    <p>{account.url}</p>
-                    <p>{account.followers}</p>
+
+                {isEditing ? (
+                  <div className="mt-1">
+                    <input
+                      ref={handleInputRef}
+                      type="text"
+                      value={draft.handle}
+                      onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
+                      className="w-full border-0 bg-transparent p-0 text-lg font-semibold tracking-tight text-text outline-none focus:outline-none focus:ring-0"
+                    />
                   </div>
-                </div>
-                <div className="flex flex-wrap gap-3 lg:justify-end">
-                  <Button size="lg" variant="secondary" onClick={onStartEdit}>Edit</Button>
-                  <Button size="lg" variant="ghost" className="text-text-action-subtle" onClick={onRemove}>Remove</Button>
-                </div>
+                ) : (
+                  <p className="mt-1 text-lg font-semibold tracking-tight text-text">{account.handle}</p>
+                )}
+
+                <p className="mt-0.5 truncate text-sm text-text-secondary">{account.url}</p>
               </div>
-            )}
+
+              <div className="flex items-center gap-2">
+                {isEditing ? (
+                  <>
+                    <Button size="sm" variant="secondary" fullWidth onClick={onConfirm}>Save</Button>
+                    <Button size="sm" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
+                  </>
+                ) : (
+                  <>
+                    <Button size="sm" variant="secondary" fullWidth onClick={onStartEdit}>Edit</Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-8 px-0 text-status-error"
+                      onClick={onRemove}
+                      aria-label={`Remove ${account.platform} account`}
+                      title={`Remove ${account.platform} account`}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </SectionCard>
+    </motion.div>
   )
 }
 
@@ -140,7 +225,6 @@ export function FetchConfirmation({
   creator,
   progressMeter = null,
   website,
-  newsletter,
   accounts,
   editingField,
   editDraft,
@@ -148,6 +232,7 @@ export function FetchConfirmation({
   onStartEditing,
   onCancelEditing,
   onSaveEditing,
+  onAddAccount,
   onRemoveAccount,
   secondaryAction,
   primaryAction,
@@ -155,91 +240,106 @@ export function FetchConfirmation({
   return (
     <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.08fr)_360px]">
-        <div className="flex h-full flex-col p-8 lg:p-12">
-          <div className="space-y-8">
+        <motion.div
+          className="flex h-full flex-col p-8 lg:p-12"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={revealTransition}
+        >
+          <div className="space-y-4">
             {progressMeter}
 
-            <div className="space-y-4">
-              <Badge variant={loading ? 'warning' : 'brand'} size="sm">
-                {loading ? 'Fetching identity' : 'Confirm details'}
-              </Badge>
+            <motion.div className="space-y-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={revealTransition}>
               <div className="space-y-3">
-                <h2 className="font-newsreader max-w-3xl text-[48px] font-normal leading-[52px] tracking-tight text-text">
+                <h2 className="max-w-3xl font-newsreader text-hero font-normal text-text">
                   {loading ? 'We’re pulling the first creator details now.' : 'Confirm what we found before moving forward.'}
                 </h2>
                 <p className="max-w-3xl text-base leading-relaxed text-text-secondary">
-                  Review the pulled fields below. Website, newsletter, and social accounts can be updated here before continuing.
+                  Review the pulled fields below. Website and social accounts can be updated here before continuing.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            <SectionCard className="bg-surface-raised">
-              <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-center">
-                <div className="flex items-center gap-4">
-                  <Avatar name={creator.name} size="xl" shape="square" />
-                  <div className="space-y-1">
-                    <SectionLabel>Creator name</SectionLabel>
-                    <p className="font-newsreader text-[48px] font-normal leading-[52px] tracking-tight text-text">{creator.name}</p>
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.04 }}>
+              <SectionCard className="border-transparent bg-black p-3 shadow-none">
+              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
+                <motion.div
+                  className="flex items-start"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ ...revealTransition, delay: 0.08 }}
+                >
+                  <div className="min-w-0 space-y-2 px-3 py-2 text-white">
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium uppercase tracking-caps text-white/60">Creator name</p>
+                      <p className="font-display text-display font-normal text-white">{creator.name}</p>
+                      <p className="truncate text-sm text-white/72">{website}</p>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="rounded-[24px] border border-border bg-surface p-4">
-                  <SectionLabel>Estimated reach</SectionLabel>
-                  <p className="mt-2 text-3xl font-semibold tracking-tight text-text">{creator.reach}</p>
-                  <p className="mt-1 text-sm text-text-secondary">{creator.reachDetail}</p>
-                </div>
+                <motion.div
+                  className="px-3 py-2 text-white"
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ ...revealTransition, delay: 0.12 }}
+                >
+                  <p className="text-xs font-medium uppercase tracking-caps text-white/60">Estimated reach</p>
+                  <p className="mt-1.5 text-display font-semibold tracking-tight text-white">{creator.reach}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/72">{creator.reachDetail}</p>
+                </motion.div>
               </div>
             </SectionCard>
-
+            </motion.div>
             <div className="grid gap-4 md:grid-cols-2">
-              <SectionCard>
-                <div className="space-y-3">
-                  <SectionLabel>Website</SectionLabel>
-                  <FieldRow
-                    label={website}
-                    value={editDraft}
-                    onChange={onEditDraftChange}
-                    editing={editingField === 'website'}
-                    onSave={editingField === 'website' ? onSaveEditing : () => onStartEditing('website', website)}
-                    onCancel={onCancelEditing}
-                  />
-                </div>
-              </SectionCard>
-
-              <SectionCard>
-                <div className="space-y-3">
-                  <SectionLabel>Newsletter</SectionLabel>
-                  <FieldRow
-                    label={newsletter}
-                    value={editDraft}
-                    onChange={onEditDraftChange}
-                    editing={editingField === 'newsletter'}
-                    multiline
-                    onSave={editingField === 'newsletter' ? onSaveEditing : () => onStartEditing('newsletter', newsletter)}
-                    onCancel={onCancelEditing}
-                  />
-                </div>
-              </SectionCard>
-            </div>
-
-            <div className="grid gap-4">
-              {accounts.map((account) => (
-                <AccountCard
-                  key={account.id}
-                  account={account}
-                  isEditing={editingField === account.id}
-                  draft={editDraft}
-                  onDraftChange={onEditDraftChange}
-                  onStartEdit={() => onStartEditing(account.id, account)}
-                  onCancel={onCancelEditing}
-                  onConfirm={onSaveEditing}
-                  onRemove={() => onRemoveAccount(account.id)}
-                />
-              ))}
+              {accounts.length > 0 ? (
+                accounts.map((account, index) => (
+                  <motion.div
+                    key={account.id}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...revealTransition, delay: 0.14 + index * 0.05 }}
+                  >
+                    <AccountCard
+                      account={account}
+                      isEditing={editingField === account.id}
+                      draft={editDraft}
+                      onDraftChange={onEditDraftChange}
+                      onStartEdit={() => onStartEditing(account.id, account)}
+                      onCancel={onCancelEditing}
+                      onConfirm={onSaveEditing}
+                      onRemove={() => onRemoveAccount(account.id)}
+                    />
+                  </motion.div>
+                ))
+              ) : (
+                <motion.div
+                  className="md:col-span-2"
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...revealTransition, delay: 0.14 }}
+                >
+                  <SectionCard className="px-4 py-4">
+                    <div className="flex flex-col gap-3">
+                      <div className="space-y-1">
+                        <SectionLabel>Social accounts</SectionLabel>
+                        <p className="text-sm leading-relaxed text-text-secondary">
+                          All social cards were removed. Add one back to keep confirming this creator profile here.
+                        </p>
+                      </div>
+                      <div className="flex">
+                        <Button size="sm" variant="secondary" onClick={onAddAccount}>
+                          Add social card
+                        </Button>
+                      </div>
+                    </div>
+                  </SectionCard>
+                </motion.div>
+              )}
             </div>
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
+          <motion.div className="mt-auto flex flex-wrap items-center gap-3 pt-8" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.18 }}>
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
@@ -250,10 +350,15 @@ export function FetchConfirmation({
                 {primaryAction.label}
               </Button>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <aside className="border-t border-border bg-surface-raised/40 p-0 lg:border-l lg:border-t-0">
+        <motion.aside
+          className="border-t border-border bg-surface-raised/40 p-0 lg:border-l lg:border-t-0"
+          initial={{ opacity: 0, x: 18 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ ...revealTransition, delay: 0.08 }}
+        >
           <div className="relative h-full min-h-[720px]">
             <img
               src={recognitionIllustrationUrl}
@@ -269,7 +374,7 @@ export function FetchConfirmation({
               </p>
             </div>
           </div>
-        </aside>
+        </motion.aside>
       </div>
     </section>
   )

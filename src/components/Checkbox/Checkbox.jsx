@@ -8,14 +8,17 @@ export function Checkbox({
   checked = false,
   disabled = false,
   onChange,
+  variant = 'card',
   className = '',
 }) {
   return (
     <label
       htmlFor={id}
       className={[
-        'flex items-start gap-3 rounded-2xl border border-border bg-surface px-4 py-3 transition-colors duration-150',
-        disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-surface-raised',
+        'flex items-start gap-3 transition-colors duration-150',
+        variant === 'card' ? 'rounded-2xl border border-border bg-surface px-4 py-3' : '',
+        disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
+        !disabled && variant === 'card' ? 'hover:bg-surface-raised' : '',
         className,
       ].filter(Boolean).join(' ')}
     >

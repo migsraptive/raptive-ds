@@ -5,6 +5,7 @@ export function StepLayout({
   eyebrow = null,
   title,
   description,
+  titleClassName = '',
   step,
   totalSteps,
   progressMeter = null,
@@ -41,7 +42,7 @@ export function StepLayout({
                 )}
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-semibold text-text">{title}</h2>
+                <h2 className={['text-2xl font-semibold text-text', titleClassName].join(' ').trim()}>{title}</h2>
                 {description && <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">{description}</p>}
               </div>
             </header>

@@ -1,11 +1,9 @@
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
-import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
 
 export function VerificationStep({
-  eyebrow = 'Verify',
   title,
   description,
   progressMeter = null,
@@ -27,9 +25,8 @@ export function VerificationStep({
             {progressMeter}
 
             <div className="space-y-4">
-              <Badge variant="success" size="sm">{eyebrow}</Badge>
               <div className="space-y-3">
-                <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-text">
+                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
                   {title}
                 </h2>
                 {description && (
@@ -48,20 +45,20 @@ export function VerificationStep({
                   description={method.description}
                   icon={method.icon}
                   selected={selectedMethod === method.value}
+                  selectionStyle="radio"
                   onClick={() => onSelectMethod?.(method.value)}
                   className="min-h-[148px]"
                 />
               ))}
             </div>
 
-            <div className="rounded-[28px] border border-border bg-surface-raised p-5">
-              <Checkbox
-                checked={confirmed}
-                onChange={(event) => onConfirmChange?.(event.target.checked)}
-                label="I control this creator account and want to continue with verification."
-                description="This keeps the last step feeling intentional without adding a long security ceremony."
-              />
-            </div>
+            <Checkbox
+              checked={confirmed}
+              onChange={(event) => onConfirmChange?.(event.target.checked)}
+              variant="plain"
+              label="I control this creator account and want to continue with verification."
+              description="This keeps the last step feeling intentional without adding a long security ceremony."
+            />
           </div>
 
           <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
