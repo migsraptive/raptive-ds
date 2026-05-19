@@ -41,7 +41,7 @@ function PipelineSkeleton({ label }) {
       </p>
       <div className="mt-1.5 h-9 w-40 rounded-full bg-surface-sunken" />
       <div className="mt-1 h-5 w-32 rounded-full bg-surface-sunken" />
-      <div className="mt-3 h-3 overflow-hidden rounded-full" style={{ backgroundColor: '#D2FF66' }} />
+      <div className="mt-3 h-3 overflow-hidden rounded-full bg-surface-sunken" />
       <div className="mt-4 space-y-2">
         <div className="h-4 w-full rounded-full bg-surface-sunken" />
         <div className="h-4 w-5/6 rounded-full bg-surface-sunken" />

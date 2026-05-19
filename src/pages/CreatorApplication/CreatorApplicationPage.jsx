@@ -7,7 +7,6 @@ import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
-import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
@@ -17,7 +16,6 @@ const flowSteps = [
   { id: 'entry', label: 'Entry' },
   { id: 'gather', label: 'Gather' },
   { id: 'fetch', label: 'Fetch' },
-  { id: 'projections', label: 'Projections' },
   { id: 'review', label: 'Review' },
   { id: 'preview', label: 'Preview' },
   { id: 'verify', label: 'Verify' },
@@ -60,11 +58,10 @@ function currentStepChipLabel(activeStep, recognitionLoading) {
   if (activeStep === 0) return 'Creator Application'
   if (activeStep === 1) return 'Gathering signals'
   if (activeStep === 2) return recognitionLoading ? 'Fetching identity' : 'Confirm details'
-  if (activeStep === 3) return 'Projections'
-  if (activeStep === 4) return 'Review'
-  if (activeStep === 5) return 'Preview'
-  if (activeStep === 6) return 'Verify'
-  if (activeStep === 7) return 'Submit'
+  if (activeStep === 3) return 'Review'
+  if (activeStep === 4) return 'Preview'
+  if (activeStep === 5) return 'Verify'
+  if (activeStep === 6) return 'Submit'
   return 'Current stage'
 }
 
@@ -73,8 +70,8 @@ function currentStepChipVariant(activeStep, recognitionLoading) {
 }
 
 const stepTransition = {
-  duration: 0.42,
-  ease: [0.22, 1, 0.36, 1],
+  duration: 0.32,
+  ease: [0.2, 0.9, 0.3, 1],
 }
 
 const stepSpring = {
@@ -137,18 +134,32 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const [recognitionLoading, setRecognitionLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
-  const [verificationStage, setVerificationStage] = useState('choose')
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
   const [reviewFields, setReviewFields] = useState(initialReviewFields)
   const [estimatedReach] = useState({
     value: '526K',
     detail: '526,000 combined followers',
   })
-  const [newsletter, setNewsletter] = useState('ConvertKit')
   const [accounts, setAccounts] = useState(initialAccounts)
   const [editingField, setEditingField] = useState(null)
   const [editDraft, setEditDraft] = useState('')
   const actionTimeoutRef = useRef(null)
+  const hasSocialAccounts = accounts.length > 0
+  const instagramAccount = accounts.find((account) => account.platform === 'Instagram')
+  const verificationMethods = [
+    ...(instagramAccount ? [{
+      value: 'instagram-dm',
+      icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
+      title: 'Confirm with an Instagram DM',
+      description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @juliachild.',
+    }] : []),
+    {
+      value: 'email-domain',
+      icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
+      title: 'Confirm with a creator email',
+      description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+    },
+  ]
 
   useEffect(() => {
     if (!recognitionLoading) return undefined
@@ -177,6 +188,13 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
     return () => window.clearTimeout(timeoutId)
   }, [activeStep])
+
+  useEffect(() => {
+    if (verificationMethod && !verificationMethods.some((method) => method.value === verificationMethod)) {
+      setVerificationMethod(null)
+      setVerificationConfirmed(false)
+    }
+  }, [verificationMethod, verificationMethods])
 
   const progress = useMemo(
     () => Math.round(((activeStep + 1) / flowSteps.length) * 100),
@@ -225,8 +243,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
     if (editingField === 'website') {
       updateReviewField('url', editDraft)
-    } else if (editingField === 'newsletter') {
-      setNewsletter(editDraft)
     } else {
       setAccounts((current) =>
         current.map((account) => (account.id === editingField ? { ...editDraft } : account)),
@@ -260,16 +276,10 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   const handleVerificationMethodChange = (value) => {
     setVerificationMethod(value)
-    setVerificationStage('choose')
     setVerificationConfirmed(false)
   }
 
   const handleVerificationContinue = () => {
-    if (verificationMethod === 'instagram-dm') {
-      setVerificationStage('instagram-dm')
-      return
-    }
-
     setActiveStep(7)
   }
 
@@ -300,13 +310,11 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     setRecognitionLoading(false)
     setCreatorUrl(initialCreatorUrl)
     setReviewFields(initialReviewFields)
-    setNewsletter('ConvertKit')
     setAccounts(initialAccounts)
     setEditingField(null)
     setEditDraft('')
     setVerificationMethod(null)
     setVerificationConfirmed(false)
-    setVerificationStage('choose')
     setActiveStep(0)
   }
 
@@ -368,7 +376,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         }}
         primaryAction={{
           label: 'Looks right',
-          disabled: pendingPrimaryAction === 'fetch-primary',
+          disabled: !hasSocialAccounts || pendingPrimaryAction === 'fetch-primary',
           success: pendingPrimaryAction === 'fetch-primary',
           successLabel: 'Nice match',
           onClick: () => triggerPrimaryAction({
@@ -382,47 +390,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   if (activeStep === 3) {
     content = (
-      <ProjectionPreview
-        progressMeter={progressMeter}
-        title="Before we ask for edits, here’s the scale this creator could unlock."
-        description="These early projections should make the opportunity legible without pretending they are final. The goal is confidence, not false precision."
-        stats={[
-          {
-            label: 'Combined followers before overlap',
-            value: '526,000',
-            sublabel: 'Cross-platform raw total',
-            detail: 'This is the total audience signal pulled across the connected creator profiles before shared followers are removed.',
-          },
-          {
-            label: 'Estimated unique reach',
-            value: '315.6K to 420.8K',
-            sublabel: 'Overlap reduced',
-            detail: 'This assumes meaningful cross-platform overlap and reframes the audience as a more realistic blended reach range.',
-          },
-          {
-            label: 'Potential monthly ad revenue',
-            value: '$426 to $3,787',
-            sublabel: 'Monthly modeled range',
-            detail: 'This models an early monthly revenue range from projected traffic, based on how much of that reach returns as readership.',
-          },
-        ]}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(2) }}
-        primaryAction={{
-          label: 'Continue to review',
-          disabled: pendingPrimaryAction === 'projections-primary',
-          success: pendingPrimaryAction === 'projections-primary',
-          successLabel: 'Into review',
-          onClick: () => triggerPrimaryAction({
-            key: 'projections-primary',
-            run: () => setActiveStep(4),
-          }),
-        }}
-      />
-    )
-  }
-
-  if (activeStep === 4) {
-    content = (
       <ReviewCorrection
         progressMeter={progressMeter}
         title="Make any corrections before we build the preview."
@@ -435,7 +402,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         }}
         note="If this step feels bureaucratic, the recognition stage failed to earn trust."
         showAside={false}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(3) }}
+        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(2) }}
         primaryAction={{
           label: 'Continue to preview',
           disabled: pendingPrimaryAction === 'review-primary',
@@ -443,14 +410,14 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           successLabel: 'Preview next',
           onClick: () => triggerPrimaryAction({
             key: 'review-primary',
-            run: () => setActiveStep(5),
+            run: () => setActiveStep(4),
           }),
         }}
       />
     )
   }
 
-  if (activeStep === 5) {
+  if (activeStep === 4) {
     content = (
       <CommunityPreviewCard
         progressMeter={progressMeter}
@@ -481,7 +448,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(4) }}
+        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(3) }}
         primaryAction={{
           label: 'Continue to verification',
           disabled: pendingPrimaryAction === 'preview-primary',
@@ -489,36 +456,20 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           successLabel: 'Verify next',
           onClick: () => triggerPrimaryAction({
             key: 'preview-primary',
-            run: () => {
-              setVerificationStage('choose')
-              setActiveStep(6)
-            },
+            run: () => setActiveStep(5),
           }),
         }}
       />
     )
   }
 
-  if (activeStep === 6) {
+  if (activeStep === 5) {
     content = (
       <VerificationStep
         progressMeter={progressMeter}
         title="One last check so we know this request is really coming from the creator."
         description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
-        methods={[
-          {
-            value: 'instagram-dm',
-            icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
-            title: 'Confirm with an Instagram DM',
-            description: 'We send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long.',
-          },
-          {
-            value: 'email-domain',
-            icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
-            title: 'Confirm with a creator email',
-            description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
-          },
-        ]}
+        methods={verificationMethods}
         selectedMethod={verificationMethod}
         onSelectMethod={handleVerificationMethodChange}
         confirmed={verificationConfirmed}
@@ -544,20 +495,18 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         instagramDmDetail={{
           code: 'CHILD-453',
           destinationHandle: '@raptive_community',
-          originHandle: accounts.find((account) => account.platform === 'Instagram')?.handle ?? '@juliachild',
+          originHandle: instagramAccount?.handle ?? '@juliachild',
           confirmSentPending: pendingPrimaryAction === 'verify-dm-primary',
         }}
         onConfirmDmSent={() => triggerPrimaryAction({
           key: 'verify-dm-primary',
           run: () => setActiveStep(7),
         })}
-        onUseEmailInstead={() => setVerificationMethod('email-domain')}
         secondaryAction={{
           label: 'Back',
           variant: 'ghost',
           onClick: () => {
-            setVerificationStage('choose')
-            setActiveStep(5)
+            setActiveStep(4)
           },
         }}
         primaryAction={verificationMethod === 'instagram-dm' ? null : {
@@ -574,7 +523,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     )
   }
 
-  if (activeStep === 7) {
+  if (activeStep === 6) {
     content = (
       <SubmissionSuccess
         progressMeter={progressMeter}
@@ -628,9 +577,9 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeStepId}
-            initial={{ opacity: 0, y: 42, scale: 0.985, filter: 'blur(10px)' }}
+            initial={{ opacity: 0, y: 16, scale: 0.996, filter: 'blur(4px)' }}
             animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -28, scale: 0.985, filter: 'blur(8px)' }}
+            exit={{ opacity: 0, y: -10, scale: 0.996, filter: 'blur(3px)' }}
             transition={stepTransition}
             className="will-change-transform"
           >

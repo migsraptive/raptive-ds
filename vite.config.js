@@ -5,5 +5,5 @@ import react from '@vitejs/plugin-react'
 // Change to '/' if deploying to a root domain instead.
 export default defineConfig({
   plugins: [react()],
-  base: '/raptive-ds/',
+  base: '/community-ds/',
 })

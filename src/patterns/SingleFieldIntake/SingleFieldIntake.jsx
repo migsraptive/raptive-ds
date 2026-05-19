@@ -89,8 +89,8 @@ export function SingleFieldIntake({
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
               </div>
-              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-6 py-6'}>
-                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'text-sm leading-relaxed text-white/92'}>
+              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'hidden'}>
+                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'hidden'}>
                   Warm, curiosity-building art that makes the first step feel premium instead of form-like.
                 </p>
               </div>

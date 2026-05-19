@@ -10,13 +10,13 @@ Document how the current repo token system maps to `/Users/miguelarias/Desktop/u
 
 The repo exposes tokens through:
 
-- [src/tokens/colors.js](/Users/miguelarias/raptive-ds/src/tokens/colors.js)
-- [src/tokens/spacing.js](/Users/miguelarias/raptive-ds/src/tokens/spacing.js)
-- [src/tokens/typography.js](/Users/miguelarias/raptive-ds/src/tokens/typography.js)
-- [src/tokens/effects.js](/Users/miguelarias/raptive-ds/src/tokens/effects.js)
-- [src/tokens/index.js](/Users/miguelarias/raptive-ds/src/tokens/index.js)
-- [tailwind.config.js](/Users/miguelarias/raptive-ds/tailwind.config.js)
-- [src/globals.css](/Users/miguelarias/raptive-ds/src/globals.css)
+- [src/tokens/colors.js](/Users/miguelarias/community-ds/src/tokens/colors.js)
+- [src/tokens/spacing.js](/Users/miguelarias/community-ds/src/tokens/spacing.js)
+- [src/tokens/typography.js](/Users/miguelarias/community-ds/src/tokens/typography.js)
+- [src/tokens/effects.js](/Users/miguelarias/community-ds/src/tokens/effects.js)
+- [src/tokens/index.js](/Users/miguelarias/community-ds/src/tokens/index.js)
+- [tailwind.config.js](/Users/miguelarias/community-ds/tailwind.config.js)
+- [src/globals.css](/Users/miguelarias/community-ds/src/globals.css)
 
 The repo token layer is not just direct canonical token exports. It includes:
 
@@ -55,7 +55,7 @@ That means migration should focus on:
 
 ### Colors
 
-Current repo colors in [colors.js](/Users/miguelarias/raptive-ds/src/tokens/colors.js) map closely to the canonical `brand`, `neutral`, and `Typography/Desktop` token groups in `tokens.json`.
+Current repo colors in [colors.js](/Users/miguelarias/community-ds/src/tokens/colors.js) map closely to the canonical `brand`, `neutral`, and `Typography/Desktop` token groups in `tokens.json`.
 
 #### Brand
 
@@ -101,7 +101,7 @@ Recommendation:
 
 ### Spacing
 
-Current repo spacing in [spacing.js](/Users/miguelarias/raptive-ds/src/tokens/spacing.js) aligns closely with `Spacing/Mode 1.spacing`.
+Current repo spacing in [spacing.js](/Users/miguelarias/community-ds/src/tokens/spacing.js) aligns closely with `Spacing/Mode 1.spacing`.
 
 | Repo token | Current value | `tokens.json` source |
 |---|---:|---|
@@ -130,7 +130,7 @@ Recommendation:
 
 ### Radius
 
-Current repo radius in [effects.js](/Users/miguelarias/raptive-ds/src/tokens/effects.js) aligns almost exactly with `Radius/Mode 1.border-radius`.
+Current repo radius in [effects.js](/Users/miguelarias/community-ds/src/tokens/effects.js) aligns almost exactly with `Radius/Mode 1.border-radius`.
 
 | Repo token | Current value | `tokens.json` source |
 |---|---:|---|
@@ -148,7 +148,7 @@ Recommendation:
 
 ### Typography
 
-Current repo typography in [typography.js](/Users/miguelarias/raptive-ds/src/tokens/typography.js) is already substantially aligned to `Typography/Desktop`.
+Current repo typography in [typography.js](/Users/miguelarias/community-ds/src/tokens/typography.js) is already substantially aligned to `Typography/Desktop`.
 
 #### Font family
 
@@ -186,7 +186,7 @@ Recommendation:
 
 ### Shadows
 
-The repo shadow scale in [effects.js](/Users/miguelarias/raptive-ds/src/tokens/effects.js) is currently hand-authored and not yet mapped from `tokens.json`.
+The repo shadow scale in [effects.js](/Users/miguelarias/community-ds/src/tokens/effects.js) is currently hand-authored and not yet mapped from `tokens.json`.
 
 `tokens.json` does contain shadow tokens, but the repo also adds:
 
@@ -226,7 +226,7 @@ This means a safe migration should preserve:
 
 ### Phase 2: Runtime sync
 
-- Update [globals.css](/Users/miguelarias/raptive-ds/src/globals.css) so CSS variables come from the same mapped semantic layer.
+- Update [globals.css](/Users/miguelarias/community-ds/src/globals.css) so CSS variables come from the same mapped semantic layer.
 
 ### Phase 3: Optional cleanup
 

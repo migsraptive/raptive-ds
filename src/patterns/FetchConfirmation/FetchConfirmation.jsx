@@ -165,40 +165,49 @@ function AccountCard({
               animate={{ opacity: 1, y: 0 }}
               transition={revealTransition}
             >
-              <div className="min-w-0">
-                <div className="flex items-end justify-between gap-3">
-                  <SectionLabel>{account.platform}</SectionLabel>
-                  <span className="text-xs font-medium text-text-secondary whitespace-nowrap">
-                    {account.followers}
-                  </span>
-                </div>
+              {isEditing ? (
+                <>
+                  <div className="min-w-0">
+                    <div className="flex items-end gap-2">
+                      <SectionLabel>{account.platform}</SectionLabel>
+                      <span className="text-xs font-medium text-text-secondary whitespace-nowrap">
+                        {account.followers}
+                      </span>
+                    </div>
 
-                {isEditing ? (
-                  <div className="mt-1">
-                    <input
-                      ref={handleInputRef}
-                      type="text"
-                      value={draft.handle}
-                      onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
-                      className="w-full border-0 bg-transparent p-0 text-lg font-semibold tracking-tight text-text outline-none focus:outline-none focus:ring-0"
-                    />
+                    <div className="mt-1">
+                      <input
+                        ref={handleInputRef}
+                        type="text"
+                        value={draft.handle}
+                        onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
+                        className="w-full border-0 bg-transparent p-0 text-lg font-semibold tracking-tight text-text outline-none focus:outline-none focus:ring-0"
+                      />
+                    </div>
+
+                    <p className="mt-0.5 truncate text-sm text-text-secondary">{account.url}</p>
                   </div>
-                ) : (
-                  <p className="mt-1 text-lg font-semibold tracking-tight text-text">{account.handle}</p>
-                )}
 
-                <p className="mt-0.5 truncate text-sm text-text-secondary">{account.url}</p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {isEditing ? (
-                  <>
+                  <div className="flex items-center gap-2">
                     <Button size="sm" variant="secondary" fullWidth onClick={onConfirm}>Save</Button>
                     <Button size="sm" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
-                  </>
-                ) : (
-                  <>
-                    <Button size="sm" variant="secondary" fullWidth onClick={onStartEdit}>Edit</Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-end gap-2">
+                      <SectionLabel>{account.platform}</SectionLabel>
+                      <span className="text-xs font-medium text-text-secondary whitespace-nowrap">
+                        {account.followers}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-lg font-semibold tracking-tight text-text">{account.handle}</p>
+                    <p className="mt-0.5 truncate text-sm text-text-secondary">{account.url}</p>
+                  </div>
+
+                  <div className="flex flex-shrink-0 items-center gap-2">
+                    <Button size="sm" variant="secondary" onClick={onStartEdit}>Edit</Button>
                     <Button
                       size="sm"
                       variant="ghost"
@@ -209,9 +218,9 @@ function AccountCard({
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                  </>
-                )}
-              </div>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </div>
         </div>
@@ -261,8 +270,8 @@ export function FetchConfirmation({
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.04 }}>
-              <SectionCard className="border-transparent bg-black p-3 shadow-none">
-              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
+              <SectionCard className="!border-neutral-950 !bg-neutral-950 p-3 shadow-sm">
+                <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
                 <motion.div
                   className="flex items-start"
                   initial={{ opacity: 0, x: -10 }}
@@ -288,10 +297,10 @@ export function FetchConfirmation({
                   <p className="mt-1.5 text-display font-semibold tracking-tight text-white">{creator.reach}</p>
                   <p className="mt-1 text-sm leading-relaxed text-white/72">{creator.reachDetail}</p>
                 </motion.div>
-              </div>
-            </SectionCard>
+                </div>
+              </SectionCard>
             </motion.div>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4">
               {accounts.length > 0 ? (
                 accounts.map((account, index) => (
                   <motion.div
@@ -314,7 +323,6 @@ export function FetchConfirmation({
                 ))
               ) : (
                 <motion.div
-                  className="md:col-span-2"
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ ...revealTransition, delay: 0.14 }}
@@ -368,11 +376,6 @@ export function FetchConfirmation({
               decoding="async"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-6 py-6">
-              <p className="text-sm leading-relaxed text-white/92">
-                Pulled signals are editable here so the creator can confirm the profile before the next step.
-              </p>
-            </div>
           </div>
         </motion.aside>
       </div>

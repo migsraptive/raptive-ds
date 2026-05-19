@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { Check } from 'lucide-react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
@@ -11,9 +12,12 @@ export function Checkbox({
   variant = 'card',
   className = '',
 }) {
+  const generatedId = useId()
+  const inputId = id ?? generatedId
+
   return (
     <label
-      htmlFor={id}
+      htmlFor={inputId}
       className={[
         'flex items-start gap-3 transition-colors duration-150',
         variant === 'card' ? 'rounded-2xl border border-border bg-surface px-4 py-3' : '',
@@ -24,7 +28,7 @@ export function Checkbox({
     >
       <span className="relative mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center">
         <input
-          id={id}
+          id={inputId}
           type="checkbox"
           checked={checked}
           disabled={disabled}

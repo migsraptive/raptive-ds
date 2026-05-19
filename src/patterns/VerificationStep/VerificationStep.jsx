@@ -49,9 +49,6 @@ function InstagramDmInlineDetail({
           <p className="font-mono text-5xl font-medium tracking-tight text-text">
             {code}
           </p>
-          <p className="text-sm leading-relaxed text-text">
-            DM this code to <span className="font-semibold">{destinationHandle}</span> from <span className="font-semibold">{originHandle}</span>.
-          </p>
         </div>
 
         <div className="flex flex-wrap gap-2 lg:flex-shrink-0">
@@ -83,7 +80,6 @@ export function VerificationStep({
   showAside = true,
   instagramDmDetail = null,
   onConfirmDmSent,
-  onUseEmailInstead,
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
@@ -267,8 +263,8 @@ export function VerificationStep({
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
               </div>
-              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/45 to-transparent px-6 py-6'}>
-                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'text-sm leading-relaxed text-white/92'}>
+              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'hidden'}>
+                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'hidden'}>
                   A calmer support visual that keeps the final handshake from feeling cold or security-heavy.
                 </p>
               </div>
