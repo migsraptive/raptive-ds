@@ -169,7 +169,7 @@ export function ProjectionPreview({
             </Button>
           )}
           {primaryAction && (
-            <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick}>
+            <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel}>
               {primaryAction.label}
             </Button>
           )}

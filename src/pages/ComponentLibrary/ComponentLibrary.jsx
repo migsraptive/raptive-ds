@@ -53,7 +53,6 @@ import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationMod
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
-import { InstagramDmVerificationDetail } from '../../patterns/InstagramDmVerificationDetail/InstagramDmVerificationDetail.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
@@ -1191,7 +1190,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Verification Step" description="Lightweight commitment and identity confirmation step before the final submission moment.">
+            <Section title="Verification Step" description="Lightweight commitment and identity confirmation step before the final submission moment, with the Instagram DM path expanding inline.">
               <VerificationStep
                 title="One last check so we know this request is really coming from the creator."
                 description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
@@ -1202,11 +1201,25 @@ export function ComponentLibrary() {
                     title: 'Confirm with an Instagram DM',
                     description: 'We send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long.',
                   },
+                  {
+                    value: 'email-domain',
+                    icon: tileIcon(BadgeCheck),
+                    title: 'Confirm with a creator email',
+                    description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+                  },
                 ]}
                 selectedMethod={verificationMethod}
                 onSelectMethod={setVerificationMethod}
                 confirmed={verificationConfirmed}
                 onConfirmChange={setVerificationConfirmed}
+                instagramDmDetail={{
+                  code: 'CHILD-453',
+                  destinationHandle: '@raptive_community',
+                  originHandle: '@juliachild',
+                  confirmSentPending: false,
+                }}
+                onConfirmDmSent={() => {}}
+                onUseEmailInstead={() => setVerificationMethod('email-domain')}
                 reassurance={[
                   {
                     icon: miniIcon(BadgeCheck),
@@ -1229,60 +1242,30 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Instagram DM Verification Detail" description="Follow-on verification screen for the Instagram DM path, with the alternate email route still visible.">
-              <InstagramDmVerificationDetail
-                title="A quick handshake. Pick whichever path is easier."
-                description="Both confirm it’s really you. The Instagram DM is fastest, but creator email works too."
-                code="BRY-453"
-                destinationHandle="@raptive_community"
-                originHandle="@juliachild"
-                creatorEmail="hello@juliachild.com"
-                secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                onConfirmSent={() => {}}
-                onUseEmailInstead={() => {}}
-              />
-            </Section>
-
             <Section title="Submission Success" description="Exclusive completion state that closes the journey with confidence instead of a generic success message.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
-                description="The request is in, the creator identity is confirmed, and the final screen should feel worth the wait rather than procedural."
-                highlights={[
-                  {
-                    value: 'Submitted',
-                    label: 'Application status',
-                    help: 'The creator request has been received and routed for review.',
-                  },
-                  {
-                    value: '< 24h',
-                    label: 'Expected follow-up',
-                    help: 'Fast confirmation keeps the ending sharp instead of vague.',
-                  },
-                  {
-                    value: 'Warm',
-                    label: 'Momentum',
-                    help: 'The closing copy should preserve the confidence built in preview and verification.',
-                  },
-                ]}
+                summary="Hold application ID CHILD-453 for reference. Next, we’ll review the setup across brand, audience, and community fit before making a decision. Expect a follow-up by email within 24–48 hours."
                 timeline={[
                   {
-                    step: '1',
-                    title: 'Confirmation lands first',
-                    description: 'A short follow-up confirms the creator request is officially in motion.',
+                    step: 'submitted',
+                    title: 'Submitted',
+                    description: 'Today we received your details.',
+                    current: true,
                   },
                   {
-                    step: '2',
-                    title: 'Team review stays invisible',
-                    description: 'Internal evaluation happens behind the scenes so the user does not have to think about operations.',
+                    step: 'approved',
+                    title: 'Approved',
+                    description: 'In 1-2 weeks we’ll send word.',
                   },
                   {
-                    step: '3',
-                    title: 'Decision arrives with context',
-                    description: 'The eventual response should feel curated and deliberate, not auto-generated.',
+                    step: 'live',
+                    title: 'Live',
+                    description: 'When you’re ready.',
                   },
                 ]}
-                secondaryAction={{ label: 'Back to patterns', variant: 'ghost' }}
-                primaryAction={{ label: 'Done' }}
+                secondaryAction={{ label: 'Start new application', variant: 'secondary' }}
+                primaryAction={{ label: 'Close', variant: 'black' }}
               />
             </Section>
 
@@ -1400,6 +1383,62 @@ export function ComponentLibrary() {
               description="Exploration area for animated data storytelling patterns before they are introduced into creator onboarding flows."
             >
               <ProjectionMotionShowcase />
+            </Section>
+
+            <Section
+              title="Verification Expansion"
+              description="Exploration area for the verification step where the Instagram DM option expands inline and compresses the alternate path."
+            >
+              <VerificationStep
+                title="One last check so we know this request is really coming from the creator."
+                description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
+                methods={[
+                  {
+                    value: 'instagram-dm',
+                    icon: tileIcon(Mail),
+                    title: 'Confirm with an Instagram DM',
+                    description: 'We send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long.',
+                  },
+                  {
+                    value: 'email-domain',
+                    icon: tileIcon(BadgeCheck),
+                    title: 'Confirm with a creator email',
+                    description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+                  },
+                ]}
+                selectedMethod={verificationMethod}
+                onSelectMethod={setVerificationMethod}
+                confirmed={verificationConfirmed}
+                onConfirmChange={setVerificationConfirmed}
+                instagramDmDetail={{
+                  code: 'CHILD-453',
+                  destinationHandle: '@raptive_community',
+                  originHandle: '@juliachild',
+                  confirmSentPending: false,
+                }}
+                onConfirmDmSent={() => {}}
+                onUseEmailInstead={() => setVerificationMethod('email-domain')}
+                reassurance={[
+                  {
+                    icon: miniIcon(BadgeCheck),
+                    title: 'Short confirmation',
+                    description: 'The creator receives a quick ownership check, not a full application form all over again.',
+                  },
+                  {
+                    icon: miniIcon(Rocket),
+                    title: 'Submission follows immediately',
+                    description: 'Once confirmed, the final step can feel exclusive and complete instead of stalled.',
+                  },
+                  {
+                    icon: miniIcon(ShieldCheck),
+                    title: 'Trust stays intact',
+                    description: 'The screen explains why verification exists so the momentum from preview does not collapse here.',
+                  },
+                ]}
+                showAside={false}
+                secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
+                primaryAction={verificationMethod === 'instagram-dm' ? null : { label: 'Confirm and submit' }}
+              />
             </Section>
           </>
         )}
