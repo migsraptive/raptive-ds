@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Set base to the GitHub Pages repo path.
-// Change to '/' if deploying to a root domain instead.
+// GitHub Pages needs the repo path; Vercel serves the app from the domain root.
 export default defineConfig({
   plugins: [react()],
-  base: '/community-ds/',
+  base: process.env.VERCEL ? '/' : '/community-ds/',
 })
