@@ -24,7 +24,7 @@ const variants = {
   ].join(' '),
 
   ghost: [
-    'bg-transparent text-text-secondary',
+    'bg-transparent text-text',
     'hover:bg-surface-sunken hover:text-text active:bg-surface-sunken',
     'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
     'disabled:opacity-40 disabled:cursor-not-allowed',
@@ -45,10 +45,10 @@ const variants = {
 }
 
 const sizes = {
-  xs: 'h-6  px-2   text-xs  rounded-sm  gap-1',
-  sm: 'h-8  px-3   text-sm  rounded-md  gap-1.5',
-  md: 'h-10 px-4   text-sm  rounded-md  gap-2',
-  lg: 'h-12 px-5   text-base rounded-lg gap-2',
+  xs: 'h-6 px-2 text-xs rounded-full gap-1',
+  sm: 'h-8 px-3 text-sm rounded-full gap-1.5',
+  md: 'h-11 px-4 text-sm rounded-full gap-2',
+  lg: 'h-14 px-5 text-base rounded-full gap-2',
 }
 
 const iconSizes = {

@@ -52,6 +52,8 @@ import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldI
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
+import { colors as colorTokens } from '../../tokens/colors.js'
+import { typography as typographyTokens } from '../../tokens/typography.js'
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ title, description, children }) {
@@ -97,6 +99,19 @@ const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const celebrationIcon = (Icon) => <LucideIcon icon={Icon} size="xl" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
+
+function tokenTypographyLabel(tokenName) {
+  const token = typographyTokens.fontSize[tokenName]
+  if (!token) return tokenName
+  const [size, meta] = token
+  const pxSize = Math.round(parseFloat(size) * 16)
+  const pxLineHeight = Math.round(parseFloat(meta.lineHeight) * 16)
+  return `${tokenName} / ${pxSize}px / ${pxLineHeight}px`
+}
+
+function pxFromRemString(remString) {
+  return `${Math.round(parseFloat(remString) * 16)}px`
+}
 
 export function ComponentLibrary() {
   const [activeSection, setActiveSection] = useState('Colors')
@@ -216,7 +231,7 @@ export function ComponentLibrary() {
             <Section title="Brand Colors" description="Primary brand palette. Use semantic tokens in components, not primitives.">
               <div className="grid grid-cols-5 md:grid-cols-11 gap-2">
                 {[50,100,200,300,400,500,600,700,800,900,950].map(w => (
-                  <ColorSwatch key={w} token={`raptive-${w}`} value={`var(--tw-color-raptive-${w}, #4361ee)`} label={w === 500 ? 'primary' : ''} />
+                  <ColorSwatch key={w} token={`raptive-${w}`} value={colorTokens[`raptive-${w}`]} label={w === 500 ? 'primary' : ''} />
                 ))}
               </div>
             </Section>
@@ -225,30 +240,35 @@ export function ComponentLibrary() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Brand</p>
-                  <ColorSwatch token="brand.DEFAULT" value="#4361ee" label="primary" />
-                  <ColorSwatch token="brand.light" value="#6d88ff" />
-                  <ColorSwatch token="brand.dark" value="#2035b0" />
-                  <ColorSwatch token="brand.subtle" value="#f0f4ff" />
+                  <ColorSwatch token="brand.DEFAULT" value={colorTokens.brand.DEFAULT} label="primary" />
+                  <ColorSwatch token="brand.light" value={colorTokens.brand.light} />
+                  <ColorSwatch token="brand.dark" value={colorTokens.brand.dark} />
+                  <ColorSwatch token="brand.subtle" value={colorTokens.brand.subtle} />
+                  <ColorSwatch token="brand.muted" value={colorTokens.brand.muted} />
                 </div>
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Surface</p>
-                  <ColorSwatch token="surface.DEFAULT" value="#ffffff" />
-                  <ColorSwatch token="surface.raised" value="#f9fafb" />
-                  <ColorSwatch token="surface.sunken" value="#f3f4f6" />
+                  <ColorSwatch token="surface.DEFAULT" value={colorTokens.surface.DEFAULT} />
+                  <ColorSwatch token="surface.raised" value={colorTokens.surface.raised} />
+                  <ColorSwatch token="surface.sunken" value={colorTokens.surface.sunken} />
+                  <ColorSwatch token="surface.overlay" value={colorTokens.surface.overlay} />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Status</p>
-                  <ColorSwatch token="status.success" value="#22c55e" />
-                  <ColorSwatch token="status.warning" value="#eab308" />
-                  <ColorSwatch token="status.error" value="#ef4444" />
-                  <ColorSwatch token="status.info" value="#4361ee" />
+                  <p className="text-xs font-semibold text-text-secondary">Text + Border</p>
+                  <ColorSwatch token="text.DEFAULT" value={colorTokens.text.DEFAULT} />
+                  <ColorSwatch token="text.secondary" value={colorTokens.text.secondary} />
+                  <ColorSwatch token="text.tertiary" value={colorTokens.text.tertiary} />
+                  <ColorSwatch token="border.DEFAULT" value={colorTokens.border.DEFAULT} />
+                  <ColorSwatch token="border.strong" value={colorTokens.border.strong} />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Gamification</p>
-                  <ColorSwatch token="gamification.gold" value="#f59e0b" />
-                  <ColorSwatch token="gamification.gold-bg" value="#fffbeb" />
-                  <ColorSwatch token="gamification.purple" value="#a855f7" />
-                  <ColorSwatch token="gamification.purple-bg" value="#faf5ff" />
+                  <p className="text-xs font-semibold text-text-secondary">Status + Gamification</p>
+                  <ColorSwatch token="status.success" value={colorTokens.status.success} />
+                  <ColorSwatch token="status.warning" value={colorTokens.status.warning} />
+                  <ColorSwatch token="status.error" value={colorTokens.status.error} />
+                  <ColorSwatch token="status.info" value={colorTokens.status.info} />
+                  <ColorSwatch token="gamification.gold" value={colorTokens.gamification.gold} />
+                  <ColorSwatch token="gamification.purple" value={colorTokens.gamification.purple} />
                 </div>
               </div>
             </Section>
@@ -257,23 +277,100 @@ export function ComponentLibrary() {
 
         {/* ── TYPOGRAPHY ─────────────────────────────────────────────────── */}
         {activeSection === 'Typography' && (
-          <Section title="Typography Scale" description="DM Sans mapped from the exported Figma typography tokens in tokens/typography.js.">
-            <div className="space-y-6 divide-y divide-border">
+          <Section title="Typography Scale" description="Current token values from tokens/typography.js. This section reflects both the size scale and the text-color intent from the provided token set.">
+            <div className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-text-secondary">Text Color Tokens</p>
+                  <ColorSwatch token="Typography.text-color.primary" value={colorTokens.text.DEFAULT} />
+                  <ColorSwatch token="Typography.text-color.secondary" value={colorTokens.text.secondary} />
+                  <ColorSwatch token="Typography.text-color.tertiary" value={colorTokens.text.tertiary} />
+                  <ColorSwatch token="Typography.text-color.placeholder" value={colorTokens.text.placeholder} />
+                  <ColorSwatch token="text.action-subtle" value={colorTokens.text['action-subtle']} />
+                  <ColorSwatch token="text.disabled" value={colorTokens.text.disabled} />
+                  <ColorSwatch token="text.brand" value={colorTokens.text.brand} />
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-text-secondary">Usage Notes</p>
+                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-2">
+                    <p className="text-sm text-text"><span className="font-medium">Primary:</span> headings, body, default actions</p>
+                    <p className="text-sm text-text-secondary"><span className="font-medium text-text">Secondary:</span> supporting labels, helper text, and metadata</p>
+                    <p className="text-sm text-text-tertiary"><span className="font-medium text-text">Tertiary:</span> lower-emphasis metadata and optional inline qualifiers</p>
+                    <p className="text-sm text-text-placeholder"><span className="font-medium text-text">Placeholder:</span> empty field hints and example input text</p>
+                    <p className="text-sm text-text-action-subtle"><span className="font-medium text-text">Action Subtle:</span> quiet form actions like cancel and remove</p>
+                    <p className="text-sm text-text-disabled"><span className="font-medium text-text">Disabled:</span> unavailable or locked input content</p>
+                    <p className="text-sm text-text-brand"><span className="font-medium text-text">Brand:</span> branded links, accents, and emphasized inline actions</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-text-secondary">Font Family + Weight Tokens</p>
+                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-3">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span className="text-xs font-mono text-text-tertiary">family.font family</span>
+                      <span className="font-sans text-sm text-text">DM Sans</span>
+                    </div>
+                    {[
+                      ['light', typographyTokens.fontWeight.light],
+                      ['regular', typographyTokens.fontWeight.normal],
+                      ['medium', typographyTokens.fontWeight.medium],
+                      ['bold', typographyTokens.fontWeight.bold],
+                    ].map(([name, value]) => (
+                      <div key={name} className="flex items-baseline justify-between gap-4">
+                        <span className="text-xs font-mono text-text-tertiary">{`font-weight.${name}`}</span>
+                        <span className="text-sm text-text">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-text-secondary">Line Height + Letter Spacing Tokens</p>
+                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-3">
+                    {[
+                      ['line-height.xs', typographyTokens.lineHeight.xs],
+                      ['line-height.sm', typographyTokens.lineHeight.sm],
+                      ['line-height.md', typographyTokens.lineHeight.md],
+                      ['line-height.lg', typographyTokens.lineHeight.lg],
+                      ['line-height.xl', typographyTokens.lineHeight.xl],
+                      ['line-height.xxl', typographyTokens.lineHeight.xxl],
+                      ['letter-spacing.sm', typographyTokens.letterSpacing.sm],
+                      ['letter-spacing.md', typographyTokens.letterSpacing.md],
+                      ['letter-spacing.lg', typographyTokens.letterSpacing.lg],
+                    ].map(([name, value]) => (
+                      <div key={name} className="flex items-baseline justify-between gap-4">
+                        <span className="text-xs font-mono text-text-tertiary">{name}</span>
+                        <span className="text-sm text-text">
+                          {name.startsWith('line-height') ? pxFromRemString(value) : `${value}rem`}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6 divide-y divide-border">
               {[
-                { label: 'Display / 32px / 42px', className: 'font-display text-5xl font-bold text-text', sample: 'Community First' },
-                { label: 'Heading 1 / 24px / 28px', className: 'font-display text-2xl font-bold text-text', sample: 'Welcome Back, Maria' },
-                { label: 'Heading 2 / 18px / 24px', className: 'font-display text-lg font-medium text-text', sample: 'Your Achievements' },
-                { label: 'Body / 15px / 20px', className: 'font-sans text-base text-text', sample: 'Share what\u2019s on your mind with your community.' },
-                { label: 'Label LG / 14px / 20px', className: 'font-sans text-sm font-medium text-text-secondary', sample: 'Joined 3 months ago · 142 posts · 1.2k reactions' },
-                { label: 'Label MD / 12px / 16px', className: 'font-sans text-xs font-medium text-text-tertiary', sample: 'Last active 2 hours ago' },
-                { label: 'Label SM / 10px / 16px', className: 'font-sans text-2xs font-medium text-text-tertiary', sample: 'MEMBER SINCE 2026' },
-                { label: 'Mono / Utility', className: 'font-mono text-sm text-text-secondary', sample: 'badge_id: community-champion-v1' },
+                { label: `${tokenTypographyLabel('display')} · text-color.primary`, className: 'font-display text-4xl font-bold text-text', sample: 'Community First' },
+                { label: `${tokenTypographyLabel('heading-1')} · text-color.primary`, className: 'font-display text-2xl font-bold text-text', sample: 'Welcome Back, Maria' },
+                { label: `${tokenTypographyLabel('heading-2')} · text-color.primary`, className: 'font-display text-lg font-medium text-text', sample: 'Your Achievements' },
+                { label: `${tokenTypographyLabel('body')} · text-color.primary`, className: 'font-sans text-base text-text', sample: 'Share what\u2019s on your mind with your community.' },
+                { label: `${tokenTypographyLabel('label-lg')} · text-color.secondary`, className: 'font-sans text-sm font-medium text-text-secondary', sample: 'Joined 3 months ago · 142 posts · 1.2k reactions' },
+                { label: `${tokenTypographyLabel('label-md')} · text-color.secondary`, className: 'font-sans text-xs font-medium text-text-secondary', sample: 'This appears on your public profile.' },
+                { label: `${tokenTypographyLabel('label-sm')} · text-color.tertiary`, className: 'font-sans text-2xs font-medium text-text-tertiary', sample: 'MEMBER SINCE 2026' },
+                { label: `${tokenTypographyLabel('body-sm')} · text-color.placeholder`, className: 'font-sans text-sm text-text-placeholder', sample: 'Paste your website URL' },
+                { label: `${tokenTypographyLabel('label-lg')} · text.action-subtle`, className: 'font-sans text-sm font-medium text-text-action-subtle', sample: 'Cancel' },
+                { label: `${tokenTypographyLabel('body-sm')} · text.disabled`, className: 'font-sans text-sm text-text-disabled', sample: 'creator@raptive.com' },
+                { label: `${tokenTypographyLabel('label-lg')} · text.brand`, className: 'font-sans text-sm font-medium text-text-brand', sample: 'View guidelines' },
+                { label: 'mono / utility', className: 'font-mono text-sm text-text-secondary', sample: 'badge_id: community-champion-v1' },
               ].map(({ label, className, sample }) => (
                 <div key={label} className="pt-4 flex items-baseline justify-between gap-8 first:pt-0">
-                  <span className="text-xs font-mono text-text-tertiary w-40 flex-shrink-0">{label}</span>
+                  <span className="text-xs font-mono text-text-secondary w-40 flex-shrink-0">{label}</span>
                   <span className={className}>{sample}</span>
                 </div>
               ))}
+            </div>
             </div>
           </Section>
         )}
@@ -554,12 +651,57 @@ export function ComponentLibrary() {
                 <Button variant="link">Link</Button>
               </Row>
             </Section>
+            <Section title="Canonical Token References" description="Additional button treatments present in the provided token set. These are shown here for reference only and do not replace the current shared primary button.">
+              <Row label="Missing token-backed treatments">
+                <Button
+                  variant="ghost"
+                  className="bg-transparent text-text hover:bg-surface-sunken active:bg-neutral-100"
+                >
+                  Naked
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="bg-white border-neutral-400 hover:border-neutral-500"
+                >
+                  Outline
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="border-transparent bg-gamification-gold-light text-green-700 hover:bg-gamification-gold active:bg-gold-600"
+                >
+                  Brand
+                </Button>
+              </Row>
+            </Section>
             <Section title="Sizes">
-              <Row>
+              <Row label="Shared button scale">
                 <Button size="xs">Extra Small</Button>
                 <Button size="sm">Small</Button>
                 <Button size="md">Medium</Button>
                 <Button size="lg">Large</Button>
+              </Row>
+              <Row label="Canonical treatment references">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="bg-transparent text-text hover:bg-surface-sunken active:bg-neutral-100"
+                >
+                  Naked / Small
+                </Button>
+                <Button
+                  size="md"
+                  variant="secondary"
+                  className="bg-white border-neutral-400 hover:border-neutral-500"
+                >
+                  Outline / Medium
+                </Button>
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="border-transparent bg-gamification-gold-light text-green-700 hover:bg-gamification-gold active:bg-gold-600"
+                >
+                  Brand / Large
+                </Button>
               </Row>
             </Section>
             <Section title="States">

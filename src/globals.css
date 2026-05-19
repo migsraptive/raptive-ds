@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -26,17 +26,19 @@
 
   /* Border */
   --color-border:        #eff0f0;
-  --color-border-strong: #d7d8d9;
+  --color-border-strong: #e9e9ea;
   --color-border-subtle: #f8f8f8;
   --color-border-focus:  #6b65ff;
 
   /* Text */
   --color-text:           #242526;
-  --color-text-secondary: #6b6e70;
-  --color-text-tertiary:  #8f9295;
+  --color-text-secondary: #444648;
+  --color-text-tertiary:  #7d8083;
+  --color-text-placeholder: #d7d8d9;
+  --color-text-action-subtle: #444648;
   --color-text-disabled:  #d7d8d9;
   --color-text-invert:    #ffffff;
-  --color-text-brand:     #354786;
+  --color-text-brand:     #6b65ff;
 
   /* Status */
   --color-success:      #22c55e;
@@ -55,10 +57,10 @@
   /* Gamification */
   --color-gold:        #c2f054;
   --color-gold-light:  #d2ff66;
-  --color-gold-bg:     #fffcec;
+  --color-gold-bg:     #fffbeb;
   --color-purple:      #8b5cf6;
   --color-purple-light: #a78bfa;
-  --color-purple-bg:   #ede9fe;
+  --color-purple-bg:   #faf5ff;
 
   /* Radius */
   --radius-sm:   8px;
@@ -119,6 +121,11 @@
 /* ─── UTILITIES ─────────────────────────────────────────────────────────────── */
 
 @layer utilities {
+  .font-newsreader {
+    font-family: "Newsreader", ui-serif, Georgia, serif;
+    font-weight: 400;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

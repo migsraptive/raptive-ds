@@ -7,6 +7,7 @@ export function StepLayout({
   description,
   step,
   totalSteps,
+  progressMeter = null,
   aside = null,
   children,
   primaryAction = { label: 'Continue' },
@@ -15,7 +16,7 @@ export function StepLayout({
   const progress = step && totalSteps ? Math.min(100, Math.round((step / totalSteps) * 100)) : null
 
   return (
-    <section className="overflow-hidden rounded-[32px] border border-border bg-white shadow-sm">
+    <section className="overflow-hidden rounded-[32px] border border-border bg-surface shadow-sm">
       <div className="h-1.5 bg-surface-sunken">
         {progress != null && (
           <div
@@ -26,27 +27,31 @@ export function StepLayout({
       </div>
 
       <div className="grid gap-8 p-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:p-8">
-        <div className="space-y-8">
-          <header className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
-              {eyebrow && <Badge variant="brand" size="sm">{eyebrow}</Badge>}
-              {step && totalSteps && (
-                <span className="text-sm text-text-secondary">
-                  Step {step} of {totalSteps}
-                </span>
-              )}
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold text-text">{title}</h2>
-              {description && <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">{description}</p>}
-            </div>
-          </header>
+        <div className="flex h-full flex-col">
+          <div className="space-y-8">
+            {progressMeter}
 
-          <div className="space-y-6">
-            {children}
+            <header className="space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
+                {eyebrow && <Badge variant="brand" size="sm">{eyebrow}</Badge>}
+                {step && totalSteps && (
+                  <span className="text-sm text-text-secondary">
+                    Step {step} of {totalSteps}
+                  </span>
+                )}
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold text-text">{title}</h2>
+                {description && <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">{description}</p>}
+              </div>
+            </header>
+
+            <div className="space-y-6">
+              {children}
+            </div>
           </div>
 
-          <footer className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
+          <footer className="mt-auto flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
             {secondaryAction ? (
               <Button
                 variant={secondaryAction.variant ?? 'ghost'}

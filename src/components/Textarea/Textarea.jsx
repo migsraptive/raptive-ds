@@ -3,7 +3,7 @@ import { FormField } from '../FormField/FormField.jsx'
 
 const baseTextareaClassName = [
   'w-full appearance-none resize-none bg-transparent px-0 py-0',
-  'text-base leading-normal text-text placeholder:text-text-tertiary',
+  'text-base leading-normal text-text placeholder:text-text-placeholder',
   'transition-colors duration-150 disabled:opacity-100',
   'focus-visible:outline-none focus-visible:ring-0',
   'disabled:cursor-not-allowed disabled:text-text-disabled',
@@ -31,7 +31,7 @@ export const Textarea = forwardRef(function Textarea(
   const control = (
     <div
       className={[
-        'rounded-3xl border px-4 py-3 shadow-xs transition-colors duration-150',
+        'rounded-lg border px-4 py-3 shadow-xs transition-colors duration-150',
         hasError
           ? 'border-status-error focus-within:ring-2 focus-within:ring-status-error focus-within:ring-offset-2'
           : 'border-border focus-within:border-brand focus-within:ring-2 focus-within:ring-brand focus-within:ring-offset-2',

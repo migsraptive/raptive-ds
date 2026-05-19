@@ -15,6 +15,7 @@ This repo is being used for:
 
 What is implemented now:
 - Figma-aligned token remap in `src/tokens/`
+- semantic text token refinements plus synchronized runtime CSS variables
 - shared form primitives:
   - `FormField`
   - `FieldShell`
@@ -32,7 +33,7 @@ What is implemented now:
   - `LucideIcon`
 - onboarding patterns:
   - `SingleFieldIntake`
-  - `RecognitionState`
+  - `FetchConfirmation`
   - `ReviewCorrection`
   - `CommunityPreviewCard`
   - `VerificationStep`
@@ -46,6 +47,13 @@ What is implemented now:
 Two top-level app surfaces exist:
 - `ComponentLibrary` for internal review and design system inspection
 - `CreatorApplicationPage` for the real user-facing flow
+
+Latest creator-flow update:
+- replaced the earlier generic recognition screen with a richer `FetchConfirmation` step
+- added editable website, newsletter, and social-account review cards
+- moved the progress meter into each flow card above the eyebrow/headline area
+- bottom-aligned the action row inside each flow container for more consistent desktop composition
+- extended the library surface to document semantic text-token usage
 
 ## Creator Flow
 
@@ -82,6 +90,7 @@ Branding updates already applied:
 - real SVG logo is wired into the app
 - sample creator identity was changed to `Julia Child`
 - Lucide icons replaced placeholder/icon text usage where appropriate
+- social platform assets now support the fetch-confirmation account cards
 
 Illustration assets currently wired into the flow:
 - `src/assets/entry-illustration.png`
@@ -105,9 +114,11 @@ The project has already been remapped to the exported Figma token values as clos
 
 That includes:
 - `DM Sans` typography mapping
+- `Newsreader` for high-emphasis editorial headings in the creator flow
 - exported spacing scale compatibility
 - exported radius scale compatibility
 - Raptive palette and semantic color mapping
+- semantic text aliases for placeholder and subtle actions
 
 ## Project Structure
 
@@ -137,7 +148,7 @@ npm run build
 ```
 
 Local dev:
-- `http://127.0.0.1:5173/raptive-ds/`
+- `http://127.0.0.1:3700/raptive-ds/`
 
 GitHub Pages:
 - `https://migsraptive.github.io/raptive-ds/`
@@ -158,13 +169,10 @@ When implementing from Figma:
 
 Highest-value next work:
 
-1. Bring in the specific Figma row from the Community Design System file and implement it in code.
-2. Use the newly installed Figma MCP in a fresh session to pull exact node context and screenshot reference.
-3. Compress and resize the illustration PNG assets.
-4. Normalize desktop screen heights so each creator-flow stage feels like one deliberate, consistent step.
-5. Decide whether the right image rail should stay `360px` or tighten to `320px`.
-6. Add a proper favicon/app mark derived from the real brand logo.
-7. Tighten the `ComponentLibrary` so it reflects the current real product direction rather than older scaffold demos.
+1. Restore Figma MCP access under the correct Raptive account and bring in the selected sidebar component.
+2. Compress and resize the illustration PNG assets.
+3. Add a proper favicon/app mark derived from the real brand logo.
+4. Keep tightening the `ComponentLibrary` so it reflects current production direction rather than scaffold-era demos.
 
 ## Verification
 

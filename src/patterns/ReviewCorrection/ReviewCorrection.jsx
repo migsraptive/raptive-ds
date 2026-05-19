@@ -8,6 +8,7 @@ export function ReviewCorrection({
   eyebrow = 'Review',
   title,
   description,
+  progressMeter = null,
   fields = {},
   onFieldChange,
   showAside = true,
@@ -16,62 +17,66 @@ export function ReviewCorrection({
   note = null,
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-white shadow-sm">
+    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
       <div className={['grid gap-0', showAside ? 'lg:grid-cols-[minmax(0,1.1fr)_380px]' : 'lg:grid-cols-1'].join(' ')}>
-        <div className="space-y-8 p-8 lg:p-12">
-          <div className="space-y-4">
-            <Badge variant="warning" size="sm">{eyebrow}</Badge>
-            <div className="space-y-3">
-              <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-text">
-                {title}
-              </h2>
-              {description && (
-                <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                  {description}
-                </p>
-              )}
-            </div>
-          </div>
+        <div className="flex h-full flex-col p-8 lg:p-12">
+          <div className="space-y-8">
+            {progressMeter}
 
-          <div className="grid gap-5 md:grid-cols-2">
-            <TextInput
-              label="Creator name"
-              value={fields.name ?? ''}
-              onChange={(event) => onFieldChange?.('name', event.target.value)}
-            />
-            <TextInput
-              label="Primary URL"
-              value={fields.url ?? ''}
-              onChange={(event) => onFieldChange?.('url', event.target.value)}
-            />
-            <Select
-              label="Primary vertical"
-              value={fields.vertical ?? ''}
-              onChange={(event) => onFieldChange?.('vertical', event.target.value)}
-              placeholder="Select a vertical"
-              options={[
-                { value: 'food', label: 'Food' },
-                { value: 'parenting', label: 'Parenting' },
-                { value: 'home', label: 'Home' },
-                { value: 'wellness', label: 'Wellness' },
-              ]}
-            />
-            <TextInput
-              label="Audience signal"
-              value={fields.audience ?? ''}
-              onChange={(event) => onFieldChange?.('audience', event.target.value)}
-            />
-            <div className="md:col-span-2">
-              <Textarea
-                label="Positioning summary"
-                value={fields.summary ?? ''}
-                onChange={(event) => onFieldChange?.('summary', event.target.value)}
-                rows={4}
+            <div className="space-y-4">
+              <Badge variant="warning" size="sm">{eyebrow}</Badge>
+              <div className="space-y-3">
+                <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-text">
+                  {title}
+                </h2>
+                {description && (
+                  <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
+                    {description}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <TextInput
+                label="Creator name"
+                value={fields.name ?? ''}
+                onChange={(event) => onFieldChange?.('name', event.target.value)}
               />
+              <TextInput
+                label="Primary URL"
+                value={fields.url ?? ''}
+                onChange={(event) => onFieldChange?.('url', event.target.value)}
+              />
+              <Select
+                label="Primary vertical"
+                value={fields.vertical ?? ''}
+                onChange={(event) => onFieldChange?.('vertical', event.target.value)}
+                placeholder="Select a vertical"
+                options={[
+                  { value: 'food', label: 'Food' },
+                  { value: 'parenting', label: 'Parenting' },
+                  { value: 'home', label: 'Home' },
+                  { value: 'wellness', label: 'Wellness' },
+                ]}
+              />
+              <TextInput
+                label="Audience signal"
+                value={fields.audience ?? ''}
+                onChange={(event) => onFieldChange?.('audience', event.target.value)}
+              />
+              <div className="md:col-span-2">
+                <Textarea
+                  label="Positioning summary"
+                  value={fields.summary ?? ''}
+                  onChange={(event) => onFieldChange?.('summary', event.target.value)}
+                  rows={4}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
             {secondaryAction && (
               <Button variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}

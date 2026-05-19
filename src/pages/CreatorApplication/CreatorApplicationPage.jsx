@@ -5,7 +5,7 @@ import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
-import { RecognitionState } from '../../patterns/RecognitionState/RecognitionState.jsx'
+import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
@@ -19,6 +19,23 @@ const flowSteps = [
   { id: 'verify', label: 'Verify' },
   { id: 'submit', label: 'Submit' },
 ]
+
+function FlowProgressMeter({ label, progress }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-sm text-text-secondary">
+        <span>{label}</span>
+        <span>{progress}%</span>
+      </div>
+      <div className="h-2 rounded-full bg-surface-sunken">
+        <div
+          className="h-full rounded-full bg-brand transition-[width] duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  )
+}
 
 export function CreatorApplicationPage({ onOpenLibrary }) {
   const [activeStep, setActiveStep] = useState(0)
@@ -34,6 +51,36 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     audience: 'Community-led',
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
   })
+  const [estimatedReach] = useState({
+    value: '526K',
+    detail: '526,000 combined followers',
+  })
+  const [newsletter, setNewsletter] = useState('ConvertKit')
+  const [accounts, setAccounts] = useState([
+    {
+      id: 'instagram',
+      platform: 'Instagram',
+      handle: '@juliachild',
+      url: 'https://instagram.com/juliachild',
+      followers: '318,000 followers',
+    },
+    {
+      id: 'tiktok',
+      platform: 'TikTok',
+      handle: '@juliachild',
+      url: 'https://tiktok.com/@juliachild',
+      followers: '124,000 followers',
+    },
+    {
+      id: 'pinterest',
+      platform: 'Pinterest',
+      handle: '@juliachild',
+      url: 'https://pinterest.com/juliachild',
+      followers: '84,000 followers',
+    },
+  ])
+  const [editingField, setEditingField] = useState(null)
+  const [editDraft, setEditDraft] = useState('')
 
   useEffect(() => {
     if (!recognitionLoading) return undefined
@@ -48,6 +95,10 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const progress = useMemo(
     () => Math.round(((activeStep + 1) / flowSteps.length) * 100),
     [activeStep],
+  )
+  const currentStepLabel = flowSteps[activeStep]?.label ?? 'Current stage'
+  const progressMeter = (
+    <FlowProgressMeter label={currentStepLabel} progress={progress} />
   )
 
   const updateReviewField = (key, value) => {
@@ -64,11 +115,45 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     }, 800)
   }
 
+  const startEditing = (field, value) => {
+    setEditingField(field)
+    setEditDraft(value)
+  }
+
+  const cancelEditing = () => {
+    setEditingField(null)
+    setEditDraft('')
+  }
+
+  const saveEditing = () => {
+    if (!editingField) return
+
+    if (editingField === 'website') {
+      updateReviewField('url', editDraft)
+    } else if (editingField === 'newsletter') {
+      setNewsletter(editDraft)
+    } else {
+      setAccounts((current) =>
+        current.map((account) => (account.id === editingField ? { ...editDraft } : account)),
+      )
+    }
+
+    cancelEditing()
+  }
+
+  const removeAccount = (accountId) => {
+    setAccounts((current) => current.filter((account) => account.id !== accountId))
+    if (editingField === accountId) {
+      cancelEditing()
+    }
+  }
+
   let content = null
 
   if (activeStep === 0) {
     content = (
       <SingleFieldIntake
+        progressMeter={progressMeter}
         title="Bring a creator into the application flow with one confident move."
         description="Paste a creator URL or social handle. We’ll recognize the profile, fetch the first identity signals, and show a preview before anything gets submitted."
         value={creatorUrl}
@@ -97,38 +182,24 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   if (activeStep === 1) {
     content = (
-      <RecognitionState
-        eyebrow={recognitionLoading ? 'Fetching identity' : 'Recognition'}
-        title={recognitionLoading ? 'We’re pulling the first identity signals now.' : 'We found a strong starting point for this creator.'}
-        description={
-          recognitionLoading
-            ? 'This should feel like a short, confident reveal rather than a generic loading wait.'
-            : 'Logo, display name, domain, and positioning are recognized first so the creator can confirm or correct with context.'
-        }
+      <FetchConfirmation
         loading={recognitionLoading}
-        profile={{
+        progressMeter={progressMeter}
+        creator={{
           name: reviewFields.name,
-          summary: 'Food creator and community builder',
-          domain: reviewFields.url,
+          reach: estimatedReach.value,
+          reachDetail: estimatedReach.detail,
         }}
-        signals={[
-          {
-            label: 'Display name',
-            value: reviewFields.name,
-            help: 'Pulled from the creator profile and social identity.',
-          },
-          {
-            label: 'Primary vertical',
-            value: 'Food',
-            help: 'Based on recent profile content and creator positioning.',
-          },
-          {
-            label: 'Audience signal',
-            value: reviewFields.audience,
-            help: 'Content tone suggests relationship-building over broadcast only.',
-          },
-        ]}
-        showAside={false}
+        website={reviewFields.url}
+        newsletter={newsletter}
+        accounts={accounts}
+        editingField={editingField}
+        editDraft={editDraft}
+        onEditDraftChange={setEditDraft}
+        onStartEditing={startEditing}
+        onCancelEditing={cancelEditing}
+        onSaveEditing={saveEditing}
+        onRemoveAccount={removeAccount}
         secondaryAction={{
           label: 'Needs edits',
           variant: 'ghost',
@@ -145,6 +216,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 2) {
     content = (
       <ReviewCorrection
+        progressMeter={progressMeter}
         title="Make any corrections before we build the preview."
         description="This should feel like refining a strong starting point, not filling out a form from scratch."
         fields={reviewFields}
@@ -160,6 +232,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 3) {
     content = (
       <CommunityPreviewCard
+        progressMeter={progressMeter}
         title="This is what the creator experience could start to look like."
         description="The preview should feel plausible, branded, and emotionally rewarding without pretending it is final."
         creator={{
@@ -196,6 +269,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 4) {
     content = (
       <VerificationStep
+        progressMeter={progressMeter}
         title="One last check so we know this request is really coming from the creator."
         description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
         methods={[
@@ -237,6 +311,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 5) {
     content = (
       <SubmissionSuccess
+        progressMeter={progressMeter}
         title="You’re on the list. We’ll take it from here."
         description="The request is in, the creator identity is confirmed, and the final screen should feel worth the wait rather than procedural."
         highlights={[
@@ -281,8 +356,8 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f8f9fc_0%,#eef2ff_100%)]">
-      <header className="border-b border-border/80 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-gradient-to-b from-surface-sunken via-surface to-brand-subtle">
+      <header className="border-b border-border/80 bg-surface/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
@@ -301,40 +376,25 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10">
-        <div className="mb-8 rounded-[28px] border border-border bg-white/80 p-5 shadow-xs backdrop-blur">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Flow progress</p>
-              <div className="flex flex-wrap gap-2">
-                {flowSteps.map((step, index) => (
-                  <div
-                    key={step.id}
-                    className={[
-                      'rounded-full border px-3 py-1.5 text-sm transition-colors',
-                      index === activeStep
-                        ? 'border-brand bg-brand-subtle text-brand-dark'
-                        : index < activeStep
-                          ? 'border-border bg-surface-raised text-text'
-                          : 'border-border bg-white text-text-secondary',
-                    ].join(' ')}
-                  >
-                    {String(index + 1).padStart(2, '0')} {step.label}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="min-w-[220px] space-y-2">
-              <div className="flex items-center justify-between text-sm text-text-secondary">
-                <span>Current stage</span>
-                <span>{progress}%</span>
-              </div>
-              <div className="h-2 rounded-full bg-surface-sunken">
+        <div className="mb-8 rounded-[28px] border border-border bg-surface/80 p-5 shadow-xs backdrop-blur">
+          <div className="space-y-2">
+            <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Flow progress</p>
+            <div className="flex flex-wrap gap-2">
+              {flowSteps.map((step, index) => (
                 <div
-                  className="h-full rounded-full bg-brand transition-[width] duration-300"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+                  key={step.id}
+                  className={[
+                    'rounded-full border px-3 py-1.5 text-sm transition-colors',
+                    index === activeStep
+                      ? 'border-brand bg-brand-subtle text-brand-dark'
+                      : index < activeStep
+                        ? 'border-border bg-surface-raised text-text'
+                        : 'border-border bg-surface text-text-secondary',
+                  ].join(' ')}
+                >
+                  {String(index + 1).padStart(2, '0')} {step.label}
+                </div>
+              ))}
             </div>
           </div>
         </div>

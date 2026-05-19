@@ -4,7 +4,7 @@ import { FormField } from '../FormField/FormField.jsx'
 
 const baseInputClassName = [
   'w-full appearance-none bg-transparent px-0',
-  'text-base text-text placeholder:text-text-tertiary',
+  'text-base text-text placeholder:text-text-placeholder',
   'transition-colors duration-150 disabled:opacity-100',
   'outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
   'disabled:cursor-not-allowed disabled:text-text-disabled',

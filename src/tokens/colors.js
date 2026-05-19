@@ -60,12 +60,14 @@ const primitives = {
   'orange-100': '#fcdbd4',
   'orange-500': '#ff7858', // brand.secondary-orange
   'orange-600': '#dd543a',
+  'orange-700': '#c05621',
 
   // Accent / gamification
   'gold-400': '#d2ff66',
   'gold-500': '#c2f054',
   'gold-600': '#a5d62f',
 
+  'purple-100': '#faf5ff',
   'purple-400': '#a78bfa',
   'purple-500': '#8b5cf6',
   'purple-600': '#7c3aed',
@@ -100,11 +102,13 @@ export const colors = {
 
   text: {
     DEFAULT:  primitives['neutral-900'],
-    secondary: primitives['neutral-500'],
-    tertiary:  primitives['neutral-400'],
+    secondary: primitives['neutral-800'],
+    tertiary:  primitives['neutral-600'],
+    placeholder: primitives['neutral-400'],
+    'action-subtle': primitives['neutral-800'],
     disabled:  primitives['neutral-300'],
     invert:    primitives['neutral-0'],
-    brand:     primitives['raptive-600'],
+    brand:     primitives['raptive-500'],
   },
 
   status: {
