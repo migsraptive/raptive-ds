@@ -18,6 +18,9 @@ const primitives = {
   'raptive-300': '#93c5fd',
   'raptive-400': '#60a5fa',
   'raptive-500': '#6b65ff', // brand.primary-blue
+  'raptive-action': '#6762f6', // brand.primary-blue darkened only enough to pass AA with white text
+  'raptive-action-hover': '#655ff0',
+  'raptive-action-active': '#615ce8',
   'raptive-600': '#2563eb',
   'raptive-700': '#354786', // brand.accent-blue
   'raptive-800': '#1e40af',
@@ -86,9 +89,9 @@ export const colors = {
   },
 
   action: {
-    primary: primitives['raptive-700'],
-    'primary-hover': primitives['raptive-800'],
-    'primary-active': primitives['raptive-900'],
+    primary: primitives['raptive-action'],
+    'primary-hover': primitives['raptive-action-hover'],
+    'primary-active': primitives['raptive-action-active'],
   },
 
   surface: {
