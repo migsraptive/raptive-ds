@@ -1,0 +1,518 @@
+[     220ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=094802ca:21548
+[   22886ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=094802ca:21548
+[   23235ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=094802ca:21548
+[   67841ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=094802ca:21548
+[  115259ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:3702/community-ds/@vite/client:559
+[  115262ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3702/community-ds/:0
+[  116879ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:21548
+[  116951ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/instagram.svg?react> component:
+
+    at /community-ds/src/assets/social/instagram.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3702/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3702/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3702/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3702/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8879:40)
+    at PopChildMeasure (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8015:23)
+    at PopChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8043:21)
+    at PresenceChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8095:24)
+    at AnimatePresence (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8172:26)
+    at App (http://localhost:3702/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:14029
+[  116951ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/tiktok.svg?react> component:
+
+    at /community-ds/src/assets/social/tiktok.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3702/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3702/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3702/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3702/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8879:40)
+    at PopChildMeasure (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8015:23)
+    at PopChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8043:21)
+    at PresenceChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8095:24)
+    at AnimatePresence (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8172:26)
+    at App (http://localhost:3702/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:14029
+[  116951ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/pinterest.svg?react> component:
+
+    at /community-ds/src/assets/social/pinterest.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3702/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3702/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3702/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3702/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8879:40)
+    at PopChildMeasure (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8015:23)
+    at PopChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8043:21)
+    at PresenceChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8095:24)
+    at AnimatePresence (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8172:26)
+    at App (http://localhost:3702/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:14029
+[  116951ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/youtube.svg?react> component:
+
+    at /community-ds/src/assets/social/youtube.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3702/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3702/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3702/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3702/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8879:40)
+    at PopChildMeasure (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8015:23)
+    at PopChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8043:21)
+    at PresenceChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8095:24)
+    at AnimatePresence (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8172:26)
+    at App (http://localhost:3702/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:14029
+[  116951ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/facebook.svg?react> component:
+
+    at /community-ds/src/assets/social/facebook.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3702/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3702/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3702/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3702/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8879:40)
+    at PopChildMeasure (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8015:23)
+    at PopChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8043:21)
+    at PresenceChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8095:24)
+    at AnimatePresence (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8172:26)
+    at App (http://localhost:3702/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:14029
+[  116951ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/substack.svg?react> component:
+
+    at /community-ds/src/assets/social/substack.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3702/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3702/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3702/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3702/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3702/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8879:40)
+    at PopChildMeasure (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8015:23)
+    at PopChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8043:21)
+    at PresenceChild (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8095:24)
+    at AnimatePresence (http://localhost:3702/community-ds/node_modules/.vite/deps/motion_react.js?v=8b7289b1:8172:26)
+    at App (http://localhost:3702/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:14029
+[  116965ms] InvalidCharacterError: Failed to execute 'createElement' on 'Document': The tag name provided ('/community-ds/src/assets/social/instagram.svg?react') is not a valid name.
+    at createElement (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:7504:42)
+    at createInstance (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:8334:28)
+    at completeWork (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:16288:34)
+    at completeUnitOfWork (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:19222:24)
+    at performUnitOfWork (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:19204:13)
+    at workLoopSync (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:19135:13)
+    at renderRootSync (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:19114:15)
+    at recoverFromConcurrentError (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:18734:28)
+    at performConcurrentWorkOnRoot (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:18682:30)
+    at workLoop (http://localhost:3702/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b69ae868:195:42)
+[  156981ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  157045ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/instagram.svg?react> component:
+
+    at /community-ds/src/assets/social/instagram.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  157045ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/tiktok.svg?react> component:
+
+    at /community-ds/src/assets/social/tiktok.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  157045ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/pinterest.svg?react> component:
+
+    at /community-ds/src/assets/social/pinterest.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  157045ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/youtube.svg?react> component:
+
+    at /community-ds/src/assets/social/youtube.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  157045ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/facebook.svg?react> component:
+
+    at /community-ds/src/assets/social/facebook.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  157045ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/substack.svg?react> component:
+
+    at /community-ds/src/assets/social/substack.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  157049ms] InvalidCharacterError: Failed to execute 'createElement' on 'Document': The tag name provided ('/community-ds/src/assets/social/instagram.svg?react') is not a valid name.
+    at createElement (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:7504:42)
+    at createInstance (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:8334:28)
+    at completeWork (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:16288:34)
+    at completeUnitOfWork (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19222:24)
+    at performUnitOfWork (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19204:13)
+    at workLoopSync (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19135:13)
+    at renderRootSync (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19114:15)
+    at recoverFromConcurrentError (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:18734:28)
+    at performConcurrentWorkOnRoot (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:18682:30)
+    at workLoop (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:195:42)
+[  197779ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  197819ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/instagram.svg?react> component:
+
+    at /community-ds/src/assets/social/instagram.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  197819ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/tiktok.svg?react> component:
+
+    at /community-ds/src/assets/social/tiktok.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  197819ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/pinterest.svg?react> component:
+
+    at /community-ds/src/assets/social/pinterest.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  197820ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/youtube.svg?react> component:
+
+    at /community-ds/src/assets/social/youtube.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  197820ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/facebook.svg?react> component:
+
+    at /community-ds/src/assets/social/facebook.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  197820ms] [ERROR] The above error occurred in the </community-ds/src/assets/social/substack.svg?react> component:
+
+    at /community-ds/src/assets/social/substack.svg?react
+    at span
+    at div
+    at FieldShell (http://localhost:3703/community-ds/src/components/FormField/FieldShell.jsx:18:3)
+    at div
+    at FormField (http://localhost:3703/community-ds/src/components/FormField/FormField.jsx:20:3)
+    at TextInput2 (http://localhost:3703/community-ds/src/components/TextInput/TextInput.jsx:32:3)
+    at SocialUrlInput2 (http://localhost:3703/community-ds/src/components/SocialUrlInput/SocialUrlInput.jsx:105:3)
+    at div
+    at section
+    at Section (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:93:20)
+    at main
+    at div
+    at ComponentLibrary (http://localhost:3703/community-ds/src/pages/ComponentLibrary/ComponentLibrary.jsx:243:45)
+    at div
+    at MotionDOMComponent (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8879:40)
+    at PopChildMeasure (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8015:23)
+    at PopChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8043:21)
+    at PresenceChild (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8095:24)
+    at AnimatePresence (http://localhost:3703/community-ds/node_modules/.vite/deps/motion_react.js?v=b665133a:8172:26)
+    at App (http://localhost:3703/community-ds/src/App.jsx:33:27)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:14029
+[  197820ms] InvalidCharacterError: Failed to execute 'createElement' on 'Document': The tag name provided ('/community-ds/src/assets/social/instagram.svg?react') is not a valid name.
+    at createElement (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:7504:42)
+    at createInstance (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:8334:28)
+    at completeWork (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:16288:34)
+    at completeUnitOfWork (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19222:24)
+    at performUnitOfWork (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19204:13)
+    at workLoopSync (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19135:13)
+    at renderRootSync (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:19114:15)
+    at recoverFromConcurrentError (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:18734:28)
+    at performConcurrentWorkOnRoot (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:18682:30)
+    at workLoop (http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:195:42)
+[  291631ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  304184ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  304529ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3703/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  698245ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:3700/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  719457ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:3700/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  747003ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:3700/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  804431ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:3700/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548
+[  823342ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://127.0.0.1:3700/community-ds/node_modules/.vite/deps/chunk-PQUBWG3Q.js?v=b665133a:21548

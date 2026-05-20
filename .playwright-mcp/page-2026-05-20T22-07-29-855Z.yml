@@ -1,0 +1,21 @@
+- main [ref=e5]:
+  - button "Component library" [ref=e7] [cursor=pointer]:
+    - generic [ref=e10]: Component library
+  - generic [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - img "Step 1 of 7" [ref=e17]
+        - generic [ref=e26]:
+          - heading "Bring a creator into the application flow with one confident move." [level=2] [ref=e27]
+          - paragraph [ref=e28]: Paste a creator URL or social handle. We’ll recognize the profile, fetch the first identity signals, and show a preview before anything gets submitted.
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - img [ref=e33]
+            - textbox "Social URL" [ref=e34]:
+              - /placeholder: Paste a creator URL or social profile
+              - text: https://instagram.com/juliachild
+          - paragraph [ref=e35]: No long application form up front.
+      - button "Continue" [ref=e38] [cursor=pointer]:
+        - generic [ref=e41]: Continue
+    - complementary [ref=e42]:
+      - img "Warm curiosity-building illustration for the creator application entry step" [ref=e46]

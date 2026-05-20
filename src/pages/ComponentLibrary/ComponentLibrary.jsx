@@ -39,6 +39,8 @@ import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
 import { RadioGroup } from '../../components/RadioGroup/RadioGroup.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
+import { SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
+import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { AuthorRow } from '../../components/AuthorRow/AuthorRow.jsx'
@@ -143,6 +145,16 @@ const avatarImageSet = [
     name: 'Cyle C',
     src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=128&q=80',
   },
+]
+const socialUrlExamples = [
+  { label: 'Empty state', value: '' },
+  { label: 'Instagram', value: 'https://instagram.com/juliachild' },
+  { label: 'TikTok', value: 'https://www.tiktok.com/@juliachild' },
+  { label: 'Pinterest', value: 'https://pinterest.com/juliachild' },
+  { label: 'YouTube', value: 'https://youtube.com/@juliachild' },
+  { label: 'Facebook', value: 'https://facebook.com/juliachild' },
+  { label: 'Substack', value: 'https://juliachild.substack.com' },
+  { label: 'Default website', value: 'https://www.juliachild.com' },
 ]
 
 function tokenTypographyLabel(tokenName) {
@@ -508,6 +520,30 @@ export function ComponentLibrary() {
                   inputClassName="text-lg leading-md"
                   affixLineHeight="md"
                 />
+              </div>
+            </Section>
+
+            <Section title="Social URL Input" description="Single URL field that detects supported social platforms locally as the value changes.">
+              <div className="grid gap-6 md:grid-cols-2">
+                <SocialUrlInput
+                  label="Live detection"
+                  description="Type or paste a creator URL to update the leading icon immediately."
+                  placeholder="https://instagram.com/creator"
+                />
+                <SocialUrlInput
+                  label="Error state"
+                  defaultValue="not a url"
+                  error="Please enter a valid URL"
+                  placeholder="Paste a creator URL"
+                />
+                {socialUrlExamples.map((example) => (
+                  <SocialUrlInput
+                    key={example.label}
+                    label={example.label}
+                    defaultValue={example.value}
+                    placeholder="Paste a creator URL"
+                  />
+                ))}
               </div>
             </Section>
 
@@ -1199,6 +1235,57 @@ export function ComponentLibrary() {
             <Section title="Community Top Navigation" description="Logged-out desktop top navigation adapted from Figma: organisms/navigation/top/desktop/default.">
               <div className="overflow-hidden rounded-xl border border-border-strong bg-white shadow-xs">
                 <CommunityTopNavigation />
+              </div>
+            </Section>
+
+            <Section title="Step Indicator" description="Compact dots for multi-step flows, plus the named StepLayout progress variants.">
+              <div className="grid gap-4 md:grid-cols-3">
+                {[
+                  { label: 'Step 1 of 5 active', currentStep: 1 },
+                  { label: 'Step 3 of 5 active', currentStep: 3 },
+                  { label: 'Step 5 of 5 active', currentStep: 5 },
+                ].map((example) => (
+                  <div key={example.label} className="space-y-3 rounded-xl border border-border bg-surface p-4 shadow-xs">
+                    <p className="text-sm font-medium text-text">{example.label}</p>
+                    <StepIndicator steps={5} currentStep={example.currentStep} />
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-text">dots variant</p>
+                  <StepLayout
+                    progressVariant="dots"
+                    step={3}
+                    totalSteps={5}
+                    title="Confirm creator details"
+                    description="The compact indicator sits centered in the header area."
+                    primaryAction={{ label: 'Continue' }}
+                    secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                  >
+                    <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
+                      Creator details, audience signal, and review controls render here.
+                    </div>
+                  </StepLayout>
+                </div>
+
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-text">bar variant</p>
+                  <StepLayout
+                    progressVariant="bar"
+                    step={3}
+                    totalSteps={5}
+                    title="Confirm creator details"
+                    description="The original progress bar remains available as the default variant."
+                    primaryAction={{ label: 'Continue' }}
+                    secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                  >
+                    <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
+                      Creator details, audience signal, and review controls render here.
+                    </div>
+                  </StepLayout>
+                </div>
               </div>
             </Section>
 

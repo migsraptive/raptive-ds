@@ -50,12 +50,18 @@ function SignalRow({ label, value, delay = 0 }) {
 
 export function DataGatheringLoader({
   progressMeter = null,
+  progressVariant = 'bar',
+  step = null,
+  totalSteps = null,
   creatorUrl,
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   return (
     <StepLayout
       progressMeter={progressMeter}
+      progressVariant={progressVariant}
+      step={step}
+      totalSteps={totalSteps}
       title="Gathering creator signals before we show what we found."
       titleClassName="max-w-3xl font-newsreader text-hero font-normal"
       description="This screen gives the user immediate feedback that profile, audience, and newsletter data are being assembled."

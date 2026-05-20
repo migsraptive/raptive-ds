@@ -8,6 +8,7 @@ export function SubmissionSuccess({
   summary = null,
   timeline = [],
   showAside = true,
+  footerContent = null,
   primaryAction = { label: 'View creator dashboard' },
   secondaryAction = { label: 'Back to library', variant: 'ghost' },
 }) {
@@ -42,81 +43,81 @@ export function SubmissionSuccess({
               </div>
             )}
 
-            {showAside && (
+            {timeline.length > 0 && (
               <>
                 <div className="max-w-2xl">
                   <p className="text-sm font-medium text-white">What happens now</p>
                 </div>
 
-                {timeline.length > 0 ? (
-                  <div className="max-w-2xl space-y-3">
-                    {timeline.map((item) => (
-                      <div key={item.step} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                <div className="max-w-2xl space-y-3">
+                  {timeline.map((item) => (
+                    <div key={item.step} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                      <span
+                        className={[
+                          'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
+                          item.current
+                            ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15'
+                            : 'border-white/10 bg-white/5',
+                        ].join(' ')}
+                      >
                         <span
                           className={[
-                            'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
-                            item.current
-                              ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15'
-                              : 'border-white/10 bg-white/5',
+                            'h-2.5 w-2.5 rounded-full',
+                            item.current ? 'bg-gamification-gold-light' : 'bg-white/28',
                           ].join(' ')}
-                        >
-                          <span
-                            className={[
-                              'h-2.5 w-2.5 rounded-full',
-                              item.current ? 'bg-gamification-gold-light' : 'bg-white/28',
-                            ].join(' ')}
-                          />
-                        </span>
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-white">{item.title}</p>
-                          <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
-                        </div>
+                        />
+                      </span>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-white">{item.title}</p>
+                        <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="max-w-2xl rounded-xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-sm leading-relaxed text-white/80">
-                      We&apos;ll email the next update as soon as review is complete.
-                    </p>
-                  </div>
-                )}
+                    </div>
+                  ))}
+                </div>
               </>
             )}
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
-            {secondaryAction && (
-              <Button
-                size="lg"
-                variant={secondaryAction.variant ?? 'ghost'}
-                onClick={secondaryAction.onClick}
-                className={
-                  secondaryAction.variant === 'secondary'
-                    ? '!border-white/16 !bg-transparent !text-white hover:!bg-white/8'
-                    : '!text-white hover:!bg-white/10'
-                }
-              >
-                {secondaryAction.label}
-              </Button>
+          <div className="mt-auto space-y-4 pt-8">
+            {footerContent && (
+              <div className="ml-auto max-w-2xl">
+                {footerContent}
+              </div>
             )}
-            {primaryAction && (
-              <Button
-                size="lg"
-                variant={primaryAction.variant ?? 'primary'}
-                onClick={primaryAction.onClick}
-                disabled={primaryAction.disabled}
-                success={primaryAction.success}
-                successLabel={primaryAction.successLabel}
-                className={
-                  primaryAction.variant === 'black'
-                    ? '!border !border-white/12 !bg-neutral-950 !text-white hover:!bg-neutral-900'
-                    : ''
-                }
-              >
-                {primaryAction.label}
-              </Button>
-            )}
+
+            <div className="flex flex-wrap items-center justify-end gap-3">
+              {secondaryAction && (
+                <Button
+                  size="lg"
+                  variant={secondaryAction.variant ?? 'ghost'}
+                  onClick={secondaryAction.onClick}
+                  className={
+                    secondaryAction.variant === 'secondary'
+                      ? '!border-white/16 !bg-transparent !text-white hover:!bg-white/8'
+                      : '!text-white hover:!bg-white/10'
+                  }
+                >
+                  {secondaryAction.label}
+                </Button>
+              )}
+              {primaryAction && (
+                <Button
+                  size="lg"
+                  variant={primaryAction.variant ?? 'primary'}
+                  onClick={primaryAction.onClick}
+                  disabled={primaryAction.disabled}
+                  success={primaryAction.success}
+                  successLabel={primaryAction.successLabel}
+                  className={
+                    primaryAction.variant === 'black' && !primaryAction.disabled
+                      ? '!border !border-white/12 !bg-neutral-950 !text-white hover:!bg-neutral-900'
+                      : ''
+                  }
+                >
+                  {primaryAction.label}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 

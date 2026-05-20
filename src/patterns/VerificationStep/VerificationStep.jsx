@@ -226,7 +226,7 @@ export function VerificationStep({
             />
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
+          <div className="mt-auto flex flex-wrap items-center justify-end gap-3 pt-8">
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}

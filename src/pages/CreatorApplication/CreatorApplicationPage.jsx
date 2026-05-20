@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BadgeCheck, Mail, Rocket, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
+import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
+import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
@@ -13,15 +14,7 @@ import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSu
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
 import { brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 
-const flowSteps = [
-  { id: 'entry', label: 'Entry' },
-  { id: 'gather', label: 'Gather' },
-  { id: 'fetch', label: 'Fetch' },
-  { id: 'review', label: 'Review' },
-  { id: 'preview', label: 'Preview' },
-  { id: 'verify', label: 'Verify' },
-  { id: 'submit', label: 'Submit' },
-]
+const flowStepIds = ['entry', 'gather', 'fetch', 'review', 'preview', 'verify', 'submit']
 
 const initialCreatorUrl = 'https://instagram.com/juliachild'
 const initialReviewFields = {
@@ -55,77 +48,15 @@ const initialAccounts = [
   },
 ]
 
-function currentStepChipLabel(activeStep, recognitionLoading) {
-  if (activeStep === 0) return 'Creator Application'
-  if (activeStep === 1) return 'Gathering signals'
-  if (activeStep === 2) return recognitionLoading ? 'Fetching identity' : 'Confirm details'
-  if (activeStep === 3) return 'Review'
-  if (activeStep === 4) return 'Preview'
-  if (activeStep === 5) return 'Verify'
-  if (activeStep === 6) return 'Submit'
-  return 'Current stage'
-}
-
-function currentStepChipVariant() {
-  return 'brand'
-}
-
 const stepTransition = {
   duration: 0.32,
   ease: [0.2, 0.9, 0.3, 1],
-}
-
-function FlowProgressMeter({
-  label,
-  variant,
-  progress,
-  loading = false,
-  trackColor = null,
-  fillColor = null,
-}) {
-  const progressScale = Math.max(0, Math.min(100, progress)) / 100
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Badge variant={variant} size="sm">{label}</Badge>
-        <span className="text-sm text-text-secondary">{progress}%</span>
-      </div>
-      <div
-        className={trackColor ? 'h-2 rounded-full' : 'h-2 rounded-full bg-surface-sunken'}
-        style={trackColor ? { backgroundColor: trackColor } : undefined}
-      >
-        {loading ? (
-          <div className="relative h-full overflow-hidden rounded-full">
-            <motion.div
-              className={fillColor ? 'absolute inset-y-0 rounded-full' : 'absolute inset-y-0 rounded-full bg-brand'}
-              style={fillColor ? { backgroundColor: fillColor, width: '42%' } : { width: '42%' }}
-              initial={{ x: '-58%' }}
-              animate={{ x: ['-58%', '138%'] }}
-              transition={{
-                repeat: Infinity,
-                repeatType: 'mirror',
-                duration: 1.4,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            />
-          </div>
-        ) : (
-          <div
-            className={fillColor ? 'h-full w-full origin-left rounded-full transition-transform duration-300 will-change-transform' : 'h-full w-full origin-left rounded-full bg-brand transition-transform duration-300 will-change-transform'}
-            style={fillColor ? { backgroundColor: fillColor, transform: `scaleX(${progressScale})` } : { transform: `scaleX(${progressScale})` }}
-          />
-        )}
-      </div>
-    </div>
-  )
 }
 
 export function CreatorApplicationPage({ onOpenLibrary }) {
   const [activeStep, setActiveStep] = useState(0)
   const [creatorUrl, setCreatorUrl] = useState(initialCreatorUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
-  const [recognitionLoading, setRecognitionLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
@@ -137,6 +68,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const [accounts, setAccounts] = useState(initialAccounts)
   const [editingField, setEditingField] = useState(null)
   const [editDraft, setEditDraft] = useState('')
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const actionTimeoutRef = useRef(null)
   const hasSocialAccounts = accounts.length > 0
   const instagramAccount = accounts.find((account) => account.platform === 'Instagram')
@@ -154,16 +86,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
       description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
     },
   ], [instagramAccount])
-
-  useEffect(() => {
-    if (!recognitionLoading) return undefined
-
-    const timeoutId = window.setTimeout(() => {
-      setRecognitionLoading(false)
-    }, 1100)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [recognitionLoading])
 
   useEffect(() => (
     () => {
@@ -190,20 +112,13 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     }
   }, [verificationMethod, verificationMethods])
 
-  const progress = useMemo(
-    () => Math.round(((activeStep + 1) / flowSteps.length) * 100),
-    [activeStep],
-  )
-  const currentStepLabel = currentStepChipLabel(activeStep, recognitionLoading)
-  const currentStepVariant = currentStepChipVariant()
-  const activeStepId = flowSteps[activeStep]?.id ?? 'current-step'
+  const activeStepId = flowStepIds[activeStep] ?? 'current-step'
+  const totalFlowSteps = flowStepIds.length
+  const currentFlowStep = activeStep + 1
   const progressMeter = (
-    <FlowProgressMeter
-      label={currentStepLabel}
-      variant={currentStepVariant}
-      progress={progress}
-      loading={activeStep === 1}
-    />
+    <div className="flex justify-center">
+      <StepIndicator steps={totalFlowSteps} currentStep={currentFlowStep} />
+    </div>
   )
 
   const updateReviewField = (key, value) => {
@@ -217,7 +132,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
     window.setTimeout(() => {
       setIntakeLoading(false)
-      setRecognitionLoading(true)
       setActiveStep(1)
     }, 800)
   }
@@ -301,12 +215,12 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
     setPendingPrimaryAction(null)
     setIntakeLoading(false)
-    setRecognitionLoading(false)
     setCreatorUrl(initialCreatorUrl)
     setReviewFields(initialReviewFields)
     setAccounts(initialAccounts)
     setEditingField(null)
     setEditDraft('')
+    setTermsAccepted(false)
     setVerificationMethod(null)
     setVerificationConfirmed(false)
     setActiveStep(0)
@@ -317,12 +231,12 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 0) {
     content = (
       <SingleFieldIntake
-        progressMeter={progressMeter}
         title="Bring a creator into the application flow with one confident move."
         description="Paste a creator URL or social handle. We’ll recognize the profile, fetch the first identity signals, and show a preview before anything gets submitted."
         value={creatorUrl}
         onChange={(event) => setCreatorUrl(event.target.value)}
         onSubmit={handleIntakeSubmit}
+        progressMeter={progressMeter}
         loading={intakeLoading}
         helperText="No long application form up front."
         ctaLabel="Continue"
@@ -336,9 +250,11 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 1) {
     content = (
       <DataGatheringLoader
-        progressMeter={progressMeter}
         creatorUrl={creatorUrl}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(0) }}
+        progressVariant="dots"
+        step={currentFlowStep}
+        totalSteps={totalFlowSteps}
+        secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: resetApplicationFlow }}
       />
     )
   }
@@ -347,7 +263,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     content = (
       <FetchConfirmation
         loading={false}
-        progressMeter={progressMeter}
         creator={{
           name: reviewFields.name,
           reach: estimatedReach.value,
@@ -355,6 +270,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         }}
         website={reviewFields.url}
         accounts={accounts}
+        progressMeter={progressMeter}
         editingField={editingField}
         editDraft={editDraft}
         onEditDraftChange={setEditDraft}
@@ -364,9 +280,9 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         onAddAccount={addAccount}
         onRemoveAccount={removeAccount}
         secondaryAction={{
-          label: 'Back',
+          label: 'Start over',
           variant: 'ghost',
-          onClick: () => setActiveStep(1),
+          onClick: resetApplicationFlow,
         }}
         primaryAction={{
           label: 'Looks right',
@@ -385,11 +301,11 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 3) {
     content = (
       <ReviewCorrection
-        progressMeter={progressMeter}
         title="Make any corrections before we build the preview."
         description="This should feel like refining a strong starting point, not filling out a form from scratch."
         fields={reviewFields}
         onFieldChange={updateReviewField}
+        progressMeter={progressMeter}
         brandAssets={{
           palette: brandPreviewPalette,
           items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
@@ -414,13 +330,13 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 4) {
     content = (
       <CommunityPreviewCard
-        progressMeter={progressMeter}
         title="This is what the creator experience could start to look like."
         description="The preview should feel plausible, branded, and emotionally rewarding without pretending it is final."
         creator={{
           name: reviewFields.name,
           summary: reviewFields.summary,
         }}
+        progressMeter={progressMeter}
         categories={['Food', 'Parenting']}
         stats={[
           { label: 'Example posts', value: '12' },
@@ -460,12 +376,12 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 5) {
     content = (
       <VerificationStep
-        progressMeter={progressMeter}
         title="One last check so we know this request is really coming from the creator."
         description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
         methods={verificationMethods}
         selectedMethod={verificationMethod}
         onSelectMethod={handleVerificationMethodChange}
+        progressMeter={progressMeter}
         confirmed={verificationConfirmed}
         onConfirmChange={setVerificationConfirmed}
         reassurance={[
@@ -520,14 +436,14 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 6) {
     content = (
       <SubmissionSuccess
-        progressMeter={progressMeter}
-        title="You’re on the list. We’ll take it from here."
+        title="Ready to submit. We’ll take it from here."
         summary="Hold application ID CHILD-453 for reference. Next, we’ll review the setup across brand, audience, and community fit before making a decision. Expect a follow-up by email within 24–48 hours."
+        progressMeter={progressMeter}
         timeline={[
           {
             step: 'submitted',
             title: 'Submitted',
-            description: 'Today we received your details.',
+            description: 'Today your details move into review.',
             current: true,
           },
           {
@@ -542,17 +458,24 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
+        footerContent={(
+          <Checkbox
+            checked={termsAccepted}
+            onChange={(event) => setTermsAccepted(event.target.checked)}
+            label="I agree to the Raptive Community Terms of Service"
+          />
+        )}
         secondaryAction={{
           label: 'Start new application',
           variant: 'secondary',
           onClick: resetApplicationFlow,
         }}
         primaryAction={{
-          label: 'Close',
+          label: 'Submit application',
           variant: 'black',
-          disabled: pendingPrimaryAction === 'submit-primary',
+          disabled: !termsAccepted || pendingPrimaryAction === 'submit-primary',
           success: pendingPrimaryAction === 'submit-primary',
-          successLabel: 'All set',
+          successLabel: 'Submitted',
           onClick: () => triggerPrimaryAction({
             key: 'submit-primary',
             run: onOpenLibrary,

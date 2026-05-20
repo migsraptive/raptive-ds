@@ -1,8 +1,8 @@
-import { Link2, LoaderCircle } from 'lucide-react'
+import { LoaderCircle } from 'lucide-react'
 import entryIllustrationUrl from '../../assets/entry-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
-import { TextInput } from '../../components/TextInput/TextInput.jsx'
+import { SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
 
 export function SingleFieldIntake({
   title,
@@ -41,12 +41,11 @@ export function SingleFieldIntake({
             </div>
 
             <div className="max-w-2xl">
-              <TextInput
+              <SocialUrlInput
                 placeholder="Paste a creator URL or social profile"
                 value={value}
                 onChange={onChange}
                 description={helperText}
-                prefix={<LucideIcon icon={Link2} size="md" stroke="display" />}
                 suffix={loading ? (
                   <span className="flex items-center text-text-tertiary">
                     <LucideIcon icon={LoaderCircle} size="sm" stroke="standard" className="animate-spin" />
@@ -70,7 +69,7 @@ export function SingleFieldIntake({
           </div>
 
           <div className="mt-auto pt-8">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center justify-end gap-3">
               <Button size="lg" onClick={onSubmit} success={loading} successLabel={ctaSuccessLabel} disabled={ctaDisabled}>
                 {ctaLabel}
               </Button>
