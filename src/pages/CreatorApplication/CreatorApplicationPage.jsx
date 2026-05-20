@@ -75,12 +75,6 @@ const stepTransition = {
   ease: [0.2, 0.9, 0.3, 1],
 }
 
-const stepSpring = {
-  type: 'spring',
-  stiffness: 260,
-  damping: 26,
-}
-
 function FlowProgressMeter({
   label,
   variant,
@@ -89,6 +83,8 @@ function FlowProgressMeter({
   trackColor = null,
   fillColor = null,
 }) {
+  const progressScale = Math.max(0, Math.min(100, progress)) / 100
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -115,12 +111,9 @@ function FlowProgressMeter({
             />
           </div>
         ) : (
-          <motion.div
-            className={fillColor ? 'h-full rounded-full transition-[width] duration-300' : 'h-full rounded-full bg-brand transition-[width] duration-300'}
-            style={fillColor ? { backgroundColor: fillColor } : undefined}
-            initial={false}
-            animate={{ width: `${progress}%` }}
-            transition={stepSpring}
+          <div
+            className={fillColor ? 'h-full w-full origin-left rounded-full transition-transform duration-300 will-change-transform' : 'h-full w-full origin-left rounded-full bg-brand transition-transform duration-300 will-change-transform'}
+            style={fillColor ? { backgroundColor: fillColor, transform: `scaleX(${progressScale})` } : { transform: `scaleX(${progressScale})` }}
           />
         )}
       </div>

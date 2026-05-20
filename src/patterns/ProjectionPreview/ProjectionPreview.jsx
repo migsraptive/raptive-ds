@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Button } from '../../components/Button/Button.jsx'
 
 const revealTransition = {
@@ -11,7 +11,14 @@ const barDurationMs = 840
 const revealPauseMs = 1000
 const pipelineCardHeight = 'min-h-40'
 
+function percentToScale(width) {
+  const parsedWidth = Number.parseFloat(width)
+  return Number.isFinite(parsedWidth) ? parsedWidth / 100 : 0
+}
+
 function AnimatedPipelineBar({ id, width, delay }) {
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : barDurationMs / 1000
   const [filled, setFilled] = useState(false)
 
   useEffect(() => {
@@ -21,12 +28,14 @@ function AnimatedPipelineBar({ id, width, delay }) {
 
   return (
     <div className="mt-4 h-3 overflow-hidden rounded-full bg-gamification-gold-light">
-      <motion.div
+      <div
         key={id}
-        className="h-full rounded-full bg-status-success-text"
-        initial={false}
-        animate={{ width: filled ? width : '0%' }}
-        transition={{ duration: barDurationMs / 1000, ease: [0.16, 1, 0.3, 1] }}
+        className="h-full w-full origin-left rounded-full bg-status-success-text transition-transform will-change-transform"
+        style={{
+          transform: `scaleX(${filled ? percentToScale(width) : 0})`,
+          transitionDuration: `${duration}s`,
+          transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
       />
     </div>
   )
@@ -50,12 +59,15 @@ function PipelineSkeleton({ label }) {
 }
 
 function PipelineNode({ label, value, sublabel, detail, width, barDelay = 0.12 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : revealTransition.duration
+
   return (
     <motion.div
       className={`h-full min-w-0 flex-1 rounded-xl border border-border bg-surface p-4 ${pipelineCardHeight}`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={revealTransition}
+      transition={{ ...revealTransition, duration }}
     >
       <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
         {label}

@@ -1,5 +1,6 @@
 import { useId } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { useReducedMotion } from 'motion/react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 export function AccordionPanel({
@@ -11,6 +12,8 @@ export function AccordionPanel({
   children,
 }) {
   const panelId = useId()
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : 0.15
 
   return (
     <div className="bg-surface">
@@ -38,6 +41,7 @@ export function AccordionPanel({
             'flex h-6 w-6 flex-shrink-0 items-center justify-center text-text-secondary transition-transform duration-150',
             open ? 'rotate-180' : '',
           ].join(' ')}
+          style={{ transitionDuration: `${duration}s` }}
         >
           <LucideIcon icon={ChevronDown} size="sm" />
         </span>

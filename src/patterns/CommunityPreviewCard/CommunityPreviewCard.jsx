@@ -1,5 +1,5 @@
 import previewIllustrationUrl from '../../assets/preview-illustration.png'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Button } from '../../components/Button/Button.jsx'
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 
@@ -20,6 +20,10 @@ export function CommunityPreviewCard({
   primaryAction = { label: 'This feels right' },
   secondaryAction = { label: 'Edit details', variant: 'ghost' },
 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : revealTransition.duration
+  const previewDuration = shouldReduceMotion ? 0.01 : 0.6
+  const transition = { ...revealTransition, duration }
   const creatorName = creator?.name ?? 'Creator'
   const creatorSummary = creator?.summary ?? 'A creator-led community preview will appear here once the profile details are ready.'
   const communityCategories = categories.length > 0 ? categories.join(', ').toLowerCase() : 'this creator community'
@@ -40,12 +44,12 @@ export function CommunityPreviewCard({
           className="flex h-full flex-col p-8 lg:p-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={revealTransition}
+          transition={transition}
         >
           <div className="space-y-8">
             {progressMeter}
 
-            <motion.div className="space-y-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={revealTransition}>
+            <motion.div className="space-y-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={transition}>
               <div className="space-y-3">
                 <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
                   {title}
@@ -63,7 +67,7 @@ export function CommunityPreviewCard({
               className="relative h-[451px] w-[634px] overflow-hidden rounded-lg border border-border bg-surface shadow-sm will-change-transform"
               initial={{ opacity: 0, y: 22, scale: 0.975 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ ...revealTransition, delay: 0.08 }}
+              transition={{ ...transition, delay: 0.08 }}
             >
               <motion.div
                 className="absolute left-0 top-0"
@@ -74,7 +78,7 @@ export function CommunityPreviewCard({
                   transformOrigin: 'top left',
                 }}
                 animate={{ y: [8, 0], scale: [0.435, 0.44] }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.14 }}
+                transition={{ duration: previewDuration, ease: [0.22, 1, 0.36, 1], delay: 0.14 }}
               >
                 <HomeFeedPageTemplate
                   brandName={creatorName}
@@ -111,7 +115,7 @@ export function CommunityPreviewCard({
             </motion.div>
           </div>
 
-          <motion.div className="mt-auto flex flex-wrap items-center gap-3 pt-8" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.16 }}>
+          <motion.div className="mt-auto flex flex-wrap items-center gap-3 pt-8" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...transition, delay: 0.16 }}>
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
@@ -129,7 +133,7 @@ export function CommunityPreviewCard({
           className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}
           initial={{ opacity: 0, x: 18 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ ...revealTransition, delay: 0.1 }}
+          transition={{ ...transition, delay: 0.1 }}
         >
           <div className={showAside ? 'space-y-4' : 'h-full'}>
             {/* no token available: fixed preview frame and full-height illustration mock preserve desktop composition. */}

@@ -1,5 +1,5 @@
 import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Avatar } from '../../components/Avatar/Avatar.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
@@ -36,6 +36,11 @@ export function RecognitionState({
   primaryAction = { label: 'Looks right' },
   secondaryAction = { label: 'Edit details', variant: 'ghost' },
 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : sectionTransition.duration
+  const transition = { ...sectionTransition, duration }
+  const layoutTransition = shouldReduceMotion ? { duration: 0.01 } : cardSpring
+
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.1fr)_360px]">
@@ -44,9 +49,9 @@ export function RecognitionState({
           className="space-y-8 p-8 lg:p-12"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={sectionTransition}
+          transition={transition}
         >
-          <motion.div className="space-y-4" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={sectionTransition}>
+          <motion.div className="space-y-4" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={transition}>
             <Badge variant={loading ? 'warning' : 'brand'} size="sm">
               {eyebrow}
             </Badge>
@@ -65,7 +70,7 @@ export function RecognitionState({
           <motion.div
             className="rounded-2xl border border-border bg-surface-raised p-6"
             layout
-            transition={cardSpring}
+            transition={layoutTransition}
           >
             <AnimatePresence mode="wait" initial={false}>
               {loading ? (
@@ -109,9 +114,9 @@ export function RecognitionState({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={sectionTransition}
+                  transition={transition}
                 >
-                <motion.div className="flex items-center gap-4" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...sectionTransition, delay: 0.04 }}>
+                <motion.div className="flex items-center gap-4" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...transition, delay: 0.04 }}>
                   <Avatar
                     src={profile?.avatar}
                     name={profile?.name}
@@ -132,7 +137,7 @@ export function RecognitionState({
                       className="rounded-3xl border border-border bg-white p-4"
                       initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ ...sectionTransition, delay: 0.08 + index * 0.06 }}
+                      transition={{ ...transition, delay: 0.08 + index * 0.06 }}
                     >
                       <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{signal.label}</p>
                       <p className="mt-2 text-sm font-medium text-text">{signal.value}</p>
@@ -145,7 +150,7 @@ export function RecognitionState({
             </AnimatePresence>
           </motion.div>
 
-          <motion.div className="flex flex-wrap items-center gap-3" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...sectionTransition, delay: 0.12 }}>
+          <motion.div className="flex flex-wrap items-center gap-3" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...transition, delay: 0.12 }}>
             {secondaryAction && (
               <Button variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
@@ -163,7 +168,7 @@ export function RecognitionState({
           className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}
           initial={{ opacity: 0, x: 18 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ ...sectionTransition, delay: 0.08 }}
+          transition={{ ...transition, delay: 0.08 }}
         >
           <div className={showAside ? 'space-y-4' : 'h-full'}>
             <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-white shadow-xs' : 'relative h-full'].join(' ')}>

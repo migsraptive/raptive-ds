@@ -18,7 +18,7 @@ export function ColorSwatchButton({
       type="button"
       onClick={onClick}
       className={[
-        'relative flex w-full items-end border text-left shadow-xs transition-all duration-150',
+        'relative flex w-full items-end border text-left shadow-xs transition-[background-color,border-color] duration-150',
         sizeClassName,
         selected ? 'border-text shadow-sm ring-2 ring-brand-subtle' : 'border-border hover:border-border-strong',
         className,

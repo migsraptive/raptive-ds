@@ -1,5 +1,5 @@
 import { LoaderCircle } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 /**
@@ -102,6 +102,9 @@ export function Button({
   className = '',
   ...props
 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const scaleDuration = shouldReduceMotion ? 0.01 : 0.22
+  const labelDuration = shouldReduceMotion ? 0.01 : 0.24
   const isDisabled = disabled || loading || success
   const isLink = variant === 'link'
   const successVariant = successVariants[variant]
@@ -109,7 +112,7 @@ export function Button({
 
   const base = [
     'relative inline-flex items-center justify-center overflow-hidden font-bold',
-    'transition-all duration-150',
+    'transition-[background-color,color,border-color,opacity] duration-150',
     'select-none whitespace-nowrap',
     fullWidth ? 'w-full' : '',
     !isLink ? sizes[size] : '',
@@ -127,7 +130,7 @@ export function Button({
       animate={{
         scale: success ? 0.985 : 1,
       }}
-      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: scaleDuration, ease: [0.22, 1, 0.36, 1] }}
       {...props}
     >
       {success && successOverlay && (
@@ -183,7 +186,7 @@ export function Button({
               initial={{ opacity: 0, filter: 'blur(6px)', y: 6 }}
               animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
               exit={{ opacity: 0, filter: 'blur(6px)', y: -6 }}
-              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: labelDuration, ease: [0.22, 1, 0.36, 1] }}
               className="inline-flex items-center gap-2"
             >
               {iconBefore ? (

@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { StepLayout } from '../StepLayout/StepLayout.jsx'
 
 const revealTransition = {
@@ -14,12 +14,15 @@ const pulseTransition = {
 }
 
 function SignalRow({ label, value, delay = 0 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : revealTransition.duration
+
   return (
     <motion.div
       className="relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-border bg-surface px-4 py-3"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ ...revealTransition, delay }}
+      transition={{ ...revealTransition, duration, delay }}
     >
       <motion.span
         aria-hidden="true"

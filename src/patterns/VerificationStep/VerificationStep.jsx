@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Copy } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
@@ -11,6 +11,7 @@ function InstagramDmInlineDetail({
   confirmed,
   confirmSentPending,
   onConfirmSent,
+  open = true,
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -31,13 +32,12 @@ function InstagramDmInlineDetail({
   }
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, height: 0, y: -8 }}
-      animate={{ opacity: 1, height: 'auto', y: 0 }}
-      exit={{ opacity: 0, height: 0, y: -8 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="overflow-hidden"
+    <div
+      className={[
+        'overflow-hidden transition-[max-height]',
+        open ? 'max-h-96 duration-200 ease-out' : 'max-h-0 duration-150 ease-in',
+      ].join(' ')}
+      aria-hidden={!open}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-3">
@@ -50,10 +50,10 @@ function InstagramDmInlineDetail({
         </div>
 
         <div className="flex flex-wrap gap-2 lg:flex-shrink-0">
-          <Button size="sm" onClick={onConfirmSent} success={confirmSentPending} successLabel="Sent" disabled={!confirmed}>
+          <Button size="sm" onClick={onConfirmSent} success={confirmSentPending} successLabel="Sent" disabled={!open || !confirmed}>
             I&apos;ve sent it
           </Button>
-          <Button size="sm" variant="secondary" onClick={handleCopyCode} success={copied} successLabel="Copied">
+          <Button size="sm" variant="secondary" onClick={handleCopyCode} success={copied} successLabel="Copied" disabled={!open}>
             <span className="inline-flex items-center gap-2">
               <LucideIcon icon={Copy} size="sm" stroke="standard" />
               <span>Copy code</span>
@@ -61,7 +61,7 @@ function InstagramDmInlineDetail({
           </Button>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -114,7 +114,7 @@ export function VerificationStep({
                     layout
                     transition={{ type: 'spring', stiffness: 260, damping: 28 }}
                     className={[
-                      'overflow-hidden rounded-3xl border px-5 py-4 transition-all duration-150',
+                      'overflow-hidden rounded-3xl border px-5 py-4 transition-[background-color,color,border-color,box-shadow] duration-150',
                       isSelected
                         ? 'border-brand bg-brand-subtle shadow-brand-glow'
                         : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
@@ -187,25 +187,25 @@ export function VerificationStep({
                       </span>
                     </motion.button>
 
-                    <AnimatePresence initial={false}>
-                      {dmExpanded ? (
-                        <motion.div
-                          key="detail"
-                          initial={{ opacity: 0, height: 0, y: -8 }}
-                          animate={{ opacity: 1, height: 'auto', y: 0 }}
-                          exit={{ opacity: 0, height: 0, y: -8 }}
-                          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                          className="overflow-hidden pt-3"
-                        >
+                    {method.value === 'instagram-dm' && instagramDmDetail ? (
+                      <div
+                        className={[
+                          'overflow-hidden transition-[max-height]',
+                          dmExpanded ? 'max-h-96 duration-200 ease-out' : 'max-h-0 duration-150 ease-in',
+                        ].join(' ')}
+                        aria-hidden={!dmExpanded}
+                      >
+                        <div className="pt-3">
                           <InstagramDmInlineDetail
                             code={instagramDmDetail.code}
                             confirmed={confirmed}
                             confirmSentPending={instagramDmDetail.confirmSentPending}
                             onConfirmSent={onConfirmDmSent}
+                            open={dmExpanded}
                           />
-                        </motion.div>
-                      ) : null}
-                    </AnimatePresence>
+                        </div>
+                      </div>
+                    ) : null}
                   </motion.div>
                 )
               }) : (

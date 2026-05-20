@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 export function OptionTile({
@@ -13,6 +13,37 @@ export function OptionTile({
   onClick,
   className = '',
 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const tileTransition = shouldReduceMotion
+    ? { duration: 0.01 }
+    : {
+        type: 'spring',
+        stiffness: 360,
+        damping: 28,
+      }
+  const iconTransition = shouldReduceMotion
+    ? { duration: 0.01 }
+    : {
+        type: 'spring',
+        stiffness: 340,
+        damping: 24,
+      }
+  const selectionTransition = shouldReduceMotion
+    ? { duration: 0.01 }
+    : {
+        type: 'spring',
+        stiffness: 380,
+        damping: 24,
+      }
+  const titleTransition = shouldReduceMotion
+    ? { duration: 0.01 }
+    : {
+        type: 'spring',
+        stiffness: 320,
+        damping: 28,
+      }
+  const indicatorDuration = shouldReduceMotion ? 0.01 : 0.18
+
   return (
     <motion.button
       type="button"
@@ -25,13 +56,9 @@ export function OptionTile({
         scale: selected ? 1.015 : 1,
         y: selected ? -2 : 0,
       }}
-      transition={{
-        type: 'spring',
-        stiffness: 360,
-        damping: 28,
-      }}
+      transition={tileTransition}
       className={[
-        'relative flex min-h-32 w-full flex-col items-start gap-3 rounded-3xl border px-5 py-4 text-left transition-all duration-150 will-change-transform',
+        'relative flex min-h-32 w-full flex-col items-start gap-3 rounded-3xl border px-5 py-4 text-left transition-[background-color,color,box-shadow] duration-150 will-change-transform',
         selected
           ? 'border-brand bg-brand-subtle shadow-brand-glow'
           : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
@@ -47,11 +74,7 @@ export function OptionTile({
               rotate: selected ? -4 : 0,
               scale: selected ? 1.05 : 1,
             }}
-            transition={{
-              type: 'spring',
-              stiffness: 340,
-              damping: 24,
-            }}
+            transition={iconTransition}
           >
             {icon}
           </motion.span>
@@ -61,11 +84,7 @@ export function OptionTile({
             animate={{
               scale: selected ? 1 : 0.92,
             }}
-            transition={{
-              type: 'spring',
-              stiffness: 380,
-              damping: 24,
-            }}
+            transition={selectionTransition}
             className={[
               'flex h-6 w-6 items-center justify-center rounded-full border',
               selected ? 'border-brand bg-surface' : 'border-border bg-surface',
@@ -76,7 +95,7 @@ export function OptionTile({
                 opacity: selected ? 1 : 0,
                 scale: selected ? 1 : 0.45,
               }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              transition={{ duration: indicatorDuration, ease: 'easeOut' }}
               className="h-3 w-3 rounded-full bg-brand"
             />
           </motion.span>
@@ -85,11 +104,7 @@ export function OptionTile({
             animate={{
               scale: selected ? 1 : 0.92,
             }}
-            transition={{
-              type: 'spring',
-              stiffness: 380,
-              damping: 24,
-            }}
+            transition={selectionTransition}
             className={[
               'flex h-6 w-6 items-center justify-center rounded-full border',
               selected ? 'border-brand bg-brand text-white' : 'border-border bg-surface text-transparent',
@@ -100,7 +115,7 @@ export function OptionTile({
                 opacity: selected ? 1 : 0,
                 scale: selected ? 1 : 0.6,
               }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              transition={{ duration: indicatorDuration, ease: 'easeOut' }}
             >
               <LucideIcon icon={Check} size="sm" stroke="strong" />
             </motion.span>
@@ -111,11 +126,7 @@ export function OptionTile({
         <motion.span
           className="block text-base font-medium text-text"
           animate={{ x: selected ? 2 : 0 }}
-          transition={{
-            type: 'spring',
-            stiffness: 320,
-            damping: 28,
-          }}
+          transition={titleTransition}
         >
           {title}
         </motion.span>

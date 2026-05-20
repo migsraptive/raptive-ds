@@ -10,15 +10,22 @@ const barDurationMs = 840
 const revealPauseMs = 1000
 const pipelineCardHeight = 'min-h-40'
 
+function percentToScale(width) {
+  const parsedWidth = Number.parseFloat(width)
+  return Number.isFinite(parsedWidth) ? parsedWidth / 100 : 0
+}
+
 function AnimatedPipelineBar({ id, width, filled }) {
   return (
     <div className="mt-5 h-3 overflow-hidden rounded-full bg-surface-sunken">
-      <motion.div
+      <div
         key={id}
-        className="h-full rounded-full bg-brand"
-        initial={false}
-        animate={{ width: filled ? width : '0%' }}
-        transition={{ duration: barDurationMs / 1000, ease: [0.16, 1, 0.3, 1] }}
+        className="h-full w-full origin-left rounded-full bg-brand transition-transform will-change-transform"
+        style={{
+          transform: `scaleX(${filled ? percentToScale(width) : 0})`,
+          transitionDuration: `${barDurationMs}ms`,
+          transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
       />
     </div>
   )

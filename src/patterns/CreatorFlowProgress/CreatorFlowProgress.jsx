@@ -3,6 +3,8 @@ export function CreatorFlowProgress({
   activeStep = 0,
   progress = 0,
 }) {
+  const progressScale = Math.max(0, Math.min(100, progress)) / 100
+
   return (
     <div className="space-y-4 rounded-2xl border border-border bg-surface-raised p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -34,8 +36,8 @@ export function CreatorFlowProgress({
           </div>
           <div className="h-2 rounded-full bg-surface-sunken">
             <div
-              className="h-full rounded-full bg-brand transition-[width] duration-300"
-              style={{ width: `${progress}%` }}
+              className="h-full w-full origin-left rounded-full bg-brand transition-transform duration-300 will-change-transform"
+              style={{ transform: `scaleX(${progressScale})` }}
             />
           </div>
         </div>

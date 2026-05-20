@@ -15,14 +15,15 @@ export function StepLayout({
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   const progress = step && totalSteps ? Math.min(100, Math.round((step / totalSteps) * 100)) : null
+  const progressScale = progress != null ? progress / 100 : 0
 
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="h-1.5 bg-surface-sunken">
         {progress != null && (
           <div
-            className="h-full rounded-r-full bg-brand transition-[width] duration-300"
-            style={{ width: `${progress}%` }}
+            className="h-full w-full origin-left rounded-r-full bg-brand transition-transform duration-300 will-change-transform"
+            style={{ transform: `scaleX(${progressScale})` }}
           />
         )}
       </div>
