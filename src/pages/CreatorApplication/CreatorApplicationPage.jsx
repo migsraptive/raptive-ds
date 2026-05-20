@@ -280,7 +280,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   }
 
   const handleVerificationContinue = () => {
-    setActiveStep(7)
+    setActiveStep(6)
   }
 
   const triggerPrimaryAction = ({ key, delay = 1100, run }) => {
@@ -500,7 +500,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         }}
         onConfirmDmSent={() => triggerPrimaryAction({
           key: 'verify-dm-primary',
-          run: () => setActiveStep(7),
+          run: () => setActiveStep(6),
         })}
         secondaryAction={{
           label: 'Back',
