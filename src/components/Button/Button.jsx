@@ -11,9 +11,9 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 const variants = {
   primary: [
-    'bg-action-primary text-white',
-    'hover:bg-action-primary-hover active:bg-action-primary-active',
-    'focus-visible:ring-2 focus-visible:ring-action-primary focus-visible:ring-offset-2',
+    'bg-brand text-surface-invert',
+    'hover:bg-brand/90 active:bg-brand/80',
+    'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
     'disabled:bg-neutral-200 disabled:text-text-disabled disabled:cursor-not-allowed',
   ].join(' '),
 
