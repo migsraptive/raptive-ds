@@ -8,8 +8,6 @@ import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 
 function InstagramDmInlineDetail({
   code,
-  destinationHandle,
-  originHandle,
   confirmed,
   confirmSentPending,
   onConfirmSent,
@@ -84,8 +82,9 @@ export function VerificationStep({
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_360px]">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
@@ -126,7 +125,7 @@ export function VerificationStep({
                       onClick={() => onSelectMethod?.(method.value)}
                       className={[
                         'flex w-full flex-col items-start gap-3 text-left',
-                        compressOtherRows ? 'min-h-[112px]' : dmExpanded ? 'min-h-[132px]' : 'min-h-[148px]',
+                        compressOtherRows ? 'min-h-28' : dmExpanded ? 'min-h-32' : 'min-h-36',
                       ].join(' ')}
                       whileHover={{ y: -2, scale: 1.01 }}
                       whileTap={{ scale: 0.985 }}
@@ -200,8 +199,6 @@ export function VerificationStep({
                         >
                           <InstagramDmInlineDetail
                             code={instagramDmDetail.code}
-                            destinationHandle={instagramDmDetail.destinationHandle}
-                            originHandle={instagramDmDetail.originHandle}
                             confirmed={confirmed}
                             confirmSentPending={instagramDmDetail.confirmSentPending}
                             onConfirmSent={onConfirmDmSent}
@@ -212,7 +209,7 @@ export function VerificationStep({
                   </motion.div>
                 )
               }) : (
-                <div className="rounded-[28px] border border-border bg-surface-raised p-5">
+                <div className="rounded-2xl border border-border bg-surface-raised p-5">
                   <p className="text-sm leading-relaxed text-text-secondary">
                     Verification methods will appear here once a creator contact path is available.
                   </p>
@@ -252,7 +249,8 @@ export function VerificationStep({
 
         <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+              {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-square' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
                   src={verificationIllustrationUrl}
@@ -278,7 +276,7 @@ export function VerificationStep({
                 </p>
               </div>
 
-              <div className="rounded-[28px] border border-border bg-surface p-5">
+              <div className="rounded-2xl border border-border bg-surface p-5">
                 <div className="space-y-3">
                   <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">What happens next</p>
                   <div className="space-y-3">

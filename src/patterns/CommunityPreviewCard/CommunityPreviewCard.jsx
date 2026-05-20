@@ -33,8 +33,9 @@ export function CommunityPreviewCard({
   const earlyMembersValue = stats.find((stat) => stat.label === 'Early members')?.value ?? '186'
 
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <motion.div
           className="flex h-full flex-col p-8 lg:p-12"
           initial={{ opacity: 0, y: 20 }}
@@ -57,8 +58,9 @@ export function CommunityPreviewCard({
               </div>
             </motion.div>
 
+            {/* no token available: fixed preview frame preserves the scaled desktop mock aspect. */}
             <motion.div
-              className="relative h-[451px] w-[634px] overflow-hidden rounded-[16px] border border-border bg-surface shadow-sm will-change-transform"
+              className="relative h-[451px] w-[634px] overflow-hidden rounded-lg border border-border bg-surface shadow-sm will-change-transform"
               initial={{ opacity: 0, y: 22, scale: 0.975 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ ...revealTransition, delay: 0.08 }}
@@ -130,7 +132,8 @@ export function CommunityPreviewCard({
           transition={{ ...revealTransition, delay: 0.1 }}
         >
           <div className={showAside ? 'space-y-4' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+            {/* no token available: fixed preview frame and full-height illustration mock preserve desktop composition. */}
+            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
               <div className={['relative', showAside ? 'aspect-[3/2]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
                   src={previewIllustrationUrl}

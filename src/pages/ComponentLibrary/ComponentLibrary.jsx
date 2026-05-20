@@ -26,13 +26,17 @@ import { Button } from '../../components/Button/Button.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { Avatar, AvatarGroup } from '../../components/Avatar/Avatar.jsx'
+import { AvatarUpload } from '../../components/AvatarUpload/AvatarUpload.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
+import { ColorInput } from '../../components/ColorInput/ColorInput.jsx'
+import { ColorSwatchButton } from '../../components/ColorSwatchButton/ColorSwatchButton.jsx'
 import { FieldShell } from '../../components/FormField/FieldShell.jsx'
 import { FormField } from '../../components/FormField/FormField.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
 import { RadioGroup } from '../../components/RadioGroup/RadioGroup.jsx'
 import { Select } from '../../components/Select/Select.jsx'
+import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { AuthorRow } from '../../components/AuthorRow/AuthorRow.jsx'
@@ -49,6 +53,7 @@ import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/Righ
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
+import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
@@ -63,6 +68,7 @@ import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSu
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
 import { colors as colorTokens } from '../../tokens/colors.js'
 import { typography as typographyTokens } from '../../tokens/typography.js'
+import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ title, description, children }) {
@@ -155,6 +161,11 @@ export function ComponentLibrary() {
   const [selectedTiles, setSelectedTiles] = useState(['community'])
   const [selectedGoals, setSelectedGoals] = useState(['audience-growth', 'community'])
   const [newsletterOptIn, setNewsletterOptIn] = useState(true)
+  const [primaryButtonColor, setPrimaryButtonColor] = useState(brandPreviewDefaults.primary)
+  const [secondaryButtonColor, setSecondaryButtonColor] = useState(brandPreviewDefaults.secondary)
+  const [selectedSwatch, setSelectedSwatch] = useState(brandPreviewDefaults.secondary)
+  const [demoAvatar, setDemoAvatar] = useState(null)
+  const [demoShape, setDemoShape] = useState('circle')
   const [categorySearch, setCategorySearch] = useState('')
   const [selectedCategories, setSelectedCategories] = useState(['food', 'parenting'])
   const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/juliachild')
@@ -264,7 +275,7 @@ export function ComponentLibrary() {
 
       <main
         className={[
-          activeSection === 'Pages' ? 'max-w-none' : 'max-w-5xl',
+          activeSection === 'Pages' ? 'max-w-none' : activeSection === 'Patterns' ? 'max-w-6xl' : 'max-w-5xl',
           'mx-auto px-6 py-10 space-y-14',
         ].join(' ')}
       >
@@ -336,7 +347,7 @@ export function ComponentLibrary() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Usage Notes</p>
-                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-2">
+                  <div className="space-y-2 rounded-xl border border-border bg-surface-raised p-4">
                     <p className="text-sm text-text"><span className="font-medium">Primary:</span> headings, body, default actions</p>
                     <p className="text-sm text-text-secondary"><span className="font-medium text-text">Secondary:</span> supporting labels, helper text, and metadata</p>
                     <p className="text-sm text-text-tertiary"><span className="font-medium text-text">Tertiary:</span> lower-emphasis metadata and optional inline qualifiers</p>
@@ -351,7 +362,7 @@ export function ComponentLibrary() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Font Family + Weight Tokens</p>
-                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-3">
+                  <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
                     <div className="flex items-baseline justify-between gap-4">
                       <span className="text-xs font-mono text-text-tertiary">family.font family</span>
                       <span className="font-sans text-sm text-text">DM Sans</span>
@@ -375,7 +386,7 @@ export function ComponentLibrary() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Line Height + Letter Spacing Tokens</p>
-                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-3">
+                  <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
                     {[
                       ['line-height.xs', typographyTokens.lineHeight.xs],
                       ['line-height.sm', typographyTokens.lineHeight.sm],
@@ -551,6 +562,58 @@ export function ComponentLibrary() {
                     { value: 'increase-revenue', label: 'Increase revenue', description: 'Focus on monetization and sponsorship readiness.' },
                     { value: 'build-community', label: 'Build community', description: 'Encourage repeat participation and loyalty.' },
                   ]}
+                />
+              </div>
+            </Section>
+
+            <Section title="Color Swatch Button" description="Reusable palette-choice control for theme and brand-preview flows.">
+              <FormField
+                label="Brand palette"
+                description="Pick the accent color that should lead the first preview impression."
+              >
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {brandPreviewPalette.map((color) => (
+                    <ColorSwatchButton
+                      key={color}
+                      color={color}
+                      selected={selectedSwatch === color}
+                      onClick={() => setSelectedSwatch(color)}
+                    />
+                  ))}
+                </div>
+              </FormField>
+            </Section>
+
+            <Section title="Color Input" description="Hex entry plus native color picker with automatic black/white foreground guidance.">
+              <div className="grid gap-4 md:grid-cols-2">
+                <ColorInput
+                  label="Main button"
+                  value={primaryButtonColor}
+                  onChange={setPrimaryButtonColor}
+                />
+                <ColorInput
+                  label="Back button"
+                  value={secondaryButtonColor}
+                  onChange={setSecondaryButtonColor}
+                />
+              </div>
+            </Section>
+
+            <Section title="Avatar Upload And Shape" description="Reusable upload and shape controls for preview/editor surfaces.">
+              <div className="grid gap-6 md:grid-cols-2">
+                <AvatarUpload
+                  label="Avatar"
+                  value={demoAvatar}
+                  onChange={setDemoAvatar}
+                />
+                <SegmentedControl
+                  label="Logo shape"
+                  value={demoShape}
+                  options={[
+                    { value: 'circle', label: 'Circle' },
+                    { value: 'rectangle', label: 'Rectangle' },
+                  ]}
+                  onChange={setDemoShape}
                 />
               </div>
             </Section>
@@ -1007,19 +1070,19 @@ export function ComponentLibrary() {
         {activeSection === 'Navigation' && (
           <>
             <Section title="Community Top Navigation" description="Logged-out desktop top navigation adapted from Figma: organisms/navigation/top/desktop/default.">
-              <div className="overflow-hidden rounded-[20px] border border-border-strong bg-white shadow-xs">
+              <div className="overflow-hidden rounded-xl border border-border-strong bg-white shadow-xs">
                 <CommunityTopNavigation />
               </div>
             </Section>
 
             <Section title="Community Sidebar" description="Desktop community navigation sidebar adapted from Figma: organisms/navigation/desktop/sidebar.">
-              <div className="overflow-hidden rounded-[20px] border border-border-strong bg-white shadow-xs">
+              <div className="overflow-hidden rounded-xl border border-border-strong bg-white shadow-xs">
                 <CommunitySidebar />
               </div>
             </Section>
 
             <Section title="Right Rail Modules" description="Home feed right-rail stack adapted from Figma: welcome card plus community rules module.">
-              <div className="inline-flex flex-col gap-4 overflow-hidden rounded-[20px] border border-border-strong bg-surface-raised p-4 shadow-xs">
+              <div className="inline-flex flex-col gap-4 overflow-hidden rounded-xl border border-border-strong bg-surface-raised p-4 shadow-xs">
                 <RightRailWelcomeCard />
                 <RightRailCommunityRulesCard />
               </div>
@@ -1030,13 +1093,14 @@ export function ComponentLibrary() {
         {/* ── PAGES ─────────────────────────────────────────────────────── */}
         {activeSection === 'Pages' && (
           <div className="mx-auto flex w-[1440px] flex-col gap-4">
+            {/* no token available: page-template review intentionally renders the fixed desktop frame width. */}
             <div className="space-y-1 text-left">
               <h3 className="text-base font-semibold text-text">Home Feed Template</h3>
               <p className="text-sm text-text-secondary">
                 Edge-to-edge top navigation with left community sidebar, center stacked feed posts, and right-rail support modules.
               </p>
             </div>
-            <div className="overflow-hidden rounded-[28px] border border-border-strong bg-surface-raised shadow-xs">
+            <div className="overflow-hidden rounded-2xl border border-border-strong bg-surface-raised shadow-xs">
               <HomeFeedPageTemplate />
             </div>
           </div>
@@ -1148,7 +1212,7 @@ export function ComponentLibrary() {
                 fields={reviewFields}
                 onFieldChange={updateReviewField}
                 brandAssets={{
-                  palette: ['#171717', '#D2FF66', '#F4EFE6'],
+                  palette: brandPreviewPalette,
                   items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
                 }}
                 note="If this step feels bureaucratic, the recognition stage failed to earn trust."
@@ -1162,10 +1226,14 @@ export function ComponentLibrary() {
               <PreviewBuilderStudio
                 initialFields={reviewFields}
                 brandAssets={{
-                  palette: ['#171717', '#D2FF66', '#F4EFE6'],
+                  palette: brandPreviewPalette,
                   items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
                 }}
               />
+            </Section>
+
+            <Section title="Exploration · Compact WYSIWYG Option" description="A calmer, tighter editor option with plain-language fields and a small live preview for less technical users.">
+              <CompactWysiwygStudio />
             </Section>
 
             <Section title="Community Preview Card" description="Aspirational preview moment that turns corrected inputs into something the creator can want.">

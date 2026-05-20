@@ -85,6 +85,12 @@ export const colors = {
     muted:   primitives['raptive-100'],
   },
 
+  action: {
+    primary: primitives['raptive-700'],
+    'primary-hover': primitives['raptive-800'],
+    'primary-active': primitives['raptive-900'],
+  },
+
   surface: {
     DEFAULT:  primitives['neutral-0'],
     raised:   primitives['neutral-50'],

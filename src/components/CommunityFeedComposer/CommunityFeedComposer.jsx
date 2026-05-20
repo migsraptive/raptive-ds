@@ -21,7 +21,7 @@ export function CommunityFeedComposer({
         <Avatar name={authorName} src={authorAvatarSrc} size="md" />
         <button
           type="button"
-          className="flex h-11 min-w-0 flex-1 items-center rounded-[32px] border border-text-placeholder bg-[#f8f8f9] px-6 text-left text-[15px] tracking-[-0.2px] text-text-tertiary"
+          className="flex h-11 min-w-0 flex-1 items-center rounded-2xl border border-text-placeholder bg-surface-sunken px-6 text-left text-body tracking-sm text-text-tertiary"
         >
           <span className="truncate">{placeholder}</span>
         </button>

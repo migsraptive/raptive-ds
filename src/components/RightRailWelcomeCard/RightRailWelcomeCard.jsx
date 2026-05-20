@@ -13,8 +13,8 @@ function CreatorMark({ name = 'Julia Child' }) {
   const initials = getInitials(name) || 'RC'
 
   return (
-    <div className="flex h-[122px] w-[122px] items-center justify-center rounded-full bg-[#e4573a] text-center text-white">
-      <div className="text-[40px] font-medium leading-none tracking-[-1.4px]">
+    <div className="flex h-32 w-32 items-center justify-center rounded-full bg-orange-600 text-center text-white">
+      <div className="text-display font-medium leading-none tracking-tight">
         {initials}
       </div>
     </div>
@@ -24,10 +24,10 @@ function CreatorMark({ name = 'Julia Child' }) {
 function Stat({ value, label, dot = false }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col justify-center">
-      <div className="text-[18px] font-bold leading-[26px] text-text">
+      <div className="text-lg font-bold text-text">
         {value}
       </div>
-      <div className="flex items-center gap-1 text-sm leading-[18px] text-[#646669]">
+      <div className="flex items-center gap-1 text-sm leading-sm text-text-tertiary">
         {dot ? <span className="h-2 w-2 rounded-full bg-status-success" /> : null}
         <span>{label}</span>
       </div>
@@ -52,19 +52,19 @@ export function RightRailWelcomeCard({
   return (
     <aside
       className={[
-        'flex w-[324px] flex-col items-center gap-4 rounded-2xl border border-border-strong bg-white px-6 py-8',
-        'shadow-[1px_1px_0_rgba(0,0,0,0.05)]',
+        'flex w-80 flex-col items-center gap-4 rounded-2xl border border-border-strong bg-white px-6 py-8',
+        'shadow-xs',
         className,
       ].join(' ')}
     >
       <CreatorMark name={creatorName} />
 
       <div className="w-full space-y-4 text-left">
-        <h3 className="text-[18px] font-bold leading-8 tracking-[-0.1px] text-text">
+        <h3 className="text-lg font-bold leading-8 tracking-md text-text">
           {resolvedTitle}
         </h3>
 
-        <div className="space-y-4 text-[15px] leading-6 tracking-[-0.2px] text-text">
+        <div className="space-y-4 text-body leading-6 tracking-sm text-text">
           <p>{description}</p>
           <p className="font-bold">{highlight}</p>
           <p>{closing}</p>

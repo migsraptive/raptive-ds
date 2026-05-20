@@ -49,6 +49,7 @@ export function Comment({
               <button
                 type="button"
                 onClick={onMore}
+                aria-label="More comment options"
                 className="shrink-0 flex items-center justify-center w-4 h-4 hover:opacity-70 transition-opacity"
               >
                 <LucideIcon icon={Ellipsis} size="xs" className="text-text-tertiary" />
@@ -60,7 +61,7 @@ export function Comment({
           {(isAuthor || badges.length > 0) && (
             <div className="flex items-center gap-1 w-full mt-0.5">
               {isAuthor && (
-                <span className="inline-flex items-center h-4 px-1 rounded-[6px] bg-neutral-900 text-2xs font-bold leading-none text-white whitespace-nowrap">
+                <span className="inline-flex h-4 items-center whitespace-nowrap rounded-xs bg-neutral-900 px-1 text-2xs font-bold leading-none text-white">
                   Author
                 </span>
               )}
@@ -100,6 +101,7 @@ export function Comment({
           <button
             type="button"
             onClick={onReact}
+            aria-label="React to comment"
             className="flex items-center justify-center w-6 h-6 rounded-full hover:bg-surface-sunken transition-colors"
           >
             <LucideIcon icon={SmilePlus} size="sm" className="text-text-tertiary" />
@@ -109,6 +111,7 @@ export function Comment({
             <button
               type="button"
               onClick={onShare}
+              aria-label="Share comment"
               className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-surface-sunken transition-colors"
             >
               <LucideIcon icon={Send} size="xs" className="text-text" />

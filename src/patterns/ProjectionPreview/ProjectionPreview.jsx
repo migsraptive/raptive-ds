@@ -9,7 +9,7 @@ const revealTransition = {
 
 const barDurationMs = 840
 const revealPauseMs = 1000
-const pipelineCardHeight = 'min-h-[152px]'
+const pipelineCardHeight = 'min-h-40'
 
 function AnimatedPipelineBar({ id, width, delay }) {
   const [filled, setFilled] = useState(false)
@@ -20,11 +20,10 @@ function AnimatedPipelineBar({ id, width, delay }) {
   }, [delay])
 
   return (
-    <div className="mt-4 h-3 overflow-hidden rounded-full" style={{ backgroundColor: '#D2FF66' }}>
+    <div className="mt-4 h-3 overflow-hidden rounded-full bg-gamification-gold-light">
       <motion.div
         key={id}
-        className="h-full rounded-full"
-        style={{ backgroundColor: '#166534' }}
+        className="h-full rounded-full bg-status-success-text"
         initial={false}
         animate={{ width: filled ? width : '0%' }}
         transition={{ duration: barDurationMs / 1000, ease: [0.16, 1, 0.3, 1] }}
@@ -35,7 +34,7 @@ function AnimatedPipelineBar({ id, width, delay }) {
 
 function PipelineSkeleton({ label }) {
   return (
-    <div className={`h-full min-w-0 flex-1 rounded-[24px] border border-border bg-surface p-4 ${pipelineCardHeight}`}>
+    <div className={`h-full min-w-0 flex-1 rounded-xl border border-border bg-surface p-4 ${pipelineCardHeight}`}>
       <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
         {label}
       </p>
@@ -53,7 +52,7 @@ function PipelineSkeleton({ label }) {
 function PipelineNode({ label, value, sublabel, detail, width, barDelay = 0.12 }) {
   return (
     <motion.div
-      className={`h-full min-w-0 flex-1 rounded-[24px] border border-border bg-surface p-4 ${pipelineCardHeight}`}
+      className={`h-full min-w-0 flex-1 rounded-xl border border-border bg-surface p-4 ${pipelineCardHeight}`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={revealTransition}
@@ -96,7 +95,7 @@ export function ProjectionPreview({
   }, [])
 
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="p-8 lg:p-12">
         <div className="space-y-8">
           {progressMeter}
@@ -156,7 +155,7 @@ export function ProjectionPreview({
           </div>
 
           {note && (
-            <div className="rounded-[28px] border border-border bg-surface-raised p-5">
+            <div className="rounded-2xl border border-border bg-surface-raised p-5">
               <p className="text-sm leading-relaxed text-text-secondary">{note}</p>
             </div>
           )}

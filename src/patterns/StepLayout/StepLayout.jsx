@@ -17,7 +17,7 @@ export function StepLayout({
   const progress = step && totalSteps ? Math.min(100, Math.round((step / totalSteps) * 100)) : null
 
   return (
-    <section className="overflow-hidden rounded-[32px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="h-1.5 bg-surface-sunken">
         {progress != null && (
           <div
@@ -28,6 +28,7 @@ export function StepLayout({
       </div>
 
       <div className="grid gap-8 p-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:p-8">
+        {/* no token available: generic step layout reserves a fixed aside width. */}
         <div className="flex h-full flex-col">
           <div className="space-y-8">
             {progressMeter}
@@ -76,7 +77,7 @@ export function StepLayout({
         </div>
 
         {aside && (
-          <aside className="rounded-[28px] border border-border bg-surface-raised p-5">
+          <aside className="rounded-2xl border border-border bg-surface-raised p-5">
             {aside}
           </aside>
         )}

@@ -37,8 +37,9 @@ export function RecognitionState({
   secondaryAction = { label: 'Edit details', variant: 'ghost' },
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-white shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.1fr)_360px]">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <motion.div
           className="space-y-8 p-8 lg:p-12"
           initial={{ opacity: 0, y: 18 }}
@@ -62,7 +63,7 @@ export function RecognitionState({
           </motion.div>
 
           <motion.div
-            className="rounded-[32px] border border-border bg-surface-raised p-6"
+            className="rounded-2xl border border-border bg-surface-raised p-6"
             layout
             transition={cardSpring}
           >
@@ -165,7 +166,8 @@ export function RecognitionState({
           transition={{ ...sectionTransition, delay: 0.08 }}
         >
           <div className={showAside ? 'space-y-4' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-white shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-white shadow-xs' : 'relative h-full'].join(' ')}>
+              {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
                   src={recognitionIllustrationUrl}

@@ -72,6 +72,7 @@ export function PostActionBar({
             <button
               type="button"
               onClick={onShare}
+              aria-label="Share post"
               className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-surface-sunken transition-colors"
             >
               <LucideIcon icon={Send} size="sm" className="text-text" />
@@ -82,6 +83,7 @@ export function PostActionBar({
             <button
               type="button"
               onClick={onComment}
+              aria-label="View post comments"
               className="flex items-center gap-1 pl-3 pr-1 py-1 rounded-full border border-border-strong hover:bg-surface-sunken transition-colors"
             >
               <LucideIcon icon={MessageCircle} size="sm" className="text-text" />
@@ -131,10 +133,10 @@ export function PostActionBar({
               </p>
             </div>
             <div className="flex items-center gap-2.5 pr-1 shrink-0">
-              <button type="button" className="flex items-center justify-center w-6 h-6 hover:opacity-70 transition-opacity">
+              <button type="button" aria-label="Open image upload" className="flex items-center justify-center w-6 h-6 hover:opacity-70 transition-opacity">
                 <LucideIcon icon={Image} size="sm" className="text-text-tertiary" />
               </button>
-              <button type="button" className="flex items-center justify-center w-6 h-6 rounded-full bg-neutral-400 hover:bg-neutral-500 transition-colors">
+              <button type="button" aria-label="Send comment" className="flex items-center justify-center w-6 h-6 rounded-full bg-neutral-400 hover:bg-neutral-500 transition-colors">
                 <LucideIcon icon={ArrowRight} size="sm" className="text-white" />
               </button>
             </div>

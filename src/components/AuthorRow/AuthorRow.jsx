@@ -27,7 +27,7 @@ export function AuthorRow({
       <Avatar src={avatarSrc} name={name} size="md" />
 
       <div className="flex flex-col justify-center min-w-0 flex-1">
-        <div className="flex items-center gap-[3px]">
+        <div className="flex items-center gap-1">
           <span className="text-body font-bold leading-md tracking-tight text-text whitespace-nowrap">
             {name}
           </span>

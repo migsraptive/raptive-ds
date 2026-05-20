@@ -1,13 +1,12 @@
 import { useEffect, useRef } from 'react'
 import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { Trash2 } from 'lucide-react'
 import instagramRoundLogoUrl from '../../assets/social/instagram-round.jpg'
 import pinterestRoundLogoUrl from '../../assets/social/pinterest-round.png'
 import tiktokRoundLogoUrl from '../../assets/social/tiktok-round.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
-import { Textarea } from '../../components/Textarea/Textarea.jsx'
 
 const revealTransition = {
   duration: 0.32,
@@ -49,7 +48,7 @@ function SectionCard({ children, className = '' }) {
     <motion.div
       layout
       transition={layoutSpring}
-      className={['rounded-[28px] border border-border bg-surface p-5 shadow-xs', className].join(' ')}
+      className={['rounded-2xl border border-border bg-surface p-5 shadow-xs', className].join(' ')}
     >
       {children}
     </motion.div>
@@ -61,62 +60,6 @@ function SectionLabel({ children }) {
     <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
       {children}
     </p>
-  )
-}
-
-function FieldRow({ label, value, onChange, onSave, onCancel, editing, multiline = false, compact = false }) {
-  return (
-    <AnimatePresence mode="wait" initial={false}>
-      {editing ? (
-        <motion.div
-          key="field-editing"
-          className="space-y-4"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={revealTransition}
-        >
-          {multiline ? (
-            <Textarea value={value} onChange={(event) => onChange(event.target.value)} rows={3} />
-          ) : (
-            <TextInput value={value} onChange={(event) => onChange(event.target.value)} />
-          )}
-          <div className="flex flex-wrap gap-3">
-            <Button size="sm" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
-            <Button size="sm" variant="secondary" onClick={onSave}>Save</Button>
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="field-display"
-          className={[
-            'flex flex-col',
-            compact ? 'gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center' : 'gap-4 lg:flex-row lg:items-center lg:justify-between',
-          ].join(' ')}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={revealTransition}
-        >
-          <div className="min-w-0 flex-1">
-            {compact && (
-              <SectionLabel>{label}</SectionLabel>
-            )}
-            <p
-              className={[
-                'min-w-0 text-text',
-                compact ? 'mt-1 truncate text-sm leading-relaxed text-text-secondary' : 'flex-1 text-base leading-relaxed',
-              ].join(' ')}
-            >
-              {value}
-            </p>
-          </div>
-          <Button size={compact ? 'sm' : 'lg'} variant="secondary" onClick={onSave}>
-            Edit
-          </Button>
-        </motion.div>
-      )}
-    </AnimatePresence>
   )
 }
 
@@ -175,13 +118,12 @@ function AccountCard({
                       </span>
                     </div>
 
-                    <div className="mt-1">
-                      <input
+                    <div className="mt-2">
+                      <TextInput
                         ref={handleInputRef}
-                        type="text"
                         value={draft.handle}
                         onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
-                        className="w-full border-0 bg-transparent p-0 text-lg font-semibold tracking-tight text-text outline-none focus:outline-none focus:ring-0"
+                        inputClassName="text-lg font-semibold tracking-tight"
                       />
                     </div>
 
@@ -247,8 +189,9 @@ export function FetchConfirmation({
   primaryAction,
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.08fr)_360px]">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <motion.div
           className="flex h-full flex-col p-8 lg:p-12"
           initial={{ opacity: 0, y: 18 }}
@@ -271,6 +214,7 @@ export function FetchConfirmation({
 
             <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.04 }}>
               <SectionCard className="!border-neutral-950 !bg-neutral-950 p-3 shadow-sm">
+                {/* no token available: dark summary card reserves a fixed metric column. */}
                 <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
                 <motion.div
                   className="flex items-start"
@@ -367,6 +311,7 @@ export function FetchConfirmation({
           animate={{ opacity: 1, x: 0 }}
           transition={{ ...revealTransition, delay: 0.08 }}
         >
+          {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
           <div className="relative h-full min-h-[720px]">
             <img
               src={recognitionIllustrationUrl}

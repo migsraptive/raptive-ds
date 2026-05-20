@@ -39,6 +39,7 @@ export function CategoryPicker({
       )}
 
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        {/* no token available: selected-chip row needs intrinsic auto width. */}
         <TextInput
           label="Search categories"
           placeholder="Search by topic, vertical, or audience"

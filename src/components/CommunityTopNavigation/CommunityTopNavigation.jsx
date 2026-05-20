@@ -18,13 +18,13 @@ function CommunityTopNavigationBrand({
 
   return (
     <div className="flex items-center gap-2 px-4 py-2">
-      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#f47c20] text-[30px] font-medium lowercase leading-none text-white">
+      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-orange-500 text-display font-medium lowercase leading-none text-white">
         <span className="flex h-full w-full items-center justify-center">
           {initials}
         </span>
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center">
-        <p className="truncate text-[15px] font-bold leading-[23px] text-text">
+        <p className="truncate text-body font-bold leading-md text-text">
           {name}
         </p>
         <div className="flex items-center gap-2 text-xs leading-[18px] text-neutral-500">
@@ -51,8 +51,8 @@ export function CommunityTopNavigation({
   return (
     <header
       className={[
-        'flex min-h-[57px] items-center justify-between gap-6 bg-white px-4 py-2',
-        'shadow-[0_1px_0_rgba(0,0,0,0.25)]',
+        'flex min-h-14 items-center justify-between gap-6 bg-white px-4 py-2',
+        'shadow-xs',
         className,
       ].join(' ')}
     >

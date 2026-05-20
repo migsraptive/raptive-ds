@@ -33,8 +33,9 @@ export function ReviewCorrection({
   note = null,
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className={['grid gap-0', showAside ? 'lg:grid-cols-[minmax(0,1.1fr)_380px]' : 'lg:grid-cols-1'].join(' ')}>
+        {/* no token available: review layout uses fixed side rail widths to preserve the wireframe composition. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
@@ -53,6 +54,7 @@ export function ReviewCorrection({
             </div>
 
             <div className={['grid gap-5', brandAssets ? 'lg:grid-cols-[280px_minmax(0,1fr)_minmax(0,1fr)]' : 'md:grid-cols-2'].join(' ')}>
+              {/* no token available: detected-assets column has a fixed width in this exploratory layout. */}
               <TextInput
                 className={brandAssets ? 'lg:col-start-2 lg:row-start-1' : ''}
                 label="Creator name"

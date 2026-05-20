@@ -11,6 +11,7 @@ import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrecti
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
+import { brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 
 const flowSteps = [
   { id: 'entry', label: 'Entry' },
@@ -65,7 +66,7 @@ function currentStepChipLabel(activeStep, recognitionLoading) {
   return 'Current stage'
 }
 
-function currentStepChipVariant(activeStep, recognitionLoading) {
+function currentStepChipVariant() {
   return 'brand'
 }
 
@@ -146,7 +147,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const actionTimeoutRef = useRef(null)
   const hasSocialAccounts = accounts.length > 0
   const instagramAccount = accounts.find((account) => account.platform === 'Instagram')
-  const verificationMethods = [
+  const verificationMethods = useMemo(() => [
     ...(instagramAccount ? [{
       value: 'instagram-dm',
       icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
@@ -159,7 +160,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
       title: 'Confirm with a creator email',
       description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
     },
-  ]
+  ], [instagramAccount])
 
   useEffect(() => {
     if (!recognitionLoading) return undefined
@@ -201,7 +202,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     [activeStep],
   )
   const currentStepLabel = currentStepChipLabel(activeStep, recognitionLoading)
-  const currentStepVariant = currentStepChipVariant(activeStep, recognitionLoading)
+  const currentStepVariant = currentStepChipVariant()
   const activeStepId = flowSteps[activeStep]?.id ?? 'current-step'
   const progressMeter = (
     <FlowProgressMeter
@@ -280,7 +281,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   }
 
   const handleVerificationContinue = () => {
-    setActiveStep(7)
+    setActiveStep(6)
   }
 
   const triggerPrimaryAction = ({ key, delay = 1100, run }) => {
@@ -397,7 +398,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         fields={reviewFields}
         onFieldChange={updateReviewField}
         brandAssets={{
-          palette: ['#171717', '#D2FF66', '#F4EFE6'],
+          palette: brandPreviewPalette,
           items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
         }}
         note="If this step feels bureaucratic, the recognition stage failed to earn trust."
@@ -500,7 +501,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         }}
         onConfirmDmSent={() => triggerPrimaryAction({
           key: 'verify-dm-primary',
-          run: () => setActiveStep(7),
+          run: () => setActiveStep(6),
         })}
         secondaryAction={{
           label: 'Back',

@@ -8,7 +8,7 @@ const revealTransition = {
 
 const barDurationMs = 840
 const revealPauseMs = 1000
-const pipelineCardHeight = 'min-h-[152px]'
+const pipelineCardHeight = 'min-h-40'
 
 function AnimatedPipelineBar({ id, width, filled }) {
   return (
@@ -26,7 +26,7 @@ function AnimatedPipelineBar({ id, width, filled }) {
 
 function LabCard({ eyebrow, title, description, children }) {
   return (
-    <div className="rounded-[28px] border border-border bg-white p-6 shadow-xs">
+    <div className="rounded-2xl border border-border bg-white p-6 shadow-xs">
       <div className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{eyebrow}</p>
         <h3 className="font-display text-xl font-semibold tracking-tight text-text">{title}</h3>
@@ -48,7 +48,7 @@ function StatPill({ label, value }) {
 
 function PipelineSkeleton({ label }) {
   return (
-    <div className={`h-full min-w-0 flex-1 rounded-[24px] border border-border bg-surface p-4 ${pipelineCardHeight}`}>
+    <div className={`h-full min-w-0 flex-1 rounded-xl border border-border bg-surface p-4 ${pipelineCardHeight}`}>
       <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{label}</p>
       <div className="mt-1.5 h-9 w-40 rounded-full bg-surface-sunken" />
       <div className="mt-1 h-5 w-32 rounded-full bg-surface-sunken" />
@@ -67,7 +67,7 @@ function PipelineNode({ label, value, sublabel, width, exposed = false, barDelay
 
   return (
     <motion.div
-      className={`h-full min-w-0 flex-1 rounded-[24px] border border-border bg-surface p-4 ${pipelineCardHeight}`}
+      className={`h-full min-w-0 flex-1 rounded-xl border border-border bg-surface p-4 ${pipelineCardHeight}`}
       initial={false}
       animate={{ opacity: exposed ? 1 : 0, y: exposed ? 0 : 10 }}
       transition={revealTransition}
@@ -209,7 +209,7 @@ export function ProjectionMotionShowcase() {
         description="Keep the story flatter and more analytical: use forecast bands to show uncertainty without breaking the grid."
       >
         <div className="grid gap-5 md:grid-cols-2">
-          <div className="rounded-[24px] border border-border bg-surface p-4">
+          <div className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Unique reach band</p>
             <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-text">315.6K to 420.8K</p>
             <div className="mt-5">
@@ -217,7 +217,7 @@ export function ProjectionMotionShowcase() {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-border bg-surface p-4">
+          <div className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Revenue band</p>
             <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-text">$426 to $3,787</p>
             <div className="mt-5">
@@ -233,7 +233,8 @@ export function ProjectionMotionShowcase() {
         description="Explain why the modeled audience shrinks from the raw total by visualizing the removed overlap directly before introducing the forecast."
       >
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.2fr)_320px]">
-          <div className="rounded-[24px] border border-border bg-surface p-4">
+          {/* no token available: motion showcase reserves a fixed stat column width. */}
+          <div className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Deduping audience</p>
             <p className="mt-2 font-display text-3xl font-semibold tracking-tight text-text">526,000 → 315.6K–420.8K</p>
             <div className="mt-5">
@@ -241,7 +242,7 @@ export function ProjectionMotionShowcase() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 rounded-[24px] border border-border bg-surface p-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4">
             <StatPill label="Overlap removed" value="~20% to 40%" />
             <StatPill label="Reach retained" value="~60% to 80%" />
             <StatPill label="Revenue handoff" value="$426 to $3,787" />

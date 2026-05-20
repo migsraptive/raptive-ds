@@ -11,9 +11,9 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 const variants = {
   primary: [
-    'bg-brand text-white',
-    'hover:bg-brand-dark active:bg-brand-dark',
-    'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
+    'bg-action-primary text-white',
+    'hover:bg-action-primary-hover active:bg-action-primary-active',
+    'focus-visible:ring-2 focus-visible:ring-action-primary focus-visible:ring-offset-2',
     'disabled:bg-neutral-200 disabled:text-text-disabled disabled:cursor-not-allowed',
   ].join(' '),
 
@@ -46,8 +46,8 @@ const variants = {
   ].join(' '),
 
   link: [
-    'bg-transparent text-brand underline underline-offset-2 p-0 h-auto',
-    'hover:text-brand-dark active:text-brand-dark',
+    'bg-transparent text-action-primary underline underline-offset-2 p-0 h-auto',
+    'hover:text-action-primary-active active:text-action-primary-active',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ].join(' '),
 }

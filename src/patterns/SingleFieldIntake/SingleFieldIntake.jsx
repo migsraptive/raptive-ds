@@ -20,8 +20,9 @@ export function SingleFieldIntake({
   showAside = true,
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="grid lg:grid-cols-[minmax(0,1.15fr)_360px]">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
@@ -44,6 +45,7 @@ export function SingleFieldIntake({
                 placeholder="Paste a creator URL or social profile"
                 value={value}
                 onChange={onChange}
+                description={helperText}
                 prefix={<LucideIcon icon={Link2} size="md" stroke="display" />}
                 suffix={loading ? (
                   <span className="flex items-center text-text-tertiary">
@@ -71,14 +73,14 @@ export function SingleFieldIntake({
               <Button size="lg" onClick={onSubmit} success={loading} successLabel={ctaSuccessLabel} disabled={ctaDisabled}>
                 {ctaLabel}
               </Button>
-              {helperText && <p className="text-sm text-text-secondary">{helperText}</p>}
             </div>
           </div>
         </div>
 
         <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+              {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-[4/3]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
                   src={entryIllustrationUrl}

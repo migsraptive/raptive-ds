@@ -18,6 +18,11 @@
   --color-brand-subtle:  #f4faff;
   --color-brand-muted:   #f0f8ff;
 
+  /* Action */
+  --color-action-primary: #354786;
+  --color-action-primary-hover: #1e40af;
+  --color-action-primary-active: #1e3a8a;
+
   /* Surface */
   --color-surface:         #ffffff;
   --color-surface-raised:  #fdfdfd;
@@ -121,6 +126,64 @@
 /* ─── UTILITIES ─────────────────────────────────────────────────────────────── */
 
 @layer utilities {
+  .preview-theme {
+    --preview-primary: var(--color-surface-overlay);
+    --preview-primary-foreground: var(--color-text-invert);
+    --preview-secondary: var(--color-gold-light);
+    --preview-secondary-foreground: var(--color-text);
+    --preview-link: var(--color-action-primary);
+  }
+
+  .preview-primary-surface {
+    background-color: var(--preview-primary);
+    border-color: var(--preview-primary);
+    color: var(--preview-primary-foreground);
+  }
+
+  .preview-primary-surface:hover,
+  .preview-primary-surface:active {
+    background-color: var(--preview-primary);
+    border-color: var(--preview-primary);
+    color: var(--preview-primary-foreground);
+  }
+
+  .preview-secondary-surface {
+    background-color: var(--preview-secondary);
+    border-color: var(--preview-secondary);
+    color: var(--preview-secondary-foreground);
+  }
+
+  .preview-secondary-surface:hover,
+  .preview-secondary-surface:active {
+    background-color: var(--preview-secondary);
+    border-color: var(--preview-secondary);
+    color: var(--preview-secondary-foreground);
+  }
+
+  .preview-link-text {
+    color: var(--preview-link);
+  }
+
+  .color-input-swatch {
+    background-color: var(--preview-primary);
+  }
+
+  .preview-accent-surface {
+    background-color: var(--preview-primary);
+  }
+
+  .preview-accent-frame {
+    border-color: var(--preview-primary);
+    background-color: var(--color-surface);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--preview-primary) 12%, transparent),
+      var(--shadow-3);
+  }
+
+  .preview-accent-tint {
+    background-color: color-mix(in srgb, var(--preview-primary) 10%, transparent);
+  }
+
   .font-newsreader {
     font-family: "Newsreader", ui-serif, Georgia, serif;
     font-weight: 400;

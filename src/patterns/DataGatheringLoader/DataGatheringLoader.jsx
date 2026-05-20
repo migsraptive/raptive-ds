@@ -16,7 +16,7 @@ const pulseTransition = {
 function SignalRow({ label, value, delay = 0 }) {
   return (
     <motion.div
-      className="relative overflow-hidden flex items-center justify-between gap-4 rounded-[22px] border border-border bg-surface px-4 py-3"
+      className="relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-border bg-surface px-4 py-3"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ ...revealTransition, delay }}
