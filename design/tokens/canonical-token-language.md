@@ -27,7 +27,9 @@ color.text.placeholder
 color.text.inverse
 color.action.primary
 color.action.primary.hover
+color.action.primary.foreground
 color.action.secondary
+color.action.secondary.foreground
 color.action.danger
 color.border.default
 color.border.strong
@@ -90,6 +92,19 @@ motion.duration.slow
 motion.easing.standard
 motion.easing.emphasized
 ```
+
+### Detected Brand Palette Roles
+
+When a creator or brand palette is detected from source material, agents should map the first two usable colors into action roles:
+
+```text
+color.brand.detected.primary = first detected accessible action color
+color.brand.detected.secondary = second detected accessible action color
+color.action.primary.foreground = black or white, computed for WCAG AA contrast
+color.action.secondary.foreground = black or white, computed for WCAG AA contrast
+```
+
+The foreground role is not optional. Do not assume white text on a brand color; compute the contrast and choose black or white.
 
 ## Implementation Notes
 

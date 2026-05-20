@@ -26,6 +26,16 @@ These standards apply to every component spec in this design system.
 - Icon-only buttons require an accessible label.
 - Button text should remain visible unless the icon has an explicit accessible label.
 
+## Detected Brand Colors
+
+- The first detected brand color is the primary action color.
+- The second detected brand color is the secondary action color.
+- Text rendered on detected brand colors must pass WCAG AA contrast for normal text, minimum 4.5:1.
+- Use white text on dark detected colors and black text on bright detected colors, based on computed contrast rather than visual guesswork.
+- If a detected color cannot produce accessible foreground contrast, do not use it for action backgrounds; fall back to the system action token and flag the palette for manual review.
+- Labels displayed directly on swatches must use the same foreground contrast rule.
+- User-entered hex overrides follow the same rules as detected colors and must recompute foreground text immediately.
+
 ## Dialogs
 
 - Dialogs must have a title.

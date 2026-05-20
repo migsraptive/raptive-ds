@@ -49,6 +49,8 @@ src/
 - All patterns accept `showAside` prop to toggle design guidance panel
 - Tokens are the source of truth — never hardcode colors, spacing, or type values
 - Reuse existing components before creating new ones
+- Patterns should compose `src/components` primitives; do not hand-roll native `button`, `input`, `textarea`, or `select` controls inside patterns. If a pattern needs a new interactive control, add it to `src/components` first and document it in the component library.
+- Detected brand palettes must be accessibility-gated: first usable color maps to primary action, second usable color maps to secondary action, and text on those colors must use computed black/white foreground contrast.
 
 ## Verification
 ```bash
@@ -60,3 +62,48 @@ npm run build
 npm run dev
 # http://127.0.0.1:3700/community-ds/
 ```
+
+## Agent Behavior
+
+### Before making changes
+- State what you found before changing it
+- If the change touches more than one file, list all affected files first
+- Flag anything ambiguous and wait for confirmation before proceeding
+
+### After every task
+- Confirm `npm run build` passes
+- Confirm `npm run lint` exits with 0 errors and 0 warnings
+- Browser smoke check: Patterns page and Creator Application render
+  without console errors
+- Output a summary table:
+
+  | file | what changed | why |
+  |---|---|---|
+
+- If a bug is found and fixed outside the original scope,
+  call it out explicitly as a bonus fix with its own table entry
+
+### Code quality
+- Remove unused imports, props, and variables in any file you touch
+- Never leave dead code — remove it or explain why it stays
+- Never suppress a lint warning without a documented reason inline
+- Stabilize unstable hook dependencies with useMemo or useCallback
+  before adding to dependency arrays
+
+### Design system compliance
+- Never hardcode hex values — use existing tokens
+- Never use arbitrary Tailwind classes — map to existing scale
+- If no token exists, leave a comment: `{/* no token available */}`
+- CSS custom properties for dynamic preview colors:
+  --preview-primary, --preview-secondary, --preview-link
+
+### Accessibility
+- All icon-only and count-only buttons need explicit aria-label
+- All accordions need aria-controls and matching panel id via useId
+- Never use text-tertiary for normal-size form labels — use text-secondary
+
+### Ember compatibility
+- Describe behavior, tokens, states, and slots — not React implementation
+- Prefer CSS custom properties over inline JSX styles
+- Motion should use CSS transitions unless an Ember animation
+  addon is explicitly approved
