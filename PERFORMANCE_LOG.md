@@ -48,3 +48,20 @@
 All fixes followed the read-only audit → approval → implement
 pattern. No changes were made without a pre-check confirming
 the element structure was compatible with the fix.
+
+## Icon and Label Sizing — May 2026
+
+- 16 files updated to use `.paired-label-icon` utility
+- Introduced shared `.paired-label-icon` utility class
+  sizing paired icons to `1lh`
+- Badge paired-icon examples added to ComponentLibrary
+- AGENTS.md updated with `.paired-label-icon` convention
+- No token files changed. No regressions.
+
+## ComponentLibrary Documentation — May 2026
+
+- 26 documentation gaps audited and closed
+- 1 stale example corrected (Button action.primary)
+- 15 missing examples added across 10 components
+- 10 accessibility and reduced-motion notes added
+- No component, pattern, or token files changed

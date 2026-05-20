@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, isValidElement } from 'react'
 import { FieldShell } from '../FormField/FieldShell.jsx'
 import { FormField } from '../FormField/FormField.jsx'
 
@@ -9,6 +9,11 @@ const baseInputClassName = [
   'outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
   'disabled:cursor-not-allowed disabled:text-text-disabled',
 ].join(' ')
+
+const affixLineHeightClassNames = {
+  sm: 'text-base leading-sm',
+  md: 'text-lg leading-md',
+}
 
 export const TextInput = forwardRef(function TextInput(
   {
@@ -23,6 +28,7 @@ export const TextInput = forwardRef(function TextInput(
     inputClassName = '',
     prefix = null,
     suffix = null,
+    affixLineHeight = 'sm',
     ...props
   },
   ref,
@@ -30,14 +36,18 @@ export const TextInput = forwardRef(function TextInput(
   const hasError = Boolean(error)
   const isDisabled = Boolean(props.disabled)
   const isReadOnly = Boolean(props.readOnly)
-  const affixClassName = [
-    'flex-shrink-0 text-sm',
-    isDisabled ? 'text-text-disabled' : 'text-text-secondary',
+  const affixLineHeightClassName = affixLineHeightClassNames[affixLineHeight] ?? affixLineHeightClassNames.sm
+  const affixToneClassName = isDisabled ? 'text-text-disabled' : 'text-text-secondary'
+  const affixClassName = (affix) => [
+    isValidElement(affix)
+      ? `paired-label-icon ${affixLineHeightClassName}`
+      : 'shrink-0 text-sm leading-sm',
+    affixToneClassName,
   ].join(' ')
 
   const input = (
     <FieldShell error={hasError} disabled={isDisabled} readOnly={isReadOnly}>
-      {prefix && <span className={affixClassName}>{prefix}</span>}
+      {prefix && <span className={affixClassName(prefix)}>{prefix}</span>}
       <input
         ref={ref}
         id={id}
@@ -50,7 +60,7 @@ export const TextInput = forwardRef(function TextInput(
         ].filter(Boolean).join(' ')}
         {...props}
       />
-      {suffix && <span className={affixClassName}>{suffix}</span>}
+      {suffix && <span className={affixClassName(suffix)}>{suffix}</span>}
     </FieldShell>
   )
 

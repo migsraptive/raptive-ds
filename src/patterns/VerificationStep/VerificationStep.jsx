@@ -55,7 +55,7 @@ function InstagramDmInlineDetail({
           </Button>
           <Button size="sm" variant="secondary" onClick={handleCopyCode} success={copied} successLabel="Copied" disabled={!open}>
             <span className="inline-flex items-center gap-2">
-              <LucideIcon icon={Copy} size="sm" stroke="standard" />
+              <LucideIcon icon={Copy} size="sm" stroke="standard" className="paired-label-icon text-sm leading-sm" />
               <span>Copy code</span>
             </span>
           </Button>

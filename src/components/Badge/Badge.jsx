@@ -62,7 +62,7 @@ export function Badge({
           aria-hidden="true"
         />
       )}
-      {icon && <span className="flex-shrink-0 w-3 h-3">{icon}</span>}
+      {icon && <span className="paired-label-icon">{icon}</span>}
       {children}
       {onRemove && (
         <button

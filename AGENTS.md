@@ -46,6 +46,12 @@ src/
 ## Conventions
 - Components live in `src/components/ComponentName/ComponentName.jsx`
 - Patterns live in `src/patterns/PatternName/PatternName.jsx`
+- Icons paired with a label must match the line-height of that label
+  exactly. Use the same size token as the label's line-height —
+  never scale icons independently when they sit inline with text.
+- Use the `.paired-label-icon` utility class for all inline
+  icon and label pairings. Do not set icon sizes manually
+  when the icon sits next to text.
 - All patterns accept `showAside` prop to toggle design guidance panel
 - Tokens are the source of truth — never hardcode colors, spacing, or type values
 - Reuse existing components before creating new ones

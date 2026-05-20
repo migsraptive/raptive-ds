@@ -53,6 +53,7 @@ export function SingleFieldIntake({
                   </span>
                 ) : null}
                 inputClassName="text-lg"
+                affixLineHeight="md"
               />
             </div>
 

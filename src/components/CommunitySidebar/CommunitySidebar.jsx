@@ -149,7 +149,11 @@ function SidebarItem({ icon: Icon, label, active = false, unread = false, tone =
       ].join(' ')}
     >
       <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-        {leading || <LucideIcon icon={Icon} size="md" stroke="standard" />}
+        {leading || (
+          <span className="paired-label-icon text-body leading-6">
+            <LucideIcon icon={Icon} size="md" stroke="standard" />
+          </span>
+        )}
       </span>
       <span className="min-w-0 flex-1 text-body leading-6 tracking-sm">{label}</span>
       {unread ? <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-status-error" /> : null}
@@ -172,7 +176,9 @@ function SectionHeader({ title, count, open, onToggle }) {
         {title}
         {count != null ? <span className="ml-1 text-neutral-400">{count}</span> : null}
       </span>
-      <LucideIcon icon={open ? ChevronUp : ChevronDown} size="md" stroke="standard" className="text-neutral-500" />
+      <span className="paired-label-icon text-sm leading-sm text-neutral-500">
+        <LucideIcon icon={open ? ChevronUp : ChevronDown} size="md" stroke="standard" />
+      </span>
     </button>
   )
 }

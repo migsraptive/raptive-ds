@@ -164,6 +164,22 @@
     color: var(--preview-link);
   }
 
+  /* no token available: CSS lh binds inline icon dimensions to the paired label's computed line-height. */
+  .paired-label-icon {
+    display: inline-flex;
+    width: 1lh;
+    height: 1lh;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    line-height: inherit;
+  }
+
+  .paired-label-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
   .color-input-swatch {
     background-color: var(--preview-primary);
   }

@@ -32,7 +32,9 @@ export function AuthorRow({
             {name}
           </span>
           {showFriendsIcon && (
-            <LucideIcon icon={Users} size="xs" className="text-text-secondary shrink-0" />
+            <span className="paired-label-icon text-body leading-md text-text-secondary">
+              <LucideIcon icon={Users} size="xs" />
+            </span>
           )}
         </div>
 

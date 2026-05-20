@@ -25,11 +25,13 @@ import {
 import { Button } from '../../components/Button/Button.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
+import { AccordionPanel } from '../../components/AccordionPanel/AccordionPanel.jsx'
 import { Avatar, AvatarGroup } from '../../components/Avatar/Avatar.jsx'
 import { AvatarUpload } from '../../components/AvatarUpload/AvatarUpload.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { ColorInput } from '../../components/ColorInput/ColorInput.jsx'
 import { ColorSwatchButton } from '../../components/ColorSwatchButton/ColorSwatchButton.jsx'
+import { CompactField } from '../../components/CompactField/CompactField.jsx'
 import { FieldShell } from '../../components/FormField/FieldShell.jsx'
 import { FormField } from '../../components/FormField/FormField.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
@@ -58,6 +60,7 @@ import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationMod
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
+import { InstagramDmVerificationDetail } from '../../patterns/InstagramDmVerificationDetail/InstagramDmVerificationDetail.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { PreviewBuilderStudio } from '../../patterns/PreviewBuilderStudio/PreviewBuilderStudio.jsx'
@@ -108,12 +111,21 @@ function Row({ label, children, className = '' }) {
   )
 }
 
+function DocumentationNote({ children }) {
+  return (
+    <aside className="rounded-lg border border-border bg-surface-sunken px-3 py-2 text-sm leading-relaxed text-text-secondary">
+      {children}
+    </aside>
+  )
+}
+
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const celebrationIcon = (Icon) => <LucideIcon icon={Icon} size="xl" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
+const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
 const avatarImageSet = [
   {
     name: 'Julia Child',
@@ -238,6 +250,21 @@ export function ComponentLibrary() {
   const updateReviewField = (key, value) => {
     setReviewFields((current) => ({ ...current, [key]: value }))
   }
+
+  const verificationExampleMethods = [
+    {
+      value: 'instagram-dm',
+      icon: tileIcon(Mail),
+      title: 'Confirm with an Instagram DM',
+      description: 'Send the verification code from the connected Instagram account.',
+    },
+    {
+      value: 'email-domain',
+      icon: tileIcon(BadgeCheck),
+      title: 'Confirm with a creator email',
+      description: 'Use a detected creator email when social access is not convenient.',
+    },
+  ]
 
   useEffect(() => {
     const url = new URL(window.location.href)
@@ -463,6 +490,24 @@ export function ComponentLibrary() {
                   readOnly
                   suffix="Locked"
                 />
+                <TextInput
+                  label="Creator Email"
+                  type="email"
+                  prefix={affixIcon(Mail)}
+                  placeholder="creator@example.com"
+                />
+                <TextInput
+                  label="Verified Website"
+                  suffix={affixIcon(BadgeCheck)}
+                  placeholder="yourdomain.com"
+                />
+                <TextInput
+                  label="Large Affix Alignment"
+                  prefix={affixIcon(Rocket)}
+                  placeholder="Paste a creator URL"
+                  inputClassName="text-lg leading-md"
+                  affixLineHeight="md"
+                />
               </div>
             </Section>
 
@@ -529,7 +574,29 @@ export function ComponentLibrary() {
                     { value: 'established', label: 'Established creator' },
                   ]}
                 />
+                <Select
+                  label="Revenue Goal"
+                  defaultValue=""
+                  error="Choose a revenue goal to continue."
+                  options={[
+                    { value: 'ads', label: 'Grow ad revenue' },
+                    { value: 'sponsorships', label: 'Book more sponsorships' },
+                  ]}
+                />
+                <Select
+                  label="Review Status"
+                  value="approved"
+                  readOnly
+                  onChange={() => {}}
+                  options={[
+                    { value: 'approved', label: 'Approved for preview' },
+                    { value: 'pending', label: 'Pending review' },
+                  ]}
+                />
               </div>
+              <DocumentationNote>
+                Always pair with a visible label. The chevron affordance is decorative — do not rely on it as the only indicator of interactivity.
+              </DocumentationNote>
             </Section>
 
             <Section title="Selection Controls" description="Primitives for onboarding choices, consents, and goal selection.">
@@ -645,6 +712,9 @@ export function ComponentLibrary() {
                   onClick={() => toggleTile('revenue')}
                 />
               </div>
+              <DocumentationNote>
+                Hover, tap, and selection animations respect prefers-reduced-motion.
+              </DocumentationNote>
             </Section>
 
             <Section title="Goal Selection Grid" description="First onboarding pattern composed directly from OptionTile primitives.">
@@ -764,20 +834,21 @@ export function ComponentLibrary() {
                 <Button variant="link">Link</Button>
               </Row>
             </Section>
-            <Section title="Canonical Token References" description="Additional button treatments present in the provided token set. These are shown here for reference only and do not replace the current shared primary button.">
-              <Row label="Missing token-backed treatments">
+            <Section title="Paired Icons" description="Inline icons inherit the label line-height through the shared paired icon utility.">
+              <Row label="Icon before and after">
+                <Button iconBefore={miniIcon(Sparkles)}>Create preview</Button>
+                <Button variant="secondary" iconAfter={miniIcon(Rocket)}>Continue</Button>
+              </Row>
+            </Section>
+            <Section title="Canonical Token References" description="Reference button treatments aligned to the current shared action tokens.">
+              <Row label="Action token treatment">
                 <Button
                   variant="ghost"
                   className="bg-transparent text-text hover:bg-surface-sunken active:bg-neutral-100"
                 >
                   Naked
                 </Button>
-                <Button
-                  variant="secondary"
-                  className="border-transparent bg-gamification-gold-light text-green-700 hover:bg-gamification-gold active:bg-gold-600"
-                >
-                  Brand
-                </Button>
+                <Button>Action Primary</Button>
               </Row>
             </Section>
             <Section title="Sizes">
@@ -798,19 +869,18 @@ export function ComponentLibrary() {
                 <Button size="md" variant="secondary">
                   Secondary / Outline
                 </Button>
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  className="border-transparent bg-gamification-gold-light text-green-700 hover:bg-gamification-gold active:bg-gold-600"
-                >
-                  Brand / Large
-                </Button>
+                <Button size="lg">Action Primary / Large</Button>
               </Row>
             </Section>
             <Section title="States">
               <Row label="Loading">
                 <Button loading>Primary</Button>
                 <Button variant="secondary" loading>Secondary</Button>
+                <Button loading loadingLabel="Saving">Save draft</Button>
+              </Row>
+              <Row label="Success">
+                <Button success>Submitted</Button>
+                <Button success successLabel="Saved">Save draft</Button>
               </Row>
               <Row label="Disabled">
                 <Button disabled>Primary</Button>
@@ -822,6 +892,9 @@ export function ComponentLibrary() {
                   <Button fullWidth>Full Width Button</Button>
                 </div>
               </Row>
+              <DocumentationNote>
+                Decorative scale and label swap animations respect prefers-reduced-motion. Loading and success animations always run.
+              </DocumentationNote>
             </Section>
           </>
         )}
@@ -849,6 +922,13 @@ export function ComponentLibrary() {
                 <Badge size="md">Medium</Badge>
               </Row>
             </Section>
+            <Section title="With Icon">
+              <Row>
+                <Badge size="xs" variant="brand" icon={miniIcon(BadgeCheck)}>Extra Small</Badge>
+                <Badge size="sm" variant="success" icon={miniIcon(Sparkles)}>Small</Badge>
+                <Badge size="md" variant="gold" icon={miniIcon(Award)}>Medium</Badge>
+              </Row>
+            </Section>
             <Section title="With Dot">
               <Row>
                 <Badge variant="success" dot>Online</Badge>
@@ -863,6 +943,9 @@ export function ComponentLibrary() {
                   <Badge key={t} variant="brand" onRemove={() => {}}>#{t}</Badge>
                 ))}
               </Row>
+              <DocumentationNote>
+                Removable badges require an aria-label on the remove button. Example: aria-label='Remove [badge label]'
+              </DocumentationNote>
             </Section>
           </>
         )}
@@ -956,6 +1039,9 @@ export function ComponentLibrary() {
                   onMore={() => {}}
                 />
               </div>
+              <DocumentationNote>
+                More-actions icon button requires an explicit aria-label. Example: aria-label='More options for [author name]'
+              </DocumentationNote>
             </Section>
 
             <Section title="Media Gallery" description="Image gallery from Figma: molecules/media/gallery. Single or 5+ grid layout.">
@@ -1005,19 +1091,60 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Post Action Bar" description="Post engagement bar from Figma: molecules/actionbar/post/desktop/feed.">
-              <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
-                <PostActionBar
-                  reactionCount={31}
-                  shareCount={13}
-                  commentCount={12}
-                  topReactions={['helpful', 'insightful', 'uplifting']}
-                  showCommentField
-                  commentAvatarName="Julia Child"
-                  onReact={() => {}}
-                  onShare={() => {}}
-                  onComment={() => {}}
-                />
+              <div className="space-y-4">
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={31}
+                    shareCount={13}
+                    commentCount={12}
+                    topReactions={['helpful', 'insightful', 'uplifting']}
+                    showCommentField
+                    commentAvatarName="Julia Child"
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={18}
+                    shareCount={7}
+                    commentCount={4}
+                    aiPrompt="Need a reply starter? Try thanking the member and asking what they want to see next."
+                    showCommentField
+                    commentAvatarName="Julia Child"
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={8}
+                    shareCount={2}
+                    commentCount={1}
+                    showCommentField={false}
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={0}
+                    shareCount={0}
+                    commentCount={0}
+                    topReactions={[]}
+                    showCommentField={false}
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
               </div>
+              <DocumentationNote>
+                All icon-only action buttons require explicit aria-label. Examples: Share post, Open image upload.
+              </DocumentationNote>
             </Section>
 
             <Section title="Feed Post" description="Full post card from Figma: organisms/posts/desktop/feed. Composes AuthorRow, image, PostContent, and PostActionBar.">
@@ -1081,6 +1208,12 @@ export function ComponentLibrary() {
               </div>
             </Section>
 
+            <Section title="Community Sidebar Compact" description="Condensed community navigation rail for constrained review surfaces.">
+              <div className="inline-flex overflow-hidden rounded-xl border border-border-strong bg-white shadow-xs">
+                <CommunitySidebar compact />
+              </div>
+            </Section>
+
             <Section title="Right Rail Modules" description="Home feed right-rail stack adapted from Figma: welcome card plus community rules module.">
               <div className="inline-flex flex-col gap-4 overflow-hidden rounded-xl border border-border-strong bg-surface-raised p-4 shadow-xs">
                 <RightRailWelcomeCard />
@@ -1124,11 +1257,62 @@ export function ComponentLibrary() {
               />
             </Section>
 
+            <Section title="Single Field Intake Variants" description="Trust points, disabled CTA, custom success copy, and the no-aside layout state.">
+              <div className="space-y-8">
+                <SingleFieldIntake
+                  title="Show trust cues while recognition runs."
+                  description="Use short proof points to explain why the first step is lightweight."
+                  value="https://instagram.com/juliachild"
+                  onChange={() => {}}
+                  onSubmit={() => {}}
+                  loading
+                  ctaLabel="Recognize creator"
+                  ctaSuccessLabel="Recognized"
+                  helperText="The success label confirms the recognition pass."
+                  trustPoints={[
+                    {
+                      title: 'Fast recognition',
+                      description: 'We pull only the early signals needed to start a preview.',
+                    },
+                    {
+                      title: 'Editable later',
+                      description: 'Fetched profile details can be corrected before submission.',
+                    },
+                    {
+                      title: 'No commitment yet',
+                      description: 'Nothing is submitted until the creator confirms the final step.',
+                    },
+                  ]}
+                />
+                <SingleFieldIntake
+                  title="Hold the CTA until the creator URL is usable."
+                  description="The disabled state keeps the first step from advancing before a recognizable profile is present."
+                  value=""
+                  onChange={() => {}}
+                  onSubmit={() => {}}
+                  ctaDisabled
+                  helperText="Paste a creator URL to unlock the action."
+                />
+                <SingleFieldIntake
+                  title="Use the focused no-aside layout when the art should become the full rail."
+                  description="This state keeps the same form contract while removing the explanatory aside content."
+                  value="juliachild.com"
+                  onChange={() => {}}
+                  onSubmit={() => {}}
+                  showAside={false}
+                  helperText="The image rail expands without changing the form behavior."
+                />
+              </div>
+            </Section>
+
             <Section title="Data Gathering Loader" description="Dedicated in-between loading step that confirms creator data is being gathered before the fetch confirmation appears.">
               <DataGatheringLoader
                 creatorUrl={creatorUrl}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
               />
+              <DocumentationNote>
+                Row entrance respects prefers-reduced-motion. Shimmer and pulse always run — they communicate loading.
+              </DocumentationNote>
             </Section>
 
             <Section title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before review.">
@@ -1174,6 +1358,9 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{ label: 'Looks right' }}
               />
+              <DocumentationNote>
+                Non-loading reveal transitions respect prefers-reduced-motion. Skeleton pulse always runs.
+              </DocumentationNote>
             </Section>
 
             <Section title="Archive · Projection Preview" description="Archived projections step kept for reference, with staged pipeline reveal from combined followers through reach and modeled revenue.">
@@ -1203,6 +1390,9 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{ label: 'Continue to review' }}
               />
+              <DocumentationNote>
+                Pipeline node and bar reveal animations respect prefers-reduced-motion. Stage sequencing always runs.
+              </DocumentationNote>
             </Section>
 
             <Section title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
@@ -1236,6 +1426,67 @@ export function ComponentLibrary() {
               <CompactWysiwygStudio />
             </Section>
 
+            <Section title="Accordion Panel" description="Standalone panel states for compact editor groups.">
+              <div className="max-w-xl divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+                <AccordionPanel
+                  icon={Settings2}
+                  label="Community basics"
+                  sublabel="Name, summary, and category fields"
+                  open
+                  onToggle={() => {}}
+                >
+                  <p className="text-sm leading-relaxed text-text-secondary">
+                    Open panels reveal the field group while keeping the paired icon, label, sublabel, and chevron aligned.
+                  </p>
+                </AccordionPanel>
+                <AccordionPanel
+                  icon={ShieldCheck}
+                  label="Verification"
+                  sublabel="Collapsed section"
+                  open={false}
+                  onToggle={() => {}}
+                >
+                  <p className="text-sm leading-relaxed text-text-secondary">
+                    Closed content stays hidden until the panel opens.
+                  </p>
+                </AccordionPanel>
+              </div>
+              <DocumentationNote>
+                Trigger uses aria-expanded and aria-controls pointing to the panel id. Panel id is generated with useId.
+              </DocumentationNote>
+              <DocumentationNote>
+                Chevron rotation respects prefers-reduced-motion.
+              </DocumentationNote>
+            </Section>
+
+            <Section title="Compact Field" description="Compact editor field variants used inside tighter creator setup surfaces.">
+              <div className="max-w-xl space-y-4 rounded-2xl border border-border bg-surface p-4">
+                <CompactField
+                  label="Name"
+                  value="Julia Child"
+                  onChange={() => {}}
+                />
+                <CompactField
+                  label="Summary"
+                  type="textarea"
+                  rows={3}
+                  value="Food creator and community builder helping families cook smarter."
+                  onChange={() => {}}
+                />
+                <CompactField
+                  label="Vertical"
+                  type="select"
+                  value="food"
+                  onChange={() => {}}
+                  options={[
+                    { value: 'food', label: 'Food' },
+                    { value: 'parenting', label: 'Parenting' },
+                    { value: 'wellness', label: 'Wellness' },
+                  ]}
+                />
+              </div>
+            </Section>
+
             <Section title="Community Preview Card" description="Aspirational preview moment that turns corrected inputs into something the creator can want.">
               <CommunityPreviewCard
                 title="This is what the creator experience could start to look like."
@@ -1267,6 +1518,9 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back to edits', variant: 'ghost' }}
                 primaryAction={{ label: 'Continue to verification' }}
               />
+              <DocumentationNote>
+                Preview reveal animation respects prefers-reduced-motion.
+              </DocumentationNote>
             </Section>
 
             <Section title="Verification Step" description="Lightweight commitment and identity confirmation step before the final submission moment, with the Instagram DM path expanding inline.">
@@ -1317,6 +1571,65 @@ export function ComponentLibrary() {
                 ]}
                 secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
                 primaryAction={{ label: 'Confirm and submit' }}
+              />
+              <DocumentationNote>
+                Expand/collapse controls use aria-expanded. Confirmation checkbox requires an associated label.
+              </DocumentationNote>
+            </Section>
+
+            <Section title="Verification Step Variants" description="Empty, email-selected, and no-aside verification states.">
+              <div className="space-y-8">
+                <VerificationStep
+                  title="Verification will unlock once we detect a contact path."
+                  description="Use the empty state when the creator profile has not exposed a usable social or email confirmation route yet."
+                  methods={[]}
+                  selectedMethod={null}
+                  onSelectMethod={() => {}}
+                  confirmed={false}
+                  onConfirmChange={() => {}}
+                  reassurance={[]}
+                  secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
+                  primaryAction={{ label: 'Confirm and submit' }}
+                />
+                <VerificationStep
+                  title="Confirm with the creator email instead."
+                  description="The email path should feel equally legitimate when Instagram access is inconvenient."
+                  methods={verificationExampleMethods}
+                  selectedMethod="email-domain"
+                  onSelectMethod={() => {}}
+                  confirmed
+                  onConfirmChange={() => {}}
+                  reassurance={[
+                    {
+                      icon: miniIcon(BadgeCheck),
+                      title: 'Domain-backed',
+                      description: 'The email path uses the creator contact already detected during review.',
+                    },
+                    {
+                      icon: miniIcon(ShieldCheck),
+                      title: 'No social handoff',
+                      description: 'The creator can finish verification without opening Instagram.',
+                    },
+                  ]}
+                  showAside={false}
+                  secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
+                  primaryAction={{ label: 'Confirm and submit' }}
+                />
+              </div>
+            </Section>
+
+            <Section title="Instagram DM Verification Detail" description="Standalone detail step for the expanded Instagram DM verification path.">
+              <InstagramDmVerificationDetail
+                title="Send this code from the creator account."
+                description="This standalone version gives creators a focused verification step when the DM handoff needs more room."
+                code="CHILD-453"
+                destinationHandle="@raptive_community"
+                originHandle="@juliachild"
+                creatorEmail="hello@juliachild.com"
+                confirmSentPending={false}
+                onConfirmSent={() => {}}
+                onUseEmailInstead={() => {}}
+                secondaryAction={{ label: 'Back to verification', variant: 'ghost' }}
               />
             </Section>
 
@@ -1450,6 +1763,9 @@ export function ComponentLibrary() {
                 <p>• "Maybe Later" dismisses — don't suppress it, community members should opt in to sharing</p>
                 <p>• Confetti is CSS-only, no library dependency</p>
               </div>
+              <DocumentationNote>
+                Modal entrance and confetti animations respect prefers-reduced-motion.
+              </DocumentationNote>
             </Section>
           </>
         )}

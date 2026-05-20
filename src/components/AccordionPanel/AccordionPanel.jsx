@@ -30,7 +30,9 @@ export function AccordionPanel({
             open ? 'bg-neutral-950 text-white' : 'bg-surface-sunken text-text-secondary',
           ].join(' ')}
         >
-          <LucideIcon icon={icon} size="md" />
+          <span className="paired-label-icon text-sm leading-sm">
+            <LucideIcon icon={icon} size="md" />
+          </span>
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-medium text-text">{label}</span>
@@ -43,7 +45,9 @@ export function AccordionPanel({
           ].join(' ')}
           style={{ transitionDuration: `${duration}s` }}
         >
-          <LucideIcon icon={ChevronDown} size="sm" />
+          <span className="paired-label-icon text-sm leading-sm">
+            <LucideIcon icon={ChevronDown} size="sm" />
+          </span>
         </span>
       </button>
 

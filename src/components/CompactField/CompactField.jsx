@@ -50,7 +50,7 @@ export function CompactField({
                 </option>
               ))}
             </select>
-            <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center text-text-secondary">
+            <span className="paired-label-icon text-base leading-snug text-text-secondary">
               <LucideIcon icon={ChevronDown} size="sm" />
             </span>
           </div>

@@ -69,20 +69,15 @@ const successOverlays = {
   black: 'bg-neutral-950',
 }
 
-const iconSizes = {
-  xs: 'w-3 h-3',
-  sm: 'w-3.5 h-3.5',
-  md: 'w-4 h-4',
-  lg: 'w-5 h-5',
-}
-
-const Spinner = ({ size }) => (
-  <LucideIcon
-    icon={LoaderCircle}
-    size={size === 'xs' ? 'xs' : size === 'sm' ? 'sm' : size === 'md' ? 'md' : 'lg'}
-    stroke="standard"
-    className="animate-spin"
-  />
+const Spinner = () => (
+  <span className="paired-label-icon">
+    <LucideIcon
+      icon={LoaderCircle}
+      size="md"
+      stroke="standard"
+      className="animate-spin"
+    />
+  </span>
 )
 
 export function Button({
@@ -154,7 +149,7 @@ export function Button({
               transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               className="inline-flex items-center gap-2"
             >
-              <Spinner size={size} />
+              <Spinner />
               {(loadingLabel ?? children) && <span>{loadingLabel ?? children}</span>}
             </motion.span>
           ) : success ? (
@@ -166,18 +161,20 @@ export function Button({
               transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               className="inline-flex items-center gap-2"
             >
-              <motion.svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <motion.path
-                  d="M3.75 8.25 6.5 11l5.75-6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
-                />
-              </motion.svg>
+              <span className="paired-label-icon">
+                <motion.svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <motion.path
+                    d="M3.75 8.25 6.5 11l5.75-6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
+                  />
+                </motion.svg>
+              </span>
               <span>{successLabel ?? children}</span>
             </motion.span>
           ) : (
@@ -189,13 +186,9 @@ export function Button({
               transition={{ duration: labelDuration, ease: [0.22, 1, 0.36, 1] }}
               className="inline-flex items-center gap-2"
             >
-              {iconBefore ? (
-                <span className={`${iconSizes[size]} flex-shrink-0`}>{iconBefore}</span>
-              ) : null}
+              {iconBefore ? <span className="paired-label-icon">{iconBefore}</span> : null}
               {children && <span>{children}</span>}
-              {iconAfter && (
-                <span className={`${iconSizes[size]} flex-shrink-0`}>{iconAfter}</span>
-              )}
+              {iconAfter && <span className="paired-label-icon">{iconAfter}</span>}
             </motion.span>
           )}
         </AnimatePresence>
