@@ -67,6 +67,7 @@ export function DataGatheringLoader({
       description="This screen gives the user immediate feedback that profile, audience, and newsletter data are being assembled."
       primaryAction={null}
       secondaryAction={secondaryAction}
+      showFooterDivider={false}
       aside={(
         <div className="space-y-4">
           <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">

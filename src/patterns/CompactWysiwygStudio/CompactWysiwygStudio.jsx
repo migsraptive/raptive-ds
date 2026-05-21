@@ -10,28 +10,19 @@ import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { brandPreviewDefaults, compactWysiwygPalette } from '../../utils/brandPreviewDefaults.js'
 import { getAccessibleColorPair, normalizeHexColor } from '../../utils/colorContrast.js'
+import {
+  COMMUNITY_VERTICAL_OPTIONS,
+  COMMUNITY_VERTICAL_OTHER,
+  getClosestCommunityVertical,
+} from '../../utils/communityVerticals.js'
 
 const defaultFields = {
   name: 'Julia Child Kitchen Club',
-  url: 'instagram.com/juliachild',
-  topic: 'Food',
+  topic: getClosestCommunityVertical('Food'),
   description: 'Food creator and community builder helping families cook smarter and gather more often.',
 }
 
 const defaultColors = brandPreviewDefaults
-
-const topicOptions = [
-  'Food',
-  'Baking',
-  'Fitness',
-  'Photography',
-  'Parenting',
-  'Travel',
-  'Books',
-  'Sports',
-  'Crafts',
-  'Gaming',
-].map((topic) => ({ value: topic, label: topic }))
 
 const shapeOptions = [
   { value: 'circle', label: 'Circle' },
@@ -114,33 +105,9 @@ export function CompactWysiwygStudio({
         <aside className="flex max-h-[760px] min-h-[720px] flex-col border-b border-border bg-surface lg:border-b-0 lg:border-r">
           {/* no token available: desktop mock needs bounded editor height to test independent sidebar scrolling. */}
           <div className="flex-shrink-0 border-b border-border bg-surface px-4 py-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex min-w-0 flex-wrap items-center gap-2">
-                <h2 className="text-base font-medium text-text">Community preview</h2>
-                <Badge variant="default" size="sm">Draft</Badge>
-              </div>
-              <div className="flex flex-shrink-0 items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  iconBefore={<LucideIcon icon={RotateCcw} size="sm" />}
-                  onClick={resetEditor}
-                >
-                  Reset
-                </Button>
-                <Button
-                  size="sm"
-                  variant="black"
-                  iconBefore={<LucideIcon icon={Save} size="sm" />}
-                  success={saved}
-                  successLabel="Saved"
-                  onClick={() => setSaved(true)}
-                >
-                  Save
-                </Button>
-              </div>
+            <div className="flex justify-start">
+              <Badge variant="default" size="sm">Draft</Badge>
             </div>
-            <p className="mt-2 text-sm text-text-secondary">Configure your community before submitting.</p>
           </div>
 
           <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">
@@ -158,17 +125,17 @@ export function CompactWysiwygStudio({
                   onChange={(value) => updateField('name', value)}
                 />
                 <CompactField
-                  label="profile"
-                  value={fields.url}
-                  onChange={(value) => updateField('url', value)}
-                />
-                <CompactField
-                  label="topic"
+                  label="main topic"
                   type="select"
                   value={fields.topic}
                   onChange={(value) => updateField('topic', value)}
-                  options={topicOptions}
+                  options={COMMUNITY_VERTICAL_OPTIONS}
                 />
+                {fields.topic === COMMUNITY_VERTICAL_OTHER && (
+                  <p className="ml-24 text-xs leading-relaxed text-text-secondary">
+                    Our team will reach out to confirm your community topic.
+                  </p>
+                )}
                 <CompactField
                   label="description"
                   type="textarea"
@@ -242,6 +209,26 @@ export function CompactWysiwygStudio({
               </div>
             </AccordionPanel>
           </div>
+          <div className="flex flex-shrink-0 items-center justify-end gap-2 border-t border-border bg-surface px-4 py-4">
+            <Button
+              size="sm"
+              variant="secondary"
+              iconBefore={<LucideIcon icon={RotateCcw} size="sm" />}
+              onClick={resetEditor}
+            >
+              Reset
+            </Button>
+            <Button
+              size="sm"
+              variant="black"
+              iconBefore={<LucideIcon icon={Save} size="sm" />}
+              success={saved}
+              successLabel="Saved"
+              onClick={() => setSaved(true)}
+            >
+              Save
+            </Button>
+          </div>
         </aside>
 
         <div className="preview-theme bg-surface-sunken p-4" style={previewThemeStyle}>
@@ -250,7 +237,6 @@ export function CompactWysiwygStudio({
               <div className="min-w-0 space-y-1">
                 <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Live preview</p>
                 <h3 className="text-display font-semibold tracking-normal text-text">{fields.name}</h3>
-                <p className="preview-link-text truncate text-sm font-medium">{fields.url}</p>
               </div>
               <div
                 className={[
@@ -300,6 +286,10 @@ export function CompactWysiwygStudio({
           </div>
         </div>
       </div>
+      <footer className="flex flex-wrap items-center justify-end gap-3 border-t border-border px-8 py-5">
+        <Button size="lg" variant="secondary">Back</Button>
+        <Button size="lg">Continue to Verification</Button>
+      </footer>
     </section>
   )
 }

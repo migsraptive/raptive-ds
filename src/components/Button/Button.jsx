@@ -4,7 +4,7 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 /**
  * Button
- * Variants: primary | secondary | ghost | danger | black | link
+ * Variants: primary | secondary | ghost | danger | black | link | previewPrimary | previewSecondary
  * Sizes: xs | sm | md | lg
  * States: default | hover | active | disabled | loading
  */
@@ -43,6 +43,18 @@ const variants = {
     'hover:bg-neutral-900 active:bg-neutral-800',
     'focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2',
     'disabled:bg-neutral-300 disabled:text-text-disabled disabled:cursor-not-allowed',
+  ].join(' '),
+
+  previewPrimary: [
+    'preview-primary-surface',
+    'focus-visible:ring-2 focus-visible:ring-offset-2',
+    'disabled:opacity-40 disabled:cursor-not-allowed',
+  ].join(' '),
+
+  previewSecondary: [
+    'preview-secondary-surface',
+    'focus-visible:ring-2 focus-visible:ring-offset-2',
+    'disabled:opacity-40 disabled:cursor-not-allowed',
   ].join(' '),
 
   link: [

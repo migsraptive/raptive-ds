@@ -1,3 +1,4 @@
+import { useReducedMotion } from 'motion/react'
 import submissionIllustrationUrl from '../../assets/submission-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 
@@ -12,6 +13,8 @@ export function SubmissionSuccess({
   primaryAction = { label: 'View creator dashboard' },
   secondaryAction = { label: 'Back to library', variant: 'ghost' },
 }) {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -64,6 +67,7 @@ export function SubmissionSuccess({
                           className={[
                             'h-2.5 w-2.5 rounded-full',
                             item.current ? 'bg-gamification-gold-light' : 'bg-white/28',
+                            item.current && !shouldReduceMotion ? 'submission-status-dot-pulse' : '',
                           ].join(' ')}
                         />
                       </span>

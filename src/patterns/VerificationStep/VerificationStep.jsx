@@ -4,13 +4,9 @@ import { motion } from 'motion/react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
-import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 
 function InstagramDmInlineDetail({
   code,
-  confirmed,
-  confirmSentPending,
-  onConfirmSent,
   open = true,
 }) {
   const [copied, setCopied] = useState(false)
@@ -50,14 +46,16 @@ function InstagramDmInlineDetail({
         </div>
 
         <div className="flex flex-wrap gap-2 lg:flex-shrink-0">
-          <Button size="sm" onClick={onConfirmSent} success={confirmSentPending} successLabel="Sent" disabled={!open || !confirmed}>
-            I&apos;ve sent it
-          </Button>
-          <Button size="sm" variant="secondary" onClick={handleCopyCode} success={copied} successLabel="Copied" disabled={!open}>
-            <span className="inline-flex items-center gap-2">
-              <LucideIcon icon={Copy} size="sm" stroke="standard" className="paired-label-icon text-sm leading-sm" />
-              <span>Copy code</span>
-            </span>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleCopyCode}
+            success={copied}
+            successLabel="Copied"
+            disabled={!open}
+            iconBefore={<Copy aria-hidden="true" strokeWidth={2} />}
+          >
+            Copy code
           </Button>
         </div>
       </div>
@@ -77,7 +75,6 @@ export function VerificationStep({
   reassurance = [],
   showAside = true,
   instagramDmDetail = null,
-  onConfirmDmSent,
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
@@ -198,9 +195,6 @@ export function VerificationStep({
                         <div className="pt-3">
                           <InstagramDmInlineDetail
                             code={instagramDmDetail.code}
-                            confirmed={confirmed}
-                            confirmSentPending={instagramDmDetail.confirmSentPending}
-                            onConfirmSent={onConfirmDmSent}
                             open={dmExpanded}
                           />
                         </div>
@@ -237,7 +231,7 @@ export function VerificationStep({
                 size="lg"
                 variant={primaryAction.variant ?? 'primary'}
                 onClick={primaryAction.onClick}
-                disabled={methods.length === 0 || !selectedMethod || !confirmed || primaryAction.disabled}
+                disabled={methods.length === 0 || !selectedMethod || primaryAction.disabled}
                 success={primaryAction.success}
                 successLabel={primaryAction.successLabel}
               >

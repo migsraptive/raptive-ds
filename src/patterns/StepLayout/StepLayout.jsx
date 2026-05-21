@@ -13,6 +13,7 @@ export function StepLayout({
   progressMeter = null,
   aside = null,
   children,
+  showFooterDivider = true,
   primaryAction = { label: 'Continue' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
@@ -67,7 +68,12 @@ export function StepLayout({
             </div>
           </div>
 
-          <footer className="mt-auto flex flex-col items-end gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-end">
+          <footer
+            className={[
+              'mt-auto flex w-full flex-col items-end justify-end gap-3 pt-5 sm:flex-row sm:items-center sm:justify-end',
+              showFooterDivider ? 'border-t border-border' : '',
+            ].filter(Boolean).join(' ')}
+          >
             {secondaryAction ? (
               <Button
                 size="lg"

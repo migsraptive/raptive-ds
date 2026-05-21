@@ -406,20 +406,15 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           code: 'CHILD-453',
           destinationHandle: '@raptive_community',
           originHandle: instagramAccount?.handle ?? '@juliachild',
-          confirmSentPending: pendingPrimaryAction === 'verify-dm-primary',
         }}
-        onConfirmDmSent={() => triggerPrimaryAction({
-          key: 'verify-dm-primary',
-          run: () => setActiveStep(6),
-        })}
         secondaryAction={{
-          label: 'Back',
-          variant: 'ghost',
+          label: 'Back to preview',
+          variant: 'secondary',
           onClick: () => {
             setActiveStep(4)
           },
         }}
-        primaryAction={verificationMethod === 'instagram-dm' ? null : {
+        primaryAction={{
           label: 'Continue',
           disabled: pendingPrimaryAction === 'verify-primary',
           success: pendingPrimaryAction === 'verify-primary',

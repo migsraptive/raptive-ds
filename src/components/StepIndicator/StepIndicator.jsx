@@ -31,10 +31,10 @@ export function StepIndicator({ steps, currentStep }) {
             className={[
               'block h-[6px] flex-shrink-0 rounded-full transition-all duration-200',
               isCurrent
-                ? 'w-[20px] border border-action-primary bg-action-primary'
+                ? 'w-[20px] border border-neutral-950 bg-neutral-950'
                 : 'w-[6px]',
               isComplete
-                ? 'border border-action-primary bg-action-primary'
+                ? 'border border-neutral-950 bg-neutral-950'
                 : '',
               !isCurrent && !isComplete
                 ? 'bg-neutral-500'

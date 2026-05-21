@@ -52,6 +52,8 @@ import { FeedPost } from '../../components/FeedPost/FeedPost.jsx'
 import { Comment } from '../../components/Comment/Comment.jsx'
 import { CommunitySidebar } from '../../components/CommunitySidebar/CommunitySidebar.jsx'
 import { CommunityTopNavigation } from '../../components/CommunityTopNavigation/CommunityTopNavigation.jsx'
+import { CommunityCreatorDiscoverCard } from '../../components/CommunityCreatorDiscoverCard/CommunityCreatorDiscoverCard.jsx'
+import { CommunityAnswersCard } from '../../components/CommunityAnswersCard/CommunityAnswersCard.jsx'
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
@@ -66,7 +68,6 @@ import { InstagramDmVerificationDetail } from '../../patterns/InstagramDmVerific
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { PreviewBuilderStudio } from '../../patterns/PreviewBuilderStudio/PreviewBuilderStudio.jsx'
-import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
@@ -156,6 +157,63 @@ const socialUrlExamples = [
   { label: 'Substack', value: 'https://juliachild.substack.com' },
   { label: 'Default website', value: 'https://www.juliachild.com' },
 ]
+// no token available — creator brand colors are runtime data, represented here as ComponentLibrary fixtures.
+const communityCreatorDiscoverExamples = [
+  {
+    name: 'Lambeau Leapers',
+    description: 'Packers pride, shared together',
+    brandPrimaryColor: '#004101',
+  },
+  {
+    name: 'Sally’s Baking',
+    description: 'Learn, share, and bake together',
+    brandPrimaryColor: '#ce7c77',
+  },
+  {
+    name: 'Make & Do Crew',
+    description: 'A welcome space for crocheters',
+    avatarShape: 'square',
+    brandPrimaryColor: '#de4b32',
+  },
+  {
+    name: 'Inside the Magic',
+    description: 'A home for Disney lovers everywhere',
+    brandPrimaryColor: '#833193',
+  },
+  {
+    name: 'Half Baked Harvest',
+    description: 'Recipes, gatherings, inspiration',
+    brandPrimaryColor: '#5f5e4a',
+  },
+]
+const communityAnswersCardExamples = [
+  {
+    label: 'Figma selected',
+    authorName: 'Sally McKenney',
+    communityName: 'Sally’s Baking',
+    question: 'Which dessert always disappears first at gatherings?',
+    answerCount: 45,
+    avatarSrc: avatarImageSet[0].src,
+    brandPrimaryColor: '#ce7c77',
+  },
+  {
+    label: 'Initials fallback',
+    authorName: 'Lena Torres',
+    communityName: 'Garden Club',
+    question: 'What is one small habit that keeps your herbs thriving indoors?',
+    answerCount: 8,
+    brandPrimaryColor: '#004101',
+  },
+  {
+    label: 'No answers yet',
+    authorName: 'Maya Chen',
+    communityName: 'Weeknight Table',
+    question: 'What is your go-to pantry dinner when the fridge is almost empty?',
+    answerCount: 0,
+    avatarSrc: avatarImageSet[1].src,
+    brandPrimaryColor: '#5f5e4a',
+  },
+]
 
 function tokenTypographyLabel(tokenName) {
   const token = typographyTokens.fontSize[tokenName]
@@ -194,9 +252,9 @@ export function ComponentLibrary() {
   const [selectedCategories, setSelectedCategories] = useState(['food', 'parenting'])
   const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/juliachild')
   const [intakeLoading, setIntakeLoading] = useState(false)
-  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
-  const [verificationConfirmed, setVerificationConfirmed] = useState(true)
-  const [reviewFields, setReviewFields] = useState({
+  const [verificationMethod, setVerificationMethod] = useState(null)
+  const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [reviewFields] = useState({
     name: 'Julia Child',
     url: 'instagram.com/juliachild',
     vertical: 'food',
@@ -257,10 +315,6 @@ export function ComponentLibrary() {
         ? current.filter((item) => item !== value)
         : [...current, value]
     ))
-  }
-
-  const updateReviewField = (key, value) => {
-    setReviewFields((current) => ({ ...current, [key]: value }))
   }
 
   const verificationExampleMethods = [
@@ -1252,39 +1306,43 @@ export function ComponentLibrary() {
                 ))}
               </div>
 
-              <div className="grid gap-6 lg:grid-cols-2">
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-text">dots variant</p>
-                  <StepLayout
-                    progressVariant="dots"
-                    step={3}
-                    totalSteps={5}
-                    title="Confirm creator details"
-                    description="The compact indicator sits centered in the header area."
-                    primaryAction={{ label: 'Continue' }}
-                    secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                  >
-                    <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
-                      Creator details, audience signal, and review controls render here.
-                    </div>
-                  </StepLayout>
+              <div className="grid gap-6">
+                <div className="grid items-start gap-4 lg:grid-cols-4">
+                  <p className="whitespace-nowrap text-sm font-medium text-text">dots variant</p>
+                  <div className="lg:col-span-3">
+                    <StepLayout
+                      progressVariant="dots"
+                      step={3}
+                      totalSteps={5}
+                      title="Confirm creator details"
+                      description="The compact indicator sits centered in the header area."
+                      primaryAction={{ label: 'Continue' }}
+                      secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                    >
+                      <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
+                        Creator details, audience signal, and review controls render here.
+                      </div>
+                    </StepLayout>
+                  </div>
                 </div>
 
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-text">bar variant</p>
-                  <StepLayout
-                    progressVariant="bar"
-                    step={3}
-                    totalSteps={5}
-                    title="Confirm creator details"
-                    description="The original progress bar remains available as the default variant."
-                    primaryAction={{ label: 'Continue' }}
-                    secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                  >
-                    <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
-                      Creator details, audience signal, and review controls render here.
-                    </div>
-                  </StepLayout>
+                <div className="grid items-start gap-4 lg:grid-cols-4">
+                  <p className="whitespace-nowrap text-sm font-medium text-text">bar variant</p>
+                  <div className="lg:col-span-3">
+                    <StepLayout
+                      progressVariant="bar"
+                      step={3}
+                      totalSteps={5}
+                      title="Confirm creator details"
+                      description="The original progress bar remains available as the default variant."
+                      primaryAction={{ label: 'Continue' }}
+                      secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                    >
+                      <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
+                        Creator details, audience signal, and review controls render here.
+                      </div>
+                    </StepLayout>
+                  </div>
                 </div>
               </div>
             </Section>
@@ -1483,20 +1541,24 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
-              <ReviewCorrection
-                title="Make any corrections before we build the preview."
-                description="This should feel like refining a strong starting point, not filling out a form from scratch."
-                fields={reviewFields}
-                onFieldChange={updateReviewField}
-                brandAssets={{
-                  palette: brandPreviewPalette,
-                  items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
-                }}
-                note="If this step feels bureaucratic, the recognition stage failed to earn trust."
-                showAside={false}
-                secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                primaryAction={{ label: 'Continue to preview' }}
-              />
+              <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+                <div className="flex h-full flex-col p-8 lg:p-12">
+                  <div className="space-y-8">
+                    <div className="space-y-4">
+                      <div className="space-y-3">
+                        <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
+                          Your community, your way.
+                        </h2>
+                        <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
+                          Here&apos;s what we found. Make it feel exactly like you.
+                        </p>
+                      </div>
+                    </div>
+
+                    <CompactWysiwygStudio />
+                  </div>
+                </div>
+              </section>
             </Section>
 
             <Section title="Exploration · Split Studio" description="Merged review + live preview exploration where meaningful edits update the mocked creator community experience immediately.">
@@ -1511,6 +1573,46 @@ export function ComponentLibrary() {
 
             <Section title="Exploration · Compact WYSIWYG Option" description="A calmer, tighter editor option with plain-language fields and a small live preview for less technical users.">
               <CompactWysiwygStudio />
+            </Section>
+
+            <Section title="Community Creator Discover Card" description="Compact discover tile migrated from Figma for the creator WYSIWYG community preview.">
+              <div className="grid items-stretch gap-6 rounded-2xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-4">
+                {communityCreatorDiscoverExamples.map((example) => (
+                  <CommunityCreatorDiscoverCard
+                    key={example.name}
+                    name={example.name}
+                    description={example.description}
+                    avatarShape={example.avatarShape}
+                    brandPrimaryColor={example.brandPrimaryColor}
+                    onExplore={() => {}}
+                  />
+                ))}
+              </div>
+            </Section>
+
+            <Section title="Community Answers Card" description="Mobile answers prompt card migrated from the selected Figma post component.">
+              <div className="grid auto-rows-fr items-stretch gap-6 rounded-2xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-3">
+                {/* no token available — creator brand fixture colors (#ce7c77, #004101, #5f5e4a) are runtime data. */}
+                {communityAnswersCardExamples.map((example) => (
+                  <div key={example.label} className="flex h-full min-w-0 flex-col gap-2">
+                    <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
+                      {example.label}
+                    </p>
+                    <div className="min-h-0 flex-1">
+                      <CommunityAnswersCard
+                        authorName={example.authorName}
+                        communityName={example.communityName}
+                        question={example.question}
+                        answerCount={example.answerCount}
+                        avatarSrc={example.avatarSrc}
+                        brandPrimaryColor={example.brandPrimaryColor}
+                        onAnswer={() => {}}
+                        onViewAnswers={() => {}}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </Section>
 
             <Section title="Accordion Panel" description="Standalone panel states for compact editor groups.">
@@ -1636,9 +1738,7 @@ export function ComponentLibrary() {
                   code: 'CHILD-453',
                   destinationHandle: '@raptive_community',
                   originHandle: '@juliachild',
-                  confirmSentPending: false,
                 }}
-                onConfirmDmSent={() => {}}
                 reassurance={[
                   {
                     icon: miniIcon(BadgeCheck),
@@ -1656,8 +1756,8 @@ export function ComponentLibrary() {
                     description: 'The screen explains why verification exists so the momentum from preview does not collapse here.',
                   },
                 ]}
-                secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
-                primaryAction={{ label: 'Confirm and submit' }}
+                secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                primaryAction={{ label: 'Continue' }}
               />
               <DocumentationNote>
                 Expand/collapse controls use aria-expanded. Confirmation checkbox requires an associated label.
@@ -1675,8 +1775,8 @@ export function ComponentLibrary() {
                   confirmed={false}
                   onConfirmChange={() => {}}
                   reassurance={[]}
-                  secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
-                  primaryAction={{ label: 'Confirm and submit' }}
+                  secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                  primaryAction={{ label: 'Continue' }}
                 />
                 <VerificationStep
                   title="Confirm with the creator email instead."
@@ -1699,8 +1799,8 @@ export function ComponentLibrary() {
                     },
                   ]}
                   showAside={false}
-                  secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
-                  primaryAction={{ label: 'Confirm and submit' }}
+                  secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                  primaryAction={{ label: 'Continue' }}
                 />
               </div>
             </Section>
@@ -1895,10 +1995,7 @@ export function ComponentLibrary() {
                   code: 'CHILD-453',
                   destinationHandle: '@raptive_community',
                   originHandle: '@juliachild',
-                  confirmSentPending: false,
                 }}
-                onConfirmDmSent={() => {}}
-                onUseEmailInstead={() => setVerificationMethod('email-domain')}
                 reassurance={[
                   {
                     icon: miniIcon(BadgeCheck),
@@ -1917,8 +2014,8 @@ export function ComponentLibrary() {
                   },
                 ]}
                 showAside={false}
-                secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
-                primaryAction={verificationMethod === 'instagram-dm' ? null : { label: 'Confirm and submit' }}
+                secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                primaryAction={{ label: 'Continue' }}
               />
             </Section>
           </>

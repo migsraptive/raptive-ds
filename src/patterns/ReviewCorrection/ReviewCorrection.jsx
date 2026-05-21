@@ -3,6 +3,11 @@ import { FormField } from '../../components/FormField/FormField.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
+import {
+  COMMUNITY_VERTICAL_OPTIONS,
+  COMMUNITY_VERTICAL_OTHER,
+  getClosestCommunityVertical,
+} from '../../utils/communityVerticals.js'
 
 function PaletteTile({ value }) {
   return (
@@ -32,6 +37,8 @@ export function ReviewCorrection({
   secondaryAction = { label: 'Back', variant: 'ghost' },
   note = null,
 }) {
+  const selectedVertical = getClosestCommunityVertical(fields.vertical)
+
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className={['grid gap-0', showAside ? 'lg:grid-cols-[minmax(0,1.1fr)_380px]' : 'lg:grid-cols-1'].join(' ')}>
@@ -69,16 +76,12 @@ export function ReviewCorrection({
               />
               <Select
                 className={brandAssets ? 'lg:col-start-3 lg:row-start-2' : ''}
-                label="Primary vertical"
-                value={fields.vertical ?? ''}
+                label="My community's main topic"
+                description={selectedVertical === COMMUNITY_VERTICAL_OTHER ? 'Our team will reach out to confirm your community topic.' : undefined}
+                value={selectedVertical}
                 onChange={(event) => onFieldChange?.('vertical', event.target.value)}
                 placeholder="Select a vertical"
-                options={[
-                  { value: 'food', label: 'Food' },
-                  { value: 'parenting', label: 'Parenting' },
-                  { value: 'home', label: 'Home' },
-                  { value: 'wellness', label: 'Wellness' },
-                ]}
+                options={COMMUNITY_VERTICAL_OPTIONS}
               />
               <TextInput
                 className={brandAssets ? 'lg:col-start-2 lg:row-start-2' : ''}
