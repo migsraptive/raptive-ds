@@ -173,14 +173,14 @@ export function ProjectionPreview({
           )}
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
           {secondaryAction && (
             <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
               {secondaryAction.label}
             </Button>
           )}
           {primaryAction && (
-            <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel}>
+            <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} className={secondaryAction ? '' : 'ml-auto'}>
               {primaryAction.label}
             </Button>
           )}

@@ -114,11 +114,27 @@ export function detectSocialUrlPlatform(value) {
     return platform
   }
 
-  if (/^(https?:\/\/|www\.)/i.test(trimmedValue)) {
+  if (/^(https?:\/\/|www\.)/i.test(trimmedValue) || hasRecognizableUrlDomain(trimmedValue)) {
     return { id: 'url', label: 'Website', icon: platformIcon(Globe) }
   }
 
   return { id: 'empty', label: 'Link', icon: platformIcon(Link2) }
+}
+
+export function getDetectedSocialAccountHelperText(value) {
+  const platform = detectSocialUrlPlatform(value)
+
+  if (platform.id === 'empty') {
+    return 'Facebook, Instagram, TikTok, YouTube, X/Twitter, Substack, or website'
+  }
+
+  if (platform.id === 'url') {
+    return "Looks like you're using a website."
+  }
+
+  const article = platform.id === 'instagram' ? 'an' : 'a'
+
+  return `Looks like you're using ${article} ${platform.label} account.`
 }
 
 export const SocialUrlInput = forwardRef(function SocialUrlInput(

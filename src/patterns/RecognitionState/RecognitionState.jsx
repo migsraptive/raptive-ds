@@ -150,14 +150,14 @@ export function RecognitionState({
             </AnimatePresence>
           </motion.div>
 
-          <motion.div className="flex flex-wrap items-center gap-3" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...transition, delay: 0.12 }}>
+          <motion.div className="flex flex-wrap items-center justify-between gap-3" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...transition, delay: 0.12 }}>
             {secondaryAction && (
               <Button variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
-              <Button variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading}>
+              <Button variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading} className={secondaryAction ? '' : 'ml-auto'}>
                 {primaryAction.label}
               </Button>
             )}

@@ -89,7 +89,7 @@ export function SubmissionSuccess({
               </div>
             )}
 
-            <div className="flex flex-wrap items-center justify-end gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               {secondaryAction && (
                 <Button
                   size="lg"
@@ -113,9 +113,12 @@ export function SubmissionSuccess({
                   success={primaryAction.success}
                   successLabel={primaryAction.successLabel}
                   className={
-                    primaryAction.variant === 'black' && !primaryAction.disabled
+                    [
+                      !secondaryAction ? 'ml-auto' : '',
+                      primaryAction.variant === 'black' && !primaryAction.disabled
                       ? '!border !border-white/12 !bg-neutral-950 !text-white hover:!bg-neutral-900'
-                      : ''
+                      : '',
+                    ].filter(Boolean).join(' ')
                   }
                 >
                   {primaryAction.label}

@@ -128,14 +128,14 @@ export function ReviewCorrection({
             </div>
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center justify-end gap-3 pt-8">
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} className={secondaryAction ? '' : 'ml-auto'}>
                 {primaryAction.label}
               </Button>
             )}

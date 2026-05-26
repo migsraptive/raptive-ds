@@ -204,10 +204,10 @@ export function FetchConfirmation({
             <motion.div className="space-y-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={revealTransition}>
               <div className="space-y-3">
                 <h2 className="max-w-3xl font-newsreader text-hero font-normal text-text">
-                  {loading ? 'We’re pulling the first creator details now.' : 'Confirm what we found before moving forward.'}
+                  {loading ? 'We’re pulling the first creator details now.' : "Here's what we found. How does it look?"}
                 </h2>
                 <p className="max-w-3xl text-base leading-relaxed text-text-secondary">
-                  Review the pulled fields below. Website and social accounts can be updated here before continuing.
+                  You can add or remove any accounts before continuing.
                 </p>
               </div>
             </motion.div>
@@ -291,14 +291,14 @@ export function FetchConfirmation({
             </div>
           </div>
 
-          <motion.div className="mt-auto flex flex-wrap items-center justify-end gap-3 pt-8" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.18 }}>
+          <motion.div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...revealTransition, delay: 0.18 }}>
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} className={secondaryAction ? '' : 'ml-auto'}>
                 {primaryAction.label}
               </Button>
             )}

@@ -39,8 +39,9 @@ import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
 import { RadioGroup } from '../../components/RadioGroup/RadioGroup.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
-import { SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
+import { getDetectedSocialAccountHelperText, SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
 import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
+import { TextLink } from '../../components/TextLink/TextLink.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { AuthorRow } from '../../components/AuthorRow/AuthorRow.jsx'
@@ -58,16 +59,13 @@ import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/Home
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
-import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
-import { InstagramDmVerificationDetail } from '../../patterns/InstagramDmVerificationDetail/InstagramDmVerificationDetail.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
-import { PreviewBuilderStudio } from '../../patterns/PreviewBuilderStudio/PreviewBuilderStudio.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
@@ -316,21 +314,6 @@ export function ComponentLibrary() {
         : [...current, value]
     ))
   }
-
-  const verificationExampleMethods = [
-    {
-      value: 'instagram-dm',
-      icon: tileIcon(Mail),
-      title: 'Confirm with an Instagram DM',
-      description: 'Send the verification code from the connected Instagram account.',
-    },
-    {
-      value: 'email-domain',
-      icon: tileIcon(BadgeCheck),
-      title: 'Confirm with a creator email',
-      description: 'Use a detected creator email when social access is not convenient.',
-    },
-  ]
 
   useEffect(() => {
     const url = new URL(window.location.href)
@@ -930,6 +913,15 @@ export function ComponentLibrary() {
                 <Button variant="secondary" iconAfter={miniIcon(Rocket)}>Continue</Button>
               </Row>
             </Section>
+            <Section title="Text Links" description="Inline action primitive for text-only links when alignment needs to be controlled independently from Button.">
+              <Row>
+                <TextLink onClick={() => {}}>Left text link</TextLink>
+                <TextLink align="center" underline onClick={() => {}}>Centered underlined link</TextLink>
+                <TextLink tone="invert" className="rounded-md bg-neutral-950 px-3 py-2" onClick={() => {}}>
+                  Inverted link
+                </TextLink>
+              </Row>
+            </Section>
             <Section title="Canonical Token References" description="Reference button treatments aligned to the current shared action tokens.">
               <Row label="Action token treatment">
                 <Button
@@ -1389,8 +1381,8 @@ export function ComponentLibrary() {
           <>
             <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
               <SingleFieldIntake
-                title="Bring a creator into the application flow with one confident move."
-                description="Paste a creator URL or social handle. We’ll recognize the profile, fetch the first identity signals, and show a preview before anything gets submitted."
+                title="Where do your fans live?"
+                description="Paste a link to where we can find your fans: your main social account or website. We’ll do the rest!"
                 value={creatorUrl}
                 onChange={(event) => setCreatorUrl(event.target.value)}
                 onSubmit={() => {
@@ -1398,7 +1390,7 @@ export function ComponentLibrary() {
                   window.setTimeout(() => setIntakeLoading(false), 900)
                 }}
                 loading={intakeLoading}
-                helperText="No long application form up front."
+                helperText={getDetectedSocialAccountHelperText(creatorUrl)}
               />
             </Section>
 
@@ -1413,7 +1405,7 @@ export function ComponentLibrary() {
                   loading
                   ctaLabel="Recognize creator"
                   ctaSuccessLabel="Recognized"
-                  helperText="The success label confirms the recognition pass."
+                  helperText={getDetectedSocialAccountHelperText('https://instagram.com/juliachild')}
                   trustPoints={[
                     {
                       title: 'Fast recognition',
@@ -1445,7 +1437,7 @@ export function ComponentLibrary() {
                   onChange={() => {}}
                   onSubmit={() => {}}
                   showAside={false}
-                  helperText="The image rail expands without changing the form behavior."
+                  helperText={getDetectedSocialAccountHelperText('juliachild.com')}
                 />
               </div>
             </Section>
@@ -1547,10 +1539,10 @@ export function ComponentLibrary() {
                     <div className="space-y-4">
                       <div className="space-y-3">
                         <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
-                          Your community, your way.
+                          We used your brand to jumpstart your community. How does it look?
                         </h2>
                         <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                          Here&apos;s what we found. Make it feel exactly like you.
+                          Pick your community name carefully. You can edit colors below and see how it feels.
                         </p>
                       </div>
                     </div>
@@ -1559,16 +1551,6 @@ export function ComponentLibrary() {
                   </div>
                 </div>
               </section>
-            </Section>
-
-            <Section title="Exploration · Split Studio" description="Merged review + live preview exploration where meaningful edits update the mocked creator community experience immediately.">
-              <PreviewBuilderStudio
-                initialFields={reviewFields}
-                brandAssets={{
-                  palette: brandPreviewPalette,
-                  items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
-                }}
-              />
             </Section>
 
             <Section title="Exploration · Compact WYSIWYG Option" description="A calmer, tighter editor option with plain-language fields and a small live preview for less technical users.">
@@ -1676,46 +1658,10 @@ export function ComponentLibrary() {
               </div>
             </Section>
 
-            <Section title="Community Preview Card" description="Aspirational preview moment that turns corrected inputs into something the creator can want.">
-              <CommunityPreviewCard
-                title="This is what the creator experience could start to look like."
-                description="The preview should feel plausible, branded, and emotionally rewarding without pretending it is final."
-                creator={{
-                  name: reviewFields.name,
-                  summary: reviewFields.summary,
-                }}
-                categories={['Food', 'Parenting']}
-                stats={[
-                  { label: 'Example posts', value: '12' },
-                  { label: 'Early members', value: '186' },
-                  { label: 'Weekly cadence', value: '3x' },
-                ]}
-                posts={[
-                  {
-                    author: 'Julia Child',
-                    title: 'Three weeknight dinners my kids will actually eat',
-                    excerpt: 'A fast collection of reliable meals that don’t require a second grocery run halfway through the week.',
-                    meta: 'Pinned discussion • 2h ago',
-                  },
-                  {
-                    author: 'Community member',
-                    title: 'What do you pack for long tournament weekends?',
-                    excerpt: 'Looking for snack ideas that survive the car ride and still count as real food by day two.',
-                    meta: 'Newest thread • 18 replies',
-                  },
-                ]}
-                secondaryAction={{ label: 'Back to edits', variant: 'ghost' }}
-                primaryAction={{ label: 'Continue to verification' }}
-              />
-              <DocumentationNote>
-                Preview reveal animation respects prefers-reduced-motion.
-              </DocumentationNote>
-            </Section>
-
             <Section title="Verification Step" description="Lightweight commitment and identity confirmation step before the final submission moment, with the Instagram DM path expanding inline.">
               <VerificationStep
-                title="One last check so we know this request is really coming from the creator."
-                description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
+                title="One last check to know it's really you."
+                description="Complete verification for one of your channels to wrap up your application."
                 methods={[
                   {
                     value: 'instagram-dm',
@@ -1762,62 +1708,6 @@ export function ComponentLibrary() {
               <DocumentationNote>
                 Expand/collapse controls use aria-expanded. Confirmation checkbox requires an associated label.
               </DocumentationNote>
-            </Section>
-
-            <Section title="Verification Step Variants" description="Empty, email-selected, and no-aside verification states.">
-              <div className="space-y-8">
-                <VerificationStep
-                  title="Verification will unlock once we detect a contact path."
-                  description="Use the empty state when the creator profile has not exposed a usable social or email confirmation route yet."
-                  methods={[]}
-                  selectedMethod={null}
-                  onSelectMethod={() => {}}
-                  confirmed={false}
-                  onConfirmChange={() => {}}
-                  reassurance={[]}
-                  secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
-                  primaryAction={{ label: 'Continue' }}
-                />
-                <VerificationStep
-                  title="Confirm with the creator email instead."
-                  description="The email path should feel equally legitimate when Instagram access is inconvenient."
-                  methods={verificationExampleMethods}
-                  selectedMethod="email-domain"
-                  onSelectMethod={() => {}}
-                  confirmed
-                  onConfirmChange={() => {}}
-                  reassurance={[
-                    {
-                      icon: miniIcon(BadgeCheck),
-                      title: 'Domain-backed',
-                      description: 'The email path uses the creator contact already detected during review.',
-                    },
-                    {
-                      icon: miniIcon(ShieldCheck),
-                      title: 'No social handoff',
-                      description: 'The creator can finish verification without opening Instagram.',
-                    },
-                  ]}
-                  showAside={false}
-                  secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
-                  primaryAction={{ label: 'Continue' }}
-                />
-              </div>
-            </Section>
-
-            <Section title="Instagram DM Verification Detail" description="Standalone detail step for the expanded Instagram DM verification path.">
-              <InstagramDmVerificationDetail
-                title="Send this code from the creator account."
-                description="This standalone version gives creators a focused verification step when the DM handoff needs more room."
-                code="CHILD-453"
-                destinationHandle="@raptive_community"
-                originHandle="@juliachild"
-                creatorEmail="hello@juliachild.com"
-                confirmSentPending={false}
-                onConfirmSent={() => {}}
-                onUseEmailInstead={() => {}}
-                secondaryAction={{ label: 'Back to verification', variant: 'ghost' }}
-              />
             </Section>
 
             <Section title="Submission Success" description="Exclusive completion state that closes the journey with confidence instead of a generic success message.">
@@ -1971,8 +1861,8 @@ export function ComponentLibrary() {
               description="Exploration area for the verification step where the Instagram DM option expands inline and compresses the alternate path."
             >
               <VerificationStep
-                title="One last check so we know this request is really coming from the creator."
-                description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
+                title="One last check to know it's really you."
+                description="Complete verification for one of your channels to wrap up your application."
                 methods={[
                   {
                     value: 'instagram-dm',

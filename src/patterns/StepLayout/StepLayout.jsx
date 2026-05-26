@@ -70,7 +70,7 @@ export function StepLayout({
 
           <footer
             className={[
-              'mt-auto flex w-full flex-col items-end justify-end gap-3 pt-5 sm:flex-row sm:items-center sm:justify-end',
+              'mt-auto flex w-full flex-col items-start justify-between gap-3 pt-5 sm:flex-row sm:items-center',
               showFooterDivider ? 'border-t border-border' : '',
             ].filter(Boolean).join(' ')}
           >
@@ -89,6 +89,7 @@ export function StepLayout({
                 size="lg"
                 variant={primaryAction.variant ?? 'primary'}
                 onClick={primaryAction.onClick}
+                className={secondaryAction ? '' : 'ml-auto'}
               >
                 {primaryAction.label}
               </Button>

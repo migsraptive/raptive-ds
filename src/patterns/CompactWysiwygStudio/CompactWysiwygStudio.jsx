@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { IdCard, Image as ImageIcon, Palette, RotateCcw, Save } from 'lucide-react'
 import { AccordionPanel } from '../../components/AccordionPanel/AccordionPanel.jsx'
 import { AvatarUpload } from '../../components/AvatarUpload/AvatarUpload.jsx'
@@ -6,10 +6,13 @@ import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { ColorInput } from '../../components/ColorInput/ColorInput.jsx'
 import { CompactField } from '../../components/CompactField/CompactField.jsx'
+import { CommunityAnswersCard } from '../../components/CommunityAnswersCard/CommunityAnswersCard.jsx'
+import { CommunityCreatorDiscoverCard } from '../../components/CommunityCreatorDiscoverCard/CommunityCreatorDiscoverCard.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
+import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { brandPreviewDefaults, compactWysiwygPalette } from '../../utils/brandPreviewDefaults.js'
-import { getAccessibleColorPair, normalizeHexColor } from '../../utils/colorContrast.js'
+import { normalizeHexColor } from '../../utils/colorContrast.js'
 import {
   COMMUNITY_VERTICAL_OPTIONS,
   COMMUNITY_VERTICAL_OTHER,
@@ -17,9 +20,10 @@ import {
 } from '../../utils/communityVerticals.js'
 
 const defaultFields = {
-  name: 'Julia Child Kitchen Club',
+  name: 'Julia Child Kitchen Community',
   topic: getClosestCommunityVertical('Food'),
   description: 'Food creator and community builder helping families cook smarter and gather more often.',
+  discoverText: 'Learn, share, and bake together',
 }
 
 const defaultColors = brandPreviewDefaults
@@ -29,20 +33,12 @@ const shapeOptions = [
   { value: 'rectangle', label: 'Rectangle' },
 ]
 
-function getInitials(name) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase() || 'JC'
-}
-
 export function CompactWysiwygStudio({
   brandAssets = {
     palette: compactWysiwygPalette,
   },
+  primaryAction = { label: 'Continue to Verification' },
+  secondaryAction = { label: 'Back', variant: 'secondary' },
 }) {
   const detectedColors = {
     primary: normalizeHexColor(brandAssets.palette?.[0]) ?? defaultColors.primary,
@@ -56,19 +52,6 @@ export function CompactWysiwygStudio({
   const [avatarShape, setAvatarShape] = useState('circle')
   const [openPanel, setOpenPanel] = useState('community')
   const [saved, setSaved] = useState(false)
-
-  const primaryActionColor = getAccessibleColorPair(colors.primary)
-  const secondaryActionColor = getAccessibleColorPair(colors.secondary)
-  const linkColor = normalizeHexColor(colors.link) ?? defaultColors.link
-  const previewThemeStyle = {
-    '--preview-primary': primaryActionColor.background,
-    '--preview-primary-foreground': primaryActionColor.foreground,
-    '--preview-secondary': secondaryActionColor.background,
-    '--preview-secondary-foreground': secondaryActionColor.foreground,
-    '--preview-link': linkColor,
-  }
-  const avatarShapeClassName = avatarShape === 'circle' ? 'rounded-full' : 'rounded-lg'
-  const initials = useMemo(() => getInitials(fields.name), [fields.name])
 
   const togglePanel = (panel) => {
     setOpenPanel((current) => (current === panel ? null : panel))
@@ -100,10 +83,8 @@ export function CompactWysiwygStudio({
 
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-      <div className="grid lg:grid-cols-[360px_minmax(0,1fr)]">
-        {/* no token available: split-studio wireframe keeps a fixed 360px editor rail. */}
-        <aside className="flex max-h-[760px] min-h-[720px] flex-col border-b border-border bg-surface lg:border-b-0 lg:border-r">
-          {/* no token available: desktop mock needs bounded editor height to test independent sidebar scrolling. */}
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+        <aside className="flex flex-col border-b border-border bg-surface lg:border-b-0 lg:border-r">
           <div className="flex-shrink-0 border-b border-border bg-surface px-4 py-4">
             <div className="flex justify-start">
               <Badge variant="default" size="sm">Draft</Badge>
@@ -141,6 +122,13 @@ export function CompactWysiwygStudio({
                   type="textarea"
                   value={fields.description}
                   onChange={(value) => updateField('description', value)}
+                  rows={2}
+                />
+                <CompactField
+                  label="discover text"
+                  type="textarea"
+                  value={fields.discoverText}
+                  onChange={(value) => updateField('discoverText', value)}
                   rows={2}
                 />
               </div>
@@ -231,64 +219,75 @@ export function CompactWysiwygStudio({
           </div>
         </aside>
 
-        <div className="preview-theme bg-surface-sunken p-4" style={previewThemeStyle}>
-          <div className="mx-auto max-w-3xl rounded-xl border border-border bg-surface p-4 shadow-xs">
-            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-3">
-              <div className="min-w-0 space-y-1">
-                <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Live preview</p>
-                <h3 className="text-display font-semibold tracking-normal text-text">{fields.name}</h3>
-              </div>
-              <div
-                className={[
-                  'flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden border border-border text-sm font-semibold shadow-xs',
-                  avatarShapeClassName,
-                  avatarUrl ? '' : 'preview-primary-surface',
-                ].join(' ')}
-              >
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={`${fields.name} avatar`} className="h-full w-full object-cover" />
-                ) : (
-                  <span>{initials}</span>
-                )}
-              </div>
-            </div>
+        <div className="bg-surface-sunken p-4">
+          <div className="grid items-stretch justify-center gap-4 lg:grid-cols-[320px_minmax(220px,1fr)]">
+            {/* no token available: this exploration previews the fixed-width right rail module beside compact community cards. */}
+            <RightRailWelcomeCard
+              className="h-full"
+              creatorName={fields.name}
+              title={fields.name}
+              description={fields.description}
+              highlight={null}
+              closing={null}
+              readerCount="186"
+              onlineCount="12"
+              primaryLabel="Join the community"
+              brandPrimaryColor={colors.primary}
+            />
 
-            <div className="grid gap-3 py-4 md:grid-cols-[minmax(0,1fr)_180px]">
-              {/* no token available: compact preview reserves a fixed stats column width. */}
-              <div className="rounded-2xl border border-border bg-surface p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="brand">{fields.topic}</Badge>
-                  <Badge variant="outline">Community-led</Badge>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-text-secondary">{fields.description}</p>
-                <div className="mt-4 rounded-2xl border border-border bg-surface-raised p-3">
-                  <p className="text-sm font-medium text-text">Three weeknight dinners my kids will actually eat</p>
-                  <p className="mt-1 text-xs text-text-tertiary">12 example posts · 186 early members</p>
-                </div>
-              </div>
-
-              <div className="grid gap-3">
-                <div className="rounded-2xl border border-border bg-surface p-3">
-                  <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Members</p>
-                  <p className="mt-1 text-display font-semibold text-text">186</p>
-                </div>
-                <div className="rounded-2xl border border-border bg-surface p-3">
-                  <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Posts</p>
-                  <p className="mt-1 text-display font-semibold text-text">12</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-3">
-              <Button size="sm" variant="secondary" className="preview-secondary-surface">Back</Button>
-              <Button size="sm" className="preview-primary-surface">Continue</Button>
+            <div className="grid min-w-0 gap-4">
+              <CommunityCreatorDiscoverCard
+                name={fields.name}
+                activeMembersLabel="186 early members"
+                description={fields.discoverText}
+                avatarSrc={avatarUrl}
+                avatarShape={avatarShape}
+                brandPrimaryColor={colors.primary}
+                brandSecondaryColor={colors.secondary}
+                ctaLabel="Explore community"
+                onExplore={() => {}}
+              />
+              <CommunityAnswersCard
+                authorName="Julia Child"
+                communityName={fields.name}
+                question="What should we cook together first?"
+                answerCount={12}
+                avatarSrc={avatarUrl}
+                avatarShape={avatarShape}
+                brandPrimaryColor={colors.primary}
+                onAnswer={() => {}}
+                onViewAnswers={() => {}}
+              />
             </div>
           </div>
         </div>
       </div>
-      <footer className="flex flex-wrap items-center justify-end gap-3 border-t border-border px-8 py-5">
-        <Button size="lg" variant="secondary">Back</Button>
-        <Button size="lg">Continue to Verification</Button>
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-8 py-5">
+        {secondaryAction && (
+          <Button
+            size="lg"
+            variant={secondaryAction.variant ?? 'secondary'}
+            onClick={secondaryAction.onClick}
+            disabled={secondaryAction.disabled}
+            success={secondaryAction.success}
+            successLabel={secondaryAction.successLabel}
+          >
+            {secondaryAction.label}
+          </Button>
+        )}
+        {primaryAction && (
+          <Button
+            size="lg"
+            variant={primaryAction.variant ?? 'primary'}
+            onClick={primaryAction.onClick}
+            disabled={primaryAction.disabled}
+            success={primaryAction.success}
+            successLabel={primaryAction.successLabel}
+            className="ml-auto"
+          >
+            {primaryAction.label}
+          </Button>
+        )}
       </footer>
     </section>
   )

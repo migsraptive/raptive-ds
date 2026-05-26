@@ -62,9 +62,9 @@ export function DataGatheringLoader({
       progressVariant={progressVariant}
       step={step}
       totalSteps={totalSteps}
-      title="Gathering creator signals before we show what we found."
+      title="We're finding your fandom"
       titleClassName="max-w-3xl font-newsreader text-hero font-normal"
-      description="This screen gives the user immediate feedback that profile, audience, and newsletter data are being assembled."
+      description="Give us a moment while we pull some details."
       primaryAction={null}
       secondaryAction={secondaryAction}
       showFooterDivider={false}

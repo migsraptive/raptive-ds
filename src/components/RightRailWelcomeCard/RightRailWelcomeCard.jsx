@@ -1,4 +1,6 @@
 import { Button } from '../Button/Button.jsx'
+import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
+import { getAccessibleColorPair } from '../../utils/colorContrast.js'
 
 function getInitials(name = '') {
   return name
@@ -46,44 +48,53 @@ export function RightRailWelcomeCard({
   onlineCount = '117',
   onPrimaryAction,
   primaryLabel = 'Join the conversation',
+  brandPrimaryColor = brandPreviewDefaults.primary,
 }) {
   const resolvedTitle = title ?? `Welcome to the ${creatorName} Community!`
+  const primaryActionColor = getAccessibleColorPair(brandPrimaryColor)
+  const previewThemeStyle = {
+    '--preview-primary': primaryActionColor.background,
+    '--preview-primary-foreground': primaryActionColor.foreground,
+  }
 
   return (
     <aside
       className={[
-        'flex w-80 flex-col items-center gap-4 rounded-2xl border border-border-strong bg-white px-6 py-8',
+        'flex w-80 flex-col items-center rounded-2xl border border-border-strong bg-white px-6 py-8',
         'shadow-xs',
         className,
       ].join(' ')}
+      style={previewThemeStyle}
     >
       <CreatorMark name={creatorName} />
 
-      <div className="w-full space-y-4 text-left">
+      <div className="mt-8 w-full space-y-4 text-left">
         <h3 className="text-lg font-bold leading-8 tracking-md text-text">
           {resolvedTitle}
         </h3>
 
         <div className="space-y-4 text-body leading-6 tracking-sm text-text">
-          <p>{description}</p>
-          <p className="font-bold">{highlight}</p>
-          <p>{closing}</p>
+          {description ? <p>{description}</p> : null}
+          {highlight ? <p className="font-bold">{highlight}</p> : null}
+          {closing ? <p>{closing}</p> : null}
         </div>
       </div>
 
-      <div className="flex w-full rounded-2xl border border-border-strong bg-white px-4 py-2">
-        <Stat value={readerCount} label="readers" />
-        <Stat value={onlineCount} label="online" dot />
-      </div>
+      <div className="mt-auto w-full space-y-4 pt-4">
+        <div className="flex w-full rounded-lg border border-border-strong bg-white px-4 py-2">
+          <Stat value={readerCount} label="readers" />
+          <Stat value={onlineCount} label="online" dot />
+        </div>
 
-      <Button
-        fullWidth
-        size="md"
-        variant="black"
-        onClick={onPrimaryAction}
-      >
-        {primaryLabel}
-      </Button>
+        <Button
+          fullWidth
+          size="md"
+          variant="previewPrimary"
+          onClick={onPrimaryAction}
+        >
+          {primaryLabel}
+        </Button>
+      </div>
     </aside>
   )
 }

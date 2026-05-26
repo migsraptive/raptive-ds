@@ -220,7 +220,7 @@ export function VerificationStep({
             />
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center justify-end gap-3 pt-8">
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
@@ -234,6 +234,7 @@ export function VerificationStep({
                 disabled={methods.length === 0 || !selectedMethod || primaryAction.disabled}
                 success={primaryAction.success}
                 successLabel={primaryAction.successLabel}
+                className={secondaryAction ? '' : 'ml-auto'}
               >
                 {primaryAction.label}
               </Button>

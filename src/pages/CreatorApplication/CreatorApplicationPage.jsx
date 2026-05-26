@@ -4,17 +4,16 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
+import { getDetectedSocialAccountHelperText } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
 import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
-import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
+import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
-import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
-import { brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 
-const flowStepIds = ['entry', 'gather', 'fetch', 'review', 'preview', 'verify', 'submit']
+const flowStepIds = ['entry', 'gather', 'fetch', 'review', 'verify', 'submit']
 
 const initialCreatorUrl = 'https://instagram.com/juliachild'
 const initialReviewFields = {
@@ -121,10 +120,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     </div>
   )
 
-  const updateReviewField = (key, value) => {
-    setReviewFields((current) => ({ ...current, [key]: value }))
-  }
-
   const handleIntakeSubmit = () => {
     if (intakeLoading || !creatorUrl.trim()) return
 
@@ -150,7 +145,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     if (!editingField) return
 
     if (editingField === 'website') {
-      updateReviewField('url', editDraft)
+      setReviewFields((current) => ({ ...current, url: editDraft }))
     } else {
       setAccounts((current) =>
         current.map((account) => (account.id === editingField ? { ...editDraft } : account)),
@@ -188,7 +183,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   }
 
   const handleVerificationContinue = () => {
-    setActiveStep(6)
+    setActiveStep(5)
   }
 
   const triggerPrimaryAction = ({ key, delay = 1100, run }) => {
@@ -231,14 +226,14 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   if (activeStep === 0) {
     content = (
       <SingleFieldIntake
-        title="Bring a creator into the application flow with one confident move."
-        description="Paste a creator URL or social handle. We’ll recognize the profile, fetch the first identity signals, and show a preview before anything gets submitted."
+        title="Where do your fans live?"
+        description="Paste a link to where we can find your fans: your main social account or website. We’ll do the rest!"
         value={creatorUrl}
         onChange={(event) => setCreatorUrl(event.target.value)}
         onSubmit={handleIntakeSubmit}
         progressMeter={progressMeter}
         loading={intakeLoading}
-        helperText="No long application form up front."
+        helperText={getDetectedSocialAccountHelperText(creatorUrl)}
         ctaLabel="Continue"
         ctaSuccessLabel="Starting now"
         ctaDisabled={!creatorUrl.trim()}
@@ -300,84 +295,45 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   if (activeStep === 3) {
     content = (
-      <ReviewCorrection
-        title="Make any corrections before we build the preview."
-        description="This should feel like refining a strong starting point, not filling out a form from scratch."
-        fields={reviewFields}
-        onFieldChange={updateReviewField}
-        progressMeter={progressMeter}
-        brandAssets={{
-          palette: brandPreviewPalette,
-          items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
-        }}
-        note="If this step feels bureaucratic, the recognition stage failed to earn trust."
-        showAside={false}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(2) }}
-        primaryAction={{
-          label: 'Continue to preview',
-          disabled: pendingPrimaryAction === 'review-primary',
-          success: pendingPrimaryAction === 'review-primary',
-          successLabel: 'Preview next',
-          onClick: () => triggerPrimaryAction({
-            key: 'review-primary',
-            run: () => setActiveStep(4),
-          }),
-        }}
-      />
+      <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+        <div className="flex h-full flex-col p-8 lg:p-12">
+          <div className="space-y-8">
+            {progressMeter}
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
+                  We used your brand to jumpstart your community. How does it look?
+                </h2>
+                <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
+                  Pick your community name carefully. You can edit colors below and see how it feels.
+                </p>
+              </div>
+            </div>
+
+            <CompactWysiwygStudio
+              secondaryAction={{ label: 'Back', variant: 'secondary', onClick: () => setActiveStep(2) }}
+              primaryAction={{
+                label: 'Continue to Verification',
+                disabled: pendingPrimaryAction === 'review-primary',
+                success: pendingPrimaryAction === 'review-primary',
+                successLabel: 'Verify next',
+                onClick: () => triggerPrimaryAction({
+                  key: 'review-primary',
+                  run: () => setActiveStep(4),
+                }),
+              }}
+            />
+          </div>
+        </div>
+      </section>
     )
   }
 
   if (activeStep === 4) {
     content = (
-      <CommunityPreviewCard
-        title="This is what the creator experience could start to look like."
-        description="The preview should feel plausible, branded, and emotionally rewarding without pretending it is final."
-        creator={{
-          name: reviewFields.name,
-          summary: reviewFields.summary,
-        }}
-        progressMeter={progressMeter}
-        categories={['Food', 'Parenting']}
-        stats={[
-          { label: 'Example posts', value: '12' },
-          { label: 'Early members', value: '186' },
-          { label: 'Weekly cadence', value: '3x' },
-        ]}
-        posts={[
-          {
-            author: reviewFields.name,
-            title: 'Three weeknight dinners my kids will actually eat',
-            excerpt: 'A fast collection of reliable meals that don’t require a second grocery run halfway through the week.',
-            meta: 'Pinned discussion • 2h ago',
-          },
-          {
-            author: 'Community member',
-            title: 'What do you pack for long tournament weekends?',
-            excerpt: 'Looking for snack ideas that survive the car ride and still count as real food by day two.',
-            meta: 'Newest thread • 18 replies',
-          },
-        ]}
-        showAside={false}
-        secondaryAction={{ label: 'Back', variant: 'ghost', onClick: () => setActiveStep(3) }}
-        primaryAction={{
-          label: 'Continue to verification',
-          disabled: pendingPrimaryAction === 'preview-primary',
-          success: pendingPrimaryAction === 'preview-primary',
-          successLabel: 'Verify next',
-          onClick: () => triggerPrimaryAction({
-            key: 'preview-primary',
-            run: () => setActiveStep(5),
-          }),
-        }}
-      />
-    )
-  }
-
-  if (activeStep === 5) {
-    content = (
       <VerificationStep
-        title="One last check so we know this request is really coming from the creator."
-        description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
+        title="One last check to know it's really you."
+        description="Complete verification for one of your channels to wrap up your application."
         methods={verificationMethods}
         selectedMethod={verificationMethod}
         onSelectMethod={handleVerificationMethodChange}
@@ -408,10 +364,10 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           originHandle: instagramAccount?.handle ?? '@juliachild',
         }}
         secondaryAction={{
-          label: 'Back to preview',
+          label: 'Back',
           variant: 'secondary',
           onClick: () => {
-            setActiveStep(4)
+            setActiveStep(3)
           },
         }}
         primaryAction={{
@@ -428,7 +384,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     )
   }
 
-  if (activeStep === 6) {
+  if (activeStep === 5) {
     content = (
       <SubmissionSuccess
         title="Ready to submit. We’ll take it from here."
