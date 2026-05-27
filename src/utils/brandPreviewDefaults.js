@@ -1,9 +1,12 @@
 import { colors } from '../tokens/index.js'
 
 export const brandPreviewDefaults = {
-  primary: colors.surface.overlay,
-  secondary: colors.gamification['gold-light'],
-  tertiary: colors.gamification['gold-bg'],
+  // no token available: demo WYSIWYG primary default requested for brand preview exploration.
+  primary: '#02B3A6',
+  // no token available: demo WYSIWYG secondary default requested for brand preview exploration.
+  secondary: '#F15438',
+  // no token available: demo WYSIWYG tertiary default requested for brand preview exploration.
+  tertiary: '#FFFAEE',
   link: colors.action.primary,
 }
 
@@ -16,5 +19,5 @@ export const brandPreviewPalette = [
 export const compactWysiwygPalette = [
   brandPreviewDefaults.primary,
   brandPreviewDefaults.secondary,
-  brandPreviewDefaults.link,
+  brandPreviewDefaults.tertiary,
 ]

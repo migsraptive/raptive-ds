@@ -2,27 +2,17 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { BadgeCheck, Mail, Rocket, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Button } from '../../components/Button/Button.jsx'
-import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { getDetectedSocialAccountHelperText } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
-import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
-import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
-import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
+import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
 
-const flowStepIds = ['entry', 'gather', 'fetch', 'review', 'verify', 'submit']
+const flowStepIds = ['entry', 'gather', 'review', 'verify', 'submit']
 
-const initialCreatorUrl = 'https://instagram.com/juliachild'
-const initialReviewFields = {
-  name: 'Julia Child',
-  url: 'instagram.com/juliachild',
-  vertical: 'food',
-  audience: 'Community-led',
-  summary: 'Food creator and community builder helping families cook smarter and gather more often.',
-}
+const initialCreatorUrl = ''
 const initialAccounts = [
   {
     id: 'instagram',
@@ -52,6 +42,21 @@ const stepTransition = {
   ease: [0.2, 0.9, 0.3, 1],
 }
 
+function getDetectedSourceLabel(value) {
+  const normalizedValue = value.trim().toLowerCase()
+
+  if (!normalizedValue) return 'Instagram'
+  if (normalizedValue.includes('tiktok')) return 'TikTok'
+  if (normalizedValue.includes('pinterest')) return 'Pinterest'
+  if (normalizedValue.includes('youtube') || normalizedValue.includes('youtu.be')) return 'YouTube'
+  if (normalizedValue.includes('twitter') || normalizedValue.includes('x.com')) return 'X/Twitter'
+  if (normalizedValue.includes('facebook') || normalizedValue.includes('fb.com')) return 'Facebook'
+  if (normalizedValue.includes('substack')) return 'Substack'
+  if (normalizedValue.includes('instagram') || normalizedValue.includes('instagr.am')) return 'Instagram'
+
+  return 'Website'
+}
+
 export function CreatorApplicationPage({ onOpenLibrary }) {
   const [activeStep, setActiveStep] = useState(0)
   const [creatorUrl, setCreatorUrl] = useState(initialCreatorUrl)
@@ -59,18 +64,8 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
-  const [reviewFields, setReviewFields] = useState(initialReviewFields)
-  const [estimatedReach] = useState({
-    value: '526K',
-    detail: '526,000 combined followers',
-  })
-  const [accounts, setAccounts] = useState(initialAccounts)
-  const [editingField, setEditingField] = useState(null)
-  const [editDraft, setEditDraft] = useState('')
-  const [termsAccepted, setTermsAccepted] = useState(false)
   const actionTimeoutRef = useRef(null)
-  const hasSocialAccounts = accounts.length > 0
-  const instagramAccount = accounts.find((account) => account.platform === 'Instagram')
+  const instagramAccount = initialAccounts.find((account) => account.platform === 'Instagram')
   const verificationMethods = useMemo(() => [
     ...(instagramAccount ? [{
       value: 'instagram-dm',
@@ -95,16 +90,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   ), [])
 
   useEffect(() => {
-    if (activeStep !== 1) return undefined
-
-    const timeoutId = window.setTimeout(() => {
-      setActiveStep(2)
-    }, 5000)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [activeStep])
-
-  useEffect(() => {
     if (verificationMethod && !verificationMethods.some((method) => method.value === verificationMethod)) {
       setVerificationMethod(null)
       setVerificationConfirmed(false)
@@ -112,13 +97,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   }, [verificationMethod, verificationMethods])
 
   const activeStepId = flowStepIds[activeStep] ?? 'current-step'
-  const totalFlowSteps = flowStepIds.length
-  const currentFlowStep = activeStep + 1
-  const progressMeter = (
-    <div className="flex justify-center">
-      <StepIndicator steps={totalFlowSteps} currentStep={currentFlowStep} />
-    </div>
-  )
+  const progressMeter = null
 
   const handleIntakeSubmit = () => {
     if (intakeLoading || !creatorUrl.trim()) return
@@ -131,59 +110,13 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     }, 800)
   }
 
-  const startEditing = (field, value) => {
-    setEditingField(field)
-    setEditDraft(value)
-  }
-
-  const cancelEditing = () => {
-    setEditingField(null)
-    setEditDraft('')
-  }
-
-  const saveEditing = () => {
-    if (!editingField) return
-
-    if (editingField === 'website') {
-      setReviewFields((current) => ({ ...current, url: editDraft }))
-    } else {
-      setAccounts((current) =>
-        current.map((account) => (account.id === editingField ? { ...editDraft } : account)),
-      )
-    }
-
-    cancelEditing()
-  }
-
-  const removeAccount = (accountId) => {
-    setAccounts((current) => current.filter((account) => account.id !== accountId))
-    if (editingField === accountId) {
-      cancelEditing()
-    }
-  }
-
-  const addAccount = () => {
-    const nextId = `manual-${Date.now()}`
-    const nextAccount = {
-      id: nextId,
-      platform: 'Instagram',
-      handle: '@newhandle',
-      url: 'https://instagram.com/newhandle',
-      followers: 'Follower count pending',
-    }
-
-    setAccounts((current) => [...current, nextAccount])
-    setEditingField(nextId)
-    setEditDraft(nextAccount)
-  }
-
   const handleVerificationMethodChange = (value) => {
     setVerificationMethod(value)
     setVerificationConfirmed(false)
   }
 
   const handleVerificationContinue = () => {
-    setActiveStep(5)
+    setActiveStep(4)
   }
 
   const triggerPrimaryAction = ({ key, delay = 1100, run }) => {
@@ -211,11 +144,6 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     setPendingPrimaryAction(null)
     setIntakeLoading(false)
     setCreatorUrl(initialCreatorUrl)
-    setReviewFields(initialReviewFields)
-    setAccounts(initialAccounts)
-    setEditingField(null)
-    setEditDraft('')
-    setTermsAccepted(false)
     setVerificationMethod(null)
     setVerificationConfirmed(false)
     setActiveStep(0)
@@ -235,7 +163,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         loading={intakeLoading}
         helperText={getDetectedSocialAccountHelperText(creatorUrl)}
         ctaLabel="Continue"
-        ctaSuccessLabel="Starting now"
+        ctaSuccessLabel="Pulling data"
         ctaDisabled={!creatorUrl.trim()}
         showAside={false}
       />
@@ -244,56 +172,26 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   if (activeStep === 1) {
     content = (
-      <DataGatheringLoader
-        creatorUrl={creatorUrl}
-        progressVariant="dots"
-        step={currentFlowStep}
-        totalSteps={totalFlowSteps}
-        secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: resetApplicationFlow }}
-      />
-    )
-  }
-
-  if (activeStep === 2) {
-    content = (
-      <FetchConfirmation
-        loading={false}
-        creator={{
-          name: reviewFields.name,
-          reach: estimatedReach.value,
-          reachDetail: estimatedReach.detail,
-        }}
-        website={reviewFields.url}
-        accounts={accounts}
+      <DataGatheringReview
+        detectedSource={getDetectedSourceLabel(creatorUrl)}
+        submittedSourceValue={creatorUrl}
         progressMeter={progressMeter}
-        editingField={editingField}
-        editDraft={editDraft}
-        onEditDraftChange={setEditDraft}
-        onStartEditing={startEditing}
-        onCancelEditing={cancelEditing}
-        onSaveEditing={saveEditing}
-        onAddAccount={addAccount}
-        onRemoveAccount={removeAccount}
-        secondaryAction={{
-          label: 'Start over',
-          variant: 'ghost',
-          onClick: resetApplicationFlow,
-        }}
+        secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: resetApplicationFlow }}
         primaryAction={{
-          label: 'Looks right',
-          disabled: !hasSocialAccounts || pendingPrimaryAction === 'fetch-primary',
-          success: pendingPrimaryAction === 'fetch-primary',
-          successLabel: 'Nice match',
+          label: 'Continue',
+          disabled: pendingPrimaryAction === 'gather-primary',
+          success: pendingPrimaryAction === 'gather-primary',
+          successLabel: 'Looks good!',
           onClick: () => triggerPrimaryAction({
-            key: 'fetch-primary',
-            run: () => setActiveStep(3),
+            key: 'gather-primary',
+            run: () => setActiveStep(2),
           }),
         }}
       />
     )
   }
 
-  if (activeStep === 3) {
+  if (activeStep === 2) {
     content = (
       <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
         <div className="flex h-full flex-col p-8 lg:p-12">
@@ -311,7 +209,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
             </div>
 
             <CompactWysiwygStudio
-              secondaryAction={{ label: 'Back', variant: 'secondary', onClick: () => setActiveStep(2) }}
+              secondaryAction={{ label: 'Back', variant: 'secondary', onClick: () => setActiveStep(1) }}
               primaryAction={{
                 label: 'Continue to Verification',
                 disabled: pendingPrimaryAction === 'review-primary',
@@ -319,7 +217,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
                 successLabel: 'Verify next',
                 onClick: () => triggerPrimaryAction({
                   key: 'review-primary',
-                  run: () => setActiveStep(4),
+                  run: () => setActiveStep(3),
                 }),
               }}
             />
@@ -329,7 +227,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     )
   }
 
-  if (activeStep === 4) {
+  if (activeStep === 3) {
     content = (
       <VerificationStep
         title="One last check to know it's really you."
@@ -367,11 +265,11 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           label: 'Back',
           variant: 'secondary',
           onClick: () => {
-            setActiveStep(3)
+            setActiveStep(2)
           },
         }}
         primaryAction={{
-          label: 'Continue',
+          label: 'Submit application',
           disabled: pendingPrimaryAction === 'verify-primary',
           success: pendingPrimaryAction === 'verify-primary',
           successLabel: 'Almost there',
@@ -384,11 +282,11 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     )
   }
 
-  if (activeStep === 5) {
+  if (activeStep === 4) {
     content = (
       <SubmissionSuccess
-        title="Ready to submit. We’ll take it from here."
-        summary="Hold application ID CHILD-453 for reference. Next, we’ll review the setup across brand, audience, and community fit before making a decision. Expect a follow-up by email within 24–48 hours."
+        title="You're on the list. We'll take it from here."
+        summary="Hold application ID CHILD-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
         progressMeter={progressMeter}
         timeline={[
           {
@@ -400,7 +298,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           {
             step: 'approved',
             title: 'Approved',
-            description: 'In 1-2 weeks we’ll send word.',
+            description: 'If there’s a fit, we may reach out with next steps.',
           },
           {
             step: 'live',
@@ -409,22 +307,11 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
-        footerContent={(
-          <Checkbox
-            checked={termsAccepted}
-            onChange={(event) => setTermsAccepted(event.target.checked)}
-            label="I agree to the Raptive Community Terms of Service"
-          />
-        )}
-        secondaryAction={{
-          label: 'Start new application',
-          variant: 'secondary',
-          onClick: resetApplicationFlow,
-        }}
+        secondaryAction={null}
         primaryAction={{
-          label: 'Submit application',
+          label: 'Start new application',
           variant: 'black',
-          disabled: !termsAccepted || pendingPrimaryAction === 'submit-primary',
+          disabled: pendingPrimaryAction === 'submit-primary',
           success: pendingPrimaryAction === 'submit-primary',
           successLabel: 'Submitted',
           onClick: () => triggerPrimaryAction({

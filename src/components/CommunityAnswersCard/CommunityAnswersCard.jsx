@@ -14,14 +14,18 @@ export function CommunityAnswersCard({
   avatarSrc,
   avatarShape = 'circle',
   brandPrimaryColor = brandPreviewDefaults.primary,
+  brandTertiaryColor = brandPreviewDefaults.tertiary,
   onAnswer,
   onViewAnswers,
   className = '',
 }) {
   const primaryColor = getAccessibleColorPair(brandPrimaryColor, brandPreviewDefaults.primary)
+  const tertiaryColor = getAccessibleColorPair(brandTertiaryColor, brandPreviewDefaults.tertiary)
   const previewThemeStyle = {
     '--preview-primary': primaryColor.background,
     '--preview-primary-foreground': primaryColor.foreground,
+    '--preview-secondary': tertiaryColor.background,
+    '--preview-secondary-foreground': tertiaryColor.foreground,
   }
   const hasAnswerCount = answerCount != null
   const answerCountLabel = `${answerCount} ${answerCount === 1 ? 'answer' : 'answers'}`
@@ -29,7 +33,7 @@ export function CommunityAnswersCard({
   return (
     <article
       className={[
-        'preview-theme preview-primary-surface flex aspect-square w-full flex-col items-start overflow-hidden rounded-xl pt-2 shadow-xs',
+        'preview-theme preview-secondary-surface flex aspect-square w-full flex-col items-start overflow-hidden rounded-xl pt-2 shadow-xs',
         className,
       ].join(' ')}
       style={previewThemeStyle}

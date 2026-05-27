@@ -62,6 +62,7 @@ import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
+import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
@@ -248,7 +249,7 @@ export function ComponentLibrary() {
   const [demoShape, setDemoShape] = useState('circle')
   const [categorySearch, setCategorySearch] = useState('')
   const [selectedCategories, setSelectedCategories] = useState(['food', 'parenting'])
-  const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/juliachild')
+  const [creatorUrl, setCreatorUrl] = useState('')
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
@@ -1390,7 +1391,16 @@ export function ComponentLibrary() {
                   window.setTimeout(() => setIntakeLoading(false), 900)
                 }}
                 loading={intakeLoading}
+                progressMeter={(
+                  <div className="flex justify-center">
+                    <StepIndicator steps={6} currentStep={1} />
+                  </div>
+                )}
                 helperText={getDetectedSocialAccountHelperText(creatorUrl)}
+                ctaLabel="Continue"
+                ctaSuccessLabel="Pulling data"
+                ctaDisabled={!creatorUrl.trim()}
+                showAside={false}
               />
             </Section>
 
@@ -1449,6 +1459,17 @@ export function ComponentLibrary() {
               />
               <DocumentationNote>
                 Row entrance respects prefers-reduced-motion. Shimmer and pulse always run — they communicate loading.
+              </DocumentationNote>
+            </Section>
+
+            <Section title="Data Gathering Review" description="Exploratory staged loading state that resolves creator signals inline before the next confirmation step.">
+              <DataGatheringReview
+                detectedSource="Instagram"
+                secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                primaryAction={{ label: 'Continue' }}
+              />
+              <DocumentationNote>
+                Source can resolve from the submitted network, and creators can optionally add more social sources before continuing.
               </DocumentationNote>
             </Section>
 
@@ -1713,7 +1734,7 @@ export function ComponentLibrary() {
             <Section title="Submission Success" description="Exclusive completion state that closes the journey with confidence instead of a generic success message.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
-                summary="Hold application ID CHILD-453 for reference. Next, we’ll review the setup across brand, audience, and community fit before making a decision. Expect a follow-up by email within 24–48 hours."
+                summary="Hold application ID CHILD-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
                 timeline={[
                   {
                     step: 'submitted',
@@ -1724,7 +1745,7 @@ export function ComponentLibrary() {
                   {
                     step: 'approved',
                     title: 'Approved',
-                    description: 'In 1-2 weeks we’ll send word.',
+                    description: 'If there’s a fit, we may reach out with next steps.',
                   },
                   {
                     step: 'live',

@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
 import { motion } from 'motion/react'
 import { Trash2 } from 'lucide-react'
 import instagramRoundLogoUrl from '../../assets/social/instagram-round.jpg'
@@ -190,8 +189,7 @@ export function FetchConfirmation({
 }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-      <div className="grid gap-0 lg:grid-cols-[minmax(0,1.08fr)_360px]">
-        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
+      <div className="grid gap-0">
         <motion.div
           className="flex h-full flex-col p-8 lg:p-12"
           initial={{ opacity: 0, y: 18 }}
@@ -304,25 +302,6 @@ export function FetchConfirmation({
             )}
           </motion.div>
         </motion.div>
-
-        <motion.aside
-          className="border-t border-border bg-surface-raised/40 p-0 lg:border-l lg:border-t-0"
-          initial={{ opacity: 0, x: 18 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ ...revealTransition, delay: 0.08 }}
-        >
-          {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
-          <div className="relative h-full min-h-[720px]">
-            <img
-              src={recognitionIllustrationUrl}
-              alt="Recognition reveal illustration for the creator application fetch step"
-              className="h-full w-full object-cover"
-              loading="eager"
-              decoding="async"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-          </div>
-        </motion.aside>
       </div>
     </section>
   )

@@ -47,38 +47,32 @@ export function SubmissionSuccess({
             )}
 
             {timeline.length > 0 && (
-              <>
-                <div className="max-w-2xl">
-                  <p className="text-sm font-medium text-white">What happens now</p>
-                </div>
-
-                <div className="max-w-2xl space-y-3">
-                  {timeline.map((item) => (
-                    <div key={item.step} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="max-w-2xl space-y-3">
+                {timeline.map((item) => (
+                  <div key={item.step} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                    <span
+                      className={[
+                        'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
+                        item.current
+                          ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15'
+                          : 'border-white/10 bg-white/5',
+                      ].join(' ')}
+                    >
                       <span
                         className={[
-                          'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
-                          item.current
-                            ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15'
-                            : 'border-white/10 bg-white/5',
+                          'h-2.5 w-2.5 rounded-full',
+                          item.current ? 'bg-gamification-gold-light' : 'bg-white/28',
+                          item.current && !shouldReduceMotion ? 'submission-status-dot-pulse' : '',
                         ].join(' ')}
-                      >
-                        <span
-                          className={[
-                            'h-2.5 w-2.5 rounded-full',
-                            item.current ? 'bg-gamification-gold-light' : 'bg-white/28',
-                            item.current && !shouldReduceMotion ? 'submission-status-dot-pulse' : '',
-                          ].join(' ')}
-                        />
-                      </span>
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-white">{item.title}</p>
-                        <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
-                      </div>
+                      />
+                    </span>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-white">{item.title}</p>
+                      <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
                     </div>
-                  ))}
-                </div>
-              </>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 

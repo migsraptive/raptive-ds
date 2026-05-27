@@ -1,4 +1,5 @@
 import { Button } from '../Button/Button.jsx'
+import { TextLink } from '../TextLink/TextLink.jsx'
 import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
 import { getAccessibleColorPair } from '../../utils/colorContrast.js'
 
@@ -15,7 +16,7 @@ function CreatorMark({ name = 'Julia Child' }) {
   const initials = getInitials(name) || 'RC'
 
   return (
-    <div className="flex h-32 w-32 items-center justify-center rounded-full bg-orange-600 text-center text-white">
+    <div className="preview-primary-surface flex h-32 w-32 items-center justify-center rounded-full text-center">
       <div className="text-display font-medium leading-none tracking-tight">
         {initials}
       </div>
@@ -30,7 +31,7 @@ function Stat({ value, label, dot = false }) {
         {value}
       </div>
       <div className="flex items-center gap-1 text-sm leading-sm text-text-tertiary">
-        {dot ? <span className="h-2 w-2 rounded-full bg-status-success" /> : null}
+        {dot ? <span className="preview-secondary-surface h-2 w-2 rounded-full" /> : null}
         <span>{label}</span>
       </div>
     </div>
@@ -42,6 +43,7 @@ export function RightRailWelcomeCard({
   creatorName = 'Julia Child',
   title,
   description = 'We are a community of home cooks who are passionate about healthy recipes.',
+  websiteUrl = null,
   highlight = 'Make genuine connections, discover cooking tips, ask questions, and share your favorite recipes.',
   closing = "Let's have a good time and inspire each other daily!",
   readerCount = '20k',
@@ -49,12 +51,17 @@ export function RightRailWelcomeCard({
   onPrimaryAction,
   primaryLabel = 'Join the conversation',
   brandPrimaryColor = brandPreviewDefaults.primary,
+  brandSecondaryColor = brandPreviewDefaults.secondary,
 }) {
   const resolvedTitle = title ?? `Welcome to the ${creatorName} Community!`
   const primaryActionColor = getAccessibleColorPair(brandPrimaryColor)
+  const secondaryActionColor = getAccessibleColorPair(brandSecondaryColor)
   const previewThemeStyle = {
     '--preview-primary': primaryActionColor.background,
     '--preview-primary-foreground': primaryActionColor.foreground,
+    '--preview-secondary': secondaryActionColor.background,
+    '--preview-secondary-foreground': secondaryActionColor.foreground,
+    '--preview-link': secondaryActionColor.background,
   }
 
   return (
@@ -68,13 +75,24 @@ export function RightRailWelcomeCard({
     >
       <CreatorMark name={creatorName} />
 
-      <div className="mt-8 w-full space-y-4 text-left">
+      <div className="mt-4 w-full space-y-2 text-left">
         <h3 className="text-lg font-bold leading-8 tracking-md text-text">
           {resolvedTitle}
         </h3>
 
         <div className="space-y-4 text-body leading-6 tracking-sm text-text">
           {description ? <p>{description}</p> : null}
+          {websiteUrl ? (
+            <p>
+              <TextLink
+                href={`https://${websiteUrl}`}
+                tone="current"
+                className="preview-link-text text-body leading-6 tracking-sm"
+              >
+                {websiteUrl}
+              </TextLink>
+            </p>
+          ) : null}
           {highlight ? <p className="font-bold">{highlight}</p> : null}
           {closing ? <p>{closing}</p> : null}
         </div>
