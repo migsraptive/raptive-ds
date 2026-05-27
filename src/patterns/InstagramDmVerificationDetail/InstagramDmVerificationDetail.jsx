@@ -37,7 +37,7 @@ export function InstagramDmVerificationDetail({
   }
 
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="p-8 lg:p-12">
         <div className="space-y-8">
           {progressMeter}
@@ -54,7 +54,7 @@ export function InstagramDmVerificationDetail({
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <div className="rounded-[28px] border border-border bg-surface p-5 shadow-xs">
+            <div className="rounded-2xl border border-border bg-surface p-5 shadow-xs">
               <div className="space-y-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
@@ -73,7 +73,7 @@ export function InstagramDmVerificationDetail({
                   <Badge variant="brand" size="sm">Recommended</Badge>
                 </div>
 
-                <div className="rounded-[28px] border border-border bg-surface-raised p-5">
+                <div className="rounded-2xl border border-border bg-surface-raised p-5">
                   <div className="space-y-4">
                     <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
                       Your code
@@ -95,7 +95,7 @@ export function InstagramDmVerificationDetail({
                     size="lg"
                     variant="secondary"
                     onClick={handleCopyCode}
-                    className="min-w-[148px] overflow-hidden"
+                    className="min-w-36 overflow-hidden"
                   >
                     <span className="relative flex h-full items-center justify-center">
                       <AnimatePresence mode="popLayout" initial={false}>
@@ -108,24 +108,26 @@ export function InstagramDmVerificationDetail({
                             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
                             className="flex items-center gap-2"
                           >
-                            <motion.svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 16 16"
-                              fill="none"
-                              aria-hidden="true"
-                            >
-                              <motion.path
-                                d="M3.75 8.25 6.5 11l5.75-6"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
-                              />
-                            </motion.svg>
+                            <span className="paired-label-icon text-base leading-sm">
+                              <motion.svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                aria-hidden="true"
+                              >
+                                <motion.path
+                                  d="M3.75 8.25 6.5 11l5.75-6"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  initial={{ pathLength: 0 }}
+                                  animate={{ pathLength: 1 }}
+                                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
+                                />
+                              </motion.svg>
+                            </span>
                             <span>Copied</span>
                           </motion.span>
                         ) : (
@@ -137,7 +139,7 @@ export function InstagramDmVerificationDetail({
                             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
                             className="flex items-center gap-2"
                           >
-                            <LucideIcon icon={Copy} size="sm" stroke="standard" />
+                            <LucideIcon icon={Copy} size="sm" stroke="standard" className="paired-label-icon text-base leading-sm" />
                             <span>Copy code</span>
                           </motion.span>
                         )}
@@ -148,7 +150,7 @@ export function InstagramDmVerificationDetail({
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-border bg-surface p-5 shadow-xs">
+            <div className="rounded-2xl border border-border bg-surface p-5 shadow-xs">
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised">
@@ -164,7 +166,7 @@ export function InstagramDmVerificationDetail({
                   </div>
                 </div>
 
-                <div className="rounded-[28px] border border-border bg-surface-raised p-5">
+                <div className="rounded-2xl border border-border bg-surface-raised p-5">
                   <div className="space-y-3 text-sm text-text">
                     <p>
                       <span className="font-medium text-text-secondary">Address:</span>{' '}

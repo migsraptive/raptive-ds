@@ -184,4 +184,4 @@ npm run build
 
 Notes:
 - builds are currently passing
-- lint is not fully configured in this scaffold because ESLint 9 is present without a matching `eslint.config.js`
+- lint is configured and should exit with 0 errors and 0 warnings

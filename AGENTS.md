@@ -11,7 +11,7 @@
 
 ## Git & Deployment
 - This is a Vercel-backed project linked to the `origin` repo (`cafemedia/community-ds`).
-- Agents are allowed to push directly to `main` for this project when completing requested work.
+- Use feature branches for WIP design explorations; only push to `main` for explicit docs/fix requests or after user approval.
 - Agents are allowed to deploy to Vercel for this project, including production deploys with `npx vercel deploy --prod --scope raptive`.
 - Keep `.vercel/` untracked; local project metadata should not be committed.
 
@@ -46,16 +46,27 @@ src/
 ## Conventions
 - Components live in `src/components/ComponentName/ComponentName.jsx`
 - Patterns live in `src/patterns/PatternName/PatternName.jsx`
+- Icons paired with a label must match the line-height of that label
+  exactly. Use the same size token as the label's line-height —
+  never scale icons independently when they sit inline with text.
+- Use the `.paired-label-icon` utility class for all inline
+  icon and label pairings. Do not set icon sizes manually
+  when the icon sits next to text.
 - All patterns accept `showAside` prop to toggle design guidance panel
 - Tokens are the source of truth — never hardcode colors, spacing, or type values
 - Reuse existing components before creating new ones
+- When adding or changing a component or variant, update `ComponentLibrary` examples and docs in the same task.
 - Patterns should compose `src/components` primitives; do not hand-roll native `button`, `input`, `textarea`, or `select` controls inside patterns. If a pattern needs a new interactive control, add it to `src/components` first and document it in the component library.
 - Detected brand palettes must be accessibility-gated: first usable color maps to primary action, second usable color maps to secondary action, and text on those colors must use computed black/white foreground contrast.
+- Detected and demo brand preview defaults must live in `src/utils/brandPreviewDefaults.js`, never defined locally in component files.
 
 ## Verification
 ```bash
 npm run build
+npm run lint
 ```
+- `npm run lint` must exit with 0 errors and 0 warnings.
+- Browser smoke check: Patterns page and Creator Application render without console errors.
 
 ## Dev Server
 ```bash
@@ -94,6 +105,8 @@ npm run dev
 - Never hardcode hex values — use existing tokens
 - Never use arbitrary Tailwind classes — map to existing scale
 - If no token exists, leave a comment: `{/* no token available */}`
+- Primary buttons use `action.primary`, not `brand.DEFAULT`; `action.primary` is the accessibility-adjusted action token.
+- After editing `src/tokens/*`, `tailwind.config.js`, or token-driven classes, restart the dev server before browser verification.
 - CSS custom properties for dynamic preview colors:
   --preview-primary, --preview-secondary, --preview-link
 

@@ -1,3 +1,4 @@
+import { useReducedMotion } from 'motion/react'
 import submissionIllustrationUrl from '../../assets/submission-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 
@@ -8,13 +9,17 @@ export function SubmissionSuccess({
   summary = null,
   timeline = [],
   showAside = true,
+  footerContent = null,
   primaryAction = { label: 'View creator dashboard' },
   secondaryAction = { label: 'Back to library', variant: 'ghost' },
 }) {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
-    <section className="overflow-hidden rounded-[36px] border border-neutral-800 bg-neutral-950 shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex h-full flex-col bg-[radial-gradient(circle_at_top,_rgba(210,255,102,0.14),_transparent_42%),linear-gradient(160deg,_#111111_0%,_#050505_100%)] p-8 lg:p-12">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
+        <div className="flex h-full flex-col bg-gradient-to-br from-neutral-900 to-neutral-950 p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter && (
               <div className="[&_.text-text-secondary]:!text-white/84 [&_.text-text-tertiary]:!text-white/72 [&_.bg-surface-sunken]:bg-white/10">
@@ -41,87 +46,86 @@ export function SubmissionSuccess({
               </div>
             )}
 
-            {showAside && (
-              <>
-                <div className="max-w-2xl">
-                  <p className="text-sm font-medium text-white">What happens now</p>
-                </div>
-
-                {timeline.length > 0 ? (
-                  <div className="max-w-2xl space-y-3">
-                    {timeline.map((item) => (
-                      <div key={item.step} className="flex gap-3 rounded-[24px] border border-white/10 bg-white/5 p-4">
-                        <span
-                          className={[
-                            'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
-                            item.current
-                              ? 'border-[#D2FF66]/30 bg-[#D2FF66]/16'
-                              : 'border-white/10 bg-white/5',
-                          ].join(' ')}
-                        >
-                          <span
-                            className={[
-                              'h-2.5 w-2.5 rounded-full',
-                              item.current ? 'bg-[#D2FF66]' : 'bg-white/28',
-                            ].join(' ')}
-                          />
-                        </span>
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-white">{item.title}</p>
-                          <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
-                        </div>
-                      </div>
-                    ))}
+            {timeline.length > 0 && (
+              <div className="max-w-2xl space-y-3">
+                {timeline.map((item) => (
+                  <div key={item.step} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                    <span
+                      className={[
+                        'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
+                        item.current
+                          ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15'
+                          : 'border-white/10 bg-white/5',
+                      ].join(' ')}
+                    >
+                      <span
+                        className={[
+                          'h-2.5 w-2.5 rounded-full',
+                          item.current ? 'bg-gamification-gold-light' : 'bg-white/28',
+                          item.current && !shouldReduceMotion ? 'submission-status-dot-pulse' : '',
+                        ].join(' ')}
+                      />
+                    </span>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-white">{item.title}</p>
+                      <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
+                    </div>
                   </div>
-                ) : (
-                  <div className="max-w-2xl rounded-[24px] border border-white/10 bg-white/5 p-4">
-                    <p className="text-sm leading-relaxed text-white/80">
-                      We&apos;ll email the next update as soon as review is complete.
-                    </p>
-                  </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
-            {secondaryAction && (
-              <Button
-                size="lg"
-                variant={secondaryAction.variant ?? 'ghost'}
-                onClick={secondaryAction.onClick}
-                className={
-                  secondaryAction.variant === 'secondary'
-                    ? '!border-white/16 !bg-transparent !text-white hover:!bg-white/8'
-                    : '!text-white hover:!bg-white/10'
-                }
-              >
-                {secondaryAction.label}
-              </Button>
+          <div className="mt-auto space-y-4 pt-8">
+            {footerContent && (
+              <div className="ml-auto max-w-2xl">
+                {footerContent}
+              </div>
             )}
-            {primaryAction && (
-              <Button
-                size="lg"
-                variant={primaryAction.variant ?? 'primary'}
-                onClick={primaryAction.onClick}
-                disabled={primaryAction.disabled}
-                success={primaryAction.success}
-                successLabel={primaryAction.successLabel}
-                className={
-                  primaryAction.variant === 'black'
-                    ? '!border !border-white/12 !bg-neutral-950 !text-white hover:!bg-neutral-900'
-                    : ''
-                }
-              >
-                {primaryAction.label}
-              </Button>
-            )}
+
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              {secondaryAction && (
+                <Button
+                  size="lg"
+                  variant={secondaryAction.variant ?? 'ghost'}
+                  onClick={secondaryAction.onClick}
+                  className={
+                    secondaryAction.variant === 'secondary'
+                      ? '!border-white/16 !bg-transparent !text-white hover:!bg-white/8'
+                      : '!text-white hover:!bg-white/10'
+                  }
+                >
+                  {secondaryAction.label}
+                </Button>
+              )}
+              {primaryAction && (
+                <Button
+                  size="lg"
+                  variant={primaryAction.variant ?? 'primary'}
+                  onClick={primaryAction.onClick}
+                  disabled={primaryAction.disabled}
+                  success={primaryAction.success}
+                  successLabel={primaryAction.successLabel}
+                  className={
+                    [
+                      !secondaryAction ? 'ml-auto' : '',
+                      primaryAction.variant === 'black' && !primaryAction.disabled
+                      ? '!border !border-white/12 !bg-neutral-950 !text-white hover:!bg-neutral-900'
+                      : '',
+                    ].filter(Boolean).join(' ')
+                  }
+                >
+                  {primaryAction.label}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
         <aside className={['border-t border-neutral-800 lg:border-l lg:border-t-0', showAside ? 'bg-neutral-900 p-8 lg:p-10' : 'bg-black/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-white/10 bg-neutral-950 shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-white/10 bg-neutral-950 shadow-xs' : 'relative h-full'].join(' ')}>
+              {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
                   src={submissionIllustrationUrl}

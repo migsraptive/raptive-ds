@@ -1,28 +1,11 @@
 import { useMemo, useState } from 'react'
+import { ColorSwatchButton } from '../../components/ColorSwatchButton/ColorSwatchButton.jsx'
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 import { FormField } from '../../components/FormField/FormField.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
-
-function PaletteButton({ color, selected, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={[
-        'relative flex h-16 w-full items-end rounded-xl border p-2 text-left shadow-xs transition-all duration-150',
-        selected ? 'border-text shadow-sm ring-2 ring-brand-subtle' : 'border-border hover:border-border-strong',
-      ].join(' ')}
-      style={{ backgroundColor: color }}
-      aria-pressed={selected}
-    >
-      <span className="rounded bg-black/20 px-1.5 py-0.5 text-2xs font-mono leading-none text-white backdrop-blur-sm">
-        {color}
-      </span>
-    </button>
-  )
-}
+import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 
 function studioCopy(vertical, creatorName) {
   const verticalMap = {
@@ -110,12 +93,12 @@ export function PreviewBuilderStudio({
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
   },
   brandAssets = {
-    palette: ['#171717', '#D2FF66', '#F4EFE6'],
+    palette: brandPreviewPalette,
     items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
   },
 }) {
   const [fields, setFields] = useState(initialFields)
-  const [selectedPalette, setSelectedPalette] = useState(brandAssets.palette?.[1] ?? '#D2FF66')
+  const [selectedPalette, setSelectedPalette] = useState(brandAssets.palette?.[1] ?? brandPreviewDefaults.secondary)
 
   const contentModel = useMemo(
     () => studioCopy(fields.vertical, fields.name || 'Creator'),
@@ -144,8 +127,9 @@ export function PreviewBuilderStudio({
   }
 
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[380px_minmax(0,1fr)]">
+        {/* no token available: split-studio exploration keeps a fixed 380px editor rail. */}
         <div className="border-b border-border bg-surface lg:border-b-0 lg:border-r">
           <div className="flex h-full flex-col p-8">
             <div className="space-y-6">
@@ -204,7 +188,7 @@ export function PreviewBuilderStudio({
                 >
                   <div className="grid grid-cols-3 gap-3">
                     {brandAssets.palette?.map((color) => (
-                      <PaletteButton
+                      <ColorSwatchButton
                         key={color}
                         color={color}
                         selected={selectedPalette === color}
@@ -234,7 +218,7 @@ export function PreviewBuilderStudio({
           </div>
         </div>
 
-        <div className="bg-[radial-gradient(circle_at_top,_rgba(210,255,102,0.18),_transparent_36%),linear-gradient(180deg,_#faf8f3_0%,_#f5f1e8_100%)] p-8 lg:p-10">
+        <div className="preview-theme bg-gradient-to-b from-gamification-gold-bg to-surface-sunken p-8 lg:p-10" style={{ '--preview-primary': selectedPalette }}>
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="space-y-1">
@@ -247,23 +231,15 @@ export function PreviewBuilderStudio({
                 <span className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
                   Active accent
                 </span>
-                <span
-                  className="h-3.5 w-3.5 rounded-full border border-black/10"
-                  style={{ backgroundColor: selectedPalette }}
-                />
+                <span className="preview-accent-surface h-3.5 w-3.5 rounded-full border border-black/10" />
                 <span className="text-xs font-mono text-text-secondary">{selectedPalette}</span>
               </div>
             </div>
 
             <div
-              className="rounded-[28px] border p-3 shadow-sm"
-              style={{
-                borderColor: selectedPalette,
-                boxShadow: `0 0 0 1px ${selectedPalette}20, 0 18px 42px rgba(23, 23, 23, 0.08)`,
-                backgroundColor: '#ffffff',
-              }}
+              className="preview-accent-frame rounded-2xl border p-3"
             >
-              <div className="mb-3 flex items-center gap-2 rounded-[18px] px-3 py-2" style={{ backgroundColor: `${selectedPalette}18` }}>
+              <div className="preview-accent-tint mb-3 flex items-center gap-2 rounded-lg px-3 py-2">
                 <span className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
                   Preview frame
                 </span>
@@ -272,7 +248,8 @@ export function PreviewBuilderStudio({
                 </span>
               </div>
 
-              <div className="relative h-[451px] w-[634px] overflow-hidden rounded-[16px] border border-border bg-surface shadow-sm">
+              {/* no token available: fixed preview frame preserves the scaled desktop mock aspect. */}
+              <div className="relative h-[451px] w-[634px] overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
                 <div
                   className="absolute left-0 top-0"
                   style={{

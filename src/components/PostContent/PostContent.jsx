@@ -100,7 +100,7 @@ function AttachmentCard({
           <img
             src={thumbnail}
             alt=""
-            className="w-16 h-16 rounded-[10px] object-cover shrink-0"
+            className="h-16 w-16 shrink-0 rounded-md object-cover"
           />
         )}
       </div>

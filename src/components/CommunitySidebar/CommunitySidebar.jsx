@@ -144,14 +144,18 @@ function SidebarItem({ icon: Icon, label, active = false, unread = false, tone =
       type="button"
       className={[
         'flex h-11 w-full items-center gap-3 rounded-full px-4 py-2 text-left transition-colors',
-        active ? 'bg-[#F5F5FF]' : 'bg-white hover:bg-surface-sunken',
+        active ? 'bg-brand-subtle' : 'bg-white hover:bg-surface-sunken',
         toneClass,
       ].join(' ')}
     >
       <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center">
-        {leading || <LucideIcon icon={Icon} size="md" stroke="standard" />}
+        {leading || (
+          <span className="paired-label-icon text-body leading-6">
+            <LucideIcon icon={Icon} size="md" stroke="standard" />
+          </span>
+        )}
       </span>
-      <span className="min-w-0 flex-1 text-[15px] leading-6 tracking-[-0.2px]">{label}</span>
+      <span className="min-w-0 flex-1 text-body leading-6 tracking-sm">{label}</span>
       {unread ? <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-status-error" /> : null}
     </button>
   )
@@ -166,13 +170,15 @@ function SectionHeader({ title, count, open, onToggle }) {
     <button
       type="button"
       onClick={onToggle}
-      className="flex h-[52px] w-full items-center gap-2 rounded-2xl px-4 text-left"
+      className="flex h-14 w-full items-center gap-2 rounded-2xl px-4 text-left"
     >
       <span className="min-w-0 flex-1 text-sm font-bold uppercase tracking-[-0.2px] text-neutral-500">
         {title}
         {count != null ? <span className="ml-1 text-neutral-400">{count}</span> : null}
       </span>
-      <LucideIcon icon={open ? ChevronUp : ChevronDown} size="md" stroke="standard" className="text-neutral-500" />
+      <span className="paired-label-icon text-sm leading-sm text-neutral-500">
+        <LucideIcon icon={open ? ChevronUp : ChevronDown} size="md" stroke="standard" />
+      </span>
     </button>
   )
 }
@@ -197,7 +203,7 @@ function DiscoverMoreBadge() {
   return (
     <span className="relative flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-border bg-white">
       <LucideIcon icon={Plus} size="md" stroke="standard" />
-      <span className="absolute right-[-1px] top-[-1px] h-1.5 w-1.5 rounded-full bg-status-error" />
+      <span className="absolute -right-px -top-px h-1.5 w-1.5 rounded-full bg-status-error" />
     </span>
   )
 }
@@ -226,6 +232,7 @@ export function CommunitySidebar({
   return (
     <aside
       className={[
+        // no token available: Figma home-feed shell uses a fixed 352px navigation rail.
         'flex w-[352px] flex-col border-r border-border-strong bg-white',
         className,
       ].join(' ')}

@@ -71,9 +71,10 @@ export function HomeFeedPageTemplate({
   const welcomeTitle = rightRail.title ?? `Welcome to the ${brandName} Community!`
   const isPreview = mode === 'preview'
   const visiblePosts = isPreview ? posts.slice(0, 1) : posts
+  // no token available: home-feed mock renders a fixed desktop artboard for scaled previews.
   const frameClassName = isPreview
     ? 'h-[1024px] w-[1440px] overflow-hidden bg-gradient-to-br from-brand-subtle via-white to-gamification-purple-bg'
-    : 'h-[1024px] w-[1440px] overflow-hidden rounded-[24px] border border-border-strong bg-gradient-to-br from-brand-subtle via-white to-gamification-purple-bg'
+    : 'h-[1024px] w-[1440px] overflow-hidden rounded-xl border border-border-strong bg-gradient-to-br from-brand-subtle via-white to-gamification-purple-bg'
 
   return (
     <div className={[frameClassName, className].join(' ')}>
@@ -84,8 +85,10 @@ export function HomeFeedPageTemplate({
         onlineCount={onlineCount}
       />
 
+      {/* no token available: fixed artboard grid mirrors the Discourse desktop layout proportions. */}
       <div className="grid h-[calc(1024px-57px)] grid-cols-[352px_minmax(0,1fr)_340px] gap-8 overflow-hidden">
         <div className="min-w-0 self-stretch pt-px">
+          {/* no token available: sidebar height compensates for the one-pixel nav divider. */}
           <CommunitySidebar
             className="h-[calc(100%-1px)] rounded-none border-0 border-r border-border-strong bg-white shadow-none"
             compact={isPreview}

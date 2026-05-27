@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { StepLayout } from '../StepLayout/StepLayout.jsx'
 
 const revealTransition = {
@@ -14,12 +14,15 @@ const pulseTransition = {
 }
 
 function SignalRow({ label, value, delay = 0 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : revealTransition.duration
+
   return (
     <motion.div
-      className="relative overflow-hidden flex items-center justify-between gap-4 rounded-[22px] border border-border bg-surface px-4 py-3"
+      className="relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-border bg-surface px-4 py-3"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ ...revealTransition, delay }}
+      transition={{ ...revealTransition, duration, delay }}
     >
       <motion.span
         aria-hidden="true"
@@ -47,17 +50,24 @@ function SignalRow({ label, value, delay = 0 }) {
 
 export function DataGatheringLoader({
   progressMeter = null,
+  progressVariant = 'bar',
+  step = null,
+  totalSteps = null,
   creatorUrl,
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   return (
     <StepLayout
       progressMeter={progressMeter}
-      title="Gathering creator signals before we show what we found."
+      progressVariant={progressVariant}
+      step={step}
+      totalSteps={totalSteps}
+      title="We're finding your fandom"
       titleClassName="max-w-3xl font-newsreader text-hero font-normal"
-      description="This screen gives the user immediate feedback that profile, audience, and newsletter data are being assembled."
+      description="Give us a moment while we pull some details."
       primaryAction={null}
       secondaryAction={secondaryAction}
+      showFooterDivider={false}
       aside={(
         <div className="space-y-4">
           <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">

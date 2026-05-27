@@ -3,6 +3,11 @@ import { FormField } from '../../components/FormField/FormField.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
+import {
+  COMMUNITY_VERTICAL_OPTIONS,
+  COMMUNITY_VERTICAL_OTHER,
+  getClosestCommunityVertical,
+} from '../../utils/communityVerticals.js'
 
 function PaletteTile({ value }) {
   return (
@@ -32,9 +37,12 @@ export function ReviewCorrection({
   secondaryAction = { label: 'Back', variant: 'ghost' },
   note = null,
 }) {
+  const selectedVertical = getClosestCommunityVertical(fields.vertical)
+
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className={['grid gap-0', showAside ? 'lg:grid-cols-[minmax(0,1.1fr)_380px]' : 'lg:grid-cols-1'].join(' ')}>
+        {/* no token available: review layout uses fixed side rail widths to preserve the wireframe composition. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
@@ -53,6 +61,7 @@ export function ReviewCorrection({
             </div>
 
             <div className={['grid gap-5', brandAssets ? 'lg:grid-cols-[280px_minmax(0,1fr)_minmax(0,1fr)]' : 'md:grid-cols-2'].join(' ')}>
+              {/* no token available: detected-assets column has a fixed width in this exploratory layout. */}
               <TextInput
                 className={brandAssets ? 'lg:col-start-2 lg:row-start-1' : ''}
                 label="Creator name"
@@ -67,16 +76,12 @@ export function ReviewCorrection({
               />
               <Select
                 className={brandAssets ? 'lg:col-start-3 lg:row-start-2' : ''}
-                label="Primary vertical"
-                value={fields.vertical ?? ''}
+                label="My community's main topic"
+                description={selectedVertical === COMMUNITY_VERTICAL_OTHER ? 'Our team will reach out to confirm your community topic.' : undefined}
+                value={selectedVertical}
                 onChange={(event) => onFieldChange?.('vertical', event.target.value)}
                 placeholder="Select a vertical"
-                options={[
-                  { value: 'food', label: 'Food' },
-                  { value: 'parenting', label: 'Parenting' },
-                  { value: 'home', label: 'Home' },
-                  { value: 'wellness', label: 'Wellness' },
-                ]}
+                options={COMMUNITY_VERTICAL_OPTIONS}
               />
               <TextInput
                 className={brandAssets ? 'lg:col-start-2 lg:row-start-2' : ''}
@@ -123,14 +128,14 @@ export function ReviewCorrection({
             </div>
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} className={secondaryAction ? '' : 'ml-auto'}>
                 {primaryAction.label}
               </Button>
             )}

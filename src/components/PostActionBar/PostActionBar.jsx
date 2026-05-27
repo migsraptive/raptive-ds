@@ -56,7 +56,7 @@ export function PostActionBar({
                   i > 0 ? '-ml-0.5' : '',
                 ].join(' ')}
               >
-                <LucideIcon icon={reaction.icon} size="xs" className="text-text" />
+                <LucideIcon icon={reaction.icon} size="xs" className="paired-label-icon text-xs leading-none text-text" />
               </div>
             ))}
           </div>
@@ -72,9 +72,10 @@ export function PostActionBar({
             <button
               type="button"
               onClick={onShare}
+              aria-label="Share post"
               className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-surface-sunken transition-colors"
             >
-              <LucideIcon icon={Send} size="sm" className="text-text" />
+              <LucideIcon icon={Send} size="sm" className="paired-label-icon text-xs leading-none text-text" />
               <span className="text-xs font-bold leading-none text-text">{shareCount}</span>
             </button>
           )}
@@ -82,9 +83,10 @@ export function PostActionBar({
             <button
               type="button"
               onClick={onComment}
+              aria-label="View post comments"
               className="flex items-center gap-1 pl-3 pr-1 py-1 rounded-full border border-border-strong hover:bg-surface-sunken transition-colors"
             >
-              <LucideIcon icon={MessageCircle} size="sm" className="text-text" />
+              <LucideIcon icon={MessageCircle} size="sm" className="paired-label-icon text-xs leading-none text-text" />
               <span className="text-xs font-bold leading-none text-text">{commentCount}</span>
             </button>
           )}
@@ -100,7 +102,7 @@ export function PostActionBar({
             onClick={() => onReact?.(reaction.key)}
             className="flex flex-1 items-center justify-center gap-0.5 h-8 px-2 py-1 rounded-full border border-border-strong bg-white hover:bg-surface-sunken transition-colors min-w-0"
           >
-            <LucideIcon icon={reaction.icon} size="sm" className="text-text-secondary shrink-0" />
+            <LucideIcon icon={reaction.icon} size="sm" className="paired-label-icon text-2xs leading-none text-text-secondary" />
             <span className="text-2xs font-bold leading-none text-text-secondary whitespace-nowrap">
               {reaction.label}
             </span>
@@ -112,7 +114,7 @@ export function PostActionBar({
       {aiPrompt && (
         <div className="flex items-center justify-center px-4 py-1 w-full">
           <div className="flex items-center gap-2.5 flex-1 px-3 py-2 bg-brand-subtle border border-brand-muted rounded-xs">
-            <LucideIcon icon={Sparkles} size="sm" className="text-brand shrink-0" />
+            <LucideIcon icon={Sparkles} size="sm" className="paired-label-icon text-sm leading-sm text-brand" />
             <p className="text-sm text-brand flex-1 min-w-0">
               {aiPrompt}
             </p>
@@ -131,10 +133,10 @@ export function PostActionBar({
               </p>
             </div>
             <div className="flex items-center gap-2.5 pr-1 shrink-0">
-              <button type="button" className="flex items-center justify-center w-6 h-6 hover:opacity-70 transition-opacity">
+              <button type="button" aria-label="Open image upload" className="flex items-center justify-center w-6 h-6 hover:opacity-70 transition-opacity">
                 <LucideIcon icon={Image} size="sm" className="text-text-tertiary" />
               </button>
-              <button type="button" className="flex items-center justify-center w-6 h-6 rounded-full bg-neutral-400 hover:bg-neutral-500 transition-colors">
+              <button type="button" aria-label="Send comment" className="flex items-center justify-center w-6 h-6 rounded-full bg-neutral-400 hover:bg-neutral-500 transition-colors">
                 <LucideIcon icon={ArrowRight} size="sm" className="text-white" />
               </button>
             </div>

@@ -55,7 +55,7 @@ export const Select = forwardRef(function Select(
             </option>
           ))}
         </select>
-        <span className={['flex h-4 w-4 flex-shrink-0 items-center justify-center', isDisabled ? 'text-text-disabled' : 'text-text-secondary'].join(' ')}>
+        <span className={['paired-label-icon text-base leading-sm', isDisabled ? 'text-text-disabled' : 'text-text-secondary'].join(' ')}>
           <LucideIcon icon={ChevronDown} size="sm" />
         </span>
       </FieldShell>

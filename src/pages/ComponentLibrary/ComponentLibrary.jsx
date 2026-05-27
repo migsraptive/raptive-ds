@@ -25,14 +25,23 @@ import {
 import { Button } from '../../components/Button/Button.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
+import { AccordionPanel } from '../../components/AccordionPanel/AccordionPanel.jsx'
 import { Avatar, AvatarGroup } from '../../components/Avatar/Avatar.jsx'
+import { AvatarUpload } from '../../components/AvatarUpload/AvatarUpload.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
+import { ColorInput } from '../../components/ColorInput/ColorInput.jsx'
+import { ColorSwatchButton } from '../../components/ColorSwatchButton/ColorSwatchButton.jsx'
+import { CompactField } from '../../components/CompactField/CompactField.jsx'
 import { FieldShell } from '../../components/FormField/FieldShell.jsx'
 import { FormField } from '../../components/FormField/FormField.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
 import { RadioGroup } from '../../components/RadioGroup/RadioGroup.jsx'
 import { Select } from '../../components/Select/Select.jsx'
+import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
+import { getDetectedSocialAccountHelperText, SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
+import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
+import { TextLink } from '../../components/TextLink/TextLink.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { AuthorRow } from '../../components/AuthorRow/AuthorRow.jsx'
@@ -44,25 +53,27 @@ import { FeedPost } from '../../components/FeedPost/FeedPost.jsx'
 import { Comment } from '../../components/Comment/Comment.jsx'
 import { CommunitySidebar } from '../../components/CommunitySidebar/CommunitySidebar.jsx'
 import { CommunityTopNavigation } from '../../components/CommunityTopNavigation/CommunityTopNavigation.jsx'
+import { CommunityCreatorDiscoverCard } from '../../components/CommunityCreatorDiscoverCard/CommunityCreatorDiscoverCard.jsx'
+import { CommunityAnswersCard } from '../../components/CommunityAnswersCard/CommunityAnswersCard.jsx'
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
-import { CommunityPreviewCard } from '../../patterns/CommunityPreviewCard/CommunityPreviewCard.jsx'
+import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
 import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
+import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
-import { PreviewBuilderStudio } from '../../patterns/PreviewBuilderStudio/PreviewBuilderStudio.jsx'
-import { ReviewCorrection } from '../../patterns/ReviewCorrection/ReviewCorrection.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
 import { colors as colorTokens } from '../../tokens/colors.js'
 import { typography as typographyTokens } from '../../tokens/typography.js'
+import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ title, description, children }) {
@@ -102,12 +113,21 @@ function Row({ label, children, className = '' }) {
   )
 }
 
+function DocumentationNote({ children }) {
+  return (
+    <aside className="rounded-lg border border-border bg-surface-sunken px-3 py-2 text-sm leading-relaxed text-text-secondary">
+      {children}
+    </aside>
+  )
+}
+
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const celebrationIcon = (Icon) => <LucideIcon icon={Icon} size="xl" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
+const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
 const avatarImageSet = [
   {
     name: 'Julia Child',
@@ -124,6 +144,73 @@ const avatarImageSet = [
   {
     name: 'Cyle C',
     src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=128&q=80',
+  },
+]
+const socialUrlExamples = [
+  { label: 'Empty state', value: '' },
+  { label: 'Instagram', value: 'https://instagram.com/juliachild' },
+  { label: 'TikTok', value: 'https://www.tiktok.com/@juliachild' },
+  { label: 'Pinterest', value: 'https://pinterest.com/juliachild' },
+  { label: 'YouTube', value: 'https://youtube.com/@juliachild' },
+  { label: 'Facebook', value: 'https://facebook.com/juliachild' },
+  { label: 'Substack', value: 'https://juliachild.substack.com' },
+  { label: 'Default website', value: 'https://www.juliachild.com' },
+]
+// no token available — creator brand colors are runtime data, represented here as ComponentLibrary fixtures.
+const communityCreatorDiscoverExamples = [
+  {
+    name: 'Lambeau Leapers',
+    description: 'Packers pride, shared together',
+    brandPrimaryColor: '#004101',
+  },
+  {
+    name: 'Sally’s Baking',
+    description: 'Learn, share, and bake together',
+    brandPrimaryColor: '#ce7c77',
+  },
+  {
+    name: 'Make & Do Crew',
+    description: 'A welcome space for crocheters',
+    avatarShape: 'square',
+    brandPrimaryColor: '#de4b32',
+  },
+  {
+    name: 'Inside the Magic',
+    description: 'A home for Disney lovers everywhere',
+    brandPrimaryColor: '#833193',
+  },
+  {
+    name: 'Half Baked Harvest',
+    description: 'Recipes, gatherings, inspiration',
+    brandPrimaryColor: '#5f5e4a',
+  },
+]
+const communityAnswersCardExamples = [
+  {
+    label: 'Figma selected',
+    authorName: 'Sally McKenney',
+    communityName: 'Sally’s Baking',
+    question: 'Which dessert always disappears first at gatherings?',
+    answerCount: 45,
+    avatarSrc: avatarImageSet[0].src,
+    brandPrimaryColor: '#ce7c77',
+  },
+  {
+    label: 'Initials fallback',
+    authorName: 'Lena Torres',
+    communityName: 'Garden Club',
+    question: 'What is one small habit that keeps your herbs thriving indoors?',
+    answerCount: 8,
+    brandPrimaryColor: '#004101',
+  },
+  {
+    label: 'No answers yet',
+    authorName: 'Maya Chen',
+    communityName: 'Weeknight Table',
+    question: 'What is your go-to pantry dinner when the fridge is almost empty?',
+    answerCount: 0,
+    avatarSrc: avatarImageSet[1].src,
+    brandPrimaryColor: '#5f5e4a',
   },
 ]
 
@@ -155,13 +242,18 @@ export function ComponentLibrary() {
   const [selectedTiles, setSelectedTiles] = useState(['community'])
   const [selectedGoals, setSelectedGoals] = useState(['audience-growth', 'community'])
   const [newsletterOptIn, setNewsletterOptIn] = useState(true)
+  const [primaryButtonColor, setPrimaryButtonColor] = useState(brandPreviewDefaults.primary)
+  const [secondaryButtonColor, setSecondaryButtonColor] = useState(brandPreviewDefaults.secondary)
+  const [selectedSwatch, setSelectedSwatch] = useState(brandPreviewDefaults.secondary)
+  const [demoAvatar, setDemoAvatar] = useState(null)
+  const [demoShape, setDemoShape] = useState('circle')
   const [categorySearch, setCategorySearch] = useState('')
   const [selectedCategories, setSelectedCategories] = useState(['food', 'parenting'])
-  const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/juliachild')
+  const [creatorUrl, setCreatorUrl] = useState('')
   const [intakeLoading, setIntakeLoading] = useState(false)
-  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
-  const [verificationConfirmed, setVerificationConfirmed] = useState(true)
-  const [reviewFields, setReviewFields] = useState({
+  const [verificationMethod, setVerificationMethod] = useState(null)
+  const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [reviewFields] = useState({
     name: 'Julia Child',
     url: 'instagram.com/juliachild',
     vertical: 'food',
@@ -224,10 +316,6 @@ export function ComponentLibrary() {
     ))
   }
 
-  const updateReviewField = (key, value) => {
-    setReviewFields((current) => ({ ...current, [key]: value }))
-  }
-
   useEffect(() => {
     const url = new URL(window.location.href)
     url.searchParams.set('section', activeSection)
@@ -264,7 +352,7 @@ export function ComponentLibrary() {
 
       <main
         className={[
-          activeSection === 'Pages' ? 'max-w-none' : 'max-w-5xl',
+          activeSection === 'Pages' ? 'max-w-none' : activeSection === 'Patterns' ? 'max-w-6xl' : 'max-w-5xl',
           'mx-auto px-6 py-10 space-y-14',
         ].join(' ')}
       >
@@ -336,7 +424,7 @@ export function ComponentLibrary() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Usage Notes</p>
-                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-2">
+                  <div className="space-y-2 rounded-xl border border-border bg-surface-raised p-4">
                     <p className="text-sm text-text"><span className="font-medium">Primary:</span> headings, body, default actions</p>
                     <p className="text-sm text-text-secondary"><span className="font-medium text-text">Secondary:</span> supporting labels, helper text, and metadata</p>
                     <p className="text-sm text-text-tertiary"><span className="font-medium text-text">Tertiary:</span> lower-emphasis metadata and optional inline qualifiers</p>
@@ -351,7 +439,7 @@ export function ComponentLibrary() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Font Family + Weight Tokens</p>
-                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-3">
+                  <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
                     <div className="flex items-baseline justify-between gap-4">
                       <span className="text-xs font-mono text-text-tertiary">family.font family</span>
                       <span className="font-sans text-sm text-text">DM Sans</span>
@@ -375,7 +463,7 @@ export function ComponentLibrary() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-text-secondary">Line Height + Letter Spacing Tokens</p>
-                  <div className="rounded-[24px] border border-border bg-surface-raised p-4 space-y-3">
+                  <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
                     {[
                       ['line-height.xs', typographyTokens.lineHeight.xs],
                       ['line-height.sm', typographyTokens.lineHeight.sm],
@@ -452,6 +540,48 @@ export function ComponentLibrary() {
                   readOnly
                   suffix="Locked"
                 />
+                <TextInput
+                  label="Creator Email"
+                  type="email"
+                  prefix={affixIcon(Mail)}
+                  placeholder="creator@example.com"
+                />
+                <TextInput
+                  label="Verified Website"
+                  suffix={affixIcon(BadgeCheck)}
+                  placeholder="yourdomain.com"
+                />
+                <TextInput
+                  label="Large Affix Alignment"
+                  prefix={affixIcon(Rocket)}
+                  placeholder="Paste a creator URL"
+                  inputClassName="text-lg leading-md"
+                  affixLineHeight="md"
+                />
+              </div>
+            </Section>
+
+            <Section title="Social URL Input" description="Single URL field that detects supported social platforms locally as the value changes.">
+              <div className="grid gap-6 md:grid-cols-2">
+                <SocialUrlInput
+                  label="Live detection"
+                  description="Type or paste a creator URL to update the leading icon immediately."
+                  placeholder="https://instagram.com/creator"
+                />
+                <SocialUrlInput
+                  label="Error state"
+                  defaultValue="not a url"
+                  error="Please enter a valid URL"
+                  placeholder="Paste a creator URL"
+                />
+                {socialUrlExamples.map((example) => (
+                  <SocialUrlInput
+                    key={example.label}
+                    label={example.label}
+                    defaultValue={example.value}
+                    placeholder="Paste a creator URL"
+                  />
+                ))}
               </div>
             </Section>
 
@@ -518,7 +648,29 @@ export function ComponentLibrary() {
                     { value: 'established', label: 'Established creator' },
                   ]}
                 />
+                <Select
+                  label="Revenue Goal"
+                  defaultValue=""
+                  error="Choose a revenue goal to continue."
+                  options={[
+                    { value: 'ads', label: 'Grow ad revenue' },
+                    { value: 'sponsorships', label: 'Book more sponsorships' },
+                  ]}
+                />
+                <Select
+                  label="Review Status"
+                  value="approved"
+                  readOnly
+                  onChange={() => {}}
+                  options={[
+                    { value: 'approved', label: 'Approved for preview' },
+                    { value: 'pending', label: 'Pending review' },
+                  ]}
+                />
               </div>
+              <DocumentationNote>
+                Always pair with a visible label. The chevron affordance is decorative — do not rely on it as the only indicator of interactivity.
+              </DocumentationNote>
             </Section>
 
             <Section title="Selection Controls" description="Primitives for onboarding choices, consents, and goal selection.">
@@ -555,6 +707,58 @@ export function ComponentLibrary() {
               </div>
             </Section>
 
+            <Section title="Color Swatch Button" description="Reusable palette-choice control for theme and brand-preview flows.">
+              <FormField
+                label="Brand palette"
+                description="Pick the accent color that should lead the first preview impression."
+              >
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {brandPreviewPalette.map((color) => (
+                    <ColorSwatchButton
+                      key={color}
+                      color={color}
+                      selected={selectedSwatch === color}
+                      onClick={() => setSelectedSwatch(color)}
+                    />
+                  ))}
+                </div>
+              </FormField>
+            </Section>
+
+            <Section title="Color Input" description="Hex entry plus native color picker with automatic black/white foreground guidance.">
+              <div className="grid gap-4 md:grid-cols-2">
+                <ColorInput
+                  label="Main button"
+                  value={primaryButtonColor}
+                  onChange={setPrimaryButtonColor}
+                />
+                <ColorInput
+                  label="Back button"
+                  value={secondaryButtonColor}
+                  onChange={setSecondaryButtonColor}
+                />
+              </div>
+            </Section>
+
+            <Section title="Avatar Upload And Shape" description="Reusable upload and shape controls for preview/editor surfaces.">
+              <div className="grid gap-6 md:grid-cols-2">
+                <AvatarUpload
+                  label="Avatar"
+                  value={demoAvatar}
+                  onChange={setDemoAvatar}
+                />
+                <SegmentedControl
+                  label="Logo shape"
+                  value={demoShape}
+                  options={[
+                    { value: 'circle', label: 'Circle' },
+                    { value: 'rectangle', label: 'Rectangle' },
+                  ]}
+                  onChange={setDemoShape}
+                />
+              </div>
+            </Section>
+
             <Section title="Option Tiles" description="Reusable selectable cards for goals, audiences, and category pickers.">
               <div className="grid gap-4 md:grid-cols-3">
                 <OptionTile
@@ -582,6 +786,9 @@ export function ComponentLibrary() {
                   onClick={() => toggleTile('revenue')}
                 />
               </div>
+              <DocumentationNote>
+                Hover, tap, and selection animations respect prefers-reduced-motion.
+              </DocumentationNote>
             </Section>
 
             <Section title="Goal Selection Grid" description="First onboarding pattern composed directly from OptionTile primitives.">
@@ -701,20 +908,30 @@ export function ComponentLibrary() {
                 <Button variant="link">Link</Button>
               </Row>
             </Section>
-            <Section title="Canonical Token References" description="Additional button treatments present in the provided token set. These are shown here for reference only and do not replace the current shared primary button.">
-              <Row label="Missing token-backed treatments">
+            <Section title="Paired Icons" description="Inline icons inherit the label line-height through the shared paired icon utility.">
+              <Row label="Icon before and after">
+                <Button iconBefore={miniIcon(Sparkles)}>Create preview</Button>
+                <Button variant="secondary" iconAfter={miniIcon(Rocket)}>Continue</Button>
+              </Row>
+            </Section>
+            <Section title="Text Links" description="Inline action primitive for text-only links when alignment needs to be controlled independently from Button.">
+              <Row>
+                <TextLink onClick={() => {}}>Left text link</TextLink>
+                <TextLink align="center" underline onClick={() => {}}>Centered underlined link</TextLink>
+                <TextLink tone="invert" className="rounded-md bg-neutral-950 px-3 py-2" onClick={() => {}}>
+                  Inverted link
+                </TextLink>
+              </Row>
+            </Section>
+            <Section title="Canonical Token References" description="Reference button treatments aligned to the current shared action tokens.">
+              <Row label="Action token treatment">
                 <Button
                   variant="ghost"
                   className="bg-transparent text-text hover:bg-surface-sunken active:bg-neutral-100"
                 >
                   Naked
                 </Button>
-                <Button
-                  variant="secondary"
-                  className="border-transparent bg-gamification-gold-light text-green-700 hover:bg-gamification-gold active:bg-gold-600"
-                >
-                  Brand
-                </Button>
+                <Button>Action Primary</Button>
               </Row>
             </Section>
             <Section title="Sizes">
@@ -735,19 +952,18 @@ export function ComponentLibrary() {
                 <Button size="md" variant="secondary">
                   Secondary / Outline
                 </Button>
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  className="border-transparent bg-gamification-gold-light text-green-700 hover:bg-gamification-gold active:bg-gold-600"
-                >
-                  Brand / Large
-                </Button>
+                <Button size="lg">Action Primary / Large</Button>
               </Row>
             </Section>
             <Section title="States">
               <Row label="Loading">
                 <Button loading>Primary</Button>
                 <Button variant="secondary" loading>Secondary</Button>
+                <Button loading loadingLabel="Saving">Save draft</Button>
+              </Row>
+              <Row label="Success">
+                <Button success>Submitted</Button>
+                <Button success successLabel="Saved">Save draft</Button>
               </Row>
               <Row label="Disabled">
                 <Button disabled>Primary</Button>
@@ -759,6 +975,9 @@ export function ComponentLibrary() {
                   <Button fullWidth>Full Width Button</Button>
                 </div>
               </Row>
+              <DocumentationNote>
+                Decorative scale and label swap animations respect prefers-reduced-motion. Loading and success animations always run.
+              </DocumentationNote>
             </Section>
           </>
         )}
@@ -786,6 +1005,13 @@ export function ComponentLibrary() {
                 <Badge size="md">Medium</Badge>
               </Row>
             </Section>
+            <Section title="With Icon">
+              <Row>
+                <Badge size="xs" variant="brand" icon={miniIcon(BadgeCheck)}>Extra Small</Badge>
+                <Badge size="sm" variant="success" icon={miniIcon(Sparkles)}>Small</Badge>
+                <Badge size="md" variant="gold" icon={miniIcon(Award)}>Medium</Badge>
+              </Row>
+            </Section>
             <Section title="With Dot">
               <Row>
                 <Badge variant="success" dot>Online</Badge>
@@ -800,6 +1026,9 @@ export function ComponentLibrary() {
                   <Badge key={t} variant="brand" onRemove={() => {}}>#{t}</Badge>
                 ))}
               </Row>
+              <DocumentationNote>
+                Removable badges require an aria-label on the remove button. Example: aria-label='Remove [badge label]'
+              </DocumentationNote>
             </Section>
           </>
         )}
@@ -893,6 +1122,9 @@ export function ComponentLibrary() {
                   onMore={() => {}}
                 />
               </div>
+              <DocumentationNote>
+                More-actions icon button requires an explicit aria-label. Example: aria-label='More options for [author name]'
+              </DocumentationNote>
             </Section>
 
             <Section title="Media Gallery" description="Image gallery from Figma: molecules/media/gallery. Single or 5+ grid layout.">
@@ -942,19 +1174,60 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Post Action Bar" description="Post engagement bar from Figma: molecules/actionbar/post/desktop/feed.">
-              <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
-                <PostActionBar
-                  reactionCount={31}
-                  shareCount={13}
-                  commentCount={12}
-                  topReactions={['helpful', 'insightful', 'uplifting']}
-                  showCommentField
-                  commentAvatarName="Julia Child"
-                  onReact={() => {}}
-                  onShare={() => {}}
-                  onComment={() => {}}
-                />
+              <div className="space-y-4">
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={31}
+                    shareCount={13}
+                    commentCount={12}
+                    topReactions={['helpful', 'insightful', 'uplifting']}
+                    showCommentField
+                    commentAvatarName="Julia Child"
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={18}
+                    shareCount={7}
+                    commentCount={4}
+                    aiPrompt="Need a reply starter? Try thanking the member and asking what they want to see next."
+                    showCommentField
+                    commentAvatarName="Julia Child"
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={8}
+                    shareCount={2}
+                    commentCount={1}
+                    showCommentField={false}
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
+                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                  <PostActionBar
+                    reactionCount={0}
+                    shareCount={0}
+                    commentCount={0}
+                    topReactions={[]}
+                    showCommentField={false}
+                    onReact={() => {}}
+                    onShare={() => {}}
+                    onComment={() => {}}
+                  />
+                </div>
               </div>
+              <DocumentationNote>
+                All icon-only action buttons require explicit aria-label. Examples: Share post, Open image upload.
+              </DocumentationNote>
             </Section>
 
             <Section title="Feed Post" description="Full post card from Figma: organisms/posts/desktop/feed. Composes AuthorRow, image, PostContent, and PostActionBar.">
@@ -1007,19 +1280,80 @@ export function ComponentLibrary() {
         {activeSection === 'Navigation' && (
           <>
             <Section title="Community Top Navigation" description="Logged-out desktop top navigation adapted from Figma: organisms/navigation/top/desktop/default.">
-              <div className="overflow-hidden rounded-[20px] border border-border-strong bg-white shadow-xs">
+              <div className="overflow-hidden rounded-xl border border-border-strong bg-white shadow-xs">
                 <CommunityTopNavigation />
               </div>
             </Section>
 
+            <Section title="Step Indicator" description="Compact dots for multi-step flows, plus the named StepLayout progress variants.">
+              <div className="grid gap-4 md:grid-cols-3">
+                {[
+                  { label: 'Step 1 of 5 active', currentStep: 1 },
+                  { label: 'Step 3 of 5 active', currentStep: 3 },
+                  { label: 'Step 5 of 5 active', currentStep: 5 },
+                ].map((example) => (
+                  <div key={example.label} className="space-y-3 rounded-xl border border-border bg-surface p-4 shadow-xs">
+                    <p className="text-sm font-medium text-text">{example.label}</p>
+                    <StepIndicator steps={5} currentStep={example.currentStep} />
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid gap-6">
+                <div className="grid items-start gap-4 lg:grid-cols-4">
+                  <p className="whitespace-nowrap text-sm font-medium text-text">dots variant</p>
+                  <div className="lg:col-span-3">
+                    <StepLayout
+                      progressVariant="dots"
+                      step={3}
+                      totalSteps={5}
+                      title="Confirm creator details"
+                      description="The compact indicator sits centered in the header area."
+                      primaryAction={{ label: 'Continue' }}
+                      secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                    >
+                      <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
+                        Creator details, audience signal, and review controls render here.
+                      </div>
+                    </StepLayout>
+                  </div>
+                </div>
+
+                <div className="grid items-start gap-4 lg:grid-cols-4">
+                  <p className="whitespace-nowrap text-sm font-medium text-text">bar variant</p>
+                  <div className="lg:col-span-3">
+                    <StepLayout
+                      progressVariant="bar"
+                      step={3}
+                      totalSteps={5}
+                      title="Confirm creator details"
+                      description="The original progress bar remains available as the default variant."
+                      primaryAction={{ label: 'Continue' }}
+                      secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                    >
+                      <div className="rounded-xl border border-border bg-surface-raised p-4 text-sm text-text-secondary">
+                        Creator details, audience signal, and review controls render here.
+                      </div>
+                    </StepLayout>
+                  </div>
+                </div>
+              </div>
+            </Section>
+
             <Section title="Community Sidebar" description="Desktop community navigation sidebar adapted from Figma: organisms/navigation/desktop/sidebar.">
-              <div className="overflow-hidden rounded-[20px] border border-border-strong bg-white shadow-xs">
+              <div className="overflow-hidden rounded-xl border border-border-strong bg-white shadow-xs">
                 <CommunitySidebar />
               </div>
             </Section>
 
+            <Section title="Community Sidebar Compact" description="Condensed community navigation rail for constrained review surfaces.">
+              <div className="inline-flex overflow-hidden rounded-xl border border-border-strong bg-white shadow-xs">
+                <CommunitySidebar compact />
+              </div>
+            </Section>
+
             <Section title="Right Rail Modules" description="Home feed right-rail stack adapted from Figma: welcome card plus community rules module.">
-              <div className="inline-flex flex-col gap-4 overflow-hidden rounded-[20px] border border-border-strong bg-surface-raised p-4 shadow-xs">
+              <div className="inline-flex flex-col gap-4 overflow-hidden rounded-xl border border-border-strong bg-surface-raised p-4 shadow-xs">
                 <RightRailWelcomeCard />
                 <RightRailCommunityRulesCard />
               </div>
@@ -1030,13 +1364,14 @@ export function ComponentLibrary() {
         {/* ── PAGES ─────────────────────────────────────────────────────── */}
         {activeSection === 'Pages' && (
           <div className="mx-auto flex w-[1440px] flex-col gap-4">
+            {/* no token available: page-template review intentionally renders the fixed desktop frame width. */}
             <div className="space-y-1 text-left">
               <h3 className="text-base font-semibold text-text">Home Feed Template</h3>
               <p className="text-sm text-text-secondary">
                 Edge-to-edge top navigation with left community sidebar, center stacked feed posts, and right-rail support modules.
               </p>
             </div>
-            <div className="overflow-hidden rounded-[28px] border border-border-strong bg-surface-raised shadow-xs">
+            <div className="overflow-hidden rounded-2xl border border-border-strong bg-surface-raised shadow-xs">
               <HomeFeedPageTemplate />
             </div>
           </div>
@@ -1047,8 +1382,8 @@ export function ComponentLibrary() {
           <>
             <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
               <SingleFieldIntake
-                title="Bring a creator into the application flow with one confident move."
-                description="Paste a creator URL or social handle. We’ll recognize the profile, fetch the first identity signals, and show a preview before anything gets submitted."
+                title="Where do your fans live?"
+                description="Paste a link to where we can find your fans: your main social account or website. We’ll do the rest!"
                 value={creatorUrl}
                 onChange={(event) => setCreatorUrl(event.target.value)}
                 onSubmit={() => {
@@ -1056,8 +1391,65 @@ export function ComponentLibrary() {
                   window.setTimeout(() => setIntakeLoading(false), 900)
                 }}
                 loading={intakeLoading}
-                helperText="No long application form up front."
+                progressMeter={(
+                  <div className="flex justify-center">
+                    <StepIndicator steps={6} currentStep={1} />
+                  </div>
+                )}
+                helperText={getDetectedSocialAccountHelperText(creatorUrl)}
+                ctaLabel="Continue"
+                ctaSuccessLabel="Pulling data"
+                ctaDisabled={!creatorUrl.trim()}
+                showAside={false}
               />
+            </Section>
+
+            <Section title="Single Field Intake Variants" description="Trust points, disabled CTA, custom success copy, and the no-aside layout state.">
+              <div className="space-y-8">
+                <SingleFieldIntake
+                  title="Show trust cues while recognition runs."
+                  description="Use short proof points to explain why the first step is lightweight."
+                  value="https://instagram.com/juliachild"
+                  onChange={() => {}}
+                  onSubmit={() => {}}
+                  loading
+                  ctaLabel="Recognize creator"
+                  ctaSuccessLabel="Recognized"
+                  helperText={getDetectedSocialAccountHelperText('https://instagram.com/juliachild')}
+                  trustPoints={[
+                    {
+                      title: 'Fast recognition',
+                      description: 'We pull only the early signals needed to start a preview.',
+                    },
+                    {
+                      title: 'Editable later',
+                      description: 'Fetched profile details can be corrected before submission.',
+                    },
+                    {
+                      title: 'No commitment yet',
+                      description: 'Nothing is submitted until the creator confirms the final step.',
+                    },
+                  ]}
+                />
+                <SingleFieldIntake
+                  title="Hold the CTA until the creator URL is usable."
+                  description="The disabled state keeps the first step from advancing before a recognizable profile is present."
+                  value=""
+                  onChange={() => {}}
+                  onSubmit={() => {}}
+                  ctaDisabled
+                  helperText="Paste a creator URL to unlock the action."
+                />
+                <SingleFieldIntake
+                  title="Use the focused no-aside layout when the art should become the full rail."
+                  description="This state keeps the same form contract while removing the explanatory aside content."
+                  value="juliachild.com"
+                  onChange={() => {}}
+                  onSubmit={() => {}}
+                  showAside={false}
+                  helperText={getDetectedSocialAccountHelperText('juliachild.com')}
+                />
+              </div>
             </Section>
 
             <Section title="Data Gathering Loader" description="Dedicated in-between loading step that confirms creator data is being gathered before the fetch confirmation appears.">
@@ -1065,6 +1457,20 @@ export function ComponentLibrary() {
                 creatorUrl={creatorUrl}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
               />
+              <DocumentationNote>
+                Row entrance respects prefers-reduced-motion. Shimmer and pulse always run — they communicate loading.
+              </DocumentationNote>
+            </Section>
+
+            <Section title="Data Gathering Review" description="Exploratory staged loading state that resolves creator signals inline before the next confirmation step.">
+              <DataGatheringReview
+                detectedSource="Instagram"
+                secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                primaryAction={{ label: 'Continue' }}
+              />
+              <DocumentationNote>
+                Source can resolve from the submitted network, and creators can optionally add more social sources before continuing.
+              </DocumentationNote>
             </Section>
 
             <Section title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before review.">
@@ -1110,6 +1516,9 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{ label: 'Looks right' }}
               />
+              <DocumentationNote>
+                Non-loading reveal transitions respect prefers-reduced-motion. Skeleton pulse always runs.
+              </DocumentationNote>
             </Section>
 
             <Section title="Archive · Projection Preview" description="Archived projections step kept for reference, with staged pipeline reveal from combined followers through reach and modeled revenue.">
@@ -1139,72 +1548,141 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{ label: 'Continue to review' }}
               />
+              <DocumentationNote>
+                Pipeline node and bar reveal animations respect prefers-reduced-motion. Stage sequencing always runs.
+              </DocumentationNote>
             </Section>
 
             <Section title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
-              <ReviewCorrection
-                title="Make any corrections before we build the preview."
-                description="This should feel like refining a strong starting point, not filling out a form from scratch."
-                fields={reviewFields}
-                onFieldChange={updateReviewField}
-                brandAssets={{
-                  palette: ['#171717', '#D2FF66', '#F4EFE6'],
-                  items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
-                }}
-                note="If this step feels bureaucratic, the recognition stage failed to earn trust."
-                showAside={false}
-                secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                primaryAction={{ label: 'Continue to preview' }}
-              />
+              <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+                <div className="flex h-full flex-col p-8 lg:p-12">
+                  <div className="space-y-8">
+                    <div className="space-y-4">
+                      <div className="space-y-3">
+                        <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
+                          We used your brand to jumpstart your community. How does it look?
+                        </h2>
+                        <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
+                          Pick your community name carefully. You can edit colors below and see how it feels.
+                        </p>
+                      </div>
+                    </div>
+
+                    <CompactWysiwygStudio />
+                  </div>
+                </div>
+              </section>
             </Section>
 
-            <Section title="Exploration · Split Studio" description="Merged review + live preview exploration where meaningful edits update the mocked creator community experience immediately.">
-              <PreviewBuilderStudio
-                initialFields={reviewFields}
-                brandAssets={{
-                  palette: ['#171717', '#D2FF66', '#F4EFE6'],
-                  items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
-                }}
-              />
+            <Section title="Exploration · Compact WYSIWYG Option" description="A calmer, tighter editor option with plain-language fields and a small live preview for less technical users.">
+              <CompactWysiwygStudio />
             </Section>
 
-            <Section title="Community Preview Card" description="Aspirational preview moment that turns corrected inputs into something the creator can want.">
-              <CommunityPreviewCard
-                title="This is what the creator experience could start to look like."
-                description="The preview should feel plausible, branded, and emotionally rewarding without pretending it is final."
-                creator={{
-                  name: reviewFields.name,
-                  summary: reviewFields.summary,
-                }}
-                categories={['Food', 'Parenting']}
-                stats={[
-                  { label: 'Example posts', value: '12' },
-                  { label: 'Early members', value: '186' },
-                  { label: 'Weekly cadence', value: '3x' },
-                ]}
-                posts={[
-                  {
-                    author: 'Julia Child',
-                    title: 'Three weeknight dinners my kids will actually eat',
-                    excerpt: 'A fast collection of reliable meals that don’t require a second grocery run halfway through the week.',
-                    meta: 'Pinned discussion • 2h ago',
-                  },
-                  {
-                    author: 'Community member',
-                    title: 'What do you pack for long tournament weekends?',
-                    excerpt: 'Looking for snack ideas that survive the car ride and still count as real food by day two.',
-                    meta: 'Newest thread • 18 replies',
-                  },
-                ]}
-                secondaryAction={{ label: 'Back to edits', variant: 'ghost' }}
-                primaryAction={{ label: 'Continue to verification' }}
-              />
+            <Section title="Community Creator Discover Card" description="Compact discover tile migrated from Figma for the creator WYSIWYG community preview.">
+              <div className="grid items-stretch gap-6 rounded-2xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-4">
+                {communityCreatorDiscoverExamples.map((example) => (
+                  <CommunityCreatorDiscoverCard
+                    key={example.name}
+                    name={example.name}
+                    description={example.description}
+                    avatarShape={example.avatarShape}
+                    brandPrimaryColor={example.brandPrimaryColor}
+                    onExplore={() => {}}
+                  />
+                ))}
+              </div>
+            </Section>
+
+            <Section title="Community Answers Card" description="Mobile answers prompt card migrated from the selected Figma post component.">
+              <div className="grid auto-rows-fr items-stretch gap-6 rounded-2xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-3">
+                {/* no token available — creator brand fixture colors (#ce7c77, #004101, #5f5e4a) are runtime data. */}
+                {communityAnswersCardExamples.map((example) => (
+                  <div key={example.label} className="flex h-full min-w-0 flex-col gap-2">
+                    <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
+                      {example.label}
+                    </p>
+                    <div className="min-h-0 flex-1">
+                      <CommunityAnswersCard
+                        authorName={example.authorName}
+                        communityName={example.communityName}
+                        question={example.question}
+                        answerCount={example.answerCount}
+                        avatarSrc={example.avatarSrc}
+                        brandPrimaryColor={example.brandPrimaryColor}
+                        onAnswer={() => {}}
+                        onViewAnswers={() => {}}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Section>
+
+            <Section title="Accordion Panel" description="Standalone panel states for compact editor groups.">
+              <div className="max-w-xl divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+                <AccordionPanel
+                  icon={Settings2}
+                  label="Community basics"
+                  sublabel="Name, summary, and category fields"
+                  open
+                  onToggle={() => {}}
+                >
+                  <p className="text-sm leading-relaxed text-text-secondary">
+                    Open panels reveal the field group while keeping the paired icon, label, sublabel, and chevron aligned.
+                  </p>
+                </AccordionPanel>
+                <AccordionPanel
+                  icon={ShieldCheck}
+                  label="Verification"
+                  sublabel="Collapsed section"
+                  open={false}
+                  onToggle={() => {}}
+                >
+                  <p className="text-sm leading-relaxed text-text-secondary">
+                    Closed content stays hidden until the panel opens.
+                  </p>
+                </AccordionPanel>
+              </div>
+              <DocumentationNote>
+                Trigger uses aria-expanded and aria-controls pointing to the panel id. Panel id is generated with useId.
+              </DocumentationNote>
+              <DocumentationNote>
+                Chevron rotation respects prefers-reduced-motion.
+              </DocumentationNote>
+            </Section>
+
+            <Section title="Compact Field" description="Compact editor field variants used inside tighter creator setup surfaces.">
+              <div className="max-w-xl space-y-4 rounded-2xl border border-border bg-surface p-4">
+                <CompactField
+                  label="Name"
+                  value="Julia Child"
+                  onChange={() => {}}
+                />
+                <CompactField
+                  label="Summary"
+                  type="textarea"
+                  rows={3}
+                  value="Food creator and community builder helping families cook smarter."
+                  onChange={() => {}}
+                />
+                <CompactField
+                  label="Vertical"
+                  type="select"
+                  value="food"
+                  onChange={() => {}}
+                  options={[
+                    { value: 'food', label: 'Food' },
+                    { value: 'parenting', label: 'Parenting' },
+                    { value: 'wellness', label: 'Wellness' },
+                  ]}
+                />
+              </div>
             </Section>
 
             <Section title="Verification Step" description="Lightweight commitment and identity confirmation step before the final submission moment, with the Instagram DM path expanding inline.">
               <VerificationStep
-                title="One last check so we know this request is really coming from the creator."
-                description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
+                title="One last check to know it's really you."
+                description="Complete verification for one of your channels to wrap up your application."
                 methods={[
                   {
                     value: 'instagram-dm',
@@ -1227,9 +1705,7 @@ export function ComponentLibrary() {
                   code: 'CHILD-453',
                   destinationHandle: '@raptive_community',
                   originHandle: '@juliachild',
-                  confirmSentPending: false,
                 }}
-                onConfirmDmSent={() => {}}
                 reassurance={[
                   {
                     icon: miniIcon(BadgeCheck),
@@ -1247,15 +1723,18 @@ export function ComponentLibrary() {
                     description: 'The screen explains why verification exists so the momentum from preview does not collapse here.',
                   },
                 ]}
-                secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
-                primaryAction={{ label: 'Confirm and submit' }}
+                secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                primaryAction={{ label: 'Continue' }}
               />
+              <DocumentationNote>
+                Expand/collapse controls use aria-expanded. Confirmation checkbox requires an associated label.
+              </DocumentationNote>
             </Section>
 
             <Section title="Submission Success" description="Exclusive completion state that closes the journey with confidence instead of a generic success message.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
-                summary="Hold application ID CHILD-453 for reference. Next, we’ll review the setup across brand, audience, and community fit before making a decision. Expect a follow-up by email within 24–48 hours."
+                summary="Hold application ID CHILD-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
                 timeline={[
                   {
                     step: 'submitted',
@@ -1266,7 +1745,7 @@ export function ComponentLibrary() {
                   {
                     step: 'approved',
                     title: 'Approved',
-                    description: 'In 1-2 weeks we’ll send word.',
+                    description: 'If there’s a fit, we may reach out with next steps.',
                   },
                   {
                     step: 'live',
@@ -1382,6 +1861,9 @@ export function ComponentLibrary() {
                 <p>• "Maybe Later" dismisses — don't suppress it, community members should opt in to sharing</p>
                 <p>• Confetti is CSS-only, no library dependency</p>
               </div>
+              <DocumentationNote>
+                Modal entrance and confetti animations respect prefers-reduced-motion.
+              </DocumentationNote>
             </Section>
           </>
         )}
@@ -1400,8 +1882,8 @@ export function ComponentLibrary() {
               description="Exploration area for the verification step where the Instagram DM option expands inline and compresses the alternate path."
             >
               <VerificationStep
-                title="One last check so we know this request is really coming from the creator."
-                description="Keep verification short and legible. This is the handshake that turns excitement into commitment."
+                title="One last check to know it's really you."
+                description="Complete verification for one of your channels to wrap up your application."
                 methods={[
                   {
                     value: 'instagram-dm',
@@ -1424,10 +1906,7 @@ export function ComponentLibrary() {
                   code: 'CHILD-453',
                   destinationHandle: '@raptive_community',
                   originHandle: '@juliachild',
-                  confirmSentPending: false,
                 }}
-                onConfirmDmSent={() => {}}
-                onUseEmailInstead={() => setVerificationMethod('email-domain')}
                 reassurance={[
                   {
                     icon: miniIcon(BadgeCheck),
@@ -1446,8 +1925,8 @@ export function ComponentLibrary() {
                   },
                 ]}
                 showAside={false}
-                secondaryAction={{ label: 'Back to preview', variant: 'ghost' }}
-                primaryAction={verificationMethod === 'instagram-dm' ? null : { label: 'Confirm and submit' }}
+                secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                primaryAction={{ label: 'Continue' }}
               />
             </Section>
           </>

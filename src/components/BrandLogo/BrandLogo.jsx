@@ -1,9 +1,9 @@
 import logoUrl from '../../assets/raptive-community.svg'
 
 const sizes = {
-  sm: 'h-[22px] w-auto',
-  md: 'h-[26px] w-auto',
-  lg: 'h-[30px] w-auto',
+  sm: 'h-6 w-auto',
+  md: 'h-7 w-auto',
+  lg: 'h-8 w-auto',
 }
 
 export function BrandLogo({

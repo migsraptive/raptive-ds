@@ -16,9 +16,11 @@
  */
 
 import { useEffect, useRef } from 'react'
+import { useReducedMotion } from 'motion/react'
 import { Button } from '../../components/Button/Button.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { Avatar } from '../../components/Avatar/Avatar.jsx'
+import { colors } from '../../tokens/index.js'
 
 const typeConfig = {
   badge: {
@@ -56,17 +58,18 @@ function ConfettiDot({ style }) {
   return <div className="absolute rounded-full animate-ping" style={style} />
 }
 
-function Confetti({ active }) {
+function Confetti({ active, shouldReduceMotion }) {
   if (!active) return null
+  const reducedDuration = '0.01s'
   const dots = [
-    { top: '15%', left: '20%', width: 8, height: 8, backgroundColor: '#fbbf24', animationDuration: '1.2s', animationDelay: '0s' },
-    { top: '10%', left: '70%', width: 6, height: 6, backgroundColor: '#a855f7', animationDuration: '1.4s', animationDelay: '0.2s' },
-    { top: '25%', left: '85%', width: 10, height: 5, backgroundColor: '#4361ee', animationDuration: '1s',   animationDelay: '0.1s' },
-    { top: '20%', left: '10%', width: 7, height: 7, backgroundColor: '#22c55e', animationDuration: '1.3s', animationDelay: '0.3s' },
-    { top: '70%', left: '15%', width: 6, height: 6, backgroundColor: '#f59e0b', animationDuration: '1.1s', animationDelay: '0.4s' },
-    { top: '75%', left: '80%', width: 8, height: 8, backgroundColor: '#c084fc', animationDuration: '1.5s', animationDelay: '0.15s' },
-    { top: '60%', left: '90%', width: 5, height: 5, backgroundColor: '#4361ee', animationDuration: '1.2s', animationDelay: '0.25s' },
-    { top: '65%', left: '5%',  width: 9, height: 5, backgroundColor: '#fbbf24', animationDuration: '1.0s', animationDelay: '0.35s' },
+    { top: '15%', left: '20%', width: 8, height: 8, backgroundColor: colors.status.warning, animationDuration: shouldReduceMotion ? reducedDuration : '1.2s', animationDelay: '0s' },
+    { top: '10%', left: '70%', width: 6, height: 6, backgroundColor: colors.gamification.purple, animationDuration: shouldReduceMotion ? reducedDuration : '1.4s', animationDelay: '0.2s' },
+    { top: '25%', left: '85%', width: 10, height: 5, backgroundColor: colors.brand.DEFAULT, animationDuration: shouldReduceMotion ? reducedDuration : '1s', animationDelay: '0.1s' },
+    { top: '20%', left: '10%', width: 7, height: 7, backgroundColor: colors.status.success, animationDuration: shouldReduceMotion ? reducedDuration : '1.3s', animationDelay: '0.3s' },
+    { top: '70%', left: '15%', width: 6, height: 6, backgroundColor: colors.status.warning, animationDuration: shouldReduceMotion ? reducedDuration : '1.1s', animationDelay: '0.4s' },
+    { top: '75%', left: '80%', width: 8, height: 8, backgroundColor: colors.gamification['purple-light'], animationDuration: shouldReduceMotion ? reducedDuration : '1.5s', animationDelay: '0.15s' },
+    { top: '60%', left: '90%', width: 5, height: 5, backgroundColor: colors.brand.DEFAULT, animationDuration: shouldReduceMotion ? reducedDuration : '1.2s', animationDelay: '0.25s' },
+    { top: '65%', left: '5%',  width: 9, height: 5, backgroundColor: colors.status.warning, animationDuration: shouldReduceMotion ? reducedDuration : '1.0s', animationDelay: '0.35s' },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
@@ -88,6 +91,8 @@ export function CelebrationModal({
   onDismiss,
   isOpen = false,
 }) {
+  const shouldReduceMotion = useReducedMotion()
+  const duration = shouldReduceMotion ? 0.01 : 0.3
   const overlayRef = useRef(null)
   const config = typeConfig[type]
 
@@ -108,8 +113,7 @@ export function CelebrationModal({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(17, 24, 39, 0.6)', backdropFilter: 'blur(4px)' }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/60 p-4 backdrop-blur-sm"
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
@@ -122,7 +126,7 @@ export function CelebrationModal({
           'animate-[modal-in_0.3s_cubic-bezier(0.34,1.56,0.64,1)_both]',
         ].join(' ')}
         style={{
-          animation: 'modal-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both',
+          animation: `modal-in ${duration}s cubic-bezier(0.34, 1.56, 0.64, 1) both`,
         }}
       >
         <style>{`
@@ -132,7 +136,7 @@ export function CelebrationModal({
           }
         `}</style>
 
-        <Confetti active={isOpen} />
+        <Confetti active={isOpen} shouldReduceMotion={shouldReduceMotion} />
 
         {/* Gradient accent header */}
         <div className={`h-2 w-full bg-gradient-to-r ${config.accent.replace('via-white', 'via-yellow-200')}`} />

@@ -1,18 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Copy } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
-import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 
 function InstagramDmInlineDetail({
   code,
-  destinationHandle,
-  originHandle,
-  confirmed,
-  confirmSentPending,
-  onConfirmSent,
+  open = true,
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -33,13 +28,12 @@ function InstagramDmInlineDetail({
   }
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, height: 0, y: -8 }}
-      animate={{ opacity: 1, height: 'auto', y: 0 }}
-      exit={{ opacity: 0, height: 0, y: -8 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="overflow-hidden"
+    <div
+      className={[
+        'overflow-hidden transition-[max-height]',
+        open ? 'max-h-96 duration-200 ease-out' : 'max-h-0 duration-150 ease-in',
+      ].join(' ')}
+      aria-hidden={!open}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-3">
@@ -52,18 +46,20 @@ function InstagramDmInlineDetail({
         </div>
 
         <div className="flex flex-wrap gap-2 lg:flex-shrink-0">
-          <Button size="sm" onClick={onConfirmSent} success={confirmSentPending} successLabel="Sent" disabled={!confirmed}>
-            I&apos;ve sent it
-          </Button>
-          <Button size="sm" variant="secondary" onClick={handleCopyCode} success={copied} successLabel="Copied">
-            <span className="inline-flex items-center gap-2">
-              <LucideIcon icon={Copy} size="sm" stroke="standard" />
-              <span>Copy code</span>
-            </span>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleCopyCode}
+            success={copied}
+            successLabel="Copied"
+            disabled={!open}
+            iconBefore={<Copy aria-hidden="true" strokeWidth={2} />}
+          >
+            Copy code
           </Button>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -79,13 +75,13 @@ export function VerificationStep({
   reassurance = [],
   showAside = true,
   instagramDmDetail = null,
-  onConfirmDmSent,
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   return (
-    <section className="overflow-hidden rounded-[36px] border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_360px]">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
@@ -115,7 +111,7 @@ export function VerificationStep({
                     layout
                     transition={{ type: 'spring', stiffness: 260, damping: 28 }}
                     className={[
-                      'overflow-hidden rounded-3xl border px-5 py-4 transition-all duration-150',
+                      'overflow-hidden rounded-3xl border px-5 py-4 transition-[background-color,color,border-color,box-shadow] duration-150',
                       isSelected
                         ? 'border-brand bg-brand-subtle shadow-brand-glow'
                         : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
@@ -126,7 +122,7 @@ export function VerificationStep({
                       onClick={() => onSelectMethod?.(method.value)}
                       className={[
                         'flex w-full flex-col items-start gap-3 text-left',
-                        compressOtherRows ? 'min-h-[112px]' : dmExpanded ? 'min-h-[132px]' : 'min-h-[148px]',
+                        compressOtherRows ? 'min-h-28' : dmExpanded ? 'min-h-32' : 'min-h-36',
                       ].join(' ')}
                       whileHover={{ y: -2, scale: 1.01 }}
                       whileTap={{ scale: 0.985 }}
@@ -188,31 +184,26 @@ export function VerificationStep({
                       </span>
                     </motion.button>
 
-                    <AnimatePresence initial={false}>
-                      {dmExpanded ? (
-                        <motion.div
-                          key="detail"
-                          initial={{ opacity: 0, height: 0, y: -8 }}
-                          animate={{ opacity: 1, height: 'auto', y: 0 }}
-                          exit={{ opacity: 0, height: 0, y: -8 }}
-                          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                          className="overflow-hidden pt-3"
-                        >
+                    {method.value === 'instagram-dm' && instagramDmDetail ? (
+                      <div
+                        className={[
+                          'overflow-hidden transition-[max-height]',
+                          dmExpanded ? 'max-h-96 duration-200 ease-out' : 'max-h-0 duration-150 ease-in',
+                        ].join(' ')}
+                        aria-hidden={!dmExpanded}
+                      >
+                        <div className="pt-3">
                           <InstagramDmInlineDetail
                             code={instagramDmDetail.code}
-                            destinationHandle={instagramDmDetail.destinationHandle}
-                            originHandle={instagramDmDetail.originHandle}
-                            confirmed={confirmed}
-                            confirmSentPending={instagramDmDetail.confirmSentPending}
-                            onConfirmSent={onConfirmDmSent}
+                            open={dmExpanded}
                           />
-                        </motion.div>
-                      ) : null}
-                    </AnimatePresence>
+                        </div>
+                      </div>
+                    ) : null}
                   </motion.div>
                 )
               }) : (
-                <div className="rounded-[28px] border border-border bg-surface-raised p-5">
+                <div className="rounded-2xl border border-border bg-surface-raised p-5">
                   <p className="text-sm leading-relaxed text-text-secondary">
                     Verification methods will appear here once a creator contact path is available.
                   </p>
@@ -229,7 +220,7 @@ export function VerificationStep({
             />
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-8">
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
             {secondaryAction && (
               <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                 {secondaryAction.label}
@@ -240,9 +231,10 @@ export function VerificationStep({
                 size="lg"
                 variant={primaryAction.variant ?? 'primary'}
                 onClick={primaryAction.onClick}
-                disabled={methods.length === 0 || !selectedMethod || !confirmed || primaryAction.disabled}
+                disabled={methods.length === 0 || !selectedMethod || primaryAction.disabled}
                 success={primaryAction.success}
                 successLabel={primaryAction.successLabel}
+                className={secondaryAction ? '' : 'ml-auto'}
               >
                 {primaryAction.label}
               </Button>
@@ -252,7 +244,8 @@ export function VerificationStep({
 
         <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-[28px] border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+              {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-square' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
                   src={verificationIllustrationUrl}
@@ -278,7 +271,7 @@ export function VerificationStep({
                 </p>
               </div>
 
-              <div className="rounded-[28px] border border-border bg-surface p-5">
+              <div className="rounded-2xl border border-border bg-surface p-5">
                 <div className="space-y-3">
                   <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">What happens next</p>
                   <div className="space-y-3">
