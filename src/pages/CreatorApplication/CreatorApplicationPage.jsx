@@ -272,7 +272,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           label: 'Submit application',
           disabled: pendingPrimaryAction === 'verify-primary',
           success: pendingPrimaryAction === 'verify-primary',
-          successLabel: 'Almost there',
+          successLabel: 'Submitting!',
           onClick: () => triggerPrimaryAction({
             key: 'verify-primary',
             run: handleVerificationContinue,
