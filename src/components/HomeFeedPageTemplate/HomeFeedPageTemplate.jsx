@@ -8,7 +8,7 @@ import { RightRailCommunityRulesCard } from '../RightRailCommunityRulesCard/Righ
 const homeFeedPosts = [
   {
     author: {
-      name: 'Julia Child',
+      name: 'Culture Crave',
       avatarSrc: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=128&q=80',
       badges: [{ variant: 'superfan', label: 'Superfan' }],
     },
@@ -23,7 +23,7 @@ const homeFeedPosts = [
     reactionCount: 31,
     shareCount: 13,
     commentCount: 12,
-    commentAvatarName: 'Julia Child',
+    commentAvatarName: 'Culture Crave',
   },
   {
     author: {
@@ -60,10 +60,10 @@ const homeFeedPosts = [
 
 export function HomeFeedPageTemplate({
   className = '',
-  brandName = 'Julia Child',
+  brandName = 'Culture Crave',
   audienceLabel = '20k readers',
   onlineCount = '117',
-  selectedCommunity = 'Julia Child',
+  selectedCommunity = 'Culture Crave',
   posts = homeFeedPosts,
   rightRail = {},
   mode = 'default',

@@ -88,7 +88,7 @@ Current user-flow image rail behavior:
 Branding updates already applied:
 - product name is now `Raptive Community Design System`
 - real SVG logo is wired into the app
-- sample creator identity was changed to `Julia Child`
+- sample creator identity was changed to `Culture Crave`
 - Lucide icons replaced placeholder/icon text usage where appropriate
 - social platform assets now support the fetch-confirmation account cards
 

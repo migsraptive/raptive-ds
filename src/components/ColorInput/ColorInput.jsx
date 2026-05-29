@@ -11,6 +11,7 @@ export const ColorInput = forwardRef(function ColorInput(
     value,
     onChange,
     layout = 'stack',
+    fallbackColor = brandPreviewDefaults.brand,
     className = '',
     ...props
   },
@@ -19,22 +20,28 @@ export const ColorInput = forwardRef(function ColorInput(
   const generatedId = useId()
   const inputId = id ?? `color-${generatedId}`
   const normalizedColor = normalizeHexColor(value)
+  const normalizedFallbackColor = normalizeHexColor(fallbackColor) ?? brandPreviewDefaults.brand
   const displayValue = normalizedColor ?? value ?? ''
   const hasValue = typeof value === 'string' && value.trim().length > 0
   const hasError = hasValue && !normalizedColor
   const descriptionId = (description || hasError) ? `${inputId}-description` : undefined
-  const colorPair = getAccessibleColorPair(normalizedColor ?? brandPreviewDefaults.primary)
-  const foregroundLabel = colorPair.foreground === colors.surface.invert ? 'Black text' : 'White text'
+  const colorPair = getAccessibleColorPair(normalizedColor ?? normalizedFallbackColor)
+  const foregroundOption = colorPair.foregroundOptions.find((option) => option.color === colorPair.foreground)
+  const alternateForegroundOption = colorPair.foregroundOptions.find((option) => option.color !== colorPair.foreground)
+  const foregroundLabel = foregroundOption?.label ?? (colorPair.foreground === colors.surface.invert ? 'Black text' : 'White text')
+  const largeTextAlternative = alternateForegroundOption?.passesLargeText && !alternateForegroundOption.passesNormalText
+    ? ` · ${alternateForegroundOption.label.replace(' text', '')} OK large`
+    : ''
   const helperText = hasError
     ? 'Enter a valid hex color.'
-    : `${foregroundLabel} · ${colorPair.contrast.toFixed(1)}:1`
+    : `${foregroundLabel} · ${colorPair.contrast.toFixed(1)}:1${largeTextAlternative}`
 
   const handleValueChange = (nextValue) => {
     onChange?.(nextValue)
   }
 
   const isCompact = layout === 'compact'
-  const swatchStyle = { '--preview-primary': normalizedColor ?? brandPreviewDefaults.primary }
+  const swatchStyle = { backgroundColor: normalizedColor ?? normalizedFallbackColor }
 
   return (
     <div
@@ -61,12 +68,12 @@ export const ColorInput = forwardRef(function ColorInput(
         ].filter(Boolean).join(' ')}
       >
         <label
-          className="color-input-swatch relative ml-2 flex h-6 w-6 flex-shrink-0 cursor-pointer overflow-hidden rounded-xs border border-border"
+          className="relative ml-2 flex h-6 w-6 flex-shrink-0 cursor-pointer overflow-hidden rounded-xs border border-border"
           style={swatchStyle}
         >
           <input
             type="color"
-            value={normalizedColor ?? brandPreviewDefaults.primary}
+            value={normalizedColor ?? normalizedFallbackColor}
             onChange={(event) => handleValueChange(event.target.value)}
             className="absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent p-0 opacity-0"
             aria-label={`${label ?? 'Color'} picker`}
@@ -83,7 +90,7 @@ export const ColorInput = forwardRef(function ColorInput(
           aria-describedby={descriptionId}
           spellCheck="false"
           inputMode="text"
-          placeholder={brandPreviewDefaults.primary.replace('#', '').toUpperCase()}
+          placeholder={normalizedFallbackColor.replace('#', '').toUpperCase()}
           {...props}
         />
         <span className="h-full w-px flex-shrink-0 bg-white" aria-hidden="true" />

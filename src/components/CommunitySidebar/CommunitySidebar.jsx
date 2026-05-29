@@ -32,7 +32,7 @@ const primaryNav = [
 const topCategories = [
   {
     label: 'Introduce Yourself',
-    avatarName: 'Julia Child',
+    avatarName: 'Culture Crave',
     avatarSrc: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=96&q=80',
   },
   {
@@ -59,8 +59,8 @@ const topCategories = [
 
 const communityCategories = [
   {
-    label: 'Julia Child',
-    avatarName: 'Julia Child',
+    label: 'Culture Crave',
+    avatarName: 'Culture Crave',
     avatarSrc: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=96&q=80',
   },
   {
@@ -210,12 +210,12 @@ function DiscoverMoreBadge() {
 
 export function CommunitySidebar({
   className = '',
-  selectedCommunity = communityCategories[0]?.label ?? 'Julia Child',
+  selectedCommunity = communityCategories[0]?.label ?? 'Culture Crave',
   compact = false,
 }) {
   const [openSections, setOpenSections] = useState({
     topCategories: true,
-    juliaChild: true,
+    cultureCrave: true,
     browseByInterest: true,
     healthWellness: false,
     chat: true,
@@ -275,13 +275,13 @@ export function CommunitySidebar({
 
           <div className="py-1">
             <SectionHeader
-              title="Julia Child Community"
+              title="Culture Crave Community"
               count={7}
-              open={openSections.juliaChild}
-              onToggle={() => toggleSection('juliaChild')}
+              open={openSections.cultureCrave}
+              onToggle={() => toggleSection('cultureCrave')}
             />
             <SidebarDivider />
-            {openSections.juliaChild ? (
+            {openSections.cultureCrave ? (
               <div className="space-y-0.5 py-2">
                 {visibleCommunityCategories.map((item, index) => (
                   <SidebarItem

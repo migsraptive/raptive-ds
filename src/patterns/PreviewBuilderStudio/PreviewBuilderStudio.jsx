@@ -6,6 +6,7 @@ import { Select } from '../../components/Select/Select.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
 import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
+import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
 function studioCopy(vertical, creatorName) {
   const verticalMap = {
@@ -86,8 +87,8 @@ export function PreviewBuilderStudio({
   title = 'Shape the first version of your creator community.',
   description = 'This exploration merges correction and preview into one split studio so every meaningful edit can update the mocked experience immediately.',
   initialFields = {
-    name: 'Julia Child',
-    url: 'instagram.com/juliachild',
+    name: 'Culture Crave',
+    url: 'instagram.com/culturecrave',
     vertical: 'food',
     audience: 'Community-led',
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
@@ -98,7 +99,11 @@ export function PreviewBuilderStudio({
   },
 }) {
   const [fields, setFields] = useState(initialFields)
-  const [selectedPalette, setSelectedPalette] = useState(brandAssets.palette?.[1] ?? brandPreviewDefaults.secondary)
+  const [selectedPalette, setSelectedPalette] = useState(brandAssets.palette?.[1] ?? brandPreviewDefaults.accent)
+  const previewThemeStyle = createPreviewThemeStyle({
+    brandColor: brandPreviewDefaults.brand,
+    accentColor: selectedPalette,
+  })
 
   const contentModel = useMemo(
     () => studioCopy(fields.vertical, fields.name || 'Creator'),
@@ -127,7 +132,7 @@ export function PreviewBuilderStudio({
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[380px_minmax(0,1fr)]">
         {/* no token available: split-studio exploration keeps a fixed 380px editor rail. */}
         <div className="border-b border-border bg-surface lg:border-b-0 lg:border-r">
@@ -218,7 +223,7 @@ export function PreviewBuilderStudio({
           </div>
         </div>
 
-        <div className="preview-theme bg-gradient-to-b from-gamification-gold-bg to-surface-sunken p-8 lg:p-10" style={{ '--preview-primary': selectedPalette }}>
+        <div className="preview-theme bg-gradient-to-b from-gamification-gold-bg to-surface-sunken p-8 lg:p-10" style={previewThemeStyle}>
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="space-y-1">
@@ -237,9 +242,9 @@ export function PreviewBuilderStudio({
             </div>
 
             <div
-              className="preview-accent-frame rounded-2xl border p-3"
+              className="preview-accent-frame rounded-xl border p-3"
             >
-              <div className="preview-accent-tint mb-3 flex items-center gap-2 rounded-lg px-3 py-2">
+              <div className="preview-accent-tint mb-3 flex items-center gap-2 rounded-xl px-3 py-2">
                 <span className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
                   Preview frame
                 </span>
@@ -249,7 +254,7 @@ export function PreviewBuilderStudio({
               </div>
 
               {/* no token available: fixed preview frame preserves the scaled desktop mock aspect. */}
-              <div className="relative h-[451px] w-[634px] overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+              <div className="relative h-[451px] w-[634px] overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
                 <div
                   className="absolute left-0 top-0"
                   style={{
@@ -279,19 +284,19 @@ export function PreviewBuilderStudio({
               </div>
 
               <div className="mt-4 grid gap-3 md:grid-cols-3">
-                <div className="rounded-2xl border border-border bg-surface px-4 py-3">
+                <div className="rounded-xl border border-border bg-surface px-4 py-3">
                   <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Mapped now</p>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">
                     Creator name updates the navigation, composer, and community title immediately.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-border bg-surface px-4 py-3">
+                <div className="rounded-xl border border-border bg-surface px-4 py-3">
                   <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Mapped now</p>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">
                     Positioning summary and vertical shift the welcome message and example post framing.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-border bg-surface px-4 py-3">
+                <div className="rounded-xl border border-border bg-surface px-4 py-3">
                   <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Theme signal</p>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">
                     Palette selection currently affects preview chrome first, which is enough to validate the studio concept before deeper theming.

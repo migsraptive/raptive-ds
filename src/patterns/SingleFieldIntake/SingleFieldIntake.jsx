@@ -16,11 +16,12 @@ export function SingleFieldIntake({
   helperText = null,
   ctaLabel = 'Continue',
   ctaSuccessLabel = null,
+  ctaSuccessIcon = null,
   ctaDisabled = false,
   showAside = true,
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className="grid lg:grid-cols-[minmax(0,1.15fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
@@ -59,7 +60,7 @@ export function SingleFieldIntake({
             {trustPoints.length > 0 && (
               <div className="grid gap-3 sm:grid-cols-3">
                 {trustPoints.map((point) => (
-                  <div key={point.title} className="rounded-3xl border border-border bg-surface-raised p-4">
+                  <div key={point.title} className="rounded-xl border border-border bg-surface-raised p-4">
                     <p className="text-sm font-medium text-text">{point.title}</p>
                     <p className="mt-1 text-sm leading-relaxed text-text-secondary">{point.description}</p>
                   </div>
@@ -70,7 +71,7 @@ export function SingleFieldIntake({
 
           <div className="mt-auto pt-8">
             <div className="flex flex-wrap items-center justify-end gap-3">
-              <Button size="lg" onClick={onSubmit} success={loading} successLabel={ctaSuccessLabel} disabled={ctaDisabled}>
+              <Button size="lg" onClick={onSubmit} success={loading} successLabel={ctaSuccessLabel} successIcon={ctaSuccessIcon} disabled={ctaDisabled}>
                 {ctaLabel}
               </Button>
             </div>
@@ -79,7 +80,7 @@ export function SingleFieldIntake({
 
         <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
               {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-[4/3]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
@@ -116,7 +117,7 @@ export function SingleFieldIntake({
                   <div
                     key={item.step}
                     className={[
-                      'flex items-center gap-3 rounded-2xl border px-4 py-3',
+                      'flex items-center gap-3 rounded-xl border px-4 py-3',
                       item.active ? 'border-brand bg-surface' : 'border-border bg-surface/70',
                     ].join(' ')}
                   >

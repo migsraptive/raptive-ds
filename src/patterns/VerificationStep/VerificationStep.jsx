@@ -79,7 +79,7 @@ export function VerificationStep({
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
@@ -111,7 +111,7 @@ export function VerificationStep({
                     layout
                     transition={{ type: 'spring', stiffness: 260, damping: 28 }}
                     className={[
-                      'overflow-hidden rounded-3xl border px-5 py-4 transition-[background-color,color,border-color,box-shadow] duration-150',
+                      'overflow-hidden rounded-xl border px-5 py-4 transition-[background-color,color,border-color,box-shadow] duration-150',
                       isSelected
                         ? 'border-brand bg-brand-subtle shadow-brand-glow'
                         : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
@@ -203,7 +203,7 @@ export function VerificationStep({
                   </motion.div>
                 )
               }) : (
-                <div className="rounded-2xl border border-border bg-surface-raised p-5">
+                <div className="rounded-xl border border-border bg-surface-raised p-5">
                   <p className="text-sm leading-relaxed text-text-secondary">
                     Verification methods will appear here once a creator contact path is available.
                   </p>
@@ -234,6 +234,7 @@ export function VerificationStep({
                 disabled={methods.length === 0 || !selectedMethod || primaryAction.disabled}
                 success={primaryAction.success}
                 successLabel={primaryAction.successLabel}
+                successIcon={primaryAction.successIcon}
                 className={secondaryAction ? '' : 'ml-auto'}
               >
                 {primaryAction.label}
@@ -244,7 +245,7 @@ export function VerificationStep({
 
         <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
               {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-square' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
@@ -271,7 +272,7 @@ export function VerificationStep({
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-border bg-surface p-5">
+              <div className="rounded-xl border border-border bg-surface p-5">
                 <div className="space-y-3">
                   <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">What happens next</p>
                   <div className="space-y-3">

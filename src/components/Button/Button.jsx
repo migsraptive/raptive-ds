@@ -4,9 +4,10 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 /**
  * Button
- * Variants: primary | secondary | ghost | danger | black | link | previewPrimary | previewSecondary
+ * Variants: primary | secondary | ghost | danger | black | link | previewBrand | previewAccent
  * Sizes: xs | sm | md | lg
- * States: default | hover | active | disabled | loading
+ * States: default | hover | active | disabled | loading | success
+ * Success icons are caller-provided with successIcon so labels can choose the right pairing.
  */
 
 const variants = {
@@ -45,14 +46,14 @@ const variants = {
     'disabled:bg-neutral-300 disabled:text-text-disabled disabled:cursor-not-allowed',
   ].join(' '),
 
-  previewPrimary: [
-    'preview-primary-surface',
+  previewBrand: [
+    'preview-brand-surface',
     'focus-visible:ring-2 focus-visible:ring-offset-2',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ].join(' '),
 
-  previewSecondary: [
-    'preview-secondary-surface',
+  previewAccent: [
+    'preview-accent-surface',
     'focus-visible:ring-2 focus-visible:ring-offset-2',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ].join(' '),
@@ -100,6 +101,7 @@ export function Button({
   loadingLabel = null,
   success = false,
   successLabel = null,
+  successIcon = null,
   disabled = false,
   iconBefore = null,
   iconAfter = null,
@@ -173,20 +175,7 @@ export function Button({
               transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               className="inline-flex items-center gap-2"
             >
-              <span className="paired-label-icon">
-                <motion.svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <motion.path
-                    d="M3.75 8.25 6.5 11l5.75-6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
-                  />
-                </motion.svg>
-              </span>
+              {successIcon ? <span className="paired-label-icon">{successIcon}</span> : null}
               <span>{successLabel ?? children}</span>
             </motion.span>
           ) : (

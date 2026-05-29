@@ -4,6 +4,7 @@ import { brandPreviewDefaults } from './brandPreviewDefaults.js'
 const ACCESSIBLE_DARK_TEXT = colors.surface.invert
 const ACCESSIBLE_LIGHT_TEXT = colors.text.invert
 export const MINIMUM_TEXT_CONTRAST = 4.5
+export const LARGE_TEXT_CONTRAST = 3
 
 export function normalizeHexColor(color) {
   if (typeof color !== 'string') return null
@@ -67,14 +68,36 @@ export function getReadableForegroundColor(backgroundColor) {
   return blackContrast >= whiteContrast ? ACCESSIBLE_DARK_TEXT : ACCESSIBLE_LIGHT_TEXT
 }
 
-export function getAccessibleColorPair(backgroundColor, fallbackBackground = brandPreviewDefaults.primary) {
+export function getForegroundContrastOptions(backgroundColor) {
+  return [
+    {
+      label: 'Black text',
+      color: ACCESSIBLE_DARK_TEXT,
+      contrast: contrastRatio(backgroundColor, ACCESSIBLE_DARK_TEXT),
+    },
+    {
+      label: 'White text',
+      color: ACCESSIBLE_LIGHT_TEXT,
+      contrast: contrastRatio(backgroundColor, ACCESSIBLE_LIGHT_TEXT),
+    },
+  ].map((option) => ({
+    ...option,
+    passesNormalText: option.contrast >= MINIMUM_TEXT_CONTRAST,
+    passesLargeText: option.contrast >= LARGE_TEXT_CONTRAST,
+  }))
+}
+
+export function getAccessibleColorPair(backgroundColor, fallbackBackground = brandPreviewDefaults.brand) {
   const background = normalizeHexColor(backgroundColor) ?? fallbackBackground
   const foreground = getReadableForegroundColor(background)
+  const contrast = contrastRatio(background, foreground)
 
   return {
     background,
     foreground,
-    contrast: contrastRatio(background, foreground),
-    passes: contrastRatio(background, foreground) >= MINIMUM_TEXT_CONTRAST,
+    contrast,
+    passes: contrast >= MINIMUM_TEXT_CONTRAST,
+    passesLargeText: contrast >= LARGE_TEXT_CONTRAST,
+    foregroundOptions: getForegroundContrastOptions(background),
   }
 }

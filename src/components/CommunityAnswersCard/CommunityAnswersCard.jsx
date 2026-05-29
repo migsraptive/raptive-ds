@@ -2,8 +2,7 @@ import { MessageCircle } from 'lucide-react'
 import { Avatar } from '../Avatar/Avatar.jsx'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 import { TextLink } from '../TextLink/TextLink.jsx'
-import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
-import { getAccessibleColorPair } from '../../utils/colorContrast.js'
+import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
 export function CommunityAnswersCard({
   authorName = 'Sally McKenney',
@@ -13,30 +12,27 @@ export function CommunityAnswersCard({
   answerCount = 45,
   avatarSrc,
   avatarShape = 'circle',
-  brandPrimaryColor = brandPreviewDefaults.primary,
-  brandTertiaryColor = brandPreviewDefaults.tertiary,
+  brandColor,
+  accentColor,
   onAnswer,
   onViewAnswers,
   className = '',
+  style,
 }) {
-  const primaryColor = getAccessibleColorPair(brandPrimaryColor, brandPreviewDefaults.primary)
-  const tertiaryColor = getAccessibleColorPair(brandTertiaryColor, brandPreviewDefaults.tertiary)
-  const previewThemeStyle = {
-    '--preview-primary': primaryColor.background,
-    '--preview-primary-foreground': primaryColor.foreground,
-    '--preview-secondary': tertiaryColor.background,
-    '--preview-secondary-foreground': tertiaryColor.foreground,
-  }
+  const previewThemeStyle = (brandColor || accentColor)
+    ? createPreviewThemeStyle({ brandColor, accentColor })
+    : undefined
+  const mergedStyle = (previewThemeStyle || style) ? { ...previewThemeStyle, ...style } : undefined
   const hasAnswerCount = answerCount != null
   const answerCountLabel = `${answerCount} ${answerCount === 1 ? 'answer' : 'answers'}`
 
   return (
     <article
       className={[
-        'preview-theme preview-secondary-surface flex aspect-square w-full flex-col items-start overflow-hidden rounded-xl pt-2 shadow-xs',
+        'preview-accent-soft-surface flex aspect-square w-full flex-col items-start overflow-hidden rounded-xl border pt-2 shadow-xs',
         className,
       ].join(' ')}
-      style={previewThemeStyle}
+      style={mergedStyle}
     >
       <div className="flex h-14 w-full shrink-0 items-center gap-2 px-4 py-2">
         <Avatar

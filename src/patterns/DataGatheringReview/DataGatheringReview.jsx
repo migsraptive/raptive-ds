@@ -23,7 +23,7 @@ const rowLoadingCopy = {
   source: 'Checking the submitted channel.',
 }
 
-const defaultSubmittedSourceValue = 'https://instagram.com/juliachild'
+const defaultSubmittedSourceValue = 'https://instagram.com/culturecrave'
 
 function StatusDot({ resolved }) {
   return (
@@ -81,7 +81,7 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
 
 function SourceFields({ source, onSourceChange, onRemoveSource }) {
   return (
-    <div className="grid gap-3 rounded-lg border border-border bg-surface-raised p-3 md:grid-cols-3">
+    <div className="grid gap-3 rounded-xl border border-border bg-surface-raised p-3 md:grid-cols-3">
       <Select
         label="Source"
         value={source.platform}
@@ -91,7 +91,7 @@ function SourceFields({ source, onSourceChange, onRemoveSource }) {
       <TextInput
         label="Handle or URL"
         value={source.value}
-        placeholder="@juliachild or https://..."
+        placeholder="@culturecrave or https://..."
         onChange={(event) => onSourceChange({ value: event.target.value })}
       />
       <div className="flex items-end">
@@ -156,7 +156,7 @@ export function DataGatheringReview({
 }) {
   const [resolvedRows, setResolvedRows] = useState([])
   const [editingRow, setEditingRow] = useState(null)
-  const [identity, setIdentity] = useState('Julia Child')
+  const [identity, setIdentity] = useState('Culture Crave')
   const [audience, setAudience] = useState('526K combined followers')
   const [primarySource, setPrimarySource] = useState({
     platform: detectedSource,
@@ -208,7 +208,7 @@ export function DataGatheringReview({
     : primarySource.platform
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
@@ -297,6 +297,7 @@ export function DataGatheringReview({
                 disabled={primaryAction.disabled}
                 success={primaryAction.success}
                 successLabel={primaryAction.successLabel}
+                successIcon={primaryAction.successIcon}
                 className={secondaryAction ? '' : 'ml-auto'}
               >
                 {primaryAction.label}

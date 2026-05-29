@@ -2,7 +2,7 @@ export function RightRailCommunityRulesCard({ className = '' }) {
   return (
     <aside
       className={[
-        'w-80 rounded-2xl border border-border-strong bg-white p-6',
+        'w-80 rounded-xl border border-border-strong bg-white p-6',
         'shadow-xs',
         className,
       ].join(' ')}

@@ -1,36 +1,34 @@
 import { Button } from '../Button/Button.jsx'
 import { Avatar } from '../Avatar/Avatar.jsx'
-import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
-import { getAccessibleColorPair } from '../../utils/colorContrast.js'
+import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
 export function CommunityCreatorDiscoverCard({
   name,
   activeMembersLabel = '12 active members',
+  topicLabel = 'Baking',
   description,
   avatarSrc,
   avatarShape = 'circle',
   ctaLabel = 'Explore',
-  brandPrimaryColor = brandPreviewDefaults.primary,
-  brandSecondaryColor = brandPreviewDefaults.secondary,
+  brandColor,
+  accentColor,
   onExplore,
   className = '',
+  style,
 }) {
-  const primaryActionColor = getAccessibleColorPair(brandPrimaryColor)
-  const secondaryActionColor = getAccessibleColorPair(brandSecondaryColor)
-  const previewThemeStyle = {
-    '--preview-primary': primaryActionColor.background,
-    '--preview-primary-foreground': primaryActionColor.foreground,
-    '--preview-secondary': secondaryActionColor.background,
-    '--preview-secondary-foreground': secondaryActionColor.foreground,
-  }
+  const memberTopicLabel = [activeMembersLabel, topicLabel].filter(Boolean).join(' • ')
+  const previewThemeStyle = (brandColor || accentColor)
+    ? createPreviewThemeStyle({ brandColor, accentColor })
+    : undefined
+  const mergedStyle = (previewThemeStyle || style) ? { ...previewThemeStyle, ...style } : undefined
 
   return (
     <article
       className={[
-        'preview-theme flex h-full w-full flex-col items-start gap-1 rounded-lg border border-border-strong bg-surface p-4 shadow-xs',
+        'flex h-full w-full flex-col items-start gap-1 rounded-xl border border-border-strong bg-surface p-4 shadow-xs',
         className,
       ].join(' ')}
-      style={previewThemeStyle}
+      style={mergedStyle}
     >
       <Avatar
         src={avatarSrc}
@@ -44,7 +42,7 @@ export function CommunityCreatorDiscoverCard({
           {name}
         </h3>
         <p className="w-full break-words text-label-md font-medium text-text-tertiary">
-          {activeMembersLabel}
+          {memberTopicLabel}
         </p>
         <p className="w-full break-words text-label-md font-medium text-text">
           {description}
@@ -55,7 +53,7 @@ export function CommunityCreatorDiscoverCard({
         <Button
           fullWidth
           size="sm"
-          variant="previewPrimary"
+          variant="previewBrand"
           onClick={onExplore}
         >
           {ctaLabel}

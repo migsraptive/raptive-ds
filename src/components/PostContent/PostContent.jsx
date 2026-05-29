@@ -58,7 +58,7 @@ function AttachmentCard({
   thumbnail,
 }) {
   return (
-    <div className="flex flex-col items-start bg-surface-raised border border-border-strong rounded-lg overflow-hidden py-2 w-full">
+    <div className="flex flex-col items-start bg-surface-raised border border-border-strong rounded-xl overflow-hidden py-2 w-full">
       {/* Header */}
       <div className="flex items-center gap-2 px-4 w-full">
         <Avatar src={authorAvatar} name={authorName} size="xs" />

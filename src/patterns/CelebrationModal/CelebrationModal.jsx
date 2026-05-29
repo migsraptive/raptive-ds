@@ -72,7 +72,7 @@ function Confetti({ active, shouldReduceMotion }) {
     { top: '65%', left: '5%',  width: 9, height: 5, backgroundColor: colors.status.warning, animationDuration: shouldReduceMotion ? reducedDuration : '1.0s', animationDelay: '0.35s' },
   ]
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
       {dots.map((d, i) => <ConfettiDot key={i} style={d} />)}
     </div>
   )
@@ -121,7 +121,7 @@ export function CelebrationModal({
     >
       <div
         className={[
-          'relative w-full max-w-sm rounded-2xl overflow-hidden',
+          'relative w-full max-w-sm rounded-xl overflow-hidden',
           'bg-white shadow-2xl',
           'animate-[modal-in_0.3s_cubic-bezier(0.34,1.56,0.64,1)_both]',
         ].join(' ')}
@@ -193,7 +193,7 @@ export function CelebrationModal({
               {stats.map((s, i) => (
                 <div
                   key={i}
-                  className="flex-1 flex flex-col items-center gap-0.5 bg-surface-raised rounded-lg py-2 px-3"
+                  className="flex-1 flex flex-col items-center gap-0.5 bg-surface-raised rounded-xl py-2 px-3"
                 >
                   <span className="font-display text-lg font-bold text-text">{s.value}</span>
                   <span className="text-xs text-text-secondary">{s.label}</span>

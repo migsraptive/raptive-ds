@@ -4,6 +4,8 @@ import {
   Baby,
   BadgeCheck,
   BriefcaseBusiness,
+  Check,
+  Eye,
   Flame,
   HandCoins,
   Heart,
@@ -14,6 +16,8 @@ import {
   Plane,
   Rocket,
   RotateCcw,
+  Search,
+  Send,
   Settings2,
   Shield,
   ShieldCheck,
@@ -115,7 +119,7 @@ function Row({ label, children, className = '' }) {
 
 function DocumentationNote({ children }) {
   return (
-    <aside className="rounded-lg border border-border bg-surface-sunken px-3 py-2 text-sm leading-relaxed text-text-secondary">
+    <aside className="rounded-xl border border-border bg-surface-sunken px-3 py-2 text-sm leading-relaxed text-text-secondary">
       {children}
     </aside>
   )
@@ -130,7 +134,7 @@ const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
 const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
 const avatarImageSet = [
   {
-    name: 'Julia Child',
+    name: 'Culture Crave',
     src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=128&q=80',
   },
   {
@@ -148,41 +152,46 @@ const avatarImageSet = [
 ]
 const socialUrlExamples = [
   { label: 'Empty state', value: '' },
-  { label: 'Instagram', value: 'https://instagram.com/juliachild' },
-  { label: 'TikTok', value: 'https://www.tiktok.com/@juliachild' },
-  { label: 'Pinterest', value: 'https://pinterest.com/juliachild' },
-  { label: 'YouTube', value: 'https://youtube.com/@juliachild' },
-  { label: 'Facebook', value: 'https://facebook.com/juliachild' },
-  { label: 'Substack', value: 'https://juliachild.substack.com' },
-  { label: 'Default website', value: 'https://www.juliachild.com' },
+  { label: 'Instagram', value: 'https://instagram.com/culturecrave' },
+  { label: 'TikTok', value: 'https://www.tiktok.com/@culturecrave' },
+  { label: 'Pinterest', value: 'https://pinterest.com/culturecrave' },
+  { label: 'YouTube', value: 'https://youtube.com/@culturecrave' },
+  { label: 'Facebook', value: 'https://facebook.com/culturecrave' },
+  { label: 'Substack', value: 'https://culturecrave.substack.com' },
+  { label: 'Default website', value: 'https://www.culturecrave.com' },
 ]
-// no token available — creator brand colors are runtime data, represented here as ComponentLibrary fixtures.
+// no token available — creator colors are runtime data, represented here as ComponentLibrary fixtures.
 const communityCreatorDiscoverExamples = [
   {
     name: 'Lambeau Leapers',
+    topicLabel: 'Sports',
     description: 'Packers pride, shared together',
-    brandPrimaryColor: '#004101',
+    brandColor: '#004101',
   },
   {
     name: 'Sally’s Baking',
+    topicLabel: 'Baking',
     description: 'Learn, share, and bake together',
-    brandPrimaryColor: '#ce7c77',
+    brandColor: '#ce7c77',
   },
   {
     name: 'Make & Do Crew',
+    topicLabel: 'Crafting',
     description: 'A welcome space for crocheters',
     avatarShape: 'square',
-    brandPrimaryColor: '#de4b32',
+    brandColor: '#de4b32',
   },
   {
     name: 'Inside the Magic',
+    topicLabel: 'Disney',
     description: 'A home for Disney lovers everywhere',
-    brandPrimaryColor: '#833193',
+    brandColor: '#833193',
   },
   {
     name: 'Half Baked Harvest',
+    topicLabel: 'Cooking',
     description: 'Recipes, gatherings, inspiration',
-    brandPrimaryColor: '#5f5e4a',
+    brandColor: '#5f5e4a',
   },
 ]
 const communityAnswersCardExamples = [
@@ -193,7 +202,7 @@ const communityAnswersCardExamples = [
     question: 'Which dessert always disappears first at gatherings?',
     answerCount: 45,
     avatarSrc: avatarImageSet[0].src,
-    brandPrimaryColor: '#ce7c77',
+    accentColor: '#ce7c77',
   },
   {
     label: 'Initials fallback',
@@ -201,7 +210,7 @@ const communityAnswersCardExamples = [
     communityName: 'Garden Club',
     question: 'What is one small habit that keeps your herbs thriving indoors?',
     answerCount: 8,
-    brandPrimaryColor: '#004101',
+    accentColor: '#004101',
   },
   {
     label: 'No answers yet',
@@ -210,7 +219,7 @@ const communityAnswersCardExamples = [
     question: 'What is your go-to pantry dinner when the fridge is almost empty?',
     answerCount: 0,
     avatarSrc: avatarImageSet[1].src,
-    brandPrimaryColor: '#5f5e4a',
+    accentColor: '#5f5e4a',
   },
 ]
 
@@ -242,9 +251,9 @@ export function ComponentLibrary() {
   const [selectedTiles, setSelectedTiles] = useState(['community'])
   const [selectedGoals, setSelectedGoals] = useState(['audience-growth', 'community'])
   const [newsletterOptIn, setNewsletterOptIn] = useState(true)
-  const [primaryButtonColor, setPrimaryButtonColor] = useState(brandPreviewDefaults.primary)
-  const [secondaryButtonColor, setSecondaryButtonColor] = useState(brandPreviewDefaults.secondary)
-  const [selectedSwatch, setSelectedSwatch] = useState(brandPreviewDefaults.secondary)
+  const [brandColor, setBrandColor] = useState(brandPreviewDefaults.brand)
+  const [accentColor, setAccentColor] = useState(brandPreviewDefaults.accent)
+  const [selectedSwatch, setSelectedSwatch] = useState(brandPreviewDefaults.accent)
   const [demoAvatar, setDemoAvatar] = useState(null)
   const [demoShape, setDemoShape] = useState('circle')
   const [categorySearch, setCategorySearch] = useState('')
@@ -254,8 +263,8 @@ export function ComponentLibrary() {
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [reviewFields] = useState({
-    name: 'Julia Child',
-    url: 'instagram.com/juliachild',
+    name: 'Culture Crave',
+    url: 'instagram.com/culturecrave',
     vertical: 'food',
     audience: 'Community-led',
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
@@ -728,14 +737,18 @@ export function ComponentLibrary() {
             <Section title="Color Input" description="Hex entry plus native color picker with automatic black/white foreground guidance.">
               <div className="grid gap-4 md:grid-cols-2">
                 <ColorInput
-                  label="Main button"
-                  value={primaryButtonColor}
-                  onChange={setPrimaryButtonColor}
+                  label="Brand Color"
+                  description="Used for buttons, links, creator marks, and active community actions."
+                  value={brandColor}
+                  fallbackColor={brandPreviewDefaults.brand}
+                  onChange={setBrandColor}
                 />
                 <ColorInput
-                  label="Back button"
-                  value={secondaryButtonColor}
-                  onChange={setSecondaryButtonColor}
+                  label="Accent Color"
+                  description="Used for highlights, prompts, and special community moments."
+                  value={accentColor}
+                  fallbackColor={brandPreviewDefaults.accent}
+                  onChange={setAccentColor}
                 />
               </div>
             </Section>
@@ -964,6 +977,7 @@ export function ComponentLibrary() {
               <Row label="Success">
                 <Button success>Submitted</Button>
                 <Button success successLabel="Saved">Save draft</Button>
+                <Button success successLabel="Finding" successIcon={<LucideIcon icon={Search} size="md" />}>Continue</Button>
               </Row>
               <Row label="Disabled">
                 <Button disabled>Primary</Button>
@@ -1039,7 +1053,7 @@ export function ComponentLibrary() {
             <Section title="Sizes">
               <Row>
                 {['xs','sm','md','lg','xl','2xl'].map(s => (
-                  <Avatar key={s} name="Julia Child" size={s} />
+                  <Avatar key={s} name="Culture Crave" size={s} />
                 ))}
               </Row>
             </Section>
@@ -1065,7 +1079,7 @@ export function ComponentLibrary() {
             </Section>
             <Section title="With Notification Count">
               <Row>
-                <Avatar name="Julia Child" size="md" count={3} />
+                <Avatar name="Culture Crave" size="md" count={3} />
                 <Avatar name="Nicole PM" size="md" count={12} />
                 <Avatar name="Kimm SVP" size="md" count={100} />
               </Row>
@@ -1101,7 +1115,7 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Author Row" description="Community member row from Figma: molecules/rows/author.">
-              <div className="max-w-md border border-border rounded-xs overflow-hidden">
+              <div className="max-w-md border border-border rounded-xl overflow-hidden">
                 <AuthorRow
                   name="Jane Doe"
                   showFriendsIcon
@@ -1113,9 +1127,9 @@ export function ComponentLibrary() {
                   onMore={() => {}}
                 />
               </div>
-              <div className="max-w-md border border-border rounded-xs overflow-hidden mt-4">
+              <div className="max-w-md border border-border rounded-xl overflow-hidden mt-4">
                 <AuthorRow
-                  name="Julia Child"
+                  name="Culture Crave"
                   badges={[
                     { variant: 'superfan', label: 'Superfan' },
                   ]}
@@ -1150,19 +1164,19 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Post Content" description="Community post body from Figma: post-content. Optional title, attachment card, and read more.">
-              <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+              <div className="max-w-2xl border border-border rounded-xl overflow-hidden">
                 <PostContent
                   title="This is the post title"
                   body="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
                   readMore={{ label: 'read more', onClick: () => {} }}
                 />
               </div>
-              <div className="max-w-2xl border border-border rounded-xs overflow-hidden mt-4">
+              <div className="max-w-2xl border border-border rounded-xl overflow-hidden mt-4">
                 <PostContent
                   title="Post with attachment card"
                   body="Slow cooker recipes are the best for busy weeknights. Here's one I've been making on repeat."
                   attachment={{
-                    authorName: 'Julia Child',
+                    authorName: 'Culture Crave',
                     date: '2 October 12',
                     title: 'Slow Cooker Pork and Green Chili Stew',
                     excerpt: 'Slow Cooker Pork and Green Chili Stew - Chunks of lean pork, slow cooked...',
@@ -1175,33 +1189,33 @@ export function ComponentLibrary() {
 
             <Section title="Post Action Bar" description="Post engagement bar from Figma: molecules/actionbar/post/desktop/feed.">
               <div className="space-y-4">
-                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                <div className="max-w-2xl border border-border rounded-xl overflow-hidden">
                   <PostActionBar
                     reactionCount={31}
                     shareCount={13}
                     commentCount={12}
                     topReactions={['helpful', 'insightful', 'uplifting']}
                     showCommentField
-                    commentAvatarName="Julia Child"
+                    commentAvatarName="Culture Crave"
                     onReact={() => {}}
                     onShare={() => {}}
                     onComment={() => {}}
                   />
                 </div>
-                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                <div className="max-w-2xl border border-border rounded-xl overflow-hidden">
                   <PostActionBar
                     reactionCount={18}
                     shareCount={7}
                     commentCount={4}
                     aiPrompt="Need a reply starter? Try thanking the member and asking what they want to see next."
                     showCommentField
-                    commentAvatarName="Julia Child"
+                    commentAvatarName="Culture Crave"
                     onReact={() => {}}
                     onShare={() => {}}
                     onComment={() => {}}
                   />
                 </div>
-                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                <div className="max-w-2xl border border-border rounded-xl overflow-hidden">
                   <PostActionBar
                     reactionCount={8}
                     shareCount={2}
@@ -1212,7 +1226,7 @@ export function ComponentLibrary() {
                     onComment={() => {}}
                   />
                 </div>
-                <div className="max-w-2xl border border-border rounded-xs overflow-hidden">
+                <div className="max-w-2xl border border-border rounded-xl overflow-hidden">
                   <PostActionBar
                     reactionCount={0}
                     shareCount={0}
@@ -1254,7 +1268,7 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Comment" description="Threaded comment from Figma: organisms/comment/post.">
-              <div className="max-w-md border border-border rounded-xs overflow-hidden">
+              <div className="max-w-md border border-border rounded-xl overflow-hidden">
                 <Comment
                   authorName="First Last"
                   username="username"
@@ -1371,7 +1385,7 @@ export function ComponentLibrary() {
                 Edge-to-edge top navigation with left community sidebar, center stacked feed posts, and right-rail support modules.
               </p>
             </div>
-            <div className="overflow-hidden rounded-2xl border border-border-strong bg-surface-raised shadow-xs">
+            <div className="overflow-hidden rounded-xl border border-border-strong bg-surface-raised shadow-xs">
               <HomeFeedPageTemplate />
             </div>
           </div>
@@ -1399,6 +1413,7 @@ export function ComponentLibrary() {
                 helperText={getDetectedSocialAccountHelperText(creatorUrl)}
                 ctaLabel="Continue"
                 ctaSuccessLabel="Pulling data"
+                ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
                 ctaDisabled={!creatorUrl.trim()}
                 showAside={false}
               />
@@ -1409,13 +1424,14 @@ export function ComponentLibrary() {
                 <SingleFieldIntake
                   title="Show trust cues while recognition runs."
                   description="Use short proof points to explain why the first step is lightweight."
-                  value="https://instagram.com/juliachild"
+                  value="https://instagram.com/culturecrave"
                   onChange={() => {}}
                   onSubmit={() => {}}
                   loading
                   ctaLabel="Recognize creator"
                   ctaSuccessLabel="Recognized"
-                  helperText={getDetectedSocialAccountHelperText('https://instagram.com/juliachild')}
+                  ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
+                  helperText={getDetectedSocialAccountHelperText('https://instagram.com/culturecrave')}
                   trustPoints={[
                     {
                       title: 'Fast recognition',
@@ -1443,11 +1459,11 @@ export function ComponentLibrary() {
                 <SingleFieldIntake
                   title="Use the focused no-aside layout when the art should become the full rail."
                   description="This state keeps the same form contract while removing the explanatory aside content."
-                  value="juliachild.com"
+                  value="culturecrave.com"
                   onChange={() => {}}
                   onSubmit={() => {}}
                   showAside={false}
-                  helperText={getDetectedSocialAccountHelperText('juliachild.com')}
+                  helperText={getDetectedSocialAccountHelperText('culturecrave.com')}
                 />
               </div>
             </Section>
@@ -1466,7 +1482,11 @@ export function ComponentLibrary() {
               <DataGatheringReview
                 detectedSource="Instagram"
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                primaryAction={{ label: 'Continue' }}
+                primaryAction={{
+                  label: 'Continue',
+                  successLabel: 'Finding...',
+                  successIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+                }}
               />
               <DocumentationNote>
                 Source can resolve from the submitted network, and creators can optionally add more social sources before continuing.
@@ -1486,22 +1506,22 @@ export function ComponentLibrary() {
                   {
                     id: 'instagram',
                     platform: 'Instagram',
-                    handle: '@juliachild',
-                    url: 'https://instagram.com/juliachild',
+                    handle: '@culturecrave',
+                    url: 'https://instagram.com/culturecrave',
                     followers: '318,000 followers',
                   },
                   {
                     id: 'tiktok',
                     platform: 'TikTok',
-                    handle: '@juliachild',
-                    url: 'https://tiktok.com/@juliachild',
+                    handle: '@culturecrave',
+                    url: 'https://tiktok.com/@culturecrave',
                     followers: '124,000 followers',
                   },
                   {
                     id: 'pinterest',
                     platform: 'Pinterest',
-                    handle: '@juliachild',
-                    url: 'https://pinterest.com/juliachild',
+                    handle: '@culturecrave',
+                    url: 'https://pinterest.com/culturecrave',
                     followers: '84,000 followers',
                   },
                 ]}
@@ -1514,7 +1534,11 @@ export function ComponentLibrary() {
                 onAddAccount={() => {}}
                 onRemoveAccount={() => {}}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                primaryAction={{ label: 'Looks right' }}
+                primaryAction={{
+                  label: 'Looks right',
+                  successLabel: 'Sneak peaking...',
+                  successIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
+                }}
               />
               <DocumentationNote>
                 Non-loading reveal transitions respect prefers-reduced-motion. Skeleton pulse always runs.
@@ -1554,7 +1578,7 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
-              <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+              <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
                 <div className="flex h-full flex-col p-8 lg:p-12">
                   <div className="space-y-8">
                     <div className="space-y-4">
@@ -1568,25 +1592,38 @@ export function ComponentLibrary() {
                       </div>
                     </div>
 
-                    <CompactWysiwygStudio />
+                    <CompactWysiwygStudio
+                      primaryAction={{
+                        label: 'Continue to Verification',
+                        successLabel: "Let's verify...",
+                        successIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
+                      }}
+                    />
                   </div>
                 </div>
               </section>
             </Section>
 
             <Section title="Exploration · Compact WYSIWYG Option" description="A calmer, tighter editor option with plain-language fields and a small live preview for less technical users.">
-              <CompactWysiwygStudio />
+              <CompactWysiwygStudio
+                primaryAction={{
+                  label: 'Continue to Verification',
+                  successLabel: "Let's verify...",
+                  successIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
+                }}
+              />
             </Section>
 
             <Section title="Community Creator Discover Card" description="Compact discover tile migrated from Figma for the creator WYSIWYG community preview.">
-              <div className="grid items-stretch gap-6 rounded-2xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid items-stretch gap-6 rounded-xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-4">
                 {communityCreatorDiscoverExamples.map((example) => (
                   <CommunityCreatorDiscoverCard
                     key={example.name}
                     name={example.name}
+                    topicLabel={example.topicLabel}
                     description={example.description}
                     avatarShape={example.avatarShape}
-                    brandPrimaryColor={example.brandPrimaryColor}
+                    brandColor={example.brandColor}
                     onExplore={() => {}}
                   />
                 ))}
@@ -1594,7 +1631,7 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Community Answers Card" description="Mobile answers prompt card migrated from the selected Figma post component.">
-              <div className="grid auto-rows-fr items-stretch gap-6 rounded-2xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid auto-rows-fr items-stretch gap-6 rounded-xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-3">
                 {/* no token available — creator brand fixture colors (#ce7c77, #004101, #5f5e4a) are runtime data. */}
                 {communityAnswersCardExamples.map((example) => (
                   <div key={example.label} className="flex h-full min-w-0 flex-col gap-2">
@@ -1608,7 +1645,7 @@ export function ComponentLibrary() {
                         question={example.question}
                         answerCount={example.answerCount}
                         avatarSrc={example.avatarSrc}
-                        brandPrimaryColor={example.brandPrimaryColor}
+                        accentColor={example.accentColor}
                         onAnswer={() => {}}
                         onViewAnswers={() => {}}
                       />
@@ -1619,7 +1656,7 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Accordion Panel" description="Standalone panel states for compact editor groups.">
-              <div className="max-w-xl divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+              <div className="max-w-xl divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
                 <AccordionPanel
                   icon={Settings2}
                   label="Community basics"
@@ -1652,10 +1689,10 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Compact Field" description="Compact editor field variants used inside tighter creator setup surfaces.">
-              <div className="max-w-xl space-y-4 rounded-2xl border border-border bg-surface p-4">
+              <div className="max-w-xl space-y-4 rounded-xl border border-border bg-surface p-4">
                 <CompactField
                   label="Name"
-                  value="Julia Child"
+                  value="Culture Crave"
                   onChange={() => {}}
                 />
                 <CompactField
@@ -1688,7 +1725,7 @@ export function ComponentLibrary() {
                     value: 'instagram-dm',
                     icon: tileIcon(Mail),
                     title: 'Confirm with an Instagram DM',
-                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @juliachild.',
+                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
                   },
                   {
                     value: 'email-domain',
@@ -1702,9 +1739,9 @@ export function ComponentLibrary() {
                 confirmed={verificationConfirmed}
                 onConfirmChange={setVerificationConfirmed}
                 instagramDmDetail={{
-                  code: 'CHILD-453',
+                  code: 'CULTURE-453',
                   destinationHandle: '@raptive_community',
-                  originHandle: '@juliachild',
+                  originHandle: '@culturecrave',
                 }}
                 reassurance={[
                   {
@@ -1724,7 +1761,11 @@ export function ComponentLibrary() {
                   },
                 ]}
                 secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
-                primaryAction={{ label: 'Continue' }}
+                primaryAction={{
+                  label: 'Continue',
+                  successLabel: 'Submitting...',
+                  successIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
+                }}
               />
               <DocumentationNote>
                 Expand/collapse controls use aria-expanded. Confirmation checkbox requires an associated label.
@@ -1734,7 +1775,7 @@ export function ComponentLibrary() {
             <Section title="Submission Success" description="Exclusive completion state that closes the journey with confidence instead of a generic success message.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
-                summary="Hold application ID CHILD-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
+                summary="Hold application ID CULTURE-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
                 timeline={[
                   {
                     step: 'submitted',
@@ -1754,7 +1795,12 @@ export function ComponentLibrary() {
                   },
                 ]}
                 secondaryAction={{ label: 'Start new application', variant: 'secondary' }}
-                primaryAction={{ label: 'Close', variant: 'black' }}
+                primaryAction={{
+                  label: "Let's begin...",
+                  variant: 'black',
+                  successLabel: "Let's begin...",
+                  successIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
+                }}
               />
             </Section>
 
@@ -1773,9 +1819,9 @@ export function ComponentLibrary() {
                       <p className="text-sm font-medium text-text">Profile Preview</p>
                       <p className="text-sm text-text-secondary">How this step influences the public profile.</p>
                     </div>
-                    <div className="rounded-3xl border border-border bg-white p-4 space-y-3">
+                    <div className="rounded-xl border border-border bg-white p-4 space-y-3">
                       <div className="space-y-1">
-                        <p className="text-base font-medium text-text">Julia Child</p>
+                        <p className="text-base font-medium text-text">Culture Crave</p>
                         <p className="text-sm text-text-secondary">Food creator and community builder</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -1854,7 +1900,7 @@ export function ComponentLibrary() {
                   </Button>
                 ))}
               </Row>
-              <div className="mt-4 p-4 bg-surface-sunken rounded-lg text-sm text-text-secondary space-y-1">
+              <div className="mt-4 p-4 bg-surface-sunken rounded-xl text-sm text-text-secondary space-y-1">
                 <p className="font-medium text-text">Usage notes</p>
                 <p>• Trigger on: badge earned, streak milestone, reaction milestone, role assignment</p>
                 <p>• CTA leads to shareable achievement card (not yet built — next pattern)</p>
@@ -1889,7 +1935,7 @@ export function ComponentLibrary() {
                     value: 'instagram-dm',
                     icon: tileIcon(Mail),
                     title: 'Confirm with an Instagram DM',
-                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @juliachild.',
+                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
                   },
                   {
                     value: 'email-domain',
@@ -1903,9 +1949,9 @@ export function ComponentLibrary() {
                 confirmed={verificationConfirmed}
                 onConfirmChange={setVerificationConfirmed}
                 instagramDmDetail={{
-                  code: 'CHILD-453',
+                  code: 'CULTURE-453',
                   destinationHandle: '@raptive_community',
-                  originHandle: '@juliachild',
+                  originHandle: '@culturecrave',
                 }}
                 reassurance={[
                   {
@@ -1926,7 +1972,11 @@ export function ComponentLibrary() {
                 ]}
                 showAside={false}
                 secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
-                primaryAction={{ label: 'Continue' }}
+                primaryAction={{
+                  label: 'Continue',
+                  successLabel: 'Submitting...',
+                  successIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
+                }}
               />
             </Section>
           </>

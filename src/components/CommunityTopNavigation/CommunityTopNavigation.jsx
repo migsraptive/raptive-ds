@@ -10,7 +10,7 @@ function getInitials(name = '') {
 }
 
 function CommunityTopNavigationBrand({
-  name = 'Julia Child',
+  name = 'Culture Crave',
   audienceLabel = '20k readers',
   onlineCount = '117',
 }) {
@@ -42,7 +42,7 @@ function CommunityTopNavigationBrand({
 
 export function CommunityTopNavigation({
   className = '',
-  brandName = 'Julia Child',
+  brandName = 'Culture Crave',
   audienceLabel = '20k readers',
   onlineCount = '117',
   onSignUp,

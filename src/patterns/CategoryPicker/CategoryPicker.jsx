@@ -81,7 +81,7 @@ export function CategoryPicker({
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border-dashed border-border bg-surface px-5 py-8 text-sm text-text-secondary">
+        <div className="rounded-xl border border-dashed border-border bg-surface px-5 py-8 text-sm text-text-secondary">
           {emptyMessage}
         </div>
       )}

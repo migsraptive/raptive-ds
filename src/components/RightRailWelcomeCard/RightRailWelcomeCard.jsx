@@ -1,7 +1,6 @@
 import { Button } from '../Button/Button.jsx'
 import { TextLink } from '../TextLink/TextLink.jsx'
-import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
-import { getAccessibleColorPair } from '../../utils/colorContrast.js'
+import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
 function getInitials(name = '') {
   return name
@@ -12,11 +11,11 @@ function getInitials(name = '') {
     .join('')
 }
 
-function CreatorMark({ name = 'Julia Child' }) {
+function CreatorMark({ name = 'Culture Crave' }) {
   const initials = getInitials(name) || 'RC'
 
   return (
-    <div className="preview-primary-surface flex h-32 w-32 items-center justify-center rounded-full text-center">
+    <div className="preview-brand-surface flex h-32 w-32 items-center justify-center rounded-full text-center">
       <div className="text-display font-medium leading-none tracking-tight">
         {initials}
       </div>
@@ -31,7 +30,7 @@ function Stat({ value, label, dot = false }) {
         {value}
       </div>
       <div className="flex items-center gap-1 text-sm leading-sm text-text-tertiary">
-        {dot ? <span className="preview-secondary-surface h-2 w-2 rounded-full" /> : null}
+        {dot ? <span className="preview-accent-surface h-2 w-2 rounded-full" /> : null}
         <span>{label}</span>
       </div>
     </div>
@@ -40,7 +39,7 @@ function Stat({ value, label, dot = false }) {
 
 export function RightRailWelcomeCard({
   className = '',
-  creatorName = 'Julia Child',
+  creatorName = 'Culture Crave',
   title,
   description = 'We are a community of home cooks who are passionate about healthy recipes.',
   websiteUrl = null,
@@ -50,28 +49,24 @@ export function RightRailWelcomeCard({
   onlineCount = '117',
   onPrimaryAction,
   primaryLabel = 'Join the conversation',
-  brandPrimaryColor = brandPreviewDefaults.primary,
-  brandSecondaryColor = brandPreviewDefaults.secondary,
+  brandColor,
+  accentColor,
+  style,
 }) {
   const resolvedTitle = title ?? `Welcome to the ${creatorName} Community!`
-  const primaryActionColor = getAccessibleColorPair(brandPrimaryColor)
-  const secondaryActionColor = getAccessibleColorPair(brandSecondaryColor)
-  const previewThemeStyle = {
-    '--preview-primary': primaryActionColor.background,
-    '--preview-primary-foreground': primaryActionColor.foreground,
-    '--preview-secondary': secondaryActionColor.background,
-    '--preview-secondary-foreground': secondaryActionColor.foreground,
-    '--preview-link': secondaryActionColor.background,
-  }
+  const previewThemeStyle = (brandColor || accentColor)
+    ? createPreviewThemeStyle({ brandColor, accentColor })
+    : undefined
+  const mergedStyle = (previewThemeStyle || style) ? { ...previewThemeStyle, ...style } : undefined
 
   return (
     <aside
       className={[
-        'flex w-80 flex-col items-center rounded-2xl border border-border-strong bg-white px-6 py-8',
+        'flex w-80 flex-col items-center rounded-xl border border-border-strong bg-white px-6 py-8',
         'shadow-xs',
         className,
       ].join(' ')}
-      style={previewThemeStyle}
+      style={mergedStyle}
     >
       <CreatorMark name={creatorName} />
 
@@ -99,7 +94,7 @@ export function RightRailWelcomeCard({
       </div>
 
       <div className="mt-auto w-full space-y-4 pt-4">
-        <div className="flex w-full rounded-lg border border-border-strong bg-white px-4 py-2">
+        <div className="flex w-full rounded-xl border border-border-strong bg-white px-4 py-2">
           <Stat value={readerCount} label="readers" />
           <Stat value={onlineCount} label="online" dot />
         </div>
@@ -107,7 +102,7 @@ export function RightRailWelcomeCard({
         <Button
           fullWidth
           size="md"
-          variant="previewPrimary"
+          variant="previewBrand"
           onClick={onPrimaryAction}
         >
           {primaryLabel}

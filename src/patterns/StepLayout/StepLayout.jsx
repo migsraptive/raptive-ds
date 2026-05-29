@@ -25,7 +25,7 @@ export function StepLayout({
   const showHeaderMeta = eyebrow || showStepLabel
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       {showBarProgress && (
         <div className="h-1.5 bg-surface-sunken">
           <div
@@ -98,7 +98,7 @@ export function StepLayout({
         </div>
 
         {aside && (
-          <aside className="rounded-2xl border border-border bg-surface-raised p-5">
+          <aside className="rounded-xl border border-border bg-surface-raised p-5">
             {aside}
           </aside>
         )}

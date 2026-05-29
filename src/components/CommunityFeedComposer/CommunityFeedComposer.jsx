@@ -4,7 +4,7 @@ import { Button } from '../Button/Button.jsx'
 
 export function CommunityFeedComposer({
   className = '',
-  authorName = 'Julia Child',
+  authorName = 'Culture Crave',
   authorAvatarSrc,
   placeholder = "What's on your mind?",
   actionLabel = 'Post',
@@ -13,7 +13,7 @@ export function CommunityFeedComposer({
   return (
     <div
       className={[
-        'flex items-center gap-5 overflow-hidden rounded-lg border border-border-strong bg-white p-4 shadow-xs',
+        'flex items-center gap-5 overflow-hidden rounded-xl border border-border-strong bg-white p-4 shadow-xs',
         className,
       ].join(' ')}
     >

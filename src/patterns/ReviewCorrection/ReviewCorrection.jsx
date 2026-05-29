@@ -40,7 +40,7 @@ export function ReviewCorrection({
   const selectedVertical = getClosestCommunityVertical(fields.vertical)
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className={['grid gap-0', showAside ? 'lg:grid-cols-[minmax(0,1.1fr)_380px]' : 'lg:grid-cols-1'].join(' ')}>
         {/* no token available: review layout uses fixed side rail widths to preserve the wireframe composition. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
@@ -135,7 +135,7 @@ export function ReviewCorrection({
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} className={secondaryAction ? '' : 'ml-auto'}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} successIcon={primaryAction.successIcon} className={secondaryAction ? '' : 'ml-auto'}>
                 {primaryAction.label}
               </Button>
             )}

@@ -22,7 +22,7 @@ export function RadioGroup({
             <label
               key={option.value}
               className={[
-                'flex items-start gap-3 rounded-2xl border px-4 py-3 transition-colors duration-150',
+                'flex items-start gap-3 rounded-xl border px-4 py-3 transition-colors duration-150',
                 checked ? 'border-brand bg-brand-subtle' : 'border-border bg-surface hover:bg-surface-raised',
                 option.disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
               ].join(' ')}

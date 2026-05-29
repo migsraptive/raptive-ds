@@ -6,7 +6,7 @@ export function CreatorFlowProgress({
   const progressScale = Math.max(0, Math.min(100, progress)) / 100
 
   return (
-    <div className="space-y-4 rounded-2xl border border-border bg-surface-raised p-5">
+    <div className="space-y-4 rounded-xl border border-border bg-surface-raised p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-2">
           <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Flow progress</p>

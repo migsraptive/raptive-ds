@@ -21,7 +21,7 @@ export function AvatarUpload({
   return (
     <div className={['space-y-2', className].filter(Boolean).join(' ')}>
       {label && <p className="text-sm font-medium text-text-secondary">{label}</p>}
-      <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border-strong bg-surface-raised px-4 py-5 text-center transition-colors duration-150 hover:bg-surface-sunken">
+      <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border-strong bg-surface-raised px-4 py-5 text-center transition-colors duration-150 hover:bg-surface-sunken">
         <input
           type="file"
           accept="image/*"

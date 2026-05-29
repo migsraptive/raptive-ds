@@ -107,7 +107,7 @@ export function ProjectionPreview({
   }, [])
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className="p-8 lg:p-12">
         <div className="space-y-8">
           {progressMeter}
@@ -167,7 +167,7 @@ export function ProjectionPreview({
           </div>
 
           {note && (
-            <div className="rounded-2xl border border-border bg-surface-raised p-5">
+            <div className="rounded-xl border border-border bg-surface-raised p-5">
               <p className="text-sm leading-relaxed text-text-secondary">{note}</p>
             </div>
           )}
@@ -180,7 +180,7 @@ export function ProjectionPreview({
             </Button>
           )}
           {primaryAction && (
-            <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} className={secondaryAction ? '' : 'ml-auto'}>
+            <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} successIcon={primaryAction.successIcon} className={secondaryAction ? '' : 'ml-auto'}>
               {primaryAction.label}
             </Button>
           )}

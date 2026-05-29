@@ -11,6 +11,7 @@ import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/Righ
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { brandPreviewDefaults, compactWysiwygPalette } from '../../utils/brandPreviewDefaults.js'
 import { normalizeHexColor } from '../../utils/colorContrast.js'
+import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 import {
   COMMUNITY_VERTICAL_OPTIONS,
   COMMUNITY_VERTICAL_OTHER,
@@ -18,7 +19,7 @@ import {
 } from '../../utils/communityVerticals.js'
 
 const defaultFields = {
-  name: 'Julia Child Kitchen Community',
+  name: 'Culture Crave Community',
   topic: getClosestCommunityVertical('Food'),
   description: 'Food creator and community builder helping families cook smarter and gather more often.',
   discoverText: 'Learn, share, and bake together',
@@ -26,9 +27,8 @@ const defaultFields = {
 
 const defaultColors = brandPreviewDefaults
 const defaultEditorColors = {
-  primary: defaultColors.primary,
-  secondary: defaultColors.secondary,
-  link: defaultColors.tertiary,
+  brand: defaultColors.brand,
+  accent: defaultColors.accent,
 }
 
 const shapeOptions = [
@@ -44,9 +44,8 @@ export function CompactWysiwygStudio({
   secondaryAction = { label: 'Back', variant: 'secondary' },
 }) {
   const detectedColors = {
-    primary: normalizeHexColor(brandAssets.palette?.[0]) ?? defaultEditorColors.primary,
-    secondary: normalizeHexColor(brandAssets.palette?.[1]) ?? defaultEditorColors.secondary,
-    link: normalizeHexColor(brandAssets.palette?.[2]) ?? defaultEditorColors.link,
+    brand: normalizeHexColor(brandAssets.palette?.[0]) ?? defaultEditorColors.brand,
+    accent: normalizeHexColor(brandAssets.palette?.[1]) ?? defaultEditorColors.accent,
   }
 
   const [fields, setFields] = useState(defaultFields)
@@ -71,9 +70,14 @@ export function CompactWysiwygStudio({
     setColors(detectedColors)
   }
 
+  const previewThemeStyle = createPreviewThemeStyle({
+    brandColor: colors.brand,
+    accentColor: colors.accent,
+  })
+
   return (
     <>
-      <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+      <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
           <aside className="flex flex-col border-b border-border bg-surface lg:border-b-0 lg:border-r">
             <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">
@@ -147,42 +151,42 @@ export function CompactWysiwygStudio({
 
               <AccordionPanel
                 icon={Palette}
-                label="Brand colors"
-                sublabel="Buttons, links, accents"
+                label="Community colors"
+                sublabel="Buttons, links, highlights"
                 open={openPanel === 'colors'}
                 onToggle={() => togglePanel('colors')}
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs text-text-secondary">Adjust if detected colors are wrong.</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-xs leading-relaxed text-text-secondary">
+                      Choose a few colors to preview how your community could feel. We’ll automatically create accessible tints, hover states, and text colors from your choices.
+                    </p>
                     <Button size="xs" variant="link" onClick={useDetectedColors}>
                       Use detected
                     </Button>
                   </div>
                   <ColorInput
-                    label="primary"
-                    value={colors.primary}
+                    label="Brand Color"
+                    description="Used for buttons, links, creator marks, and active community actions."
+                    value={colors.brand}
                     layout="compact"
-                    onChange={(value) => updateColor('primary', value)}
+                    fallbackColor={defaultEditorColors.brand}
+                    onChange={(value) => updateColor('brand', value)}
                   />
                   <ColorInput
-                    label="secondary"
-                    value={colors.secondary}
+                    label="Accent Color"
+                    description="Used for highlights, prompts, and special community moments."
+                    value={colors.accent}
                     layout="compact"
-                    onChange={(value) => updateColor('secondary', value)}
-                  />
-                  <ColorInput
-                    label="tertiary"
-                    value={colors.link}
-                    layout="compact"
-                    onChange={(value) => updateColor('link', value)}
+                    fallbackColor={defaultEditorColors.accent}
+                    onChange={(value) => updateColor('accent', value)}
                   />
                 </div>
               </AccordionPanel>
             </div>
           </aside>
 
-          <div className="bg-surface-raised p-4">
+          <div className="preview-theme bg-surface-raised p-4" style={previewThemeStyle}>
             <div className="grid items-stretch justify-center gap-4 lg:grid-cols-[320px_minmax(220px,1fr)]">
               {/* no token available: this exploration previews the fixed-width right rail module beside compact community cards. */}
               <RightRailWelcomeCard
@@ -190,37 +194,32 @@ export function CompactWysiwygStudio({
                 creatorName={fields.name}
                 title={fields.name}
                 description={fields.description}
-                websiteUrl="www.juliaskitchen.com"
+                websiteUrl="www.culturecrave.com"
                 highlight={null}
                 closing={null}
                 readerCount="186"
                 onlineCount="12"
                 primaryLabel="Join the community"
-                brandPrimaryColor={colors.primary}
-                brandSecondaryColor={colors.secondary}
               />
 
               <div className="grid min-w-0 gap-4">
                 <CommunityCreatorDiscoverCard
                   name={fields.name}
                   activeMembersLabel="186 early members"
+                  topicLabel={fields.topic}
                   description={fields.discoverText}
                   avatarSrc={avatarUrl}
                   avatarShape={avatarShape}
-                  brandPrimaryColor={colors.primary}
-                  brandSecondaryColor={colors.secondary}
                   ctaLabel="Explore community"
                   onExplore={() => {}}
                 />
                 <CommunityAnswersCard
-                  authorName="Julia Child"
+                  authorName="Culture Crave"
                   communityName={fields.name}
                   question="What should we cook together first?"
                   answerCount={12}
                   avatarSrc={avatarUrl}
                   avatarShape={avatarShape}
-                  brandPrimaryColor={colors.primary}
-                  brandTertiaryColor={colors.link}
                   onAnswer={() => {}}
                   onViewAnswers={() => {}}
                 />
@@ -239,6 +238,7 @@ export function CompactWysiwygStudio({
             disabled={secondaryAction.disabled}
             success={secondaryAction.success}
             successLabel={secondaryAction.successLabel}
+            successIcon={secondaryAction.successIcon}
           >
             {secondaryAction.label}
           </Button>
@@ -251,6 +251,7 @@ export function CompactWysiwygStudio({
             disabled={primaryAction.disabled}
             success={primaryAction.success}
             successLabel={primaryAction.successLabel}
+            successIcon={primaryAction.successIcon}
             className="ml-auto"
           >
             {primaryAction.label}

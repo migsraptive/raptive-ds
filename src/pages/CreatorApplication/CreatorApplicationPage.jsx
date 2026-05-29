@@ -1,41 +1,44 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BadgeCheck, Mail, Rocket, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, Check, Eye, Mail, Rocket, Search, Send, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { getDetectedSocialAccountHelperText } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
+import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
 
-const flowStepIds = ['entry', 'gather', 'review', 'verify', 'submit']
+const flowStepIds = ['entry', 'gather', 'fetch-confirmation', 'review', 'verify', 'submit']
 
 const initialCreatorUrl = ''
 const initialAccounts = [
   {
     id: 'instagram',
     platform: 'Instagram',
-    handle: '@juliachild',
-    url: 'https://instagram.com/juliachild',
+    handle: '@culturecrave',
+    url: 'https://instagram.com/culturecrave',
     followers: '318,000 followers',
   },
   {
     id: 'tiktok',
     platform: 'TikTok',
-    handle: '@juliachild',
-    url: 'https://tiktok.com/@juliachild',
+    handle: '@culturecrave',
+    url: 'https://tiktok.com/@culturecrave',
     followers: '124,000 followers',
   },
   {
     id: 'pinterest',
     platform: 'Pinterest',
-    handle: '@juliachild',
-    url: 'https://pinterest.com/juliachild',
+    handle: '@culturecrave',
+    url: 'https://pinterest.com/culturecrave',
     followers: '84,000 followers',
   },
 ]
+
+const getInitialAccounts = () => initialAccounts.map((account) => ({ ...account }))
 
 const stepTransition = {
   duration: 0.32,
@@ -63,6 +66,9 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
+  const [editingFetchAccountId, setEditingFetchAccountId] = useState(null)
+  const [fetchEditDraft, setFetchEditDraft] = useState({ handle: '' })
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
   const actionTimeoutRef = useRef(null)
   const instagramAccount = initialAccounts.find((account) => account.platform === 'Instagram')
@@ -71,7 +77,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
       value: 'instagram-dm',
       icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
       title: 'Confirm with an Instagram DM',
-      description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @juliachild.',
+      description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
     }] : []),
     {
       value: 'email-domain',
@@ -116,7 +122,42 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   }
 
   const handleVerificationContinue = () => {
-    setActiveStep(4)
+    setActiveStep(5)
+  }
+
+  const startEditingFetchAccount = (accountId, account) => {
+    setEditingFetchAccountId(accountId)
+    setFetchEditDraft({ handle: account.handle })
+  }
+
+  const cancelEditingFetchAccount = () => {
+    setEditingFetchAccountId(null)
+    setFetchEditDraft({ handle: '' })
+  }
+
+  const saveEditingFetchAccount = () => {
+    setFetchAccounts((current) => current.map((account) => (
+      account.id === editingFetchAccountId
+        ? { ...account, handle: fetchEditDraft.handle.trim() || account.handle }
+        : account
+    )))
+    cancelEditingFetchAccount()
+  }
+
+  const removeFetchAccount = (accountId) => {
+    setFetchAccounts((current) => current.filter((account) => account.id !== accountId))
+    if (editingFetchAccountId === accountId) {
+      cancelEditingFetchAccount()
+    }
+  }
+
+  const addFetchAccount = () => {
+    const existingAccountIds = new Set(fetchAccounts.map((account) => account.id))
+    const nextDetectedAccount = initialAccounts.find((account) => !existingAccountIds.has(account.id))
+
+    if (nextDetectedAccount) {
+      setFetchAccounts((current) => [...current, { ...nextDetectedAccount }])
+    }
   }
 
   const triggerPrimaryAction = ({ key, delay = 1100, run }) => {
@@ -144,6 +185,8 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     setPendingPrimaryAction(null)
     setIntakeLoading(false)
     setCreatorUrl(initialCreatorUrl)
+    setFetchAccounts(getInitialAccounts())
+    cancelEditingFetchAccount()
     setVerificationMethod(null)
     setVerificationConfirmed(false)
     setActiveStep(0)
@@ -164,6 +207,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         helperText={getDetectedSocialAccountHelperText(creatorUrl)}
         ctaLabel="Continue"
         ctaSuccessLabel="Pulling data"
+        ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
         ctaDisabled={!creatorUrl.trim()}
         showAside={false}
       />
@@ -181,7 +225,8 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           label: 'Continue',
           disabled: pendingPrimaryAction === 'gather-primary',
           success: pendingPrimaryAction === 'gather-primary',
-          successLabel: 'Looks good!',
+          successLabel: 'Finding...',
+          successIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
           onClick: () => triggerPrimaryAction({
             key: 'gather-primary',
             run: () => setActiveStep(2),
@@ -193,7 +238,42 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   if (activeStep === 2) {
     content = (
-      <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+      <FetchConfirmation
+        loading={false}
+        creator={{
+          name: 'Culture Crave',
+          reach: '526K',
+          reachDetail: '526,000 combined followers',
+        }}
+        website={creatorUrl.trim() || 'instagram.com/culturecrave'}
+        accounts={fetchAccounts}
+        editingField={editingFetchAccountId}
+        editDraft={fetchEditDraft}
+        onEditDraftChange={setFetchEditDraft}
+        onStartEditing={startEditingFetchAccount}
+        onCancelEditing={cancelEditingFetchAccount}
+        onSaveEditing={saveEditingFetchAccount}
+        onAddAccount={addFetchAccount}
+        onRemoveAccount={removeFetchAccount}
+        secondaryAction={{ label: 'Back', variant: 'secondary', onClick: () => setActiveStep(1) }}
+        primaryAction={{
+          label: 'Looks right',
+          disabled: Boolean(editingFetchAccountId) || pendingPrimaryAction === 'fetch-primary',
+          success: pendingPrimaryAction === 'fetch-primary',
+          successLabel: 'Sneak peaking...',
+          successIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
+          onClick: () => triggerPrimaryAction({
+            key: 'fetch-primary',
+            run: () => setActiveStep(3),
+          }),
+        }}
+      />
+    )
+  }
+
+  if (activeStep === 3) {
+    content = (
+      <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
@@ -209,15 +289,16 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
             </div>
 
             <CompactWysiwygStudio
-              secondaryAction={{ label: 'Back', variant: 'secondary', onClick: () => setActiveStep(1) }}
+              secondaryAction={{ label: 'Back', variant: 'secondary', onClick: () => setActiveStep(2) }}
               primaryAction={{
                 label: 'Continue to Verification',
                 disabled: pendingPrimaryAction === 'review-primary',
                 success: pendingPrimaryAction === 'review-primary',
-                successLabel: 'Verify next',
+                successLabel: "Let's verify...",
+                successIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
                 onClick: () => triggerPrimaryAction({
                   key: 'review-primary',
-                  run: () => setActiveStep(3),
+                  run: () => setActiveStep(4),
                 }),
               }}
             />
@@ -227,7 +308,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     )
   }
 
-  if (activeStep === 3) {
+  if (activeStep === 4) {
     content = (
       <VerificationStep
         title="One last check to know it's really you."
@@ -257,22 +338,23 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         ]}
         showAside={false}
         instagramDmDetail={{
-          code: 'CHILD-453',
+          code: 'CULTURE-453',
           destinationHandle: '@raptive_community',
-          originHandle: instagramAccount?.handle ?? '@juliachild',
+          originHandle: instagramAccount?.handle ?? '@culturecrave',
         }}
         secondaryAction={{
           label: 'Back',
           variant: 'secondary',
           onClick: () => {
-            setActiveStep(2)
+            setActiveStep(3)
           },
         }}
         primaryAction={{
           label: 'Submit application',
           disabled: pendingPrimaryAction === 'verify-primary',
           success: pendingPrimaryAction === 'verify-primary',
-          successLabel: 'Submitting!',
+          successLabel: 'Submitting...',
+          successIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
           onClick: () => triggerPrimaryAction({
             key: 'verify-primary',
             run: handleVerificationContinue,
@@ -282,11 +364,11 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     )
   }
 
-  if (activeStep === 4) {
+  if (activeStep === 5) {
     content = (
       <SubmissionSuccess
         title="You're on the list. We'll take it from here."
-        summary="Hold application ID CHILD-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
+        summary="Hold application ID CULTURE-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
         progressMeter={progressMeter}
         timeline={[
           {
@@ -309,11 +391,12 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         showAside={false}
         secondaryAction={null}
         primaryAction={{
-          label: 'Start new application',
+          label: "Let's begin...",
           variant: 'black',
           disabled: pendingPrimaryAction === 'submit-primary',
           success: pendingPrimaryAction === 'submit-primary',
-          successLabel: 'Submitted',
+          successLabel: "Let's begin...",
+          successIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
           onClick: () => triggerPrimaryAction({
             key: 'submit-primary',
             run: onOpenLibrary,

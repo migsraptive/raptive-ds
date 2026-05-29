@@ -33,7 +33,7 @@ function AnimatedPipelineBar({ id, width, filled }) {
 
 function LabCard({ eyebrow, title, description, children }) {
   return (
-    <div className="rounded-2xl border border-border bg-white p-6 shadow-xs">
+    <div className="rounded-xl border border-border bg-white p-6 shadow-xs">
       <div className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{eyebrow}</p>
         <h3 className="font-display text-xl font-semibold tracking-tight text-text">{title}</h3>

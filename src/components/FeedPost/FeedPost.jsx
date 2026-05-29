@@ -30,7 +30,7 @@ export function FeedPost({
   return (
     <div
       className={[
-        'flex flex-col items-start bg-white border border-border-strong rounded-lg overflow-hidden shadow-xs',
+        'flex flex-col items-start bg-white border border-border-strong rounded-xl overflow-hidden shadow-xs',
         className,
       ].join(' ')}
     >

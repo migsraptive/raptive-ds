@@ -42,7 +42,7 @@ export function RecognitionState({
   const layoutTransition = shouldReduceMotion ? { duration: 0.01 } : cardSpring
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.1fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <motion.div
@@ -68,7 +68,7 @@ export function RecognitionState({
           </motion.div>
 
           <motion.div
-            className="rounded-2xl border border-border bg-surface-raised p-6"
+            className="rounded-xl border border-border bg-surface-raised p-6"
             layout
             transition={layoutTransition}
           >
@@ -90,17 +90,17 @@ export function RecognitionState({
                   </div>
                 </div>
                 <div className="grid gap-3 md:grid-cols-3">
-                  <div className="rounded-3xl border border-border bg-white p-4 space-y-3">
+                  <div className="rounded-xl border border-border bg-white p-4 space-y-3">
                     <SkeletonLine width="72px" />
                     <SkeletonLine width="100%" />
                     <SkeletonLine width="70%" />
                   </div>
-                  <div className="rounded-3xl border border-border bg-white p-4 space-y-3">
+                  <div className="rounded-xl border border-border bg-white p-4 space-y-3">
                     <SkeletonLine width="88px" />
                     <SkeletonLine width="100%" />
                     <SkeletonLine width="60%" />
                   </div>
-                  <div className="rounded-3xl border border-border bg-white p-4 space-y-3">
+                  <div className="rounded-xl border border-border bg-white p-4 space-y-3">
                     <SkeletonLine width="60px" />
                     <SkeletonLine width="100%" />
                     <SkeletonLine width="65%" />
@@ -134,7 +134,7 @@ export function RecognitionState({
                   {signals.map((signal, index) => (
                     <motion.div
                       key={signal.label}
-                      className="rounded-3xl border border-border bg-white p-4"
+                      className="rounded-xl border border-border bg-white p-4"
                       initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ ...transition, delay: 0.08 + index * 0.06 }}
@@ -171,7 +171,7 @@ export function RecognitionState({
           transition={{ ...transition, delay: 0.08 }}
         >
           <div className={showAside ? 'space-y-4' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-brand/20 bg-white shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-xl border border-brand/20 bg-white shadow-xs' : 'relative h-full'].join(' ')}>
               {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img

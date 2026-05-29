@@ -20,7 +20,7 @@ export function Checkbox({
       htmlFor={inputId}
       className={[
         'flex items-start gap-3 transition-colors duration-150',
-        variant === 'card' ? 'rounded-2xl border border-border bg-surface px-4 py-3' : '',
+        variant === 'card' ? 'rounded-xl border border-border bg-surface px-4 py-3' : '',
         disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
         !disabled && variant === 'card' ? 'hover:bg-surface-raised' : '',
         className,

@@ -16,7 +16,7 @@ export function SubmissionSuccess({
   const shouldReduceMotion = useReducedMotion()
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950 shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col bg-gradient-to-br from-neutral-900 to-neutral-950 p-8 lg:p-12">
@@ -106,6 +106,7 @@ export function SubmissionSuccess({
                   disabled={primaryAction.disabled}
                   success={primaryAction.success}
                   successLabel={primaryAction.successLabel}
+                  successIcon={primaryAction.successIcon}
                   className={
                     [
                       !secondaryAction ? 'ml-auto' : '',
@@ -124,7 +125,7 @@ export function SubmissionSuccess({
 
         <aside className={['border-t border-neutral-800 lg:border-l lg:border-t-0', showAside ? 'bg-neutral-900 p-8 lg:p-10' : 'bg-black/40 p-0'].join(' ')}>
           <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-2xl border border-white/10 bg-neutral-950 shadow-xs' : 'relative h-full'].join(' ')}>
+            <div className={['overflow-hidden', showAside ? 'rounded-xl border border-white/10 bg-neutral-950 shadow-xs' : 'relative h-full'].join(' ')}>
               {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img

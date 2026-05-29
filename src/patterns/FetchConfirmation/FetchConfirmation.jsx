@@ -47,7 +47,7 @@ function SectionCard({ children, className = '' }) {
     <motion.div
       layout
       transition={layoutSpring}
-      className={['rounded-2xl border border-border bg-surface p-5 shadow-xs', className].join(' ')}
+      className={['rounded-xl border border-border bg-surface p-5 shadow-xs', className].join(' ')}
     >
       {children}
     </motion.div>
@@ -188,7 +188,7 @@ export function FetchConfirmation({
   primaryAction,
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className="grid gap-0">
         <motion.div
           className="flex h-full flex-col p-8 lg:p-12"
@@ -296,7 +296,7 @@ export function FetchConfirmation({
               </Button>
             )}
             {primaryAction && (
-              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} className={secondaryAction ? '' : 'ml-auto'}>
+              <Button size="lg" variant={primaryAction.variant ?? 'primary'} onClick={primaryAction.onClick} loading={loading} disabled={primaryAction.disabled} success={primaryAction.success} successLabel={primaryAction.successLabel} successIcon={primaryAction.successIcon} className={secondaryAction ? '' : 'ml-auto'}>
                 {primaryAction.label}
               </Button>
             )}

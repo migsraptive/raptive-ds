@@ -58,7 +58,7 @@ export function OptionTile({
       }}
       transition={tileTransition}
       className={[
-        'relative flex min-h-32 w-full flex-col items-start gap-3 rounded-3xl border px-5 py-4 text-left transition-[background-color,color,box-shadow] duration-150 will-change-transform',
+        'relative flex min-h-32 w-full flex-col items-start gap-3 rounded-xl border px-5 py-4 text-left transition-[background-color,color,box-shadow] duration-150 will-change-transform',
         selected
           ? 'border-brand bg-brand-subtle shadow-brand-glow'
           : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',

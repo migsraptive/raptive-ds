@@ -127,41 +127,55 @@
 
 @layer utilities {
   .preview-theme {
-    --preview-primary: var(--color-surface-overlay);
-    --preview-primary-foreground: var(--color-text-invert);
-    --preview-secondary: var(--color-gold-light);
-    --preview-secondary-foreground: var(--color-text);
-    --preview-link: var(--color-action-primary);
+    --preview-brand: var(--color-action-primary);
+    --preview-brand-foreground: var(--color-text-invert);
+    --preview-brand-soft: color-mix(in srgb, var(--preview-brand) 12%, var(--color-surface));
+    --preview-brand-muted: color-mix(in srgb, var(--preview-brand) 28%, var(--color-surface));
+    --preview-brand-hover: var(--color-action-primary-hover);
+    --preview-brand-active: var(--color-action-primary-active);
+    --preview-accent: var(--color-gold-light);
+    --preview-accent-foreground: var(--color-text);
+    --preview-accent-soft: color-mix(in srgb, var(--preview-accent) 12%, var(--color-surface));
+    --preview-accent-muted: color-mix(in srgb, var(--preview-accent) 28%, var(--color-surface));
+    --preview-link: var(--preview-brand);
   }
 
-  .preview-primary-surface {
-    background-color: var(--preview-primary);
-    border-color: var(--preview-primary);
-    color: var(--preview-primary-foreground);
+  .preview-brand-surface {
+    background-color: var(--preview-brand, var(--color-action-primary));
+    border-color: var(--preview-brand, var(--color-action-primary));
+    color: var(--preview-brand-foreground, var(--color-text-invert));
   }
 
-  .preview-primary-surface:hover,
-  .preview-primary-surface:active {
-    background-color: var(--preview-primary);
-    border-color: var(--preview-primary);
-    color: var(--preview-primary-foreground);
+  .preview-brand-surface:hover {
+    background-color: var(--preview-brand-hover, var(--color-action-primary-hover));
+    border-color: var(--preview-brand-hover, var(--color-action-primary-hover));
+    color: var(--preview-brand-foreground, var(--color-text-invert));
   }
 
-  .preview-secondary-surface {
-    background-color: var(--preview-secondary);
-    border-color: var(--preview-secondary);
-    color: var(--preview-secondary-foreground);
+  .preview-brand-surface:active {
+    background-color: var(--preview-brand-active, var(--color-action-primary-active));
+    border-color: var(--preview-brand-active, var(--color-action-primary-active));
+    color: var(--preview-brand-foreground, var(--color-text-invert));
   }
 
-  .preview-secondary-surface:hover,
-  .preview-secondary-surface:active {
-    background-color: var(--preview-secondary);
-    border-color: var(--preview-secondary);
-    color: var(--preview-secondary-foreground);
+  .preview-brand-surface:focus-visible {
+    --tw-ring-color: var(--preview-brand-muted, var(--color-brand-muted));
+  }
+
+  .preview-accent-surface {
+    background-color: var(--preview-accent, var(--color-gold-light));
+    border-color: var(--preview-accent, var(--color-gold-light));
+    color: var(--preview-accent-foreground, var(--color-text));
+  }
+
+  .preview-accent-soft-surface {
+    background-color: var(--preview-accent-soft, var(--color-gold-bg));
+    border-color: var(--preview-accent-muted, var(--color-gold-light));
+    color: var(--preview-accent-foreground, var(--color-text));
   }
 
   .preview-link-text {
-    color: var(--preview-link);
+    color: var(--preview-link, var(--color-action-primary));
   }
 
   /* no token available: CSS lh binds inline icon dimensions to the paired label's computed line-height. */
@@ -198,24 +212,16 @@
     transform-origin: center;
   }
 
-  .color-input-swatch {
-    background-color: var(--preview-primary);
-  }
-
-  .preview-accent-surface {
-    background-color: var(--preview-primary);
-  }
-
   .preview-accent-frame {
-    border-color: var(--preview-primary);
+    border-color: var(--preview-accent-muted, var(--color-gold-light));
     background-color: var(--color-surface);
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--preview-primary) 12%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--preview-accent, var(--color-gold-light)) 12%, transparent),
       var(--shadow-3);
   }
 
   .preview-accent-tint {
-    background-color: color-mix(in srgb, var(--preview-primary) 10%, transparent);
+    background-color: var(--preview-accent-soft, var(--color-gold-bg));
   }
 
   .font-newsreader {
