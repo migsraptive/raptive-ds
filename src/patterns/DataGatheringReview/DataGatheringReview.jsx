@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Check, Plus, Trash2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Check, IdCard, Link2, Plus, Trash2, Users } from 'lucide-react'
 import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
+import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { Select } from '../../components/Select/Select.jsx'
@@ -67,6 +68,40 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
 
       {editing ? (
         <div className="mt-4 space-y-3 border-t border-border pt-4">
+          {children}
+          <div className="flex justify-end">
+            <Button size="sm" variant="secondary" onClick={onSave}>
+              Save
+            </Button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function AccordionReviewContent({ loadingCopy, resolved, value, editing, onEdit, onSave, children }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 space-y-1">
+          <p className="break-words text-sm leading-relaxed text-text-secondary">
+            {resolved ? 'We found this detail from the submitted creator source.' : loadingCopy}
+          </p>
+          {resolved ? (
+            <p className="break-words text-base font-semibold text-text">{value}</p>
+          ) : null}
+        </div>
+
+        {resolved && !editing ? (
+          <Button size="xs" variant="secondary" onClick={onEdit}>
+            Edit
+          </Button>
+        ) : null}
+      </div>
+
+      {editing ? (
+        <div className="space-y-3 border-t border-border pt-4">
           {children}
           <div className="flex justify-end">
             <Button size="sm" variant="secondary" onClick={onSave}>
@@ -151,6 +186,13 @@ export function DataGatheringReview({
   detectedSource = 'Instagram',
   submittedSourceValue = defaultSubmittedSourceValue,
   progressMeter = null,
+  contentOnly = false,
+  rowPresentation = 'cards',
+  aside = null,
+  revealKey = null,
+  onRowsRevealStart,
+  onRowsResolved,
+  onResolvedChange,
   secondaryAction = { label: 'Back', variant: 'ghost' },
   primaryAction = { label: 'Continue' },
 }) {
@@ -163,22 +205,65 @@ export function DataGatheringReview({
     value: submittedSourceValue || defaultSubmittedSourceValue,
   })
   const [additionalSources, setAdditionalSources] = useState([])
+  const [openReviewRow, setOpenReviewRow] = useState('identity')
+  const rowsRevealStartRef = useRef(onRowsRevealStart)
+  const rowsResolvedRef = useRef(onRowsResolved)
+  const resolvedChangeRef = useRef(onResolvedChange)
+
+  useEffect(() => {
+    rowsRevealStartRef.current = onRowsRevealStart
+  }, [onRowsRevealStart])
+
+  useEffect(() => {
+    rowsResolvedRef.current = onRowsResolved
+  }, [onRowsResolved])
+
+  useEffect(() => {
+    resolvedChangeRef.current = onResolvedChange
+  }, [onResolvedChange])
 
   useEffect(() => {
     setResolvedRows([])
+    setOpenReviewRow('identity')
     setPrimarySource((current) => ({
       ...current,
       platform: detectedSource,
       value: submittedSourceValue.trim() || current.value || defaultSubmittedSourceValue,
     }))
     const timers = [
-      window.setTimeout(() => setResolvedRows(['identity']), 700),
+      window.setTimeout(() => {
+        rowsRevealStartRef.current?.()
+        setResolvedRows(['identity'])
+      }, 700),
       window.setTimeout(() => setResolvedRows(['identity', 'audience']), 1250),
-      window.setTimeout(() => setResolvedRows(['identity', 'audience', 'source']), 1800),
+      window.setTimeout(() => {
+        setResolvedRows(['identity', 'audience', 'source'])
+        rowsResolvedRef.current?.()
+      }, 1800),
     ]
 
     return () => timers.forEach((timer) => window.clearTimeout(timer))
-  }, [detectedSource, submittedSourceValue])
+  }, [detectedSource, submittedSourceValue, revealKey])
+
+  useEffect(() => {
+    if (rowPresentation !== 'accordion') return
+
+    if (resolvedRows.includes('source')) {
+      setOpenReviewRow('source')
+      return
+    }
+
+    if (resolvedRows.includes('audience')) {
+      setOpenReviewRow('audience')
+      return
+    }
+
+    setOpenReviewRow('identity')
+  }, [resolvedRows, rowPresentation])
+
+  useEffect(() => {
+    resolvedChangeRef.current?.(resolvedRows.includes('source'))
+  }, [resolvedRows])
 
   const isResolved = (key) => resolvedRows.includes(key)
 
@@ -207,11 +292,82 @@ export function DataGatheringReview({
     ? `${primarySource.platform} + ${additionalSources.length} more`
     : primarySource.platform
 
-  return (
-    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
-      <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
-        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
-        <div className="flex h-full flex-col p-8 lg:p-12">
+  const rowEditors = {
+    identity: (
+      <TextInput
+        label="Creator name"
+        value={identity}
+        onChange={(event) => setIdentity(event.target.value)}
+      />
+    ),
+    audience: (
+      <TextInput
+        label="Follower signal"
+        value={audience}
+        onChange={(event) => setAudience(event.target.value)}
+      />
+    ),
+    source: (
+      <SourceEditor
+        primarySource={primarySource}
+        additionalSources={additionalSources}
+        onPrimarySourceChange={(patch) => setPrimarySource((current) => ({ ...current, ...patch }))}
+        onAddSource={addSource}
+        onSourceChange={updateAdditionalSource}
+        onRemoveSource={removeAdditionalSource}
+      />
+    ),
+  }
+
+  const reviewRows = [
+    {
+      id: 'identity',
+      icon: IdCard,
+      label: 'Identity',
+      loadingCopy: rowLoadingCopy.identity,
+      resolved: isResolved('identity'),
+      value: identity,
+    },
+    {
+      id: 'audience',
+      icon: Users,
+      label: 'Audience',
+      loadingCopy: rowLoadingCopy.audience,
+      resolved: isResolved('audience'),
+      value: audience,
+    },
+    {
+      id: 'source',
+      icon: Link2,
+      label: 'Source',
+      loadingCopy: rowLoadingCopy.source,
+      resolved: isResolved('source'),
+      value: sourceSummary,
+    },
+  ]
+
+  const accordionRows = reviewRows.map((row) => ({
+    id: row.id,
+    icon: row.icon,
+    label: row.label,
+    subtext: row.resolved ? row.value : row.loadingCopy,
+    trailing: <StatusDot resolved={row.resolved} />,
+    content: (
+      <AccordionReviewContent
+        loadingCopy={row.loadingCopy}
+        resolved={row.resolved}
+        value={row.value}
+        editing={editingRow === row.id}
+        onEdit={() => setEditingRow(row.id)}
+        onSave={() => setEditingRow(null)}
+      >
+        {rowEditors[row.id]}
+      </AccordionReviewContent>
+    ),
+  }))
+
+  const content = (
+    <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
 
@@ -224,58 +380,53 @@ export function DataGatheringReview({
               </p>
             </header>
 
-            <div className="grid gap-3">
-              <ReviewRow
-                label="Identity"
-                loadingCopy={rowLoadingCopy.identity}
-                resolved={isResolved('identity')}
-                value={identity}
-                editing={editingRow === 'identity'}
-                onEdit={() => setEditingRow('identity')}
-                onSave={() => setEditingRow(null)}
-              >
-                <TextInput
-                  label="Creator name"
+            {rowPresentation === 'accordion' ? (
+              <AccordionPanelGroup
+                rows={accordionRows}
+                openRow={openReviewRow}
+                onOpenRowChange={setOpenReviewRow}
+                allowCollapse={false}
+                className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs"
+              />
+            ) : (
+              <div className="grid gap-3">
+                <ReviewRow
+                  label="Identity"
+                  loadingCopy={rowLoadingCopy.identity}
+                  resolved={isResolved('identity')}
                   value={identity}
-                  onChange={(event) => setIdentity(event.target.value)}
-                />
-              </ReviewRow>
+                  editing={editingRow === 'identity'}
+                  onEdit={() => setEditingRow('identity')}
+                  onSave={() => setEditingRow(null)}
+                >
+                  {rowEditors.identity}
+                </ReviewRow>
 
-              <ReviewRow
-                label="Audience"
-                loadingCopy={rowLoadingCopy.audience}
-                resolved={isResolved('audience')}
-                value={audience}
-                editing={editingRow === 'audience'}
-                onEdit={() => setEditingRow('audience')}
-                onSave={() => setEditingRow(null)}
-              >
-                <TextInput
-                  label="Follower signal"
+                <ReviewRow
+                  label="Audience"
+                  loadingCopy={rowLoadingCopy.audience}
+                  resolved={isResolved('audience')}
                   value={audience}
-                  onChange={(event) => setAudience(event.target.value)}
-                />
-              </ReviewRow>
+                  editing={editingRow === 'audience'}
+                  onEdit={() => setEditingRow('audience')}
+                  onSave={() => setEditingRow(null)}
+                >
+                  {rowEditors.audience}
+                </ReviewRow>
 
-              <ReviewRow
-                label="Source"
-                loadingCopy={rowLoadingCopy.source}
-                resolved={isResolved('source')}
-                value={sourceSummary}
-                editing={editingRow === 'source'}
-                onEdit={() => setEditingRow('source')}
-                onSave={() => setEditingRow(null)}
-              >
-                <SourceEditor
-                  primarySource={primarySource}
-                  additionalSources={additionalSources}
-                  onPrimarySourceChange={(patch) => setPrimarySource((current) => ({ ...current, ...patch }))}
-                  onAddSource={addSource}
-                  onSourceChange={updateAdditionalSource}
-                  onRemoveSource={removeAdditionalSource}
-                />
-              </ReviewRow>
-            </div>
+                <ReviewRow
+                  label="Source"
+                  loadingCopy={rowLoadingCopy.source}
+                  resolved={isResolved('source')}
+                  value={sourceSummary}
+                  editing={editingRow === 'source'}
+                  onEdit={() => setEditingRow('source')}
+                  onSave={() => setEditingRow(null)}
+                >
+                  {rowEditors.source}
+                </ReviewRow>
+              </div>
+            )}
           </div>
 
           <footer className="mt-auto flex w-full flex-col items-start justify-between gap-3 pt-8 sm:flex-row sm:items-center">
@@ -305,19 +456,32 @@ export function DataGatheringReview({
             ) : null}
           </footer>
         </div>
+  )
+
+  if (contentOnly) {
+    return content
+  }
+
+  return (
+    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+      <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
+        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
+        {content}
 
         <aside className="border-t border-border bg-surface-raised/40 p-0 lg:border-l lg:border-t-0">
-          {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
-          <div className="relative h-full min-h-[620px]">
-            <img
-              src={recognitionIllustrationUrl}
-              alt="Recognition reveal illustration for the creator data gathering step"
-              className="h-full w-full object-cover"
-              loading="eager"
-              decoding="async"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-          </div>
+          {aside ?? (
+            /* no token available: full-height illustration mock uses a fixed desktop minimum. */
+            <div className="relative h-full min-h-[620px]">
+              <img
+                src={recognitionIllustrationUrl}
+                alt="Recognition reveal illustration for the creator data gathering step"
+                className="h-full w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+            </div>
+          )}
         </aside>
       </div>
     </section>

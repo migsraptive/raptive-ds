@@ -1,5 +1,5 @@
 import { LoaderCircle } from 'lucide-react'
-import entryIllustrationUrl from '../../assets/entry-illustration.png'
+import singleFieldIntakeIllustrationUrl from '../../assets/single-field-intake-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
@@ -84,8 +84,8 @@ export function SingleFieldIntake({
               {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
               <div className={['relative', showAside ? 'aspect-[4/3]' : 'h-full min-h-[720px]'].join(' ')}>
                 <img
-                  src={entryIllustrationUrl}
-                  alt="Warm curiosity-building illustration for the creator application entry step"
+                  src={singleFieldIntakeIllustrationUrl}
+                  alt="Vibrant fantasy garden illustration for the creator application entry step"
                   className="h-full w-full object-cover"
                   loading="eager"
                   decoding="async"
@@ -94,7 +94,7 @@ export function SingleFieldIntake({
               </div>
               <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'hidden'}>
                 <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'hidden'}>
-                  Warm, curiosity-building art that makes the first step feel premium instead of form-like.
+                  Vivid, curiosity-building art that makes the first step feel premium instead of form-like.
                 </p>
               </div>
             </div>

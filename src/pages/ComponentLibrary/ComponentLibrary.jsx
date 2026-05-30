@@ -6,30 +6,29 @@ import {
   BriefcaseBusiness,
   Check,
   Eye,
-  Flame,
   HandCoins,
-  Heart,
   House,
+  IdCard,
+  Image as ImageIcon,
   Mail,
   Megaphone,
   MessageSquare,
+  Palette,
   Plane,
   Rocket,
   RotateCcw,
   Search,
   Send,
   Settings2,
-  Shield,
   ShieldCheck,
   Sparkles,
-  Trophy,
   UtensilsCrossed,
   Waves,
 } from 'lucide-react'
 import { Button } from '../../components/Button/Button.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
-import { AccordionPanel } from '../../components/AccordionPanel/AccordionPanel.jsx'
+import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
 import { Avatar, AvatarGroup } from '../../components/Avatar/Avatar.jsx'
 import { AvatarUpload } from '../../components/AvatarUpload/AvatarUpload.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
@@ -57,20 +56,16 @@ import { FeedPost } from '../../components/FeedPost/FeedPost.jsx'
 import { Comment } from '../../components/Comment/Comment.jsx'
 import { CommunitySidebar } from '../../components/CommunitySidebar/CommunitySidebar.jsx'
 import { CommunityTopNavigation } from '../../components/CommunityTopNavigation/CommunityTopNavigation.jsx'
-import { CommunityCreatorDiscoverCard } from '../../components/CommunityCreatorDiscoverCard/CommunityCreatorDiscoverCard.jsx'
-import { CommunityAnswersCard } from '../../components/CommunityAnswersCard/CommunityAnswersCard.jsx'
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
-import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
-import { DataGatheringLoader } from '../../patterns/DataGatheringLoader/DataGatheringLoader.jsx'
 import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
+import { DataGatheringWonderSequence } from '../../patterns/DataGatheringWonderSequence/DataGatheringWonderSequence.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
-import { ProjectionPreview } from '../../patterns/ProjectionPreview/ProjectionPreview.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
@@ -129,7 +124,6 @@ function DocumentationNote({ children }) {
 const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
-const celebrationIcon = (Icon) => <LucideIcon icon={Icon} size="xl" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
 const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
 const avatarImageSet = [
@@ -160,69 +154,6 @@ const socialUrlExamples = [
   { label: 'Substack', value: 'https://culturecrave.substack.com' },
   { label: 'Default website', value: 'https://www.culturecrave.com' },
 ]
-// no token available — creator colors are runtime data, represented here as ComponentLibrary fixtures.
-const communityCreatorDiscoverExamples = [
-  {
-    name: 'Lambeau Leapers',
-    topicLabel: 'Sports',
-    description: 'Packers pride, shared together',
-    brandColor: '#004101',
-  },
-  {
-    name: 'Sally’s Baking',
-    topicLabel: 'Baking',
-    description: 'Learn, share, and bake together',
-    brandColor: '#ce7c77',
-  },
-  {
-    name: 'Make & Do Crew',
-    topicLabel: 'Crafting',
-    description: 'A welcome space for crocheters',
-    avatarShape: 'square',
-    brandColor: '#de4b32',
-  },
-  {
-    name: 'Inside the Magic',
-    topicLabel: 'Disney',
-    description: 'A home for Disney lovers everywhere',
-    brandColor: '#833193',
-  },
-  {
-    name: 'Half Baked Harvest',
-    topicLabel: 'Cooking',
-    description: 'Recipes, gatherings, inspiration',
-    brandColor: '#5f5e4a',
-  },
-]
-const communityAnswersCardExamples = [
-  {
-    label: 'Figma selected',
-    authorName: 'Sally McKenney',
-    communityName: 'Sally’s Baking',
-    question: 'Which dessert always disappears first at gatherings?',
-    answerCount: 45,
-    avatarSrc: avatarImageSet[0].src,
-    accentColor: '#ce7c77',
-  },
-  {
-    label: 'Initials fallback',
-    authorName: 'Lena Torres',
-    communityName: 'Garden Club',
-    question: 'What is one small habit that keeps your herbs thriving indoors?',
-    answerCount: 8,
-    accentColor: '#004101',
-  },
-  {
-    label: 'No answers yet',
-    authorName: 'Maya Chen',
-    communityName: 'Weeknight Table',
-    question: 'What is your go-to pantry dinner when the fridge is almost empty?',
-    answerCount: 0,
-    avatarSrc: avatarImageSet[1].src,
-    accentColor: '#5f5e4a',
-  },
-]
-
 function tokenTypographyLabel(tokenName) {
   const token = typographyTokens.fontSize[tokenName]
   if (!token) return tokenName
@@ -245,8 +176,6 @@ export function ComponentLibrary() {
     const sectionParam = new URLSearchParams(window.location.search).get('section')
     return sections.includes(sectionParam) ? sectionParam : 'Colors'
   })
-  const [modalOpen, setModalOpen] = useState(false)
-  const [modalType, setModalType] = useState('badge')
   const [goalValue, setGoalValue] = useState('grow-audience')
   const [selectedTiles, setSelectedTiles] = useState(['community'])
   const [selectedGoals, setSelectedGoals] = useState(['audience-growth', 'community'])
@@ -256,10 +185,12 @@ export function ComponentLibrary() {
   const [selectedSwatch, setSelectedSwatch] = useState(brandPreviewDefaults.accent)
   const [demoAvatar, setDemoAvatar] = useState(null)
   const [demoShape, setDemoShape] = useState('circle')
+  const [accordionDemoOpenRow, setAccordionDemoOpenRow] = useState('profile')
   const [categorySearch, setCategorySearch] = useState('')
   const [selectedCategories, setSelectedCategories] = useState(['food', 'parenting'])
   const [creatorUrl, setCreatorUrl] = useState('')
   const [intakeLoading, setIntakeLoading] = useState(false)
+  const [previewPatternCtaSuccess, setPreviewPatternCtaSuccess] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [reviewFields] = useState({
@@ -269,37 +200,6 @@ export function ComponentLibrary() {
     audience: 'Community-led',
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
   })
-
-  const modalExamples = {
-    badge: {
-      type: 'badge',
-      title: 'Achievement Unlocked!',
-      description: 'You just earned the "Community Champion" badge for helping 10 members this month.',
-      badge: { icon: celebrationIcon(Trophy), name: 'Community Champion', tier: tileIcon(Sparkles) },
-      stats: [{ value: '10', label: 'Members helped' }, { value: '47', label: 'Points earned' }],
-    },
-    streak: {
-      type: 'streak',
-      title: '30-Day Streak!',
-      description: "You've been active every day for a month. That's incredible consistency.",
-      badge: { icon: celebrationIcon(Flame), name: '30-Day Streak' },
-      stats: [{ value: '30', label: 'Days active' }, { value: '12', label: 'Posts written' }],
-    },
-    milestone: {
-      type: 'milestone',
-      title: 'First 100 Reactions!',
-      description: "Your posts have resonated with the community. Keep sharing your insights.",
-      badge: { icon: celebrationIcon(Heart), name: 'Reaction Milestone' },
-      stats: [{ value: '100', label: 'Reactions' }, { value: '#4', label: 'This week' }],
-    },
-    role: {
-      type: 'role',
-      title: 'You\u2019re a Moderator Now',
-      description: "The community has recognized your leadership. Welcome to the team.",
-      badge: { icon: celebrationIcon(Shield), name: 'Moderator' },
-      stats: [{ value: '2.1k', label: 'Posts read' }, { value: '98%', label: 'Helpful rate' }],
-    },
-  }
 
   const toggleTile = (value) => {
     setSelectedTiles((current) => (
@@ -714,6 +614,82 @@ export function ComponentLibrary() {
                   ]}
                 />
               </div>
+            </Section>
+
+            <Section title="Accordion Panel Group" description="Reusable collapsible editor rows with customizable icon, label, subtext, and content.">
+              <div className="max-w-xl overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
+                <AccordionPanelGroup
+                  openRow={accordionDemoOpenRow}
+                  onOpenRowChange={setAccordionDemoOpenRow}
+                  rows={[
+                    {
+                      id: 'profile',
+                      icon: IdCard,
+                      label: 'Profile details',
+                      subtext: 'Name, topic, summary',
+                      trailing: <Badge variant="brand" size="xs">Live</Badge>,
+                      content: (
+                        <div className="space-y-2.5">
+                          <CompactField label="name" value="Culture Crave Community" onChange={() => {}} />
+                          <CompactField
+                            label="topic"
+                            type="select"
+                            value="Pop Culture"
+                            onChange={() => {}}
+                            options={[
+                              { value: 'Pop Culture', label: 'Pop Culture' },
+                              { value: 'Movies', label: 'Movies' },
+                              { value: 'TV Shows', label: 'TV Shows' },
+                            ]}
+                          />
+                          <CompactField
+                            label="summary"
+                            type="textarea"
+                            value="A place to unpack the moments everyone is talking about."
+                            onChange={() => {}}
+                          />
+                        </div>
+                      ),
+                    },
+                    {
+                      id: 'identity',
+                      icon: ImageIcon,
+                      label: 'Visual identity',
+                      subtext: 'Avatar, shape, media',
+                      content: (
+                        <SegmentedControl
+                          label="Logo shape"
+                          value={demoShape}
+                          options={[
+                            { value: 'circle', label: 'Circle' },
+                            { value: 'rectangle', label: 'Rectangle' },
+                          ]}
+                          onChange={setDemoShape}
+                        />
+                      ),
+                    },
+                    {
+                      id: 'theme',
+                      icon: Palette,
+                      label: 'Theme colors',
+                      subtext: 'Brand and accent',
+                      content: (
+                        <ColorInput
+                          label="Brand Color"
+                          description="Used for buttons, links, creator marks, and active community actions."
+                          value={brandColor}
+                          layout="compact"
+                          fallbackColor={brandPreviewDefaults.brand}
+                          onChange={setBrandColor}
+                        />
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+              <DocumentationNote>
+                Use `AccordionPanelGroup` when a screen needs the same compact row shell with different labels and row bodies.
+              </DocumentationNote>
             </Section>
 
             <Section title="Color Swatch Button" description="Reusable palette-choice control for theme and brand-preview flows.">
@@ -1394,6 +1370,16 @@ export function ComponentLibrary() {
         {/* ── PATTERNS ───────────────────────────────────────────────────── */}
         {activeSection === 'Patterns' && (
           <>
+            <div className="rounded-xl border border-border bg-surface px-4 py-3 shadow-xs">
+              <Checkbox
+                variant="plain"
+                label="Preview CTA success labels"
+                description="Forces applicable pattern CTAs into their success state so transition copy can be reviewed in place."
+                checked={previewPatternCtaSuccess}
+                onChange={(event) => setPreviewPatternCtaSuccess(event.target.checked)}
+              />
+            </div>
+
             <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
               <SingleFieldIntake
                 title="Where do your fans live?"
@@ -1404,7 +1390,7 @@ export function ComponentLibrary() {
                   setIntakeLoading(true)
                   window.setTimeout(() => setIntakeLoading(false), 900)
                 }}
-                loading={intakeLoading}
+                loading={intakeLoading || previewPatternCtaSuccess}
                 progressMeter={(
                   <div className="flex justify-center">
                     <StepIndicator steps={6} currentStep={1} />
@@ -1414,68 +1400,9 @@ export function ComponentLibrary() {
                 ctaLabel="Continue"
                 ctaSuccessLabel="Pulling data"
                 ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
-                ctaDisabled={!creatorUrl.trim()}
+                ctaDisabled={!creatorUrl.trim() && !previewPatternCtaSuccess}
                 showAside={false}
               />
-            </Section>
-
-            <Section title="Single Field Intake Variants" description="Trust points, disabled CTA, custom success copy, and the no-aside layout state.">
-              <div className="space-y-8">
-                <SingleFieldIntake
-                  title="Show trust cues while recognition runs."
-                  description="Use short proof points to explain why the first step is lightweight."
-                  value="https://instagram.com/culturecrave"
-                  onChange={() => {}}
-                  onSubmit={() => {}}
-                  loading
-                  ctaLabel="Recognize creator"
-                  ctaSuccessLabel="Recognized"
-                  ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
-                  helperText={getDetectedSocialAccountHelperText('https://instagram.com/culturecrave')}
-                  trustPoints={[
-                    {
-                      title: 'Fast recognition',
-                      description: 'We pull only the early signals needed to start a preview.',
-                    },
-                    {
-                      title: 'Editable later',
-                      description: 'Fetched profile details can be corrected before submission.',
-                    },
-                    {
-                      title: 'No commitment yet',
-                      description: 'Nothing is submitted until the creator confirms the final step.',
-                    },
-                  ]}
-                />
-                <SingleFieldIntake
-                  title="Hold the CTA until the creator URL is usable."
-                  description="The disabled state keeps the first step from advancing before a recognizable profile is present."
-                  value=""
-                  onChange={() => {}}
-                  onSubmit={() => {}}
-                  ctaDisabled
-                  helperText="Paste a creator URL to unlock the action."
-                />
-                <SingleFieldIntake
-                  title="Use the focused no-aside layout when the art should become the full rail."
-                  description="This state keeps the same form contract while removing the explanatory aside content."
-                  value="culturecrave.com"
-                  onChange={() => {}}
-                  onSubmit={() => {}}
-                  showAside={false}
-                  helperText={getDetectedSocialAccountHelperText('culturecrave.com')}
-                />
-              </div>
-            </Section>
-
-            <Section title="Data Gathering Loader" description="Dedicated in-between loading step that confirms creator data is being gathered before the fetch confirmation appears.">
-              <DataGatheringLoader
-                creatorUrl={creatorUrl}
-                secondaryAction={{ label: 'Back', variant: 'ghost' }}
-              />
-              <DocumentationNote>
-                Row entrance respects prefers-reduced-motion. Shimmer and pulse always run — they communicate loading.
-              </DocumentationNote>
             </Section>
 
             <Section title="Data Gathering Review" description="Exploratory staged loading state that resolves creator signals inline before the next confirmation step.">
@@ -1484,13 +1411,11 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{
                   label: 'Continue',
+                  success: previewPatternCtaSuccess,
                   successLabel: 'Finding...',
                   successIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
                 }}
               />
-              <DocumentationNote>
-                Source can resolve from the submitted network, and creators can optionally add more social sources before continuing.
-              </DocumentationNote>
             </Section>
 
             <Section title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before review.">
@@ -1536,45 +1461,15 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{
                   label: 'Looks right',
+                  success: previewPatternCtaSuccess,
                   successLabel: 'Sneak peaking...',
                   successIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
                 }}
               />
-              <DocumentationNote>
-                Non-loading reveal transitions respect prefers-reduced-motion. Skeleton pulse always runs.
-              </DocumentationNote>
             </Section>
 
-            <Section title="Archive · Projection Preview" description="Archived projections step kept for reference, with staged pipeline reveal from combined followers through reach and modeled revenue.">
-              <ProjectionPreview
-                title="Before we ask for edits, here’s the scale this creator could unlock."
-                description="These early projections should make the opportunity legible without pretending they are final. The goal is confidence, not false precision."
-                stats={[
-                  {
-                    label: 'Combined followers before overlap',
-                    value: '526,000',
-                    sublabel: 'Cross-platform raw total',
-                    detail: 'This is the total audience signal pulled across the connected creator profiles before shared followers are removed.',
-                  },
-                  {
-                    label: 'Estimated unique reach',
-                    value: '315.6K to 420.8K',
-                    sublabel: 'Overlap reduced',
-                    detail: 'This assumes meaningful cross-platform overlap and reframes the audience as a more realistic blended reach range.',
-                  },
-                  {
-                    label: 'Potential monthly ad revenue',
-                    value: '$426 to $3,787',
-                    sublabel: 'Monthly modeled range',
-                    detail: 'This models an early monthly revenue range from projected traffic, based on how much of that reach returns as readership.',
-                  },
-                ]}
-                secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                primaryAction={{ label: 'Continue to review' }}
-              />
-              <DocumentationNote>
-                Pipeline node and bar reveal animations respect prefers-reduced-motion. Stage sequencing always runs.
-              </DocumentationNote>
+            <Section title="Data Gathering Wonder Sequence" description="Standalone prototype for the data gathering review into fetch confirmation transition. Not wired into onboarding.">
+              <DataGatheringWonderSequence previewCtaSuccess={previewPatternCtaSuccess} />
             </Section>
 
             <Section title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
@@ -1595,6 +1490,7 @@ export function ComponentLibrary() {
                     <CompactWysiwygStudio
                       primaryAction={{
                         label: 'Continue to Verification',
+                        success: previewPatternCtaSuccess,
                         successLabel: "Let's verify...",
                         successIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
                       }}
@@ -1602,118 +1498,6 @@ export function ComponentLibrary() {
                   </div>
                 </div>
               </section>
-            </Section>
-
-            <Section title="Exploration · Compact WYSIWYG Option" description="A calmer, tighter editor option with plain-language fields and a small live preview for less technical users.">
-              <CompactWysiwygStudio
-                primaryAction={{
-                  label: 'Continue to Verification',
-                  successLabel: "Let's verify...",
-                  successIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
-                }}
-              />
-            </Section>
-
-            <Section title="Community Creator Discover Card" description="Compact discover tile migrated from Figma for the creator WYSIWYG community preview.">
-              <div className="grid items-stretch gap-6 rounded-xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-4">
-                {communityCreatorDiscoverExamples.map((example) => (
-                  <CommunityCreatorDiscoverCard
-                    key={example.name}
-                    name={example.name}
-                    topicLabel={example.topicLabel}
-                    description={example.description}
-                    avatarShape={example.avatarShape}
-                    brandColor={example.brandColor}
-                    onExplore={() => {}}
-                  />
-                ))}
-              </div>
-            </Section>
-
-            <Section title="Community Answers Card" description="Mobile answers prompt card migrated from the selected Figma post component.">
-              <div className="grid auto-rows-fr items-stretch gap-6 rounded-xl border border-border bg-surface-raised p-6 sm:grid-cols-2 lg:grid-cols-3">
-                {/* no token available — creator brand fixture colors (#ce7c77, #004101, #5f5e4a) are runtime data. */}
-                {communityAnswersCardExamples.map((example) => (
-                  <div key={example.label} className="flex h-full min-w-0 flex-col gap-2">
-                    <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
-                      {example.label}
-                    </p>
-                    <div className="min-h-0 flex-1">
-                      <CommunityAnswersCard
-                        authorName={example.authorName}
-                        communityName={example.communityName}
-                        question={example.question}
-                        answerCount={example.answerCount}
-                        avatarSrc={example.avatarSrc}
-                        accentColor={example.accentColor}
-                        onAnswer={() => {}}
-                        onViewAnswers={() => {}}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Section>
-
-            <Section title="Accordion Panel" description="Standalone panel states for compact editor groups.">
-              <div className="max-w-xl divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
-                <AccordionPanel
-                  icon={Settings2}
-                  label="Community basics"
-                  sublabel="Name, summary, and category fields"
-                  open
-                  onToggle={() => {}}
-                >
-                  <p className="text-sm leading-relaxed text-text-secondary">
-                    Open panels reveal the field group while keeping the paired icon, label, sublabel, and chevron aligned.
-                  </p>
-                </AccordionPanel>
-                <AccordionPanel
-                  icon={ShieldCheck}
-                  label="Verification"
-                  sublabel="Collapsed section"
-                  open={false}
-                  onToggle={() => {}}
-                >
-                  <p className="text-sm leading-relaxed text-text-secondary">
-                    Closed content stays hidden until the panel opens.
-                  </p>
-                </AccordionPanel>
-              </div>
-              <DocumentationNote>
-                Trigger uses aria-expanded and aria-controls pointing to the panel id. Panel id is generated with useId.
-              </DocumentationNote>
-              <DocumentationNote>
-                Chevron rotation respects prefers-reduced-motion.
-              </DocumentationNote>
-            </Section>
-
-            <Section title="Compact Field" description="Compact editor field variants used inside tighter creator setup surfaces.">
-              <div className="max-w-xl space-y-4 rounded-xl border border-border bg-surface p-4">
-                <CompactField
-                  label="Name"
-                  value="Culture Crave"
-                  onChange={() => {}}
-                />
-                <CompactField
-                  label="Summary"
-                  type="textarea"
-                  rows={3}
-                  value="Food creator and community builder helping families cook smarter."
-                  onChange={() => {}}
-                />
-                <CompactField
-                  label="Vertical"
-                  type="select"
-                  value="food"
-                  onChange={() => {}}
-                  options={[
-                    { value: 'food', label: 'Food' },
-                    { value: 'parenting', label: 'Parenting' },
-                    { value: 'wellness', label: 'Wellness' },
-                  ]}
-                />
-              </div>
             </Section>
 
             <Section title="Verification Step" description="Lightweight commitment and identity confirmation step before the final submission moment, with the Instagram DM path expanding inline.">
@@ -1734,9 +1518,9 @@ export function ComponentLibrary() {
                     description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
                   },
                 ]}
-                selectedMethod={verificationMethod}
+                selectedMethod={previewPatternCtaSuccess ? 'instagram-dm' : verificationMethod}
                 onSelectMethod={setVerificationMethod}
-                confirmed={verificationConfirmed}
+                confirmed={previewPatternCtaSuccess || verificationConfirmed}
                 onConfirmChange={setVerificationConfirmed}
                 instagramDmDetail={{
                   code: 'CULTURE-453',
@@ -1763,13 +1547,11 @@ export function ComponentLibrary() {
                 secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
                 primaryAction={{
                   label: 'Continue',
+                  success: previewPatternCtaSuccess,
                   successLabel: 'Submitting...',
                   successIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
                 }}
               />
-              <DocumentationNote>
-                Expand/collapse controls use aria-expanded. Confirmation checkbox requires an associated label.
-              </DocumentationNote>
             </Section>
 
             <Section title="Submission Success" description="Exclusive completion state that closes the journey with confidence instead of a generic success message.">
@@ -1798,118 +1580,11 @@ export function ComponentLibrary() {
                 primaryAction={{
                   label: "Let's begin...",
                   variant: 'black',
+                  success: previewPatternCtaSuccess,
                   successLabel: "Let's begin...",
                   successIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
                 }}
               />
-            </Section>
-
-            <Section title="Step Layout" description="Shared shell for multi-step creator onboarding screens with progress, content, and preview rail.">
-              <StepLayout
-                eyebrow="Creator Onboarding"
-                step={2}
-                totalSteps={6}
-                title="Choose your creator categories"
-                description="Pick the verticals that best describe this creator so onboarding can tailor guidance, examples, and profile recommendations."
-                primaryAction={{ label: 'Continue' }}
-                secondaryAction={{ label: 'Back', variant: 'ghost' }}
-                aside={(
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-text">Profile Preview</p>
-                      <p className="text-sm text-text-secondary">How this step influences the public profile.</p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-white p-4 space-y-3">
-                      <div className="space-y-1">
-                        <p className="text-base font-medium text-text">Culture Crave</p>
-                        <p className="text-sm text-text-secondary">Food creator and community builder</p>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="brand">Food</Badge>
-                        <Badge variant="brand">Parenting</Badge>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              >
-                <CategoryPicker
-                  title="Best-fit categories"
-                  description="Select all categories that apply right now."
-                  searchValue={categorySearch}
-                  onSearchChange={setCategorySearch}
-                  selected={selectedCategories}
-                  onToggle={toggleCategory}
-                  categories={[
-                    {
-                      value: 'food',
-                      icon: tileIcon(UtensilsCrossed),
-                      title: 'Food',
-                      description: 'Recipes, meal planning, kitchen tips, and cooking inspiration.',
-                      tags: ['recipes', 'meal planning', 'cooking'],
-                    },
-                    {
-                      value: 'parenting',
-                      icon: tileIcon(Baby),
-                      title: 'Parenting',
-                      description: 'Family routines, child development, and parent life.',
-                      tags: ['family', 'kids', 'home'],
-                    },
-                    {
-                      value: 'home',
-                      icon: tileIcon(House),
-                      title: 'Home',
-                      description: 'Decor, organization, hosting, and DIY improvements.',
-                      tags: ['decor', 'organization', 'hosting'],
-                    },
-                    {
-                      value: 'wellness',
-                      icon: tileIcon(Waves),
-                      title: 'Wellness',
-                      description: 'Fitness, mindfulness, habits, and sustainable self-care.',
-                      tags: ['fitness', 'habits', 'mindfulness'],
-                    },
-                    {
-                      value: 'finance',
-                      icon: tileIcon(BriefcaseBusiness),
-                      title: 'Personal Finance',
-                      description: 'Budgeting, saving, planning, and practical money education.',
-                      tags: ['budgeting', 'saving', 'career'],
-                    },
-                    {
-                      value: 'travel',
-                      icon: tileIcon(Plane),
-                      title: 'Travel',
-                      description: 'Guides, itineraries, family trips, and destination recs.',
-                      tags: ['guides', 'itineraries', 'destinations'],
-                    },
-                  ]}
-                />
-              </StepLayout>
-            </Section>
-
-            <Section title="Celebration Modal" description="Used for badge earned, streak milestone, new role, and other gamification moments.">
-              <Row label="Trigger by type">
-                {Object.keys(modalExamples).map(type => (
-                  <Button
-                    key={type}
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => { setModalType(type); setModalOpen(true) }}
-                  >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Button>
-                ))}
-              </Row>
-              <div className="mt-4 p-4 bg-surface-sunken rounded-xl text-sm text-text-secondary space-y-1">
-                <p className="font-medium text-text">Usage notes</p>
-                <p>• Trigger on: badge earned, streak milestone, reaction milestone, role assignment</p>
-                <p>• CTA leads to shareable achievement card (not yet built — next pattern)</p>
-                <p>• "Maybe Later" dismisses — don't suppress it, community members should opt in to sharing</p>
-                <p>• Confetti is CSS-only, no library dependency</p>
-              </div>
-              <DocumentationNote>
-                Modal entrance and confetti animations respect prefers-reduced-motion.
-              </DocumentationNote>
             </Section>
           </>
         )}
@@ -1984,15 +1659,6 @@ export function ComponentLibrary() {
 
       </main>
 
-      {/* Modal rendered at root */}
-      {modalOpen && (
-        <CelebrationModal
-          {...modalExamples[modalType]}
-          isOpen={modalOpen}
-          onConfirm={() => setModalOpen(false)}
-          onDismiss={() => setModalOpen(false)}
-        />
-      )}
     </div>
   )
 }
