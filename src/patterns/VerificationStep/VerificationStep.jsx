@@ -257,11 +257,13 @@ export function VerificationStep({
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
               </div>
-              <div className={showAside ? 'border-t border-border bg-surface px-4 py-3' : 'hidden'}>
-                <p className={showAside ? 'text-sm leading-relaxed text-text-secondary' : 'hidden'}>
-                  A calmer support visual that keeps the final handshake from feeling cold or security-heavy.
-                </p>
-              </div>
+              {showAside && (
+                <div className="border-t border-border bg-surface px-4 py-3">
+                  <p className="text-sm leading-relaxed text-text-secondary">
+                    A calmer support visual that keeps the final handshake from feeling cold or security-heavy.
+                  </p>
+                </div>
+              )}
             </div>
             {showAside && (
               <>

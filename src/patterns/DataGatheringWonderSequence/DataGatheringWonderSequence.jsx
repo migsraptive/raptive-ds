@@ -132,7 +132,7 @@ export function DataGatheringWonderSequence({ previewCtaSuccess = false }) {
     }
 
     video.currentTime = 0
-    video.playbackRate = 0.42
+    video.playbackRate = 1
 
     const playPromise = video.play()
     setVideoStatus('playing')

@@ -137,11 +137,13 @@ export function SubmissionSuccess({
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
               </div>
-              <div className={showAside ? 'border-t border-white/10 bg-neutral-950 px-4 py-3' : 'hidden'}>
-                <p className={showAside ? 'text-sm leading-relaxed text-white/68' : 'hidden'}>
-                  A memorable closing visual that makes the final state feel exclusive and worth the wait.
-                </p>
-              </div>
+              {showAside && (
+                <div className="border-t border-white/10 bg-neutral-950 px-4 py-3">
+                  <p className="text-sm leading-relaxed text-white/68">
+                    A memorable closing visual that makes the final state feel exclusive and worth the wait.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </aside>

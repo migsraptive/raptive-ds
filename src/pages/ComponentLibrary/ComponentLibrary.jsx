@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Award,
   Baby,
@@ -10,6 +10,7 @@ import {
   House,
   IdCard,
   Image as ImageIcon,
+  Link2,
   Mail,
   Megaphone,
   MessageSquare,
@@ -25,6 +26,10 @@ import {
   UtensilsCrossed,
   Waves,
 } from 'lucide-react'
+import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
+import singleFieldIntakeIllustrationUrl from '../../assets/single-field-intake-illustration.png'
+import submissionIllustrationUrl from '../../assets/submission-illustration.png'
+import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
@@ -61,6 +66,7 @@ import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/Righ
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
+import { CreatorOnboardingShell } from '../../patterns/CreatorOnboardingShell/CreatorOnboardingShell.jsx'
 import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
 import { DataGatheringWonderSequence } from '../../patterns/DataGatheringWonderSequence/DataGatheringWonderSequence.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
@@ -120,12 +126,60 @@ function DocumentationNote({ children }) {
   )
 }
 
+function TimedShellVideo({ src, label }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+
+    video.pause()
+    video.currentTime = 0
+    video.playbackRate = 1
+
+    const playPromise = video.play()
+    if (playPromise) {
+      playPromise.catch(() => {})
+    }
+
+    const pauseTimer = window.setTimeout(() => {
+      video.pause()
+    }, 3000)
+
+    return () => {
+      window.clearTimeout(pauseTimer)
+      video.pause()
+    }
+  }, [src])
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      className="h-full w-full object-cover"
+      muted
+      playsInline
+      preload="metadata"
+      aria-label={label}
+    />
+  )
+}
+
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
 const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
+const creatorShellStepOrder = ['entry', 'gather', 'confirm', 'preview', 'verify', 'success']
+const creatorShellPreviewOptions = [
+  { value: 'entry', label: 'Entry' },
+  { value: 'gather', label: 'Gather' },
+  { value: 'confirm', label: 'Confirm' },
+  { value: 'preview', label: 'Preview' },
+  { value: 'verify', label: 'Verify' },
+  { value: 'success', label: 'Success' },
+]
 const avatarImageSet = [
   {
     name: 'Culture Crave',
@@ -191,6 +245,8 @@ export function ComponentLibrary() {
   const [creatorUrl, setCreatorUrl] = useState('')
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [previewPatternCtaSuccess, setPreviewPatternCtaSuccess] = useState(false)
+  const [creatorShellPreviewStep, setCreatorShellPreviewStep] = useState('entry')
+  const [creatorShellPreviewOpenRow, setCreatorShellPreviewOpenRow] = useState('identity')
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [reviewFields] = useState({
@@ -200,6 +256,170 @@ export function ComponentLibrary() {
     audience: 'Community-led',
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
   })
+  const creatorShellPreviewSteps = {
+    entry: {
+      title: 'Where do your fans live?',
+      description: 'Paste a link to where we can find your fans: your main social account or website. We’ll do the rest!',
+      primaryLabel: 'Continue',
+      primarySuccessLabel: 'Pulling data',
+      primarySuccessIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+      image: singleFieldIntakeIllustrationUrl,
+      imageAlt: 'Vibrant fantasy garden illustration for the creator application entry step',
+    },
+    gather: {
+      title: 'We’re finding your fandom',
+      description: 'Give us a moment while we pull some details.',
+      primaryLabel: 'Continue',
+      primarySuccessLabel: 'Finding...',
+      primarySuccessIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+      video: wonderVideoUrl,
+      videoLabel: 'Fantastical garden video reveal for the creator data gathering step',
+    },
+    confirm: {
+      title: 'Take a look at what we found.',
+      description: 'Confirm the creator profile before we use it to shape the first community preview.',
+      primaryLabel: 'Looks right',
+      primarySuccessLabel: 'Sneak peaking...',
+      primarySuccessIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
+      video: wonderVideoUrl,
+      videoLabel: 'Fantastical garden video reveal for the creator confirmation step',
+    },
+    preview: {
+      title: 'We used your brand to jumpstart your community. How does it look?',
+      description: 'Pick your community name carefully. You can edit colors below and see how it feels.',
+      primaryLabel: 'Continue to Verification',
+      primarySuccessLabel: "Let's verify...",
+      primarySuccessIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
+      image: null,
+      imageAlt: '',
+    },
+    verify: {
+      title: "One last check to know it's really you.",
+      description: 'Complete verification for one of your channels to wrap up your application.',
+      primaryLabel: 'Submit application',
+      primarySuccessLabel: 'Submitting...',
+      primarySuccessIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
+      image: verificationIllustrationUrl,
+      imageAlt: 'Verification trust illustration for the creator application verification step',
+    },
+    success: {
+      title: 'You’re on the list. We’ll take it from here.',
+      description: null,
+      primaryLabel: "Let's begin...",
+      primarySuccessLabel: "Let's begin...",
+      primarySuccessIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
+      image: submissionIllustrationUrl,
+      imageAlt: 'Completion illustration for the creator application submission success step',
+      tone: 'dark',
+      primaryVariant: 'black',
+    },
+  }
+  const creatorShellPreview = creatorShellPreviewSteps[creatorShellPreviewStep] ?? creatorShellPreviewSteps.entry
+  const creatorShellPreviewIndex = Math.max(0, creatorShellStepOrder.indexOf(creatorShellPreviewStep))
+  const creatorShellIsFirstStep = creatorShellPreviewIndex === 0
+  const creatorShellIsLastStep = creatorShellPreviewIndex === creatorShellStepOrder.length - 1
+  const handleCreatorShellPreviewStepChange = (value) => {
+    setCreatorShellPreviewStep(value)
+    setCreatorShellPreviewOpenRow(value === 'confirm' ? 'identity' : 'source')
+  }
+  const handleCreatorShellNext = () => {
+    if (creatorShellIsLastStep) {
+      handleCreatorShellPreviewStepChange('entry')
+      return
+    }
+
+    handleCreatorShellPreviewStepChange(creatorShellStepOrder[creatorShellPreviewIndex + 1])
+  }
+  const handleCreatorShellBack = () => {
+    handleCreatorShellPreviewStepChange(creatorShellStepOrder[Math.max(0, creatorShellPreviewIndex - 1)])
+  }
+  const creatorShellGatherRows = [
+    {
+      id: 'identity',
+      icon: IdCard,
+      label: 'Identity',
+      subtext: reviewFields.name,
+      trailing: <Badge variant="success" size="sm">Found</Badge>,
+      content: (
+        <p className="text-sm leading-relaxed text-text-secondary">
+          We found this detail from the submitted creator source.
+        </p>
+      ),
+    },
+    {
+      id: 'audience',
+      icon: Megaphone,
+      label: 'Audience',
+      subtext: '526K combined followers',
+      trailing: <Badge variant="success" size="sm">Found</Badge>,
+      content: (
+        <p className="text-sm leading-relaxed text-text-secondary">
+          Audience reach is available across the detected creator accounts.
+        </p>
+      ),
+    },
+    {
+      id: 'source',
+      icon: Link2,
+      label: 'Source',
+      subtext: 'Instagram',
+      trailing: <Badge variant="success" size="sm">Found</Badge>,
+      content: (
+        <p className="text-sm leading-relaxed text-text-secondary">
+          Instagram is the primary source for this shell preview.
+        </p>
+      ),
+    },
+  ]
+  const creatorShellReviewRows = [
+    {
+      id: 'identity',
+      icon: IdCard,
+      label: 'Creator name',
+      subtext: `${reviewFields.name} · ${reviewFields.url}`,
+      content: (
+        <div className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Creator name</p>
+          <p className="text-base font-semibold text-text">{reviewFields.name}</p>
+          <p className="text-sm leading-relaxed text-text-secondary">
+            {reviewFields.url}
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: 'audience',
+      icon: Megaphone,
+      label: 'Estimated reach',
+      subtext: '526,000 combined followers',
+      trailing: <span className="text-sm font-semibold text-text">526K</span>,
+      content: (
+        <div className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Estimated reach</p>
+          <p className="text-base font-semibold text-text">526K</p>
+          <p className="text-sm leading-relaxed text-text-secondary">526,000 combined followers</p>
+        </div>
+      ),
+    },
+    {
+      id: 'source',
+      icon: Link2,
+      label: 'Social accounts',
+      subtext: 'Instagram, TikTok, Pinterest',
+      trailing: <span className="text-sm font-semibold text-text">3</span>,
+      content: (
+        <div className="space-y-2">
+          {[
+            'Instagram: @culturecrave · 318,000 followers',
+            'TikTok: @culturecrave · 124,000 followers',
+            'Pinterest: @culturecrave · 84,000 followers',
+          ].map((account) => (
+            <p key={account} className="text-sm leading-relaxed text-text-secondary">{account}</p>
+          ))}
+        </div>
+      ),
+    },
+  ]
 
   const toggleTile = (value) => {
     setSelectedTiles((current) => (
@@ -1380,6 +1600,201 @@ export function ComponentLibrary() {
               />
             </div>
 
+            <Section title="Creator Onboarding Shell" description="Stable guided-story frame for previewing onboarding height before wiring it into the live flow.">
+              <div className="space-y-4">
+                <SegmentedControl
+                  label="Preview screen"
+                  value={creatorShellPreviewStep}
+                  options={creatorShellPreviewOptions}
+                  onChange={handleCreatorShellPreviewStepChange}
+                />
+
+                <CreatorOnboardingShell
+                  title={creatorShellPreview.title}
+                  description={creatorShellPreview.description}
+                  contentAlignment="center"
+                  contentKey={creatorShellPreviewStep}
+                  tone={creatorShellPreview.tone}
+                  aside={creatorShellPreview.image || creatorShellPreview.video ? (
+                    <div className="relative h-full min-h-96 overflow-hidden">
+                      {creatorShellPreview.video ? (
+                        <TimedShellVideo
+                          src={creatorShellPreview.video}
+                          label={creatorShellPreview.videoLabel}
+                        />
+                      ) : (
+                        <img
+                          src={creatorShellPreview.image}
+                          alt={creatorShellPreview.imageAlt}
+                          className="h-full w-full object-cover"
+                          loading="eager"
+                          decoding="async"
+                        />
+                      )}
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />
+                    </div>
+                  ) : null}
+                  footer={(
+                    <>
+                      {!creatorShellIsFirstStep ? (
+                        <Button size="lg" variant="secondary" onClick={handleCreatorShellBack}>
+                          Back
+                        </Button>
+                      ) : null}
+                      <Button
+                        size="lg"
+                        variant={creatorShellPreview.primaryVariant ?? 'primary'}
+                        success={previewPatternCtaSuccess}
+                        successLabel={creatorShellPreview.primarySuccessLabel}
+                        successIcon={creatorShellPreview.primarySuccessIcon}
+                        onClick={handleCreatorShellNext}
+                        className={[
+                          creatorShellIsFirstStep ? 'ml-auto' : '',
+                          creatorShellPreview.primaryVariant === 'black' ? '!border !border-white/12 !bg-neutral-950 !text-white hover:!bg-neutral-900' : '',
+                        ].filter(Boolean).join(' ')}
+                      >
+                        {creatorShellPreview.primaryLabel}
+                      </Button>
+                    </>
+                  )}
+                >
+                  <>
+                    {creatorShellPreviewStep === 'entry' ? (
+                      <div className="max-w-2xl space-y-6">
+                        <SocialUrlInput
+                          placeholder="Paste a creator URL or social profile"
+                          value={creatorUrl}
+                          onChange={(event) => setCreatorUrl(event.target.value)}
+                          description={getDetectedSocialAccountHelperText(creatorUrl)}
+                          inputClassName="text-lg"
+                          affixLineHeight="md"
+                        />
+                      </div>
+                    ) : null}
+                    {creatorShellPreviewStep === 'gather' ? (
+                      <div className="max-w-3xl space-y-6">
+                        <AccordionPanelGroup
+                          rows={creatorShellGatherRows}
+                          openRow={creatorShellPreviewOpenRow}
+                          onOpenRowChange={setCreatorShellPreviewOpenRow}
+                          allowCollapse={false}
+                          className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs"
+                        />
+                      </div>
+                    ) : null}
+                    {creatorShellPreviewStep === 'confirm' ? (
+                      <div className="max-w-3xl space-y-6">
+                        <AccordionPanelGroup
+                          rows={creatorShellReviewRows}
+                          openRow={creatorShellPreviewOpenRow}
+                          onOpenRowChange={setCreatorShellPreviewOpenRow}
+                          allowCollapse={false}
+                          className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs"
+                        />
+                      </div>
+                    ) : null}
+                    {creatorShellPreviewStep === 'preview' ? (
+                      <div>
+                        <CompactWysiwygStudio
+                          secondaryAction={null}
+                          primaryAction={null}
+                        />
+                      </div>
+                    ) : null}
+                    {creatorShellPreviewStep === 'verify' ? (
+                      <div className="max-w-3xl space-y-6">
+                        <div className="grid gap-4">
+                          {[
+                            {
+                              icon: tileIcon(Mail),
+                              title: 'Confirm with an Instagram DM',
+                              description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
+                            },
+                            {
+                              icon: tileIcon(BadgeCheck),
+                              title: 'Confirm with a creator email',
+                              description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+                            },
+                          ].map((method) => (
+                            <div key={method.title} className="rounded-xl border border-border bg-surface px-5 py-4">
+                              <div className="flex min-h-36 flex-col items-start gap-3">
+                                <span className="flex w-full items-start justify-between gap-3">
+                                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised text-xl">
+                                    {method.icon}
+                                  </span>
+                                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-surface" />
+                                </span>
+                                <span className="space-y-1">
+                                  <span className="block text-base font-medium text-text">{method.title}</span>
+                                  <span className="block text-sm text-text-secondary">{method.description}</span>
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <Checkbox
+                          checked={verificationConfirmed}
+                          onChange={(event) => setVerificationConfirmed(event.target.checked)}
+                          variant="plain"
+                          label="I control this creator account and want to continue with verification."
+                          description="This keeps the last step feeling intentional without adding a long security ceremony."
+                        />
+                      </div>
+                    ) : null}
+                    {creatorShellPreviewStep === 'success' ? (
+                      <div className="max-w-2xl space-y-8">
+                        <p className="text-base leading-relaxed text-white">
+                          Hold application ID CULTURE-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps.
+                        </p>
+                        <div className="space-y-3">
+                          {[
+                            {
+                              step: 'submitted',
+                              title: 'Submitted',
+                              description: 'Today your details move into review.',
+                              current: true,
+                            },
+                            {
+                              step: 'approved',
+                              title: 'Approved',
+                              description: 'If there’s a fit, we may reach out with next steps.',
+                            },
+                            {
+                              step: 'live',
+                              title: 'Live',
+                              description: 'When you’re ready.',
+                            },
+                          ].map((item) => (
+                            <div key={item.step} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                              <span
+                                className={[
+                                  'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
+                                  item.current
+                                    ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15'
+                                    : 'border-white/10 bg-white/5',
+                                ].join(' ')}
+                              >
+                                <span
+                                  className={[
+                                    'h-2.5 w-2.5 rounded-full',
+                                    item.current ? 'bg-gamification-gold-light' : 'bg-white/28',
+                                  ].join(' ')}
+                                />
+                              </span>
+                              <div className="space-y-1">
+                                <p className="text-sm font-medium text-white">{item.title}</p>
+                                <p className="text-sm leading-relaxed text-white/80">{item.description}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                </CreatorOnboardingShell>
+              </div>
+            </Section>
+
             <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
               <SingleFieldIntake
                 title="Where do your fans live?"
@@ -1500,7 +1915,7 @@ export function ComponentLibrary() {
               </section>
             </Section>
 
-            <Section title="Verification Step" description="Lightweight commitment and identity confirmation step before the final submission moment, with the Instagram DM path expanding inline.">
+            <Section title="Verification Step" description="Identity confirmation step before the final submission moment, matching the creator onboarding flow.">
               <VerificationStep
                 title="One last check to know it's really you."
                 description="Complete verification for one of your channels to wrap up your application."
@@ -1527,23 +1942,7 @@ export function ComponentLibrary() {
                   destinationHandle: '@raptive_community',
                   originHandle: '@culturecrave',
                 }}
-                reassurance={[
-                  {
-                    icon: miniIcon(BadgeCheck),
-                    title: 'Short confirmation',
-                    description: 'The creator receives a quick ownership check, not a full application form all over again.',
-                  },
-                  {
-                    icon: miniIcon(Rocket),
-                    title: 'Submission follows immediately',
-                    description: 'Once confirmed, the final step can feel exclusive and complete instead of stalled.',
-                  },
-                  {
-                    icon: miniIcon(ShieldCheck),
-                    title: 'Trust stays intact',
-                    description: 'The screen explains why verification exists so the momentum from preview does not collapse here.',
-                  },
-                ]}
+                showAside={false}
                 secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
                 primaryAction={{
                   label: 'Continue',
@@ -1554,7 +1953,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Submission Success" description="Exclusive completion state that closes the journey with confidence instead of a generic success message.">
+            <Section title="Submission Success" description="Completion state matching the creator onboarding flow.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
                 summary="Hold application ID CULTURE-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
@@ -1562,7 +1961,7 @@ export function ComponentLibrary() {
                   {
                     step: 'submitted',
                     title: 'Submitted',
-                    description: 'Today we received your details.',
+                    description: 'Today your details move into review.',
                     current: true,
                   },
                   {
@@ -1576,7 +1975,8 @@ export function ComponentLibrary() {
                     description: 'When you’re ready.',
                   },
                 ]}
-                secondaryAction={{ label: 'Start new application', variant: 'secondary' }}
+                showAside={false}
+                secondaryAction={null}
                 primaryAction={{
                   label: "Let's begin...",
                   variant: 'black',
