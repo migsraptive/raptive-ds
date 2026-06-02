@@ -28,7 +28,6 @@ const defaultFields = {
 const defaultColors = brandPreviewDefaults
 const defaultEditorColors = {
   brand: defaultColors.brand,
-  accent: defaultColors.accent,
 }
 
 const shapeOptions = [
@@ -43,13 +42,10 @@ export function CompactWysiwygStudio({
   primaryAction = { label: 'Continue to Verification' },
   secondaryAction = { label: 'Back', variant: 'secondary' },
 }) {
-  const detectedColors = {
-    brand: normalizeHexColor(brandAssets.palette?.[0]) ?? defaultEditorColors.brand,
-    accent: normalizeHexColor(brandAssets.palette?.[1]) ?? defaultEditorColors.accent,
-  }
+  const detectedBrandColor = normalizeHexColor(brandAssets.palette?.[0]) ?? defaultEditorColors.brand
 
   const [fields, setFields] = useState(defaultFields)
-  const [colors, setColors] = useState(detectedColors)
+  const [brandColor, setBrandColor] = useState(detectedBrandColor)
   const [avatarUrl, setAvatarUrl] = useState(null)
   const [avatarShape, setAvatarShape] = useState('circle')
   const [openPanel, setOpenPanel] = useState('community')
@@ -58,17 +54,12 @@ export function CompactWysiwygStudio({
     setFields((current) => ({ ...current, [key]: value }))
   }
 
-  const updateColor = (key, value) => {
-    setColors((current) => ({ ...current, [key]: value }))
-  }
-
-  const useDetectedColors = () => {
-    setColors(detectedColors)
+  const useDetectedBrandColor = () => {
+    setBrandColor(detectedBrandColor)
   }
 
   const previewThemeStyle = createPreviewThemeStyle({
-    brandColor: colors.brand,
-    accentColor: colors.accent,
+    brandColor,
   })
 
   const editorRows = [
@@ -142,32 +133,24 @@ export function CompactWysiwygStudio({
       id: 'colors',
       icon: Palette,
       label: 'Community colors',
-      subtext: 'Buttons, links, highlights',
+      subtext: 'Brand and generated accent',
       content: (
         <div className="space-y-3">
           <div className="flex items-start justify-between gap-3">
             <p className="text-xs leading-relaxed text-text-secondary">
-              Choose a few colors to preview how your community could feel. We’ll automatically create accessible tints, hover states, and text colors from your choices.
+              Choose the brand color to preview how your community could feel. We’ll automatically create the accessible accent tint, hover states, and text colors from it.
             </p>
-            <Button size="xs" variant="link" onClick={useDetectedColors}>
+            <Button size="xs" variant="link" onClick={useDetectedBrandColor}>
               Use detected
             </Button>
           </div>
           <ColorInput
             label="Brand Color"
-            description="Used for buttons, links, creator marks, and active community actions."
-            value={colors.brand}
+            description="Used for buttons, links, creator marks, and the generated highlight tint."
+            value={brandColor}
             layout="compact"
             fallbackColor={defaultEditorColors.brand}
-            onChange={(value) => updateColor('brand', value)}
-          />
-          <ColorInput
-            label="Accent Color"
-            description="Used for highlights, prompts, and special community moments."
-            value={colors.accent}
-            layout="compact"
-            fallbackColor={defaultEditorColors.accent}
-            onChange={(value) => updateColor('accent', value)}
+            onChange={setBrandColor}
           />
         </div>
       ),

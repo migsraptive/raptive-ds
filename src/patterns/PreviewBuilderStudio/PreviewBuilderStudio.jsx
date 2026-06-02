@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { ColorSwatchButton } from '../../components/ColorSwatchButton/ColorSwatchButton.jsx'
+import { ColorInput } from '../../components/ColorInput/ColorInput.jsx'
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 import { FormField } from '../../components/FormField/FormField.jsx'
 import { Select } from '../../components/Select/Select.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { Textarea } from '../../components/Textarea/Textarea.jsx'
-import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
+import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
+import { normalizeHexColor } from '../../utils/colorContrast.js'
 import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
 function studioCopy(vertical, creatorName) {
@@ -94,15 +95,15 @@ export function PreviewBuilderStudio({
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
   },
   brandAssets = {
-    palette: brandPreviewPalette,
+    palette: [brandPreviewDefaults.brand],
     items: ['Editorial food photography', 'Short-form social avatars', 'Warm serif wordmark'],
   },
 }) {
+  const detectedBrandColor = normalizeHexColor(brandAssets.palette?.[0]) ?? brandPreviewDefaults.brand
   const [fields, setFields] = useState(initialFields)
-  const [selectedPalette, setSelectedPalette] = useState(brandAssets.palette?.[1] ?? brandPreviewDefaults.accent)
+  const [brandColor, setBrandColor] = useState(detectedBrandColor)
   const previewThemeStyle = createPreviewThemeStyle({
-    brandColor: brandPreviewDefaults.brand,
-    accentColor: selectedPalette,
+    brandColor,
   })
 
   const contentModel = useMemo(
@@ -187,21 +188,13 @@ export function PreviewBuilderStudio({
                   />
                 </div>
 
-                <FormField
-                  label="Brand palette"
-                  description="Pick the accent color that should lead the first preview impression."
-                >
-                  <div className="grid grid-cols-3 gap-3">
-                    {brandAssets.palette?.map((color) => (
-                      <ColorSwatchButton
-                        key={color}
-                        color={color}
-                        selected={selectedPalette === color}
-                        onClick={() => setSelectedPalette(color)}
-                      />
-                    ))}
-                  </div>
-                </FormField>
+                <ColorInput
+                  label="Brand Color"
+                  description="Used for buttons, links, creator marks, and the generated highlight tint."
+                  value={brandColor}
+                  fallbackColor={brandPreviewDefaults.brand}
+                  onChange={setBrandColor}
+                />
 
                 <FormField
                   label="Asset signals"
@@ -229,15 +222,15 @@ export function PreviewBuilderStudio({
               <div className="space-y-1">
                 <p className="text-sm font-medium text-text">Live community preview</p>
                 <p className="text-sm leading-relaxed text-text-secondary">
-                  Name, summary, vertical, and palette selection update this mock in place.
+                  Name, summary, vertical, and brand color update this mock in place.
                 </p>
               </div>
               <div className="flex items-center gap-2 rounded-full border border-border bg-white px-3 py-2 shadow-xs">
                 <span className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
-                  Active accent
+                  Derived accent
                 </span>
                 <span className="preview-accent-surface h-3.5 w-3.5 rounded-full border border-black/10" />
-                <span className="text-xs font-mono text-text-secondary">{selectedPalette}</span>
+                <span className="text-xs font-mono text-text-secondary">{previewThemeStyle['--preview-accent']}</span>
               </div>
             </div>
 
@@ -249,7 +242,7 @@ export function PreviewBuilderStudio({
                   Preview frame
                 </span>
                 <span className="text-xs text-text-secondary">
-                  Accent updates now. Template theming can go deeper if this direction wins.
+                  Accent updates automatically from the brand color. Template theming can go deeper if this direction wins.
                 </span>
               </div>
 
@@ -299,7 +292,7 @@ export function PreviewBuilderStudio({
                 <div className="rounded-xl border border-border bg-surface px-4 py-3">
                   <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Theme signal</p>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    Palette selection currently affects preview chrome first, which is enough to validate the studio concept before deeper theming.
+                    Brand color affects preview chrome first, with accent generated as a lighter tint for highlights.
                   </p>
                 </div>
               </div>

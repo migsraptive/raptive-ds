@@ -12,6 +12,7 @@ const HOVER_DARK_MIX_WEIGHT = 0.16
 const ACTIVE_DARK_MIX_WEIGHT = 0.24
 const HOVER_LIGHT_MIX_WEIGHT = 0.12
 const ACTIVE_LIGHT_MIX_WEIGHT = 0.18
+const ACCENT_TINT_MIX_WEIGHT = 0.4
 const DARK_COLOR_LUMINANCE = 0.2
 
 function hexChannelToString(value) {
@@ -48,6 +49,10 @@ function deriveMutedColor(color) {
   return mixHexColors(color, colors.surface.DEFAULT, MUTED_MIX_WEIGHT)
 }
 
+function deriveAccentColor(color) {
+  return mixHexColors(color, colors.surface.DEFAULT, ACCENT_TINT_MIX_WEIGHT)
+}
+
 function deriveInteractiveColor(color, darkMixWeight, lightMixWeight) {
   const luminance = relativeLuminance(color) ?? 1
   const mixTarget = luminance <= DARK_COLOR_LUMINANCE ? colors.text.invert : colors.surface.invert
@@ -58,13 +63,13 @@ function deriveInteractiveColor(color, darkMixWeight, lightMixWeight) {
 
 export function createPreviewThemeStyle({
   brandColor = brandPreviewDefaults.brand,
-  accentColor = brandPreviewDefaults.accent,
+  accentColor,
   linkColor,
 } = {}) {
   const brand = getAccessibleColorPair(resolvePreviewColor(brandColor, brandPreviewDefaults.brand))
-  const accentBackground = resolvePreviewColor(accentColor, brandPreviewDefaults.accent)
+  const accentBackground = resolvePreviewColor(accentColor, deriveAccentColor(brand.background))
   const accentSoft = deriveSoftColor(accentBackground)
-  const accent = getAccessibleColorPair(accentSoft)
+  const accent = getAccessibleColorPair(accentBackground)
   const link = resolvePreviewColor(linkColor, brand.background) ?? brand.background
 
   return {
@@ -75,7 +80,7 @@ export function createPreviewThemeStyle({
     '--preview-brand-muted': deriveMutedColor(brand.background),
     '--preview-brand-hover': deriveInteractiveColor(brand.background, HOVER_DARK_MIX_WEIGHT, HOVER_LIGHT_MIX_WEIGHT),
     '--preview-brand-active': deriveInteractiveColor(brand.background, ACTIVE_DARK_MIX_WEIGHT, ACTIVE_LIGHT_MIX_WEIGHT),
-    // Accent remains preview-scoped unless a safe Discourse mapping is confirmed.
+    // Accent is a preview-scoped light tint of Brand Color unless an explicit override is provided.
     '--preview-accent': accentBackground,
     '--preview-accent-foreground': accent.foreground,
     '--preview-accent-soft': accentSoft,

@@ -133,7 +133,7 @@
     --preview-brand-muted: color-mix(in srgb, var(--preview-brand) 28%, var(--color-surface));
     --preview-brand-hover: var(--color-action-primary-hover);
     --preview-brand-active: var(--color-action-primary-active);
-    --preview-accent: var(--color-gold-light);
+    --preview-accent: color-mix(in srgb, var(--preview-brand) 40%, var(--color-surface));
     --preview-accent-foreground: var(--color-text);
     --preview-accent-soft: color-mix(in srgb, var(--preview-accent) 12%, var(--color-surface));
     --preview-accent-muted: color-mix(in srgb, var(--preview-accent) 28%, var(--color-surface));

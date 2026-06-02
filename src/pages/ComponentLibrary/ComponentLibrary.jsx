@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import {
   Award,
   Baby,
@@ -16,6 +17,7 @@ import {
   MessageSquare,
   Palette,
   Plane,
+  Plus,
   Rocket,
   RotateCcw,
   Search,
@@ -118,6 +120,54 @@ function Row({ label, children, className = '' }) {
   )
 }
 
+const shimmerTransition = {
+  repeat: Infinity,
+  duration: 1.45,
+  ease: 'easeInOut',
+}
+
+function FoundBadgeReveal() {
+  const shouldReduceMotion = useReducedMotion()
+  const motionProps = shouldReduceMotion
+    ? {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0, y: 4 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] },
+      }
+
+  return (
+    <motion.span {...motionProps}>
+      <Badge variant="success" size="sm">Found</Badge>
+    </motion.span>
+  )
+}
+
+function ShellRowShimmer({ label }) {
+  const shouldReduceMotion = useReducedMotion()
+
+  return (
+    <span
+      className="relative mt-1 block h-3 max-w-sm overflow-hidden rounded-full bg-border"
+      aria-label={label}
+    >
+      {!shouldReduceMotion ? (
+        <motion.span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent"
+          animate={{ x: ['0%', '420%'] }}
+          transition={shimmerTransition}
+        />
+      ) : null}
+      <span className="sr-only">{label}</span>
+    </span>
+  )
+}
+
 function DocumentationNote({ children }) {
   return (
     <aside className="rounded-xl border border-border bg-surface-sunken px-3 py-2 text-sm leading-relaxed text-text-secondary">
@@ -126,7 +176,7 @@ function DocumentationNote({ children }) {
   )
 }
 
-function TimedShellVideo({ src, label }) {
+function TimedShellVideo({ src, label, playbackRate = 1, pauseAfterMs = 3000 }) {
   const videoRef = useRef(null)
 
   useEffect(() => {
@@ -135,7 +185,7 @@ function TimedShellVideo({ src, label }) {
 
     video.pause()
     video.currentTime = 0
-    video.playbackRate = 1
+    video.playbackRate = playbackRate
 
     const playPromise = video.play()
     if (playPromise) {
@@ -144,13 +194,13 @@ function TimedShellVideo({ src, label }) {
 
     const pauseTimer = window.setTimeout(() => {
       video.pause()
-    }, 3000)
+    }, pauseAfterMs)
 
     return () => {
       window.clearTimeout(pauseTimer)
       video.pause()
     }
-  }, [src])
+  }, [pauseAfterMs, playbackRate, src])
 
   return (
     <video
@@ -171,11 +221,14 @@ const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
 const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
-const creatorShellStepOrder = ['entry', 'gather', 'confirm', 'preview', 'verify', 'success']
+const creatorShellStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
+const creatorShellGatherVideoLeadInMs = 2000
+const creatorShellGatherVideoPlaybackRate = 0.45
+const creatorShellGatherRowFetchMs = 700
+const creatorShellGatherResolvedPauseMs = 1000
 const creatorShellPreviewOptions = [
   { value: 'entry', label: 'Entry' },
   { value: 'gather', label: 'Gather' },
-  { value: 'confirm', label: 'Confirm' },
   { value: 'preview', label: 'Preview' },
   { value: 'verify', label: 'Verify' },
   { value: 'success', label: 'Success' },
@@ -208,6 +261,61 @@ const socialUrlExamples = [
   { label: 'Substack', value: 'https://culturecrave.substack.com' },
   { label: 'Default website', value: 'https://www.culturecrave.com' },
 ]
+const creatorShellSocialAccountDefaults = [
+  {
+    platform: 'Instagram',
+    handle: '@culturecrave',
+    followers: '318,000 followers',
+  },
+  {
+    platform: 'TikTok',
+    handle: '@culturecrave',
+    followers: '124,000 followers',
+  },
+  {
+    platform: 'Pinterest',
+    handle: '@culturecrave',
+    followers: '84,000 followers',
+  },
+  {
+    platform: 'YouTube',
+    handle: '@culturecrave',
+    followers: 'Followers unavailable',
+  },
+  {
+    platform: 'Facebook',
+    handle: '@culturecrave',
+    followers: 'Followers unavailable',
+  },
+]
+const fetchConfirmationDemoAccountsSeed = [
+  {
+    id: 'instagram',
+    platform: 'Instagram',
+    handle: '@culturecrave',
+    url: 'https://instagram.com/culturecrave',
+    followers: '318,000 followers',
+  },
+  {
+    id: 'tiktok',
+    platform: 'TikTok',
+    handle: '@culturecrave',
+    url: 'https://tiktok.com/@culturecrave',
+    followers: '124,000 followers',
+  },
+  {
+    id: 'pinterest',
+    platform: 'Pinterest',
+    handle: '@culturecrave',
+    url: 'https://pinterest.com/culturecrave',
+    followers: '84,000 followers',
+  },
+]
+
+function getFetchConfirmationDemoAccounts() {
+  return fetchConfirmationDemoAccountsSeed.map((account) => ({ ...account }))
+}
+
 function tokenTypographyLabel(tokenName) {
   const token = typographyTokens.fontSize[tokenName]
   if (!token) return tokenName
@@ -235,8 +343,7 @@ export function ComponentLibrary() {
   const [selectedGoals, setSelectedGoals] = useState(['audience-growth', 'community'])
   const [newsletterOptIn, setNewsletterOptIn] = useState(true)
   const [brandColor, setBrandColor] = useState(brandPreviewDefaults.brand)
-  const [accentColor, setAccentColor] = useState(brandPreviewDefaults.accent)
-  const [selectedSwatch, setSelectedSwatch] = useState(brandPreviewDefaults.accent)
+  const [selectedSwatch, setSelectedSwatch] = useState(brandPreviewDefaults.brand)
   const [demoAvatar, setDemoAvatar] = useState(null)
   const [demoShape, setDemoShape] = useState('circle')
   const [accordionDemoOpenRow, setAccordionDemoOpenRow] = useState('profile')
@@ -247,6 +354,14 @@ export function ComponentLibrary() {
   const [previewPatternCtaSuccess, setPreviewPatternCtaSuccess] = useState(false)
   const [creatorShellPreviewStep, setCreatorShellPreviewStep] = useState('entry')
   const [creatorShellPreviewOpenRow, setCreatorShellPreviewOpenRow] = useState('identity')
+  const [creatorShellGatherResolvedRows, setCreatorShellGatherResolvedRows] = useState([])
+  const [creatorShellSocialAccountPlatforms, setCreatorShellSocialAccountPlatforms] = useState(['Instagram', 'TikTok', 'Pinterest'])
+  const [creatorShellHandleOverrides, setCreatorShellHandleOverrides] = useState({})
+  const [creatorShellEditingHandlePlatform, setCreatorShellEditingHandlePlatform] = useState(null)
+  const [creatorShellHandleDraft, setCreatorShellHandleDraft] = useState('')
+  const [fetchConfirmationDemoAccounts, setFetchConfirmationDemoAccounts] = useState(getFetchConfirmationDemoAccounts)
+  const [fetchConfirmationEditingAccountId, setFetchConfirmationEditingAccountId] = useState(null)
+  const [fetchConfirmationEditDraft, setFetchConfirmationEditDraft] = useState({ platform: '', handle: '', url: '' })
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [reviewFields] = useState({
@@ -256,6 +371,94 @@ export function ComponentLibrary() {
     audience: 'Community-led',
     summary: 'Food creator and community builder helping families cook smarter and gather more often.',
   })
+  const creatorShellSocialAccounts = creatorShellSocialAccountPlatforms.map((platform) => {
+    const account = creatorShellSocialAccountDefaults.find((item) => item.platform === platform)
+    if (!account) return null
+
+    return {
+      ...account,
+      handle: creatorShellHandleOverrides[platform] ?? account.handle,
+    }
+  }).filter(Boolean)
+  const nextCreatorShellSocialAccount = creatorShellSocialAccountDefaults.find((account) => (
+    !creatorShellSocialAccountPlatforms.includes(account.platform)
+  ))
+  const creatorShellSocialAccountContent = (
+    <div className="space-y-3">
+      <div className="space-y-2">
+        {creatorShellSocialAccounts.map((account) => (
+          <div key={account.platform} className="flex items-baseline justify-between gap-3 text-sm leading-relaxed text-text-secondary">
+            <div className="min-w-0">
+              {account.platform}:{' '}
+              {creatorShellEditingHandlePlatform === account.platform ? (
+                <input
+                  className="inline-block h-6 w-36 rounded-md border border-border bg-surface px-1.5 text-sm font-semibold leading-sm text-text outline-none transition-colors duration-150 focus:border-brand focus:ring-1 focus:ring-brand"
+                  value={creatorShellHandleDraft}
+                  onChange={(event) => setCreatorShellHandleDraft(event.target.value)}
+                  onBlur={saveCreatorShellHandleEdit}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.currentTarget.blur()
+                    }
+                  }}
+                  autoFocus
+                  aria-label={`${account.platform} handle`}
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  onClick={() => startCreatorShellHandleEdit(account)}
+                  aria-label={`Edit ${account.platform} handle`}
+                >
+                  <span>{account.handle}</span>
+                  <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
+                    Edit
+                  </span>
+                </button>
+              )}{' '}
+              · {account.followers}
+            </div>
+            <button
+              type="button"
+              className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+              onClick={() => removeCreatorShellSocialAccount(account.platform)}
+              aria-label={`Remove ${account.platform} account`}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {nextCreatorShellSocialAccount ? (
+        <Button
+          size="sm"
+          variant="secondary"
+          iconBefore={<LucideIcon icon={Plus} size="sm" />}
+          onClick={addCreatorShellSocialAccount}
+        >
+          Add another account
+        </Button>
+      ) : null}
+    </div>
+  )
+  const creatorShellSocialAccountSummary = creatorShellSocialAccounts
+    .map((account) => account.platform)
+    .join(', ') || 'No accounts added'
+  const creatorShellIdentityContent = (
+    <div className="space-y-1">
+      <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Creator name</p>
+      <p className="text-base font-semibold text-text">{reviewFields.name}</p>
+      <p className="text-sm leading-relaxed text-text-secondary">
+        {reviewFields.url}
+      </p>
+    </div>
+  )
+  const creatorShellGatherLoadingCopy = {
+    identity: 'Matching the submitted URL to a creator profile.',
+    source: 'Checking connected social accounts.',
+  }
   const creatorShellPreviewSteps = {
     entry: {
       title: 'Where do your fans live?',
@@ -286,7 +489,7 @@ export function ComponentLibrary() {
     },
     preview: {
       title: 'We used your brand to jumpstart your community. How does it look?',
-      description: 'Pick your community name carefully. You can edit colors below and see how it feels.',
+      description: 'Pick your community name carefully. You can adjust the brand color below and see how it feels.',
       primaryLabel: 'Continue to Verification',
       primarySuccessLabel: "Let's verify...",
       primarySuccessIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
@@ -315,12 +518,17 @@ export function ComponentLibrary() {
     },
   }
   const creatorShellPreview = creatorShellPreviewSteps[creatorShellPreviewStep] ?? creatorShellPreviewSteps.entry
+  const isCreatorShellGatherRowResolved = (rowId) => creatorShellGatherResolvedRows.includes(rowId)
+  const creatorShellGatherResolved = isCreatorShellGatherRowResolved('source')
+  const creatorShellHeaderPreview = creatorShellPreviewStep === 'gather' && creatorShellGatherResolved
+    ? creatorShellPreviewSteps.confirm
+    : creatorShellPreview
   const creatorShellPreviewIndex = Math.max(0, creatorShellStepOrder.indexOf(creatorShellPreviewStep))
   const creatorShellIsFirstStep = creatorShellPreviewIndex === 0
   const creatorShellIsLastStep = creatorShellPreviewIndex === creatorShellStepOrder.length - 1
   const handleCreatorShellPreviewStepChange = (value) => {
     setCreatorShellPreviewStep(value)
-    setCreatorShellPreviewOpenRow(value === 'confirm' ? 'identity' : 'source')
+    setCreatorShellPreviewOpenRow(value === 'gather' ? 'identity' : 'source')
   }
   const handleCreatorShellNext = () => {
     if (creatorShellIsLastStep) {
@@ -333,94 +541,129 @@ export function ComponentLibrary() {
   const handleCreatorShellBack = () => {
     handleCreatorShellPreviewStepChange(creatorShellStepOrder[Math.max(0, creatorShellPreviewIndex - 1)])
   }
+  const handleCreatorShellGatherOpenRowChange = (nextOpenRow, row) => {
+    if (!isCreatorShellGatherRowResolved(row?.id)) return
+
+    setCreatorShellPreviewOpenRow(nextOpenRow)
+  }
+  function startCreatorShellHandleEdit(account) {
+    setCreatorShellEditingHandlePlatform(account.platform)
+    setCreatorShellHandleDraft(account.handle)
+  }
+  function saveCreatorShellHandleEdit() {
+    if (!creatorShellEditingHandlePlatform) return
+
+    setCreatorShellHandleOverrides((current) => ({
+      ...current,
+      [creatorShellEditingHandlePlatform]: creatorShellHandleDraft.trim() || current[creatorShellEditingHandlePlatform] || '@culturecrave',
+    }))
+    setCreatorShellEditingHandlePlatform(null)
+    setCreatorShellHandleDraft('')
+  }
+  function removeCreatorShellSocialAccount(platform) {
+    setCreatorShellSocialAccountPlatforms((current) => current.filter((item) => item !== platform))
+    if (creatorShellEditingHandlePlatform === platform) {
+      setCreatorShellEditingHandlePlatform(null)
+      setCreatorShellHandleDraft('')
+    }
+  }
+  function addCreatorShellSocialAccount() {
+    if (!nextCreatorShellSocialAccount) return
+
+    setCreatorShellSocialAccountPlatforms((current) => [...current, nextCreatorShellSocialAccount.platform])
+  }
+  const startFetchConfirmationAccountEdit = (accountId, account) => {
+    setFetchConfirmationEditingAccountId(accountId)
+    setFetchConfirmationEditDraft({
+      platform: account.platform,
+      handle: account.handle,
+      url: account.url,
+    })
+  }
+  const cancelFetchConfirmationAccountEdit = () => {
+    setFetchConfirmationEditingAccountId(null)
+    setFetchConfirmationEditDraft({ platform: '', handle: '', url: '' })
+  }
+  const saveFetchConfirmationAccountEdit = () => {
+    setFetchConfirmationDemoAccounts((current) => current.map((account) => (
+      account.id === fetchConfirmationEditingAccountId
+        ? {
+            ...account,
+            platform: fetchConfirmationEditDraft.platform || account.platform,
+            handle: fetchConfirmationEditDraft.handle.trim() || account.handle,
+            url: fetchConfirmationEditDraft.url.trim() || account.url,
+          }
+        : account
+    )))
+    cancelFetchConfirmationAccountEdit()
+  }
+  const removeFetchConfirmationAccount = (accountId) => {
+    setFetchConfirmationDemoAccounts((current) => current.filter((account) => account.id !== accountId))
+    if (fetchConfirmationEditingAccountId === accountId) {
+      cancelFetchConfirmationAccountEdit()
+    }
+  }
+  const addFetchConfirmationAccount = () => {
+    const existingAccountIds = new Set(fetchConfirmationDemoAccounts.map((account) => account.id))
+    const nextDetectedAccount = fetchConfirmationDemoAccountsSeed.find((account) => !existingAccountIds.has(account.id))
+
+    if (nextDetectedAccount) {
+      setFetchConfirmationDemoAccounts((current) => [...current, { ...nextDetectedAccount }])
+      startFetchConfirmationAccountEdit(nextDetectedAccount.id, nextDetectedAccount)
+    }
+  }
+
+  useEffect(() => {
+    if (creatorShellPreviewStep !== 'gather') {
+      setCreatorShellGatherResolvedRows([])
+      return undefined
+    }
+
+    setCreatorShellGatherResolvedRows([])
+    setCreatorShellPreviewOpenRow(null)
+    const identityResolveDelay = creatorShellGatherVideoLeadInMs + creatorShellGatherRowFetchMs
+    const sourceLoadDelay = identityResolveDelay + creatorShellGatherResolvedPauseMs
+    const sourceResolveDelay = sourceLoadDelay + creatorShellGatherRowFetchMs
+    const timers = [
+      window.setTimeout(() => {
+        setCreatorShellGatherResolvedRows(['identity'])
+        setCreatorShellPreviewOpenRow('identity')
+      }, identityResolveDelay),
+      window.setTimeout(() => {
+        setCreatorShellGatherResolvedRows(['identity', 'source'])
+        setCreatorShellPreviewOpenRow('source')
+      }, sourceResolveDelay),
+    ]
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer))
+  }, [creatorShellPreviewStep])
+
   const creatorShellGatherRows = [
     {
       id: 'identity',
       icon: IdCard,
       label: 'Identity',
-      subtext: reviewFields.name,
-      trailing: <Badge variant="success" size="sm">Found</Badge>,
-      content: (
-        <p className="text-sm leading-relaxed text-text-secondary">
-          We found this detail from the submitted creator source.
-        </p>
-      ),
-    },
-    {
-      id: 'audience',
-      icon: Megaphone,
-      label: 'Audience',
-      subtext: '526K combined followers',
-      trailing: <Badge variant="success" size="sm">Found</Badge>,
-      content: (
-        <p className="text-sm leading-relaxed text-text-secondary">
-          Audience reach is available across the detected creator accounts.
-        </p>
-      ),
-    },
-    {
-      id: 'source',
-      icon: Link2,
-      label: 'Source',
-      subtext: 'Instagram',
-      trailing: <Badge variant="success" size="sm">Found</Badge>,
-      content: (
-        <p className="text-sm leading-relaxed text-text-secondary">
-          Instagram is the primary source for this shell preview.
-        </p>
-      ),
-    },
-  ]
-  const creatorShellReviewRows = [
-    {
-      id: 'identity',
-      icon: IdCard,
-      label: 'Creator name',
-      subtext: `${reviewFields.name} · ${reviewFields.url}`,
-      content: (
-        <div className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Creator name</p>
-          <p className="text-base font-semibold text-text">{reviewFields.name}</p>
-          <p className="text-sm leading-relaxed text-text-secondary">
-            {reviewFields.url}
-          </p>
-        </div>
-      ),
-    },
-    {
-      id: 'audience',
-      icon: Megaphone,
-      label: 'Estimated reach',
-      subtext: '526,000 combined followers',
-      trailing: <span className="text-sm font-semibold text-text">526K</span>,
-      content: (
-        <div className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Estimated reach</p>
-          <p className="text-base font-semibold text-text">526K</p>
-          <p className="text-sm leading-relaxed text-text-secondary">526,000 combined followers</p>
-        </div>
-      ),
+      subtext: isCreatorShellGatherRowResolved('identity')
+        ? `${reviewFields.name} · ${reviewFields.url}`
+        : <ShellRowShimmer label={creatorShellGatherLoadingCopy.identity} />,
+      trailing: isCreatorShellGatherRowResolved('identity') ? <FoundBadgeReveal /> : null,
+      content: isCreatorShellGatherRowResolved('identity')
+        ? creatorShellIdentityContent
+        : null,
     },
     {
       id: 'source',
       icon: Link2,
       label: 'Social accounts',
-      subtext: 'Instagram, TikTok, Pinterest',
-      trailing: <span className="text-sm font-semibold text-text">3</span>,
-      content: (
-        <div className="space-y-2">
-          {[
-            'Instagram: @culturecrave · 318,000 followers',
-            'TikTok: @culturecrave · 124,000 followers',
-            'Pinterest: @culturecrave · 84,000 followers',
-          ].map((account) => (
-            <p key={account} className="text-sm leading-relaxed text-text-secondary">{account}</p>
-          ))}
-        </div>
-      ),
+      subtext: isCreatorShellGatherRowResolved('source')
+        ? creatorShellSocialAccountSummary
+        : <ShellRowShimmer label={creatorShellGatherLoadingCopy.source} />,
+      trailing: isCreatorShellGatherRowResolved('source') ? <FoundBadgeReveal /> : null,
+      content: isCreatorShellGatherRowResolved('source')
+        ? creatorShellSocialAccountContent
+        : null,
     },
   ]
-
   const toggleTile = (value) => {
     setSelectedTiles((current) => (
       current.includes(value)
@@ -891,8 +1134,8 @@ export function ComponentLibrary() {
                     {
                       id: 'theme',
                       icon: Palette,
-                      label: 'Theme colors',
-                      subtext: 'Brand and accent',
+                      label: 'Brand color',
+                      subtext: 'Generated accent tint',
                       content: (
                         <ColorInput
                           label="Brand Color"
@@ -914,8 +1157,8 @@ export function ComponentLibrary() {
 
             <Section title="Color Swatch Button" description="Reusable palette-choice control for theme and brand-preview flows.">
               <FormField
-                label="Brand palette"
-                description="Pick the accent color that should lead the first preview impression."
+                label="Detected brand color"
+                description="Use swatches when a detected color needs a compact visual confirmation."
               >
                 <div className="grid gap-3 sm:grid-cols-3">
                   {brandPreviewPalette.map((color) => (
@@ -931,20 +1174,13 @@ export function ComponentLibrary() {
             </Section>
 
             <Section title="Color Input" description="Hex entry plus native color picker with automatic black/white foreground guidance.">
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="max-w-xl">
                 <ColorInput
                   label="Brand Color"
-                  description="Used for buttons, links, creator marks, and active community actions."
+                  description="Used for buttons, links, creator marks, and the generated highlight tint."
                   value={brandColor}
                   fallbackColor={brandPreviewDefaults.brand}
                   onChange={setBrandColor}
-                />
-                <ColorInput
-                  label="Accent Color"
-                  description="Used for highlights, prompts, and special community moments."
-                  value={accentColor}
-                  fallbackColor={brandPreviewDefaults.accent}
-                  onChange={setAccentColor}
                 />
               </div>
             </Section>
@@ -1610,18 +1846,22 @@ export function ComponentLibrary() {
                 />
 
                 <CreatorOnboardingShell
-                  title={creatorShellPreview.title}
-                  description={creatorShellPreview.description}
-                  contentAlignment="center"
+                  title={creatorShellHeaderPreview.title}
+                  description={creatorShellHeaderPreview.description}
+                  contentAlignment={creatorShellPreviewStep === 'gather' ? 'start' : 'center'}
+                  headerClassName={creatorShellPreviewStep === 'gather' ? 'pt-6' : ''}
+                  contentClassName={creatorShellPreviewStep === 'gather' ? 'min-h-80' : ''}
                   contentKey={creatorShellPreviewStep}
                   tone={creatorShellPreview.tone}
                   aside={creatorShellPreview.image || creatorShellPreview.video ? (
                     <div className="relative h-full min-h-96 overflow-hidden">
                       {creatorShellPreview.video ? (
-                        <TimedShellVideo
-                          src={creatorShellPreview.video}
-                          label={creatorShellPreview.videoLabel}
-                        />
+                          <TimedShellVideo
+                            src={creatorShellPreview.video}
+                            label={creatorShellPreview.videoLabel}
+                            playbackRate={creatorShellPreviewStep === 'gather' ? creatorShellGatherVideoPlaybackRate : 1}
+                            pauseAfterMs={creatorShellPreviewStep === 'gather' ? creatorShellGatherVideoLeadInMs : 3000}
+                          />
                       ) : (
                         <img
                           src={creatorShellPreview.image}
@@ -1676,18 +1916,7 @@ export function ComponentLibrary() {
                         <AccordionPanelGroup
                           rows={creatorShellGatherRows}
                           openRow={creatorShellPreviewOpenRow}
-                          onOpenRowChange={setCreatorShellPreviewOpenRow}
-                          allowCollapse={false}
-                          className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs"
-                        />
-                      </div>
-                    ) : null}
-                    {creatorShellPreviewStep === 'confirm' ? (
-                      <div className="max-w-3xl space-y-6">
-                        <AccordionPanelGroup
-                          rows={creatorShellReviewRows}
-                          openRow={creatorShellPreviewOpenRow}
-                          onOpenRowChange={setCreatorShellPreviewOpenRow}
+                          onOpenRowChange={handleCreatorShellGatherOpenRowChange}
                           allowCollapse={false}
                           className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs"
                         />
@@ -1823,6 +2052,14 @@ export function ComponentLibrary() {
             <Section title="Data Gathering Review" description="Exploratory staged loading state that resolves creator signals inline before the next confirmation step.">
               <DataGatheringReview
                 detectedSource="Instagram"
+                socialAccounts={fetchConfirmationDemoAccounts}
+                onSocialAccountChange={(accountId, patch) => {
+                  setFetchConfirmationDemoAccounts((current) => current.map((account) => (
+                    account.id === accountId ? { ...account, ...patch } : account
+                  )))
+                }}
+                onAddSocialAccount={addFetchConfirmationAccount}
+                onRemoveSocialAccount={removeFetchConfirmationAccount}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{
                   label: 'Continue',
@@ -1842,37 +2079,15 @@ export function ComponentLibrary() {
                   reachDetail: '526,000 combined followers',
                 }}
                 website={reviewFields.url}
-                accounts={[
-                  {
-                    id: 'instagram',
-                    platform: 'Instagram',
-                    handle: '@culturecrave',
-                    url: 'https://instagram.com/culturecrave',
-                    followers: '318,000 followers',
-                  },
-                  {
-                    id: 'tiktok',
-                    platform: 'TikTok',
-                    handle: '@culturecrave',
-                    url: 'https://tiktok.com/@culturecrave',
-                    followers: '124,000 followers',
-                  },
-                  {
-                    id: 'pinterest',
-                    platform: 'Pinterest',
-                    handle: '@culturecrave',
-                    url: 'https://pinterest.com/culturecrave',
-                    followers: '84,000 followers',
-                  },
-                ]}
-                editingField={null}
-                editDraft=""
-                onEditDraftChange={() => {}}
-                onStartEditing={() => {}}
-                onCancelEditing={() => {}}
-                onSaveEditing={() => {}}
-                onAddAccount={() => {}}
-                onRemoveAccount={() => {}}
+                accounts={fetchConfirmationDemoAccounts}
+                editingField={fetchConfirmationEditingAccountId}
+                editDraft={fetchConfirmationEditDraft}
+                onEditDraftChange={setFetchConfirmationEditDraft}
+                onStartEditing={startFetchConfirmationAccountEdit}
+                onCancelEditing={cancelFetchConfirmationAccountEdit}
+                onSaveEditing={saveFetchConfirmationAccountEdit}
+                onAddAccount={addFetchConfirmationAccount}
+                onRemoveAccount={removeFetchConfirmationAccount}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{
                   label: 'Looks right',
@@ -1897,7 +2112,7 @@ export function ComponentLibrary() {
                           We used your brand to jumpstart your community. How does it look?
                         </h2>
                         <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                          Pick your community name carefully. You can edit colors below and see how it feels.
+                          Pick your community name carefully. You can adjust the brand color below and see how it feels.
                         </p>
                       </div>
                     </div>

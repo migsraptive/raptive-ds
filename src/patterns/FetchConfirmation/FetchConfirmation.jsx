@@ -6,6 +6,7 @@ import pinterestRoundLogoUrl from '../../assets/social/pinterest-round.png'
 import tiktokRoundLogoUrl from '../../assets/social/tiktok-round.png'
 import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
 import { Button } from '../../components/Button/Button.jsx'
+import { Select } from '../../components/Select/Select.jsx'
 import { TextInput } from '../../components/TextInput/TextInput.jsx'
 
 const revealTransition = {
@@ -18,6 +19,17 @@ const layoutSpring = {
   stiffness: 280,
   damping: 28,
 }
+
+const socialPlatformOptions = [
+  { value: 'Instagram', label: 'Instagram' },
+  { value: 'TikTok', label: 'TikTok' },
+  { value: 'Pinterest', label: 'Pinterest' },
+  { value: 'YouTube', label: 'YouTube' },
+  { value: 'X/Twitter', label: 'X/Twitter' },
+  { value: 'Facebook', label: 'Facebook' },
+  { value: 'Substack', label: 'Substack' },
+  { value: 'Website', label: 'Website' },
+]
 
 function SocialPlatformMark({ platform }) {
   const logoMap = {
@@ -147,13 +159,28 @@ function AccordionAccountContent({
   if (isEditing) {
     return (
       <div className="space-y-3">
+        <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
+          <Select
+            label="Platform"
+            value={draft.platform ?? account.platform}
+            onChange={(event) => onDraftChange({ ...draft, platform: event.target.value })}
+            options={socialPlatformOptions}
+            placeholder=""
+          />
+          <TextInput
+            ref={handleInputRef}
+            label="Handle"
+            value={draft.handle ?? account.handle}
+            onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
+            inputClassName="text-base font-semibold leading-snug"
+          />
+        </div>
         <TextInput
-          ref={handleInputRef}
-          value={draft.handle}
-          onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
-          inputClassName="text-base font-semibold leading-snug"
+          label="URL"
+          value={draft.url ?? account.url}
+          onChange={(event) => onDraftChange({ ...draft, url: event.target.value })}
         />
-        <p className="truncate text-sm text-text-secondary">{account.url}</p>
+        <p className="truncate text-sm text-text-secondary">{account.followers}</p>
         <div className="flex items-center gap-2">
           <Button size="sm" variant="secondary" fullWidth onClick={onConfirm}>Save</Button>
           <Button size="sm" variant="ghost" className="text-text-action-subtle" onClick={onCancel}>Cancel</Button>
@@ -237,23 +264,29 @@ function AccountCard({
               {isEditing ? (
                 <>
                   <div className="min-w-0">
-                    <div className="flex items-end gap-2">
-                      <SectionLabel>{account.platform}</SectionLabel>
-                      <span className="text-xs font-medium text-text-secondary whitespace-nowrap">
-                        {account.followers}
-                      </span>
-                    </div>
-
-                    <div className="mt-2">
+                    <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
+                      <Select
+                        label="Platform"
+                        value={draft.platform ?? account.platform}
+                        onChange={(event) => onDraftChange({ ...draft, platform: event.target.value })}
+                        options={socialPlatformOptions}
+                        placeholder=""
+                      />
                       <TextInput
                         ref={handleInputRef}
-                        value={draft.handle}
+                        label="Handle"
+                        value={draft.handle ?? account.handle}
                         onChange={(event) => onDraftChange({ ...draft, handle: event.target.value })}
                         inputClassName="text-lg font-semibold tracking-tight"
                       />
                     </div>
-
-                    <p className="mt-0.5 truncate text-sm text-text-secondary">{account.url}</p>
+                    <TextInput
+                      label="URL"
+                      value={draft.url ?? account.url}
+                      onChange={(event) => onDraftChange({ ...draft, url: event.target.value })}
+                      className="mt-3"
+                    />
+                    <p className="mt-1 truncate text-sm text-text-secondary">{account.followers}</p>
                   </div>
 
                   <div className="flex items-center gap-2">

@@ -13,7 +13,6 @@ export function StepLayout({
   progressMeter = null,
   aside = null,
   children,
-  showFooterDivider = true,
   primaryAction = { label: 'Continue' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
@@ -35,8 +34,13 @@ export function StepLayout({
         </div>
       )}
 
-      <div className="grid gap-8 p-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:p-8">
-        {/* no token available: generic step layout reserves a fixed aside width. */}
+      {/* no token available: generic step layout reserves a fixed aside width when aside content exists. */}
+      <div
+        className={[
+          'grid gap-8 p-6 lg:p-8',
+          aside ? 'lg:grid-cols-[minmax(0,1fr)_320px]' : '',
+        ].filter(Boolean).join(' ')}
+      >
         <div className="flex h-full flex-col">
           <div className="space-y-8">
             {progressMeter}
@@ -69,10 +73,7 @@ export function StepLayout({
           </div>
 
           <footer
-            className={[
-              'mt-auto flex w-full flex-col items-start justify-between gap-3 pt-5 sm:flex-row sm:items-center',
-              showFooterDivider ? 'border-t border-border' : '',
-            ].filter(Boolean).join(' ')}
+            className="mt-auto flex w-full flex-col items-start justify-between gap-3 pt-5 sm:flex-row sm:items-center"
           >
             {secondaryAction ? (
               <Button

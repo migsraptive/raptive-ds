@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BadgeCheck, Check, Eye, Mail, Rocket, Search, Send, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { getDetectedSocialAccountHelperText } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
@@ -45,6 +46,52 @@ const stepTransition = {
   ease: [0.2, 0.9, 0.3, 1],
 }
 
+const gatherVideoLeadInMs = 2000
+const gatherVideoPlaybackRate = 0.45
+
+function GatherVideoAside() {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+
+    video.pause()
+    video.currentTime = 0
+    video.playbackRate = gatherVideoPlaybackRate
+
+    const playPromise = video.play()
+    if (playPromise) {
+      playPromise.catch(() => {})
+    }
+
+    const pauseTimer = window.setTimeout(() => {
+      video.pause()
+    }, gatherVideoLeadInMs)
+
+    return () => {
+      window.clearTimeout(pauseTimer)
+      video.pause()
+    }
+  }, [])
+
+  return (
+    /* no token available: full-height video rail uses the same fixed desktop minimum as the previous gather illustration rail. */
+    <div className="relative h-full min-h-[620px] overflow-hidden">
+      <video
+        ref={videoRef}
+        src={wonderVideoUrl}
+        className="h-full w-full object-cover"
+        muted
+        playsInline
+        preload="metadata"
+        aria-label="Fantastical garden video reveal for the creator data gathering step"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />
+    </div>
+  )
+}
+
 function getDetectedSourceLabel(value) {
   const normalizedValue = value.trim().toLowerCase()
 
@@ -68,7 +115,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
   const [editingFetchAccountId, setEditingFetchAccountId] = useState(null)
-  const [fetchEditDraft, setFetchEditDraft] = useState({ handle: '' })
+  const [fetchEditDraft, setFetchEditDraft] = useState({ platform: '', handle: '', url: '' })
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
   const actionTimeoutRef = useRef(null)
   const instagramAccount = initialAccounts.find((account) => account.platform === 'Instagram')
@@ -127,21 +174,36 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   const startEditingFetchAccount = (accountId, account) => {
     setEditingFetchAccountId(accountId)
-    setFetchEditDraft({ handle: account.handle })
+    setFetchEditDraft({
+      platform: account.platform,
+      handle: account.handle,
+      url: account.url,
+    })
   }
 
   const cancelEditingFetchAccount = () => {
     setEditingFetchAccountId(null)
-    setFetchEditDraft({ handle: '' })
+    setFetchEditDraft({ platform: '', handle: '', url: '' })
   }
 
   const saveEditingFetchAccount = () => {
     setFetchAccounts((current) => current.map((account) => (
       account.id === editingFetchAccountId
-        ? { ...account, handle: fetchEditDraft.handle.trim() || account.handle }
+        ? {
+            ...account,
+            platform: fetchEditDraft.platform || account.platform,
+            handle: fetchEditDraft.handle.trim() || account.handle,
+            url: fetchEditDraft.url.trim() || account.url,
+          }
         : account
     )))
     cancelEditingFetchAccount()
+  }
+
+  const updateFetchAccount = (accountId, patch) => {
+    setFetchAccounts((current) => current.map((account) => (
+      account.id === accountId ? { ...account, ...patch } : account
+    )))
   }
 
   const removeFetchAccount = (accountId) => {
@@ -157,6 +219,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
     if (nextDetectedAccount) {
       setFetchAccounts((current) => [...current, { ...nextDetectedAccount }])
+      startEditingFetchAccount(nextDetectedAccount.id, nextDetectedAccount)
     }
   }
 
@@ -220,6 +283,13 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         detectedSource={getDetectedSourceLabel(creatorUrl)}
         submittedSourceValue={creatorUrl}
         progressMeter={progressMeter}
+        rowRevealDelay={gatherVideoLeadInMs}
+        rowPresentation="accordion"
+        aside={<GatherVideoAside />}
+        socialAccounts={fetchAccounts}
+        onSocialAccountChange={updateFetchAccount}
+        onAddSocialAccount={addFetchAccount}
+        onRemoveSocialAccount={removeFetchAccount}
         secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: resetApplicationFlow }}
         primaryAction={{
           label: 'Continue',
@@ -283,7 +353,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
                   We used your brand to jumpstart your community. How does it look?
                 </h2>
                 <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                  Pick your community name carefully. You can edit colors below and see how it feels.
+                  Pick your community name carefully. You can adjust the brand color below and see how it feels.
                 </p>
               </div>
             </div>

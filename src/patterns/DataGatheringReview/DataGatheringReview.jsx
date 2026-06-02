@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, IdCard, Link2, Plus, Trash2, Users } from 'lucide-react'
+import { IdCard, Link2, Plus, Trash2 } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
 import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
 import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
+import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { Select } from '../../components/Select/Select.jsx'
@@ -20,25 +22,57 @@ const sourceOptions = [
 
 const rowLoadingCopy = {
   identity: 'Matching the submitted URL to a creator profile.',
-  audience: 'Estimating cross-platform follower signal.',
   source: 'Checking the submitted channel.',
 }
 
 const defaultSubmittedSourceValue = 'https://instagram.com/culturecrave'
+const rowFetchDurationMs = 700
+const rowResolvedPauseMs = 1000
 
-function StatusDot({ resolved }) {
+const shimmerTransition = {
+  repeat: Infinity,
+  duration: 1.45,
+  ease: 'easeInOut',
+}
+
+function FoundBadge() {
+  const shouldReduceMotion = useReducedMotion()
+  const motionProps = shouldReduceMotion
+    ? {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0, y: 4 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] },
+      }
+
+  return (
+    <motion.span {...motionProps}>
+      <Badge variant="success" size="sm">Found</Badge>
+    </motion.span>
+  )
+}
+
+function DescriptionShimmer({ label }) {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <span
-      className={[
-        'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
-        resolved ? 'border-transparent bg-gamification-gold-light text-surface-invert' : 'border-brand/20 bg-brand/10 text-brand',
-      ].join(' ')}
+      className="relative mt-1 block h-3 max-w-sm overflow-hidden rounded-full bg-border"
+      aria-label={label}
     >
-      {resolved ? (
-        <LucideIcon icon={Check} size="sm" />
-      ) : (
-        <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-brand" />
-      )}
+      {!shouldReduceMotion ? (
+        <motion.span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent"
+          animate={{ x: ['0%', '420%'] }}
+          transition={shimmerTransition}
+        />
+      ) : null}
+      <span className="sr-only">{label}</span>
     </span>
   )
 }
@@ -52,7 +86,10 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
           {resolved ? (
             <p className="break-words text-base font-semibold text-text">{value}</p>
           ) : (
-            <p className="break-words text-sm text-text-secondary">{loadingCopy}</p>
+            <>
+              <p className="break-words text-sm text-text-secondary">{loadingCopy}</p>
+              <DescriptionShimmer label={loadingCopy} />
+            </>
           )}
         </div>
 
@@ -62,7 +99,7 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
               Edit
             </Button>
           ) : null}
-          <StatusDot resolved={resolved} />
+          {resolved ? <FoundBadge /> : null}
         </div>
       </div>
 
@@ -80,16 +117,18 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
   )
 }
 
-function AccordionReviewContent({ loadingCopy, resolved, value, editing, onEdit, onSave, children }) {
+function AccordionReviewContent({ resolved, value, editing, onEdit, onSave, children }) {
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 space-y-1">
-          <p className="break-words text-sm leading-relaxed text-text-secondary">
-            {resolved ? 'We found this detail from the submitted creator source.' : loadingCopy}
-          </p>
           {resolved ? (
-            <p className="break-words text-base font-semibold text-text">{value}</p>
+            <>
+              <p className="break-words text-sm leading-relaxed text-text-secondary">
+                We found this detail from the submitted creator source.
+              </p>
+              <p className="break-words text-base font-semibold text-text">{value}</p>
+            </>
           ) : null}
         </div>
 
@@ -182,6 +221,69 @@ function SourceEditor({ primarySource, additionalSources, onPrimarySourceChange,
   )
 }
 
+function SocialAccountsEditor({
+  accounts,
+  onAccountChange,
+  onAddAccount,
+  onRemoveAccount,
+}) {
+  const canAddAccount = typeof onAddAccount === 'function'
+
+  return (
+    <div className="space-y-3">
+      {accounts.map((account) => (
+        <div
+          key={account.id}
+          className="grid gap-3 rounded-xl border border-border bg-surface-raised p-3 md:grid-cols-[160px_minmax(0,1fr)_minmax(0,1fr)_auto]"
+        >
+          <Select
+            label="Platform"
+            value={account.platform}
+            onChange={(event) => onAccountChange?.(account.id, { platform: event.target.value })}
+            options={sourceOptions}
+            placeholder=""
+          />
+          <TextInput
+            label="Handle"
+            value={account.handle}
+            placeholder="@culturecrave"
+            onChange={(event) => onAccountChange?.(account.id, { handle: event.target.value })}
+          />
+          <TextInput
+            label="URL"
+            value={account.url}
+            placeholder="https://..."
+            onChange={(event) => onAccountChange?.(account.id, { url: event.target.value })}
+          />
+          <div className="flex items-end">
+            {accounts.length > 1 && onRemoveAccount ? (
+              <Button
+                size="sm"
+                variant="ghost"
+                iconBefore={<LucideIcon icon={Trash2} size="sm" />}
+                onClick={() => onRemoveAccount(account.id)}
+              >
+                Remove
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      ))}
+
+      {canAddAccount ? (
+        <Button
+          size="sm"
+          variant="secondary"
+          iconBefore={<LucideIcon icon={Plus} size="sm" />}
+          onClick={onAddAccount}
+        >
+          Add another account
+        </Button>
+      ) : null}
+    </div>
+  )
+}
+
 export function DataGatheringReview({
   detectedSource = 'Instagram',
   submittedSourceValue = defaultSubmittedSourceValue,
@@ -190,16 +292,20 @@ export function DataGatheringReview({
   rowPresentation = 'cards',
   aside = null,
   revealKey = null,
+  rowRevealDelay = 0,
   onRowsRevealStart,
   onRowsResolved,
   onResolvedChange,
+  socialAccounts = null,
+  onSocialAccountChange,
+  onAddSocialAccount,
+  onRemoveSocialAccount,
   secondaryAction = { label: 'Back', variant: 'ghost' },
   primaryAction = { label: 'Continue' },
 }) {
   const [resolvedRows, setResolvedRows] = useState([])
   const [editingRow, setEditingRow] = useState(null)
   const [identity, setIdentity] = useState('Culture Crave')
-  const [audience, setAudience] = useState('526K combined followers')
   const [primarySource, setPrimarySource] = useState({
     platform: detectedSource,
     value: submittedSourceValue || defaultSubmittedSourceValue,
@@ -224,26 +330,30 @@ export function DataGatheringReview({
 
   useEffect(() => {
     setResolvedRows([])
-    setOpenReviewRow('identity')
+    setOpenReviewRow(null)
     setPrimarySource((current) => ({
       ...current,
       platform: detectedSource,
       value: submittedSourceValue.trim() || current.value || defaultSubmittedSourceValue,
     }))
+    const identityResolveDelay = rowRevealDelay + rowFetchDurationMs
+    const sourceLoadDelay = identityResolveDelay + rowResolvedPauseMs
+    const sourceResolveDelay = sourceLoadDelay + rowFetchDurationMs
     const timers = [
       window.setTimeout(() => {
         rowsRevealStartRef.current?.()
-        setResolvedRows(['identity'])
-      }, 700),
-      window.setTimeout(() => setResolvedRows(['identity', 'audience']), 1250),
+      }, rowRevealDelay),
       window.setTimeout(() => {
-        setResolvedRows(['identity', 'audience', 'source'])
+        setResolvedRows(['identity'])
+      }, identityResolveDelay),
+      window.setTimeout(() => {
+        setResolvedRows(['identity', 'source'])
         rowsResolvedRef.current?.()
-      }, 1800),
+      }, sourceResolveDelay),
     ]
 
     return () => timers.forEach((timer) => window.clearTimeout(timer))
-  }, [detectedSource, submittedSourceValue, revealKey])
+  }, [detectedSource, submittedSourceValue, revealKey, rowRevealDelay])
 
   useEffect(() => {
     if (rowPresentation !== 'accordion') return
@@ -253,12 +363,12 @@ export function DataGatheringReview({
       return
     }
 
-    if (resolvedRows.includes('audience')) {
-      setOpenReviewRow('audience')
+    if (resolvedRows.includes('identity')) {
+      setOpenReviewRow('identity')
       return
     }
 
-    setOpenReviewRow('identity')
+    setOpenReviewRow(null)
   }, [resolvedRows, rowPresentation])
 
   useEffect(() => {
@@ -266,6 +376,11 @@ export function DataGatheringReview({
   }, [resolvedRows])
 
   const isResolved = (key) => resolvedRows.includes(key)
+  const handleOpenReviewRowChange = (nextOpenRow, row) => {
+    if (!row?.resolved) return
+
+    setOpenReviewRow(nextOpenRow)
+  }
 
   const addSource = () => {
     setAdditionalSources((current) => [
@@ -291,6 +406,9 @@ export function DataGatheringReview({
   const sourceSummary = additionalSources.length > 0
     ? `${primarySource.platform} + ${additionalSources.length} more`
     : primarySource.platform
+  const socialAccountSummary = Array.isArray(socialAccounts) && socialAccounts.length > 0
+    ? socialAccounts.map((account) => account.platform).join(', ')
+    : sourceSummary
 
   const rowEditors = {
     identity: (
@@ -300,22 +418,24 @@ export function DataGatheringReview({
         onChange={(event) => setIdentity(event.target.value)}
       />
     ),
-    audience: (
-      <TextInput
-        label="Follower signal"
-        value={audience}
-        onChange={(event) => setAudience(event.target.value)}
-      />
-    ),
     source: (
-      <SourceEditor
-        primarySource={primarySource}
-        additionalSources={additionalSources}
-        onPrimarySourceChange={(patch) => setPrimarySource((current) => ({ ...current, ...patch }))}
-        onAddSource={addSource}
-        onSourceChange={updateAdditionalSource}
-        onRemoveSource={removeAdditionalSource}
-      />
+      Array.isArray(socialAccounts) && socialAccounts.length > 0 ? (
+        <SocialAccountsEditor
+          accounts={socialAccounts}
+          onAccountChange={onSocialAccountChange}
+          onAddAccount={onAddSocialAccount}
+          onRemoveAccount={onRemoveSocialAccount}
+        />
+      ) : (
+        <SourceEditor
+          primarySource={primarySource}
+          additionalSources={additionalSources}
+          onPrimarySourceChange={(patch) => setPrimarySource((current) => ({ ...current, ...patch }))}
+          onAddSource={addSource}
+          onSourceChange={updateAdditionalSource}
+          onRemoveSource={removeAdditionalSource}
+        />
+      )
     ),
   }
 
@@ -329,20 +449,12 @@ export function DataGatheringReview({
       value: identity,
     },
     {
-      id: 'audience',
-      icon: Users,
-      label: 'Audience',
-      loadingCopy: rowLoadingCopy.audience,
-      resolved: isResolved('audience'),
-      value: audience,
-    },
-    {
       id: 'source',
       icon: Link2,
-      label: 'Source',
+      label: Array.isArray(socialAccounts) && socialAccounts.length > 0 ? 'Social accounts' : 'Source',
       loadingCopy: rowLoadingCopy.source,
       resolved: isResolved('source'),
-      value: sourceSummary,
+      value: socialAccountSummary,
     },
   ]
 
@@ -350,11 +462,12 @@ export function DataGatheringReview({
     id: row.id,
     icon: row.icon,
     label: row.label,
-    subtext: row.resolved ? row.value : row.loadingCopy,
-    trailing: <StatusDot resolved={row.resolved} />,
-    content: (
+    subtext: row.resolved
+      ? row.value
+      : <DescriptionShimmer label={row.loadingCopy} />,
+    trailing: row.resolved ? <FoundBadge /> : null,
+    content: row.resolved ? (
       <AccordionReviewContent
-        loadingCopy={row.loadingCopy}
         resolved={row.resolved}
         value={row.value}
         editing={editingRow === row.id}
@@ -363,7 +476,7 @@ export function DataGatheringReview({
       >
         {rowEditors[row.id]}
       </AccordionReviewContent>
-    ),
+    ) : null,
   }))
 
   const content = (
@@ -384,7 +497,7 @@ export function DataGatheringReview({
               <AccordionPanelGroup
                 rows={accordionRows}
                 openRow={openReviewRow}
-                onOpenRowChange={setOpenReviewRow}
+                onOpenRowChange={handleOpenReviewRowChange}
                 allowCollapse={false}
                 className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs"
               />
@@ -400,18 +513,6 @@ export function DataGatheringReview({
                   onSave={() => setEditingRow(null)}
                 >
                   {rowEditors.identity}
-                </ReviewRow>
-
-                <ReviewRow
-                  label="Audience"
-                  loadingCopy={rowLoadingCopy.audience}
-                  resolved={isResolved('audience')}
-                  value={audience}
-                  editing={editingRow === 'audience'}
-                  onEdit={() => setEditingRow('audience')}
-                  onSave={() => setEditingRow(null)}
-                >
-                  {rowEditors.audience}
                 </ReviewRow>
 
                 <ReviewRow
