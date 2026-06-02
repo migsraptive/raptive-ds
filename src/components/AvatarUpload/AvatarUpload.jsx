@@ -3,6 +3,9 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 export function AvatarUpload({
   label = 'Avatar',
+  uploadLabel = 'Click to upload avatar',
+  previewLabel = 'Avatar',
+  previewShape = 'both',
   value = null,
   onChange,
   className = '',
@@ -31,21 +34,25 @@ export function AvatarUpload({
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary shadow-xs">
           <LucideIcon icon={Upload} size="md" />
         </span>
-        <span className="mt-2 text-sm font-medium text-text-secondary">Click to upload avatar</span>
+        <span className="mt-2 text-sm font-medium text-text-secondary">{uploadLabel}</span>
       </label>
 
       {value && (
         <div className="flex items-center gap-3">
-          <img
-            src={value}
-            alt="Avatar circle preview"
-            className="h-12 w-12 rounded-full border border-border object-cover"
-          />
-          <img
-            src={value}
-            alt="Avatar rectangle preview"
-            className="h-12 w-16 rounded-lg border border-border object-cover"
-          />
+          {previewShape === 'both' || previewShape === 'circle' ? (
+            <img
+              src={value}
+              alt={`${previewLabel} circle preview`}
+              className="h-12 w-12 rounded-full border border-border object-cover"
+            />
+          ) : null}
+          {previewShape === 'both' || previewShape === 'rectangle' ? (
+            <img
+              src={value}
+              alt={`${previewLabel} rectangle preview`}
+              className="h-12 w-16 rounded-lg border border-border object-cover"
+            />
+          ) : null}
         </div>
       )}
     </div>

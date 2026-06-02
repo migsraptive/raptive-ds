@@ -8,7 +8,6 @@ import { CompactField } from '../../components/CompactField/CompactField.jsx'
 import { CommunityAnswersCard } from '../../components/CommunityAnswersCard/CommunityAnswersCard.jsx'
 import { CommunityCreatorDiscoverCard } from '../../components/CommunityCreatorDiscoverCard/CommunityCreatorDiscoverCard.jsx'
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
-import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { brandPreviewDefaults, compactWysiwygPalette } from '../../utils/brandPreviewDefaults.js'
 import { normalizeHexColor } from '../../utils/colorContrast.js'
 import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
@@ -30,11 +29,6 @@ const defaultEditorColors = {
   brand: defaultColors.brand,
 }
 
-const shapeOptions = [
-  { value: 'circle', label: 'Circle' },
-  { value: 'rectangle', label: 'Rectangle' },
-]
-
 export function CompactWysiwygStudio({
   brandAssets = {
     palette: compactWysiwygPalette,
@@ -47,7 +41,6 @@ export function CompactWysiwygStudio({
   const [fields, setFields] = useState(defaultFields)
   const [brandColor, setBrandColor] = useState(detectedBrandColor)
   const [avatarUrl, setAvatarUrl] = useState(null)
-  const [avatarShape, setAvatarShape] = useState('circle')
   const [openPanel, setOpenPanel] = useState('community')
 
   const updateField = (key, value) => {
@@ -95,7 +88,7 @@ export function CompactWysiwygStudio({
             rows={2}
           />
           <CompactField
-            label="discover text"
+            label="short description"
             type="textarea"
             value={fields.discoverText}
             onChange={(value) => updateField('discoverText', value)}
@@ -105,28 +98,21 @@ export function CompactWysiwygStudio({
       ),
     },
     {
-      id: 'avatar',
+      id: 'logo',
       icon: ImageIcon,
-      label: 'Logo & avatar',
-      subtext: 'Upload your images',
+      label: 'Logo',
+      subtext: 'Upload your image',
       content: (
-        <div className="space-y-4">
-          <AvatarUpload
-            label="Avatar"
-            value={avatarUrl}
-            onChange={(value) => {
-              setAvatarUrl(value)
-            }}
-          />
-          <SegmentedControl
-            label="Logo shape"
-            value={avatarShape}
-            options={shapeOptions}
-            onChange={(value) => {
-              setAvatarShape(value)
-            }}
-          />
-        </div>
+        <AvatarUpload
+          label="Logo"
+          uploadLabel="Click to upload logo"
+          previewLabel="Logo"
+          previewShape="circle"
+          value={avatarUrl}
+          onChange={(value) => {
+            setAvatarUrl(value)
+          }}
+        />
       ),
     },
     {
@@ -193,7 +179,7 @@ export function CompactWysiwygStudio({
                   topicLabel={fields.topic}
                   description={fields.discoverText}
                   avatarSrc={avatarUrl}
-                  avatarShape={avatarShape}
+                  avatarShape="circle"
                   ctaLabel="Explore community"
                   onExplore={() => {}}
                 />
@@ -203,7 +189,7 @@ export function CompactWysiwygStudio({
                   question="Which pop culture moment should we unpack first?"
                   answerCount={12}
                   avatarSrc={avatarUrl}
-                  avatarShape={avatarShape}
+                  avatarShape="circle"
                   onAnswer={() => {}}
                   onViewAnswers={() => {}}
                 />

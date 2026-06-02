@@ -81,6 +81,7 @@ import { VerificationStep } from '../../patterns/VerificationStep/VerificationSt
 import { colors as colorTokens } from '../../tokens/colors.js'
 import { typography as typographyTokens } from '../../tokens/typography.js'
 import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
+import { COMMUNITY_VERTICAL_OPTIONS } from '../../utils/communityVerticals.js'
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ title, description, children }) {
@@ -908,7 +909,7 @@ export function ComponentLibrary() {
                 />
                 <TextInput
                   label="Primary Niche"
-                  value="Parenting"
+                  value="Family & Parenting"
                   readOnly
                   suffix="Locked"
                 />
@@ -1097,13 +1098,9 @@ export function ComponentLibrary() {
                           <CompactField
                             label="topic"
                             type="select"
-                            value="Pop Culture"
+                            value="Entertainment"
                             onChange={() => {}}
-                            options={[
-                              { value: 'Pop Culture', label: 'Pop Culture' },
-                              { value: 'Movies', label: 'Movies' },
-                              { value: 'TV Shows', label: 'TV Shows' },
-                            ]}
+                            options={COMMUNITY_VERTICAL_OPTIONS}
                           />
                           <CompactField
                             label="summary"
@@ -1415,6 +1412,9 @@ export function ComponentLibrary() {
                 <Button disabled>Primary</Button>
                 <Button variant="secondary" disabled>Secondary</Button>
                 <Button variant="ghost" disabled>Ghost</Button>
+                <Button variant="danger" disabled>Danger</Button>
+                <Button variant="black" disabled>Black</Button>
+                <Button variant="link" disabled>Link</Button>
               </Row>
               <Row label="Full Width">
                 <div className="w-full max-w-xs">
@@ -2060,6 +2060,25 @@ export function ComponentLibrary() {
                 }}
                 onAddSocialAccount={addFetchConfirmationAccount}
                 onRemoveSocialAccount={removeFetchConfirmationAccount}
+                secondaryAction={{ label: 'Back', variant: 'ghost' }}
+                primaryAction={{
+                  label: 'Continue',
+                  success: previewPatternCtaSuccess,
+                  successLabel: 'Finding...',
+                  successIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+                }}
+              />
+            </Section>
+
+            <Section title="Data Gathering Review: No Data Found" description="Variation for submitted sources that resolve without a matching identity or connected social accounts.">
+              <DataGatheringReview
+                title="We’re finding your fandom"
+                description="Give us a moment while we pull some details."
+                detectedSource="Website"
+                submittedSourceValue="https://example.com"
+                resultStatus="not-found"
+                rowPresentation="accordion"
+                socialAccounts={fetchConfirmationDemoAccounts}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{
                   label: 'Continue',

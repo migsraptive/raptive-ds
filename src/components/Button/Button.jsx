@@ -15,53 +15,53 @@ const variants = {
     'bg-action-primary text-white',
     'hover:bg-action-primary-hover active:bg-action-primary-active',
     'focus-visible:ring-2 focus-visible:ring-action-primary focus-visible:ring-offset-2',
-    'disabled:bg-neutral-200 disabled:text-text-disabled disabled:cursor-not-allowed',
+    'disabled:bg-neutral-200 disabled:text-neutral-700 disabled:cursor-not-allowed',
   ].join(' '),
 
   secondary: [
     'border border-text-placeholder bg-white text-text',
     'hover:border-brand hover:bg-white active:border-border-strong active:bg-surface-sunken',
     'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
-    'disabled:border-border disabled:bg-white disabled:text-text-disabled disabled:cursor-not-allowed',
+    'disabled:border-border disabled:bg-white disabled:text-neutral-700 disabled:cursor-not-allowed',
   ].join(' '),
 
   ghost: [
     'bg-transparent text-text',
     'hover:bg-surface-sunken hover:text-text active:bg-surface-sunken',
     'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
-    'disabled:opacity-40 disabled:cursor-not-allowed',
+    'disabled:text-neutral-700 disabled:opacity-100 disabled:cursor-not-allowed',
   ].join(' '),
 
   danger: [
     'bg-status-error text-white',
     'hover:bg-status-error-text active:bg-red-800',
     'focus-visible:ring-2 focus-visible:ring-status-error focus-visible:ring-offset-2',
-    'disabled:opacity-40 disabled:cursor-not-allowed',
+    'disabled:bg-neutral-200 disabled:text-neutral-700 disabled:opacity-100 disabled:cursor-not-allowed',
   ].join(' '),
 
   black: [
     'bg-neutral-950 text-white',
     'hover:bg-neutral-900 active:bg-neutral-800',
     'focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2',
-    'disabled:bg-neutral-300 disabled:text-text-disabled disabled:cursor-not-allowed',
+    'disabled:bg-neutral-300 disabled:text-text-secondary disabled:cursor-not-allowed',
   ].join(' '),
 
   previewBrand: [
     'preview-brand-surface',
     'focus-visible:ring-2 focus-visible:ring-offset-2',
-    'disabled:opacity-40 disabled:cursor-not-allowed',
+    'disabled:text-neutral-700 disabled:opacity-100 disabled:cursor-not-allowed',
   ].join(' '),
 
   previewAccent: [
     'preview-accent-surface',
     'focus-visible:ring-2 focus-visible:ring-offset-2',
-    'disabled:opacity-40 disabled:cursor-not-allowed',
+    'disabled:text-neutral-700 disabled:opacity-100 disabled:cursor-not-allowed',
   ].join(' '),
 
   link: [
     'bg-transparent text-action-primary underline underline-offset-2 p-0 h-auto',
     'hover:text-action-primary-active active:text-action-primary-active',
-    'disabled:opacity-40 disabled:cursor-not-allowed',
+    'disabled:text-neutral-700 disabled:opacity-100 disabled:cursor-not-allowed',
   ].join(' '),
 }
 

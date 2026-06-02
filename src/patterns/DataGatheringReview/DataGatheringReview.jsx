@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { IdCard, Link2, Plus, Trash2 } from 'lucide-react'
-import { motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import recognitionIllustrationUrl from '../../assets/recognition-illustration.png'
 import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
@@ -35,8 +35,9 @@ const shimmerTransition = {
   ease: 'easeInOut',
 }
 
-function FoundBadge() {
+function ResultBadge({ status = 'found' }) {
   const shouldReduceMotion = useReducedMotion()
+  const isNotFound = status === 'not-found'
   const motionProps = shouldReduceMotion
     ? {
         initial: { opacity: 1 },
@@ -51,7 +52,9 @@ function FoundBadge() {
 
   return (
     <motion.span {...motionProps}>
-      <Badge variant="success" size="sm">Found</Badge>
+      <Badge variant={isNotFound ? 'error' : 'success'} size="sm">
+        {isNotFound ? 'Not Found' : 'Found'}
+      </Badge>
     </motion.span>
   )
 }
@@ -77,7 +80,7 @@ function DescriptionShimmer({ label }) {
   )
 }
 
-function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSave, children }) {
+function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSave, resultStatus = 'found', children }) {
   return (
     <div className="rounded-xl border border-border bg-surface px-4 py-3 shadow-xs">
       <div className="flex items-start justify-between gap-4">
@@ -99,48 +102,12 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
               Edit
             </Button>
           ) : null}
-          {resolved ? <FoundBadge /> : null}
+          {resolved ? <ResultBadge status={resultStatus} /> : null}
         </div>
       </div>
 
       {editing ? (
         <div className="mt-4 space-y-3 border-t border-border pt-4">
-          {children}
-          <div className="flex justify-end">
-            <Button size="sm" variant="secondary" onClick={onSave}>
-              Save
-            </Button>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
-function AccordionReviewContent({ resolved, value, editing, onEdit, onSave, children }) {
-  return (
-    <div className="space-y-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 space-y-1">
-          {resolved ? (
-            <>
-              <p className="break-words text-sm leading-relaxed text-text-secondary">
-                We found this detail from the submitted creator source.
-              </p>
-              <p className="break-words text-base font-semibold text-text">{value}</p>
-            </>
-          ) : null}
-        </div>
-
-        {resolved && !editing ? (
-          <Button size="xs" variant="secondary" onClick={onEdit}>
-            Edit
-          </Button>
-        ) : null}
-      </div>
-
-      {editing ? (
-        <div className="space-y-3 border-t border-border pt-4">
           {children}
           <div className="flex justify-end">
             <Button size="sm" variant="secondary" onClick={onSave}>
@@ -227,48 +194,75 @@ function SocialAccountsEditor({
   onAddAccount,
   onRemoveAccount,
 }) {
+  const [editingAccountId, setEditingAccountId] = useState(null)
+  const [handleDraft, setHandleDraft] = useState('')
   const canAddAccount = typeof onAddAccount === 'function'
+
+  const startHandleEdit = (account) => {
+    setEditingAccountId(account.id)
+    setHandleDraft(account.handle)
+  }
+
+  const saveHandleEdit = () => {
+    if (!editingAccountId) return
+
+    const currentAccount = accounts.find((account) => account.id === editingAccountId)
+    onAccountChange?.(editingAccountId, {
+      handle: handleDraft.trim() || currentAccount?.handle || '@culturecrave',
+    })
+    setEditingAccountId(null)
+    setHandleDraft('')
+  }
 
   return (
     <div className="space-y-3">
-      {accounts.map((account) => (
-        <div
-          key={account.id}
-          className="grid gap-3 rounded-xl border border-border bg-surface-raised p-3 md:grid-cols-[160px_minmax(0,1fr)_minmax(0,1fr)_auto]"
-        >
-          <Select
-            label="Platform"
-            value={account.platform}
-            onChange={(event) => onAccountChange?.(account.id, { platform: event.target.value })}
-            options={sourceOptions}
-            placeholder=""
-          />
-          <TextInput
-            label="Handle"
-            value={account.handle}
-            placeholder="@culturecrave"
-            onChange={(event) => onAccountChange?.(account.id, { handle: event.target.value })}
-          />
-          <TextInput
-            label="URL"
-            value={account.url}
-            placeholder="https://..."
-            onChange={(event) => onAccountChange?.(account.id, { url: event.target.value })}
-          />
-          <div className="flex items-end">
+      <div className="space-y-2">
+        {accounts.map((account) => (
+          <div key={account.id} className="flex items-baseline justify-between gap-3 text-sm leading-relaxed text-text-secondary">
+            <div className="min-w-0">
+              {account.platform}:{' '}
+              {editingAccountId === account.id ? (
+                <input
+                  className="inline-block h-6 w-36 rounded-md border border-border bg-surface px-1.5 text-sm font-semibold leading-sm text-text outline-none transition-colors duration-150 focus:border-brand focus:ring-1 focus:ring-brand"
+                  value={handleDraft}
+                  onChange={(event) => setHandleDraft(event.target.value)}
+                  onBlur={saveHandleEdit}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.currentTarget.blur()
+                    }
+                  }}
+                  autoFocus
+                  aria-label={`${account.platform} handle`}
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  onClick={() => startHandleEdit(account)}
+                  aria-label={`Edit ${account.platform} handle`}
+                >
+                  <span>{account.handle}</span>
+                  <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
+                    Edit
+                  </span>
+                </button>
+              )}{' '}
+              · {account.followers}
+            </div>
             {accounts.length > 1 && onRemoveAccount ? (
-              <Button
-                size="sm"
-                variant="ghost"
-                iconBefore={<LucideIcon icon={Trash2} size="sm" />}
+              <button
+                type="button"
+                className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                 onClick={() => onRemoveAccount(account.id)}
+                aria-label={`Remove ${account.platform} account`}
               >
                 Remove
-              </Button>
+              </button>
             ) : null}
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {canAddAccount ? (
         <Button
@@ -285,6 +279,8 @@ function SocialAccountsEditor({
 }
 
 export function DataGatheringReview({
+  title = 'We’re finding your fandom',
+  description = 'Give us a moment while we pull some details.',
   detectedSource = 'Instagram',
   submittedSourceValue = defaultSubmittedSourceValue,
   progressMeter = null,
@@ -293,6 +289,10 @@ export function DataGatheringReview({
   aside = null,
   revealKey = null,
   rowRevealDelay = 0,
+  headerClassName = '',
+  contentClassName = '',
+  loadingCopy = {},
+  resultStatus = 'found',
   onRowsRevealStart,
   onRowsResolved,
   onResolvedChange,
@@ -303,6 +303,7 @@ export function DataGatheringReview({
   secondaryAction = { label: 'Back', variant: 'ghost' },
   primaryAction = { label: 'Continue' },
 }) {
+  const shouldReduceMotion = useReducedMotion()
   const [resolvedRows, setResolvedRows] = useState([])
   const [editingRow, setEditingRow] = useState(null)
   const [identity, setIdentity] = useState('Culture Crave')
@@ -376,6 +377,21 @@ export function DataGatheringReview({
   }, [resolvedRows])
 
   const isResolved = (key) => resolvedRows.includes(key)
+  const isNotFound = resultStatus === 'not-found'
+  const headerKey = `${title}-${description ?? ''}`
+  const headerMotion = shouldReduceMotion
+    ? {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        exit: { opacity: 1 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0, y: 6 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -6 },
+        transition: { duration: 0.24, ease: [0.22, 1, 0.36, 1] },
+      }
   const handleOpenReviewRowChange = (nextOpenRow, row) => {
     if (!row?.resolved) return
 
@@ -409,6 +425,18 @@ export function DataGatheringReview({
   const socialAccountSummary = Array.isArray(socialAccounts) && socialAccounts.length > 0
     ? socialAccounts.map((account) => account.platform).join(', ')
     : sourceSummary
+  const resolvedIdentityValue = isNotFound ? 'No matching creator profile' : identity
+  const resolvedSourceValue = isNotFound
+    ? 'No social accounts found'
+    : socialAccountSummary
+  const activeRowLoadingCopy = {
+    identity: loadingCopy.identity ?? rowLoadingCopy.identity,
+    source: loadingCopy.source ?? (
+      Array.isArray(socialAccounts) && socialAccounts.length > 0
+        ? 'Checking connected social accounts.'
+        : rowLoadingCopy.source
+    ),
+  }
 
   const rowEditors = {
     identity: (
@@ -438,23 +466,39 @@ export function DataGatheringReview({
       )
     ),
   }
+  const accordionRowContent = {
+    identity: (
+      <div className="space-y-1">
+        <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Creator name</p>
+        <p className="text-base font-semibold text-text">{resolvedIdentityValue}</p>
+        <p className="text-sm leading-relaxed text-text-secondary">
+          {submittedSourceValue.trim() || primarySource.value}
+        </p>
+      </div>
+    ),
+    source: isNotFound ? (
+      <p className="text-sm leading-relaxed text-text-secondary">
+        No social accounts were detected from the submitted source.
+      </p>
+    ) : rowEditors.source,
+  }
 
   const reviewRows = [
     {
       id: 'identity',
       icon: IdCard,
       label: 'Identity',
-      loadingCopy: rowLoadingCopy.identity,
+      loadingCopy: activeRowLoadingCopy.identity,
       resolved: isResolved('identity'),
-      value: identity,
+      value: resolvedIdentityValue,
     },
     {
       id: 'source',
       icon: Link2,
       label: Array.isArray(socialAccounts) && socialAccounts.length > 0 ? 'Social accounts' : 'Source',
-      loadingCopy: rowLoadingCopy.source,
+      loadingCopy: activeRowLoadingCopy.source,
       resolved: isResolved('source'),
-      value: socialAccountSummary,
+      value: resolvedSourceValue,
     },
   ]
 
@@ -465,32 +509,35 @@ export function DataGatheringReview({
     subtext: row.resolved
       ? row.value
       : <DescriptionShimmer label={row.loadingCopy} />,
-    trailing: row.resolved ? <FoundBadge /> : null,
-    content: row.resolved ? (
-      <AccordionReviewContent
-        resolved={row.resolved}
-        value={row.value}
-        editing={editingRow === row.id}
-        onEdit={() => setEditingRow(row.id)}
-        onSave={() => setEditingRow(null)}
-      >
-        {rowEditors[row.id]}
-      </AccordionReviewContent>
-    ) : null,
+    trailing: row.resolved ? <ResultBadge status={resultStatus} /> : null,
+    content: row.resolved ? accordionRowContent[row.id] : null,
   }))
 
   const content = (
     <div className="flex h-full flex-col p-8 lg:p-12">
-          <div className="space-y-8">
+          <div className={['space-y-8', contentClassName].filter(Boolean).join(' ')}>
             {progressMeter}
 
-            <header className="space-y-2">
-              <h2 className="max-w-3xl font-newsreader text-hero font-normal text-text">
-                We&apos;re finding your fandom
-              </h2>
-              <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
-                Give us a moment while we pull some details.
-              </p>
+            <header className={['space-y-2', headerClassName].filter(Boolean).join(' ')}>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={headerKey}
+                  className="space-y-2"
+                  initial={headerMotion.initial}
+                  animate={headerMotion.animate}
+                  exit={headerMotion.exit}
+                  transition={headerMotion.transition}
+                >
+                  <h2 className="max-w-3xl font-newsreader text-hero font-normal text-text">
+                    {title}
+                  </h2>
+                  {description ? (
+                    <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
+                      {description}
+                    </p>
+                  ) : null}
+                </motion.div>
+              </AnimatePresence>
             </header>
 
             {rowPresentation === 'accordion' ? (
@@ -505,24 +552,26 @@ export function DataGatheringReview({
               <div className="grid gap-3">
                 <ReviewRow
                   label="Identity"
-                  loadingCopy={rowLoadingCopy.identity}
+                  loadingCopy={activeRowLoadingCopy.identity}
                   resolved={isResolved('identity')}
-                  value={identity}
+                  value={resolvedIdentityValue}
                   editing={editingRow === 'identity'}
                   onEdit={() => setEditingRow('identity')}
                   onSave={() => setEditingRow(null)}
+                  resultStatus={resultStatus}
                 >
                   {rowEditors.identity}
                 </ReviewRow>
 
                 <ReviewRow
                   label="Source"
-                  loadingCopy={rowLoadingCopy.source}
+                  loadingCopy={activeRowLoadingCopy.source}
                   resolved={isResolved('source')}
-                  value={sourceSummary}
+                  value={resolvedSourceValue}
                   editing={editingRow === 'source'}
                   onEdit={() => setEditingRow('source')}
                   onSave={() => setEditingRow(null)}
+                  resultStatus={resultStatus}
                 >
                   {rowEditors.source}
                 </ReviewRow>
