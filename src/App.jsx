@@ -13,6 +13,8 @@ const pageTransition = {
   transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] },
 }
 
+const creatorApplicationViews = ['creator-application', 'creator-application-page']
+
 export default function App() {
   const [view, setView] = useState(() => {
     if (typeof window === 'undefined') {
@@ -20,7 +22,8 @@ export default function App() {
     }
 
     const viewParam = new URLSearchParams(window.location.search).get('view')
-    return viewParam === 'component-library' ? 'component-library' : 'creator-application'
+    if (viewParam === 'component-library') return 'component-library'
+    return creatorApplicationViews.includes(viewParam) ? viewParam : 'creator-application'
   })
 
   useEffect(() => {
@@ -55,13 +58,16 @@ export default function App() {
         </motion.div>
       ) : (
         <motion.div
-          key="creator-application"
+          key={view}
           initial={pageTransition.initial}
           animate={pageTransition.animate}
           exit={pageTransition.exit}
           transition={pageTransition.transition}
         >
-          <CreatorApplicationPage onOpenLibrary={() => setView('component-library')} />
+          <CreatorApplicationPage
+            onOpenLibrary={() => setView('component-library')}
+            standalone={view === 'creator-application-page'}
+          />
         </motion.div>
       )}
     </AnimatePresence>

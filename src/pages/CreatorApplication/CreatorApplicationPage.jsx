@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { BadgeCheck, Check, Eye, Mail, Rocket, Search, Send, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
+import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { getDetectedSocialAccountHelperText } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
@@ -106,12 +107,13 @@ function getDetectedSourceLabel(value) {
   return 'Website'
 }
 
-export function CreatorApplicationPage({ onOpenLibrary }) {
+export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const [activeStep, setActiveStep] = useState(0)
   const [creatorUrl, setCreatorUrl] = useState(initialCreatorUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
   const [gatherRowsResolved, setGatherRowsResolved] = useState(false)
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
@@ -144,6 +146,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     if (verificationMethod && !verificationMethods.some((method) => method.value === verificationMethod)) {
       setVerificationMethod(null)
       setVerificationConfirmed(false)
+      setVerificationTermsAccepted(false)
     }
   }, [verificationMethod, verificationMethods])
 
@@ -165,6 +168,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
   const handleVerificationMethodChange = (value) => {
     setVerificationMethod(value)
     setVerificationConfirmed(false)
+    setVerificationTermsAccepted(false)
   }
 
   const handleVerificationContinue = () => {
@@ -219,6 +223,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     setGatherRowsResolved(false)
     setVerificationMethod(null)
     setVerificationConfirmed(false)
+    setVerificationTermsAccepted(false)
     setActiveStep(0)
   }
 
@@ -228,7 +233,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     content = (
       <SingleFieldIntake
         title="Where do your fans live?"
-        description="Paste a link to where we can find your fans: your main social account or website. We’ll do the rest!"
+        description="Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website. We’ll do the rest!"
         value={creatorUrl}
         onChange={(event) => setCreatorUrl(event.target.value)}
         onSubmit={handleIntakeSubmit}
@@ -240,6 +245,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
         ctaDisabled={!creatorUrl.trim()}
         showAside={false}
+        framed={!standalone}
       />
     )
   }
@@ -263,6 +269,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         onAddSocialAccount={addFetchAccount}
         onRemoveSocialAccount={removeFetchAccount}
         onResolvedChange={setGatherRowsResolved}
+        framed={!standalone}
         secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: resetApplicationFlow }}
         primaryAction={{
           label: gatherRowsResolved ? 'Looks right' : 'Continue',
@@ -281,7 +288,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   if (activeStep === 2) {
     content = (
-      <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+      <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', !standalone ? 'border border-border' : ''].filter(Boolean).join(' ')}>
         <div className="flex h-full flex-col p-8 lg:p-12">
           <div className="space-y-8">
             {progressMeter}
@@ -334,6 +341,8 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
         progressMeter={progressMeter}
         confirmed={verificationConfirmed}
         onConfirmChange={setVerificationConfirmed}
+        termsAccepted={verificationTermsAccepted}
+        onTermsAcceptedChange={setVerificationTermsAccepted}
         reassurance={[
           {
             icon: <LucideIcon icon={BadgeCheck} size="sm" />,
@@ -352,6 +361,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
+        framed={!standalone}
         instagramDmDetail={{
           code: 'CULTURE-453',
           destinationHandle: '@raptive_community',
@@ -383,7 +393,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
     content = (
       <SubmissionSuccess
         title="You're on the list. We'll take it from here."
-        summary="Hold application ID CULTURE-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
+        summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
         progressMeter={progressMeter}
         timeline={[
           {
@@ -395,7 +405,7 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           {
             step: 'approved',
             title: 'Approved',
-            description: 'If there’s a fit, we may reach out with next steps.',
+            description: "If there's a fit, we will reach out with next steps.",
           },
           {
             step: 'live',
@@ -404,13 +414,14 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
           },
         ]}
         showAside={false}
+        framed={!standalone}
         secondaryAction={null}
         primaryAction={{
-          label: 'Start new application',
+          label: 'Close',
           variant: 'black',
           disabled: pendingPrimaryAction === 'submit-primary',
           success: pendingPrimaryAction === 'submit-primary',
-          successLabel: "Let's begin...",
+          successLabel: 'Close',
           successIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
           onClick: () => triggerPrimaryAction({
             key: 'submit-primary',
@@ -423,6 +434,15 @@ export function CreatorApplicationPage({ onOpenLibrary }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-surface-sunken via-surface to-brand-subtle">
+      {standalone ? (
+        <header className="border-b border-border bg-surface">
+          <div className="mx-auto flex max-w-6xl items-center gap-4 px-6 py-4">
+            <a href="https://raptive.com/community/creators/" aria-label="Raptive Community">
+              <BrandLogo size="md" />
+            </a>
+          </div>
+        </header>
+      ) : null}
       <main className="mx-auto max-w-6xl px-6 py-4">
         <div className="mb-4 flex justify-end">
           <Button size="sm" variant="ghost" onClick={onOpenLibrary}>Component library</Button>

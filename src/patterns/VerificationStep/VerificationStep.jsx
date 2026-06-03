@@ -72,14 +72,17 @@ export function VerificationStep({
   onSelectMethod,
   confirmed = false,
   onConfirmChange,
+  termsAccepted = false,
+  onTermsAcceptedChange,
   reassurance = [],
   showAside = true,
+  framed = true,
   instagramDmDetail = null,
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   return (
-    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+    <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', framed ? 'border border-border' : ''].filter(Boolean).join(' ')}>
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
@@ -211,13 +214,22 @@ export function VerificationStep({
               )}
             </div>
 
-            <Checkbox
-              checked={confirmed}
-              onChange={(event) => onConfirmChange?.(event.target.checked)}
-              variant="plain"
-              label="I control this creator account and want to continue with verification."
-              description="This keeps the last step feeling intentional without adding a long security ceremony."
-            />
+            <div className="grid gap-3">
+              <Checkbox
+                checked={confirmed}
+                onChange={(event) => onConfirmChange?.(event.target.checked)}
+                variant="plain"
+                label="I control this creator account and want to continue with verification."
+                description="This keeps the last step feeling intentional without adding a long security ceremony."
+              />
+              <Checkbox
+                checked={termsAccepted}
+                onChange={(event) => onTermsAcceptedChange?.(event.target.checked)}
+                variant="plain"
+                label="I agree to the Community terms."
+                description="By submitting this application, I agree to the Terms of Service and acknowledge the Privacy Policy."
+              />
+            </div>
           </div>
 
           <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
@@ -231,7 +243,7 @@ export function VerificationStep({
                 size="lg"
                 variant={primaryAction.variant ?? 'primary'}
                 onClick={primaryAction.onClick}
-                disabled={methods.length === 0 || !selectedMethod || primaryAction.disabled}
+                disabled={methods.length === 0 || !selectedMethod || !confirmed || !termsAccepted || primaryAction.disabled}
                 success={primaryAction.success}
                 successLabel={primaryAction.successLabel}
                 successIcon={primaryAction.successIcon}

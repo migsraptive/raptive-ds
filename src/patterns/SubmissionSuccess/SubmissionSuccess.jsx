@@ -9,14 +9,15 @@ export function SubmissionSuccess({
   summary = null,
   timeline = [],
   showAside = true,
+  framed = true,
   footerContent = null,
-  primaryAction = { label: 'View creator dashboard' },
+  primaryAction = { label: 'Close' },
   secondaryAction = { label: 'Back to library', variant: 'ghost' },
 }) {
   const shouldReduceMotion = useReducedMotion()
 
   return (
-    <section className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950 shadow-sm">
+    <section className={['overflow-hidden rounded-xl bg-neutral-950 shadow-sm', framed ? 'border border-neutral-800' : ''].filter(Boolean).join(' ')}>
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col bg-gradient-to-br from-neutral-900 to-neutral-950 p-8 lg:p-12">

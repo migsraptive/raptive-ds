@@ -2,6 +2,7 @@ import { forwardRef, useId } from 'react'
 import { colors } from '../../tokens/index.js'
 import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
 import { getAccessibleColorPair, normalizeHexColor } from '../../utils/colorContrast.js'
+import { FieldHelperText } from '../FormField/FormField.jsx'
 
 export const ColorInput = forwardRef(function ColorInput(
   {
@@ -47,7 +48,7 @@ export const ColorInput = forwardRef(function ColorInput(
     <div
       className={[
         // no token available: compact editor labels use a fixed rail to keep fields aligned.
-        isCompact ? 'grid grid-cols-[92px_minmax(0,1fr)] items-start gap-3' : 'flex flex-col gap-2',
+        isCompact ? 'grid grid-cols-[92px_minmax(0,1fr)] items-start gap-x-3 gap-y-2' : 'flex flex-col gap-2',
         className,
       ].filter(Boolean).join(' ')}
     >
@@ -99,18 +100,13 @@ export const ColorInput = forwardRef(function ColorInput(
         </span>
       </div>
 
-      {(description || hasError) && (
-        <p
-          id={descriptionId}
-          className={[
-            isCompact ? 'col-start-2' : '',
-            'text-xs',
-            hasError ? 'font-medium text-status-error-text' : 'text-text-secondary',
-          ].filter(Boolean).join(' ')}
-        >
-          {hasError ? 'Enter a valid hex color.' : description}
-        </p>
-      )}
+      <FieldHelperText
+        id={descriptionId}
+        tone={hasError ? 'error' : 'default'}
+        className={isCompact ? 'col-start-2' : ''}
+      >
+        {hasError ? 'Enter a valid hex color.' : description}
+      </FieldHelperText>
     </div>
   )
 })

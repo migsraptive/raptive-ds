@@ -19,9 +19,10 @@ export function SingleFieldIntake({
   ctaSuccessIcon = null,
   ctaDisabled = false,
   showAside = true,
+  framed = true,
 }) {
   return (
-    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+    <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', framed ? 'border border-border' : ''].filter(Boolean).join(' ')}>
       <div className="grid lg:grid-cols-[minmax(0,1.15fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">

@@ -1,5 +1,34 @@
 import { cloneElement, isValidElement, useId } from 'react'
 
+const helperToneClassNames = {
+  default: 'text-text-secondary',
+  error: 'font-medium text-status-error-text',
+}
+
+export function FieldHelperText({
+  id,
+  children,
+  tone = 'default',
+  className = '',
+}) {
+  if (!children) {
+    return null
+  }
+
+  return (
+    <p
+      id={id}
+      className={[
+        'text-xs',
+        helperToneClassNames[tone] ?? helperToneClassNames.default,
+        className,
+      ].filter(Boolean).join(' ')}
+    >
+      {children}
+    </p>
+  )
+}
+
 export function FormField({
   id,
   label,
@@ -39,15 +68,11 @@ export function FormField({
       {control}
 
       {description && !error && (
-        <p id={descriptionId} className="text-xs text-text-secondary">
-          {description}
-        </p>
+        <FieldHelperText id={descriptionId}>{description}</FieldHelperText>
       )}
 
       {error && (
-        <p id={errorId} className="text-xs font-medium text-status-error-text">
-          {error}
-        </p>
+        <FieldHelperText id={errorId} tone="error">{error}</FieldHelperText>
       )}
     </div>
   )

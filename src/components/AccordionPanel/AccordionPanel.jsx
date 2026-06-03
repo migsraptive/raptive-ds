@@ -11,6 +11,7 @@ export function AccordionPanel({
   trailing = null,
   open = false,
   onToggle,
+  toggleable = true,
   children,
 }) {
   const panelId = useId()
@@ -18,15 +19,21 @@ export function AccordionPanel({
   const duration = shouldReduceMotion ? 0.01 : 0.15
   const renderedIcon = icon && (isValidElement(icon) ? icon : <LucideIcon icon={icon} size="md" />)
   const resolvedSublabel = sublabel ?? subtext
+  const HeaderElement = toggleable ? 'button' : 'div'
 
   return (
     <div className="bg-surface">
-      <button
-        type="button"
-        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150 hover:bg-surface-sunken"
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={onToggle}
+      <HeaderElement
+        {...(toggleable ? {
+          type: 'button',
+          'aria-expanded': open,
+          'aria-controls': panelId,
+          onClick: onToggle,
+        } : {})}
+        className={[
+          'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150',
+          toggleable ? 'hover:bg-surface-sunken' : '',
+        ].filter(Boolean).join(' ')}
       >
         {renderedIcon ? (
           <span
@@ -49,18 +56,20 @@ export function AccordionPanel({
             {trailing}
           </span>
         ) : null}
-        <span
-          className={[
-            'flex h-6 w-6 flex-shrink-0 items-center justify-center text-text-secondary transition-transform duration-150',
-            open ? 'rotate-180' : '',
-          ].join(' ')}
-          style={{ transitionDuration: `${duration}s` }}
-        >
-          <span className="paired-label-icon text-sm leading-sm">
-            <LucideIcon icon={ChevronDown} size="sm" />
+        {toggleable ? (
+          <span
+            className={[
+              'flex h-6 w-6 flex-shrink-0 items-center justify-center text-text-secondary transition-transform duration-150',
+              open ? 'rotate-180' : '',
+            ].join(' ')}
+            style={{ transitionDuration: `${duration}s` }}
+          >
+            <span className="paired-label-icon text-sm leading-sm">
+              <LucideIcon icon={ChevronDown} size="sm" />
+            </span>
           </span>
-        </span>
-      </button>
+        ) : null}
+      </HeaderElement>
 
       {open && (
         <div id={panelId} className="border-t border-border px-4 py-4">

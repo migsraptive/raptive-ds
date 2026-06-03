@@ -40,20 +40,19 @@ export function CompactWysiwygStudio({
 
   const [fields, setFields] = useState(defaultFields)
   const [brandColor, setBrandColor] = useState(detectedBrandColor)
-  const [avatarUrl, setAvatarUrl] = useState(null)
-  const [openPanel, setOpenPanel] = useState('community')
+  const [horizontalLogoUrl, setHorizontalLogoUrl] = useState(null)
+  const [squareLogoUrl, setSquareLogoUrl] = useState(null)
 
   const updateField = (key, value) => {
     setFields((current) => ({ ...current, [key]: value }))
   }
 
-  const useDetectedBrandColor = () => {
-    setBrandColor(detectedBrandColor)
-  }
-
   const previewThemeStyle = createPreviewThemeStyle({
     brandColor,
   })
+  const topicHelperText = fields.topic === COMMUNITY_VERTICAL_OTHER
+    ? 'Our team will reach out to confirm your community topic.'
+    : null
 
   const editorRows = [
     {
@@ -74,18 +73,15 @@ export function CompactWysiwygStudio({
             value={fields.topic}
             onChange={(value) => updateField('topic', value)}
             options={COMMUNITY_VERTICAL_OPTIONS}
+            helperText={topicHelperText}
           />
-          {fields.topic === COMMUNITY_VERTICAL_OTHER && (
-            <p className="ml-24 text-xs leading-relaxed text-text-secondary">
-              Our team will reach out to confirm your community topic.
-            </p>
-          )}
           <CompactField
             label="description"
             type="textarea"
             value={fields.description}
             onChange={(value) => updateField('description', value)}
             rows={2}
+            helperText="0/130 characters"
           />
           <CompactField
             label="short description"
@@ -93,6 +89,7 @@ export function CompactWysiwygStudio({
             value={fields.discoverText}
             onChange={(value) => updateField('discoverText', value)}
             rows={2}
+            helperText="0/40 characters"
           />
         </div>
       ),
@@ -101,18 +98,32 @@ export function CompactWysiwygStudio({
       id: 'logo',
       icon: ImageIcon,
       label: 'Logo',
-      subtext: 'Upload your image',
+      subtext: 'Horizontal and square logos',
       content: (
-        <AvatarUpload
-          label="Logo"
-          uploadLabel="Click to upload logo"
-          previewLabel="Logo"
-          previewShape="circle"
-          value={avatarUrl}
-          onChange={(value) => {
-            setAvatarUrl(value)
-          }}
-        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <AvatarUpload
+            label="Horizontal"
+            uploadLabel="Upload asset"
+            previewLabel="Horizontal logo"
+            previewShape="rectangle"
+            layout="button"
+            value={horizontalLogoUrl}
+            onChange={(value) => {
+              setHorizontalLogoUrl(value)
+            }}
+          />
+          <AvatarUpload
+            label="Square"
+            uploadLabel="Upload asset"
+            previewLabel="Square logo"
+            previewShape="square"
+            layout="button"
+            value={squareLogoUrl}
+            onChange={(value) => {
+              setSquareLogoUrl(value)
+            }}
+          />
+        </div>
       ),
     },
     {
@@ -122,14 +133,9 @@ export function CompactWysiwygStudio({
       subtext: 'Brand and generated accent',
       content: (
         <div className="space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-xs leading-relaxed text-text-secondary">
-              Choose the brand color to preview how your community could feel. We’ll automatically create the accessible accent tint, hover states, and text colors from it.
-            </p>
-            <Button size="xs" variant="link" onClick={useDetectedBrandColor}>
-              Use detected
-            </Button>
-          </div>
+          <p className="text-xs leading-relaxed text-text-secondary">
+            Choose the brand color to preview how your community could feel. We’ll automatically create the accessible accent tint, hover states, and text colors from it.
+          </p>
           <ColorInput
             label="Brand Color"
             description="Used for buttons, links, creator marks, and the generated highlight tint."
@@ -150,8 +156,7 @@ export function CompactWysiwygStudio({
           <aside className="flex flex-col border-b border-border bg-surface lg:border-b-0 lg:border-r">
             <AccordionPanelGroup
               rows={editorRows}
-              openRow={openPanel}
-              onOpenRowChange={setOpenPanel}
+              allRowsOpen
               className="min-h-0 flex-1 overflow-y-auto"
             />
           </aside>
@@ -178,8 +183,8 @@ export function CompactWysiwygStudio({
                   activeMembersLabel="186 early members"
                   topicLabel={fields.topic}
                   description={fields.discoverText}
-                  avatarSrc={avatarUrl}
-                  avatarShape="circle"
+                  avatarSrc={squareLogoUrl}
+                  avatarShape="square"
                   ctaLabel="Explore community"
                   onExplore={() => {}}
                 />
@@ -188,8 +193,8 @@ export function CompactWysiwygStudio({
                   communityName={fields.name}
                   question="Which pop culture moment should we unpack first?"
                   answerCount={12}
-                  avatarSrc={avatarUrl}
-                  avatarShape="circle"
+                  avatarSrc={squareLogoUrl}
+                  avatarShape="square"
                   onAnswer={() => {}}
                   onViewAnswers={() => {}}
                 />

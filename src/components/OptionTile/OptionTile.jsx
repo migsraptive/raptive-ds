@@ -5,6 +5,7 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 export function OptionTile({
   title,
   description,
+  children = null,
   icon = null,
   selected = false,
   disabled = false,
@@ -132,6 +133,7 @@ export function OptionTile({
         </motion.span>
         {description && <span className="block text-sm text-text-secondary">{description}</span>}
       </span>
+      {children ? <span className="block w-full">{children}</span> : null}
     </motion.button>
   )
 }

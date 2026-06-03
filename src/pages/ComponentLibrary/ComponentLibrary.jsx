@@ -73,6 +73,7 @@ import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGath
 import { DataGatheringWonderSequence } from '../../patterns/DataGatheringWonderSequence/DataGatheringWonderSequence.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
+import { MobileOnboardingFlow } from '../../patterns/MobileOnboardingFlow/MobileOnboardingFlow.jsx'
 import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
@@ -217,7 +218,7 @@ function TimedShellVideo({ src, label, playbackRate = 1, pauseAfterMs = 3000 }) 
 }
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
-const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Animation']
+const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Mobile', 'Pages', 'Patterns', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
@@ -365,6 +366,7 @@ export function ComponentLibrary() {
   const [fetchConfirmationEditDraft, setFetchConfirmationEditDraft] = useState({ platform: '', handle: '', url: '' })
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [reviewFields] = useState({
     name: 'Culture Crave',
     url: 'instagram.com/culturecrave',
@@ -463,7 +465,7 @@ export function ComponentLibrary() {
   const creatorShellPreviewSteps = {
     entry: {
       title: 'Where do your fans live?',
-      description: 'Paste a link to where we can find your fans: your main social account or website. We’ll do the rest!',
+      description: 'Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website. We’ll do the rest!',
       primaryLabel: 'Continue',
       primarySuccessLabel: 'Pulling data',
       primarySuccessIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
@@ -509,8 +511,8 @@ export function ComponentLibrary() {
     success: {
       title: 'You’re on the list. We’ll take it from here.',
       description: null,
-      primaryLabel: "Let's begin...",
-      primarySuccessLabel: "Let's begin...",
+      primaryLabel: 'Close',
+      primarySuccessLabel: 'Close',
       primarySuccessIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
       image: submissionIllustrationUrl,
       imageAlt: 'Completion illustration for the creator application submission success step',
@@ -531,6 +533,13 @@ export function ComponentLibrary() {
     setCreatorShellPreviewStep(value)
     setCreatorShellPreviewOpenRow(value === 'gather' ? 'identity' : 'source')
   }
+  const handleVerificationMethodChange = (value) => {
+    setVerificationMethod(value)
+    setVerificationConfirmed(false)
+    setVerificationTermsAccepted(false)
+  }
+  const creatorShellVerificationIncomplete = creatorShellPreviewStep === 'verify'
+    && (!verificationConfirmed || !verificationTermsAccepted)
   const handleCreatorShellNext = () => {
     if (creatorShellIsLastStep) {
       handleCreatorShellPreviewStepChange('entry')
@@ -725,7 +734,7 @@ export function ComponentLibrary() {
 
       <main
         className={[
-          activeSection === 'Pages' ? 'max-w-none' : activeSection === 'Patterns' ? 'max-w-6xl' : 'max-w-5xl',
+          activeSection === 'Pages' ? 'max-w-none' : ['Mobile', 'Patterns'].includes(activeSection) ? 'max-w-6xl' : 'max-w-5xl',
           'mx-auto px-6 py-10 space-y-14',
         ].join(' ')}
       >
@@ -1107,6 +1116,7 @@ export function ComponentLibrary() {
                             type="textarea"
                             value="A place to unpack the moments everyone is talking about."
                             onChange={() => {}}
+                            helperText="0/130 characters"
                           />
                         </div>
                       ),
@@ -1148,7 +1158,7 @@ export function ComponentLibrary() {
                 />
               </div>
               <DocumentationNote>
-                Use `AccordionPanelGroup` when a screen needs the same compact row shell with different labels and row bodies.
+                Use `AccordionPanelGroup` when a screen needs the same compact row shell with different labels and row bodies. Set `allRowsOpen` on editor surfaces where every option should remain visible.
               </DocumentationNote>
             </Section>
 
@@ -1182,21 +1192,25 @@ export function ComponentLibrary() {
               </div>
             </Section>
 
-            <Section title="Avatar Upload And Shape" description="Reusable upload and shape controls for preview/editor surfaces.">
+            <Section title="Logo Upload Areas" description="Reusable upload controls for horizontal and square logo assets.">
               <div className="grid gap-6 md:grid-cols-2">
                 <AvatarUpload
-                  label="Avatar"
+                  label="Horizontal"
+                  uploadLabel="Upload asset"
+                  previewLabel="Horizontal logo"
+                  previewShape="rectangle"
+                  layout="button"
                   value={demoAvatar}
                   onChange={setDemoAvatar}
                 />
-                <SegmentedControl
-                  label="Logo shape"
-                  value={demoShape}
-                  options={[
-                    { value: 'circle', label: 'Circle' },
-                    { value: 'rectangle', label: 'Rectangle' },
-                  ]}
-                  onChange={setDemoShape}
+                <AvatarUpload
+                  label="Square"
+                  uploadLabel="Upload asset"
+                  previewLabel="Square logo"
+                  previewShape="square"
+                  layout="button"
+                  value={demoAvatar}
+                  onChange={setDemoAvatar}
                 />
               </div>
             </Section>
@@ -1228,8 +1242,26 @@ export function ComponentLibrary() {
                   onClick={() => toggleTile('revenue')}
                 />
               </div>
+              <div className="max-w-sm">
+                <OptionTile
+                  icon={tileIcon(Mail)}
+                  title="Confirm with an Instagram DM"
+                  description="Use an inline detail area when the selected tile needs a short next step."
+                  selected
+                  selectionStyle="radio"
+                  onClick={() => {}}
+                >
+                  <span className="mt-1 block rounded-lg border border-border bg-surface px-3 py-2">
+                    <span className="block text-xs font-medium uppercase tracking-caps text-text-secondary">Your code</span>
+                    <span className="mt-1 block font-mono text-2xl font-medium text-text">CULTURE-453</span>
+                    <span className="mt-1 block text-sm leading-relaxed text-text-secondary">
+                      Detail content stays inside the selected tile.
+                    </span>
+                  </span>
+                </OptionTile>
+              </div>
               <DocumentationNote>
-                Hover, tap, and selection animations respect prefers-reduced-motion.
+                Hover, tap, and selection animations respect prefers-reduced-motion. Use the optional detail slot for selected radio tiles that need a short inline confirmation step.
               </DocumentationNote>
             </Section>
 
@@ -1807,6 +1839,29 @@ export function ComponentLibrary() {
           </>
         )}
 
+        {/* ── MOBILE ────────────────────────────────────────────────────── */}
+        {activeSection === 'Mobile' && (
+          <>
+            <div className="rounded-xl border border-border bg-surface px-4 py-3 shadow-xs">
+              <Checkbox
+                variant="plain"
+                label="Preview mobile CTA success labels"
+                description="Forces the mobile preview CTA into its success state so transition copy can be reviewed in the handset frame."
+                checked={previewPatternCtaSuccess}
+                onChange={(event) => setPreviewPatternCtaSuccess(event.target.checked)}
+              />
+            </div>
+
+            <Section title="Mobile Creator Onboarding Flow" description="Handset-first preview of the creator application onboarding story.">
+              <MobileOnboardingFlow forceSuccess={previewPatternCtaSuccess} />
+            </Section>
+
+            <DocumentationNote>
+              Mobile onboarding keeps the same behavior as the desktop flow: URL intake, fetched creator confirmation, preview editing, ownership verification, and submission. The layout changes to stacked content, a compact handset header, and bottom actions.
+            </DocumentationNote>
+          </>
+        )}
+
         {/* ── PAGES ─────────────────────────────────────────────────────── */}
         {activeSection === 'Pages' && (
           <div className="mx-auto flex w-[1440px] flex-col gap-4">
@@ -1887,6 +1942,7 @@ export function ComponentLibrary() {
                         success={previewPatternCtaSuccess}
                         successLabel={creatorShellPreview.primarySuccessLabel}
                         successIcon={creatorShellPreview.primarySuccessIcon}
+                        disabled={creatorShellVerificationIncomplete}
                         onClick={handleCreatorShellNext}
                         className={[
                           creatorShellIsFirstStep ? 'ml-auto' : '',
@@ -1961,19 +2017,28 @@ export function ComponentLibrary() {
                             </div>
                           ))}
                         </div>
-                        <Checkbox
-                          checked={verificationConfirmed}
-                          onChange={(event) => setVerificationConfirmed(event.target.checked)}
-                          variant="plain"
-                          label="I control this creator account and want to continue with verification."
-                          description="This keeps the last step feeling intentional without adding a long security ceremony."
-                        />
+                        <div className="grid gap-3">
+                          <Checkbox
+                            checked={verificationConfirmed}
+                            onChange={(event) => setVerificationConfirmed(event.target.checked)}
+                            variant="plain"
+                            label="I control this creator account and want to continue with verification."
+                            description="This keeps the last step feeling intentional without adding a long security ceremony."
+                          />
+                          <Checkbox
+                            checked={verificationTermsAccepted}
+                            onChange={(event) => setVerificationTermsAccepted(event.target.checked)}
+                            variant="plain"
+                            label="I agree to the Community terms."
+                            description="By submitting this application, I agree to the Terms of Service and acknowledge the Privacy Policy."
+                          />
+                        </div>
                       </div>
                     ) : null}
                     {creatorShellPreviewStep === 'success' ? (
                       <div className="max-w-2xl space-y-8">
                         <p className="text-base leading-relaxed text-white">
-                          Hold application ID CULTURE-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps.
+                          We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps.
                         </p>
                         <div className="space-y-3">
                           {[
@@ -1986,7 +2051,7 @@ export function ComponentLibrary() {
                             {
                               step: 'approved',
                               title: 'Approved',
-                              description: 'If there’s a fit, we may reach out with next steps.',
+                              description: "If there's a fit, we will reach out with next steps.",
                             },
                             {
                               step: 'live',
@@ -2027,7 +2092,7 @@ export function ComponentLibrary() {
             <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
               <SingleFieldIntake
                 title="Where do your fans live?"
-                description="Paste a link to where we can find your fans: your main social account or website. We’ll do the rest!"
+                description="Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website. We’ll do the rest!"
                 value={creatorUrl}
                 onChange={(event) => setCreatorUrl(event.target.value)}
                 onSubmit={() => {
@@ -2168,9 +2233,11 @@ export function ComponentLibrary() {
                   },
                 ]}
                 selectedMethod={previewPatternCtaSuccess ? 'instagram-dm' : verificationMethod}
-                onSelectMethod={setVerificationMethod}
+                onSelectMethod={handleVerificationMethodChange}
                 confirmed={previewPatternCtaSuccess || verificationConfirmed}
                 onConfirmChange={setVerificationConfirmed}
+                termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
+                onTermsAcceptedChange={setVerificationTermsAccepted}
                 instagramDmDetail={{
                   code: 'CULTURE-453',
                   destinationHandle: '@raptive_community',
@@ -2190,7 +2257,7 @@ export function ComponentLibrary() {
             <Section title="Submission Success" description="Completion state matching the creator onboarding flow.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
-                summary="Hold application ID CULTURE-453 for reference. We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
+                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
                 timeline={[
                   {
                     step: 'submitted',
@@ -2201,7 +2268,7 @@ export function ComponentLibrary() {
                   {
                     step: 'approved',
                     title: 'Approved',
-                    description: 'If there’s a fit, we may reach out with next steps.',
+                    description: "If there's a fit, we will reach out with next steps.",
                   },
                   {
                     step: 'live',
@@ -2212,10 +2279,10 @@ export function ComponentLibrary() {
                 showAside={false}
                 secondaryAction={null}
                 primaryAction={{
-                  label: "Let's begin...",
+                  label: 'Close',
                   variant: 'black',
                   success: previewPatternCtaSuccess,
-                  successLabel: "Let's begin...",
+                  successLabel: 'Close',
                   successIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
                 }}
               />
@@ -2254,9 +2321,11 @@ export function ComponentLibrary() {
                   },
                 ]}
                 selectedMethod={verificationMethod}
-                onSelectMethod={setVerificationMethod}
+                onSelectMethod={handleVerificationMethodChange}
                 confirmed={verificationConfirmed}
                 onConfirmChange={setVerificationConfirmed}
+                termsAccepted={verificationTermsAccepted}
+                onTermsAcceptedChange={setVerificationTermsAccepted}
                 instagramDmDetail={{
                   code: 'CULTURE-453',
                   destinationHandle: '@raptive_community',

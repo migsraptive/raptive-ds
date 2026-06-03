@@ -293,6 +293,7 @@ export function DataGatheringReview({
   contentClassName = '',
   loadingCopy = {},
   resultStatus = 'found',
+  framed = true,
   onRowsRevealStart,
   onRowsResolved,
   onResolvedChange,
@@ -613,7 +614,7 @@ export function DataGatheringReview({
   }
 
   return (
-    <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+    <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', framed ? 'border border-border' : ''].filter(Boolean).join(' ')}>
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         {content}
