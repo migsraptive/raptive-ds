@@ -2036,7 +2036,7 @@ export function ComponentLibrary() {
                     {creatorShellPreviewStep === 'success' ? (
                       <div className="max-w-2xl space-y-8">
                         <p className="text-base leading-relaxed text-white">
-                          We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps.
+                          We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps.
                         </p>
                         <div className="space-y-3">
                           {[
@@ -2255,7 +2255,7 @@ export function ComponentLibrary() {
             <Section title="Submission Success" description="Completion state matching the creator onboarding flow.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
-                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
+                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
                 timeline={[
                   {
                     step: 'submitted',

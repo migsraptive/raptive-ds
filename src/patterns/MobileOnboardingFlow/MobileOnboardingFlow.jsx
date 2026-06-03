@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BadgeCheck, ChevronLeft, IdCard, Image as ImageIcon, Link2, LoaderCircle, Mail, Palette, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
@@ -26,6 +26,7 @@ import { COMMUNITY_VERTICAL_OPTIONS, COMMUNITY_VERTICAL_OTHER, getClosestCommuni
 const mobileStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
 const descriptionCharacterLimit = 130
 const shortDescriptionCharacterLimit = 40
+const mobilePrimaryActionDelayMs = 900
 
 function getCharacterCountLabel(value, limit) {
   return `${value.length}/${limit} characters`
@@ -35,16 +36,16 @@ const mobileStepMeta = {
   entry: {
     label: 'Source',
     title: 'Where do your fans live?',
-    description: "Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website.",
+    description: "Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website. We’ll do the rest!",
     primaryLabel: 'Continue',
     primarySuccessLabel: 'Pulling data',
     primarySuccessIcon: LoaderCircle,
     primarySuccessIconClassName: 'animate-spin',
   },
   gather: {
-    label: 'Gather',
-    title: "We're finding your fandom",
-    description: 'Give us a moment while we pull the creator profile and connected social signals.',
+    label: 'Review',
+    title: 'Take a look at what we found.',
+    description: 'Confirm the creator profile before we use it to shape the first community preview.',
     primaryLabel: 'Looks right',
     primarySuccessLabel: 'Sneak peaking...',
     primarySuccessIcon: LoaderCircle,
@@ -52,9 +53,9 @@ const mobileStepMeta = {
   },
   preview: {
     label: 'Preview',
-    title: 'Your community preview is ready.',
-    description: 'Adjust the community name, topic, and brand color before this moves to review.',
-    primaryLabel: 'Continue',
+    title: 'We used your brand to jumpstart your community. How does it look?',
+    description: 'Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.',
+    primaryLabel: 'Continue to Verification',
     primarySuccessLabel: "Let's verify...",
     primarySuccessIcon: LoaderCircle,
     primarySuccessIconClassName: 'animate-spin',
@@ -62,16 +63,16 @@ const mobileStepMeta = {
   verify: {
     label: 'Verify',
     title: "One last check to know it's really you.",
-    description: 'Choose an ownership check so we can keep the application tied to the right creator.',
-    primaryLabel: 'Submit',
+    description: 'Complete verification for one of your channels to wrap up your application.',
+    primaryLabel: 'Submit application',
     primarySuccessLabel: 'Submitting...',
     primarySuccessIcon: LoaderCircle,
     primarySuccessIconClassName: 'animate-spin',
   },
   success: {
     label: 'Done',
-    title: "You're on the list.",
-    description: "We'll review the setup across brand, audience, and community fit.",
+    title: "You're on the list. We'll take it from here.",
+    description: "We'll review the setup across brand, audience, and community fit. If there's a match, our team will reach out with next steps.",
     primaryLabel: 'Close',
     primarySuccessLabel: 'Close',
     primarySuccessIcon: LoaderCircle,
@@ -165,7 +166,7 @@ function MobileFooter({
           size="md"
           onClick={onPrimary}
           disabled={primaryAction.disabled}
-          success={forceSuccess}
+          success={forceSuccess || primaryAction.success}
           successLabel={primaryAction.successLabel}
           successIcon={<LucideIcon icon={SuccessIcon} size="md" stroke="standard" className={primaryAction.successIconClassName} />}
           className={canGoBack ? 'flex-1' : ''}
@@ -181,6 +182,7 @@ function MobileFooter({
 export function MobileOnboardingFlow({ forceSuccess = false }) {
   const detectedBrandColor = normalizeHexColor(compactWysiwygPalette[0]) ?? brandPreviewDefaults.brand
   const shouldReduceMotion = useReducedMotion()
+  const actionTimeoutRef = useRef(null)
   const [activeStep, setActiveStep] = useState('entry')
   const [creatorUrl, setCreatorUrl] = useState('https://instagram.com/culturecrave')
   const [openGatherRow, setOpenGatherRow] = useState('identity')
@@ -188,11 +190,13 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
   const [communityTopic, setCommunityTopic] = useState(getClosestCommunityVertical('Pop Culture'))
   const [communityDescription, setCommunityDescription] = useState('Pop culture community tracking movies, TV, music, celebrity moments, and the fandom conversations people cannot stop discussing.')
   const [communityDiscoverText, setCommunityDiscoverText] = useState('React to the moments fans love most.')
-  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [horizontalLogoUrl, setHorizontalLogoUrl] = useState(null)
+  const [squareLogoUrl, setSquareLogoUrl] = useState(null)
   const [brandColor, setBrandColor] = useState(detectedBrandColor)
   const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
+  const [pendingPrimaryStep, setPendingPrimaryStep] = useState(null)
   const activeIndex = mobileStepOrder.indexOf(activeStep)
   const activeMeta = mobileStepMeta[activeStep]
   const previewThemeStyle = useMemo(() => createPreviewThemeStyle({ brandColor }), [brandColor])
@@ -205,24 +209,45 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
     (activeStep === 'entry' && !creatorUrl.trim())
     || (activeStep === 'verify' && (!verificationMethod || !verificationConfirmed || !verificationTermsAccepted))
   )
+  const primaryPending = pendingPrimaryStep === activeStep
   const primaryAction = {
     label: activeMeta.primaryLabel,
     successLabel: activeMeta.primarySuccessLabel,
     successIcon: activeMeta.primarySuccessIcon,
     successIconClassName: activeMeta.primarySuccessIconClassName,
-    disabled: primaryDisabled,
+    success: primaryPending,
+    disabled: primaryDisabled || Boolean(pendingPrimaryStep),
   }
 
-  const goToNextStep = () => {
-    if (activeStep === 'success') {
-      setActiveStep('entry')
-      return
+  useEffect(() => (
+    () => {
+      if (actionTimeoutRef.current) {
+        window.clearTimeout(actionTimeoutRef.current)
+      }
     }
+  ), [])
 
-    setActiveStep(mobileStepOrder[Math.min(activeIndex + 1, mobileStepOrder.length - 1)])
+  const goToNextStep = () => {
+    if (primaryDisabled || pendingPrimaryStep) return
+
+    setPendingPrimaryStep(activeStep)
+
+    actionTimeoutRef.current = window.setTimeout(() => {
+      setPendingPrimaryStep(null)
+      actionTimeoutRef.current = null
+
+      if (activeStep === 'success') {
+        setActiveStep('entry')
+        return
+      }
+
+      setActiveStep(mobileStepOrder[Math.min(activeIndex + 1, mobileStepOrder.length - 1)])
+    }, mobilePrimaryActionDelayMs)
   }
 
   const goToPreviousStep = () => {
+    if (pendingPrimaryStep) return
+
     setActiveStep(mobileStepOrder[Math.max(activeIndex - 1, 0)])
   }
 
@@ -283,17 +308,28 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
       id: 'logo',
       icon: ImageIcon,
       label: 'Logo',
-      subtext: 'Upload your image',
+      subtext: 'Horizontal and square logos',
       content: (
-        <AvatarUpload
-          label="Logo"
-          uploadLabel="Upload asset"
-          previewLabel="Logo"
-          previewShape="circle"
-          layout="button"
-          value={avatarUrl}
-          onChange={setAvatarUrl}
-        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <AvatarUpload
+            label="Horizontal"
+            uploadLabel="Upload asset"
+            previewLabel="Horizontal logo"
+            previewShape="rectangle"
+            layout="button"
+            value={horizontalLogoUrl}
+            onChange={setHorizontalLogoUrl}
+          />
+          <AvatarUpload
+            label="Square"
+            uploadLabel="Upload asset"
+            previewLabel="Square logo"
+            previewShape="square"
+            layout="button"
+            value={squareLogoUrl}
+            onChange={setSquareLogoUrl}
+          />
+        </div>
       ),
     },
     {
@@ -403,8 +439,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
               activeMembersLabel="186 early members"
               topicLabel={communityTopic}
               description={communityDiscoverText}
-              avatarSrc={avatarUrl}
-              avatarShape="circle"
+              avatarSrc={squareLogoUrl}
+              avatarShape="square"
               ctaLabel="Explore community"
               onExplore={() => {}}
             />
@@ -414,8 +450,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
             communityName={communityName}
             question="Which pop culture moment should we unpack first?"
             answerCount={12}
-            avatarSrc={avatarUrl}
-            avatarShape="circle"
+            avatarSrc={squareLogoUrl}
+            avatarShape="square"
             onAnswer={() => {}}
             onViewAnswers={() => {}}
             className="aspect-auto min-h-48"

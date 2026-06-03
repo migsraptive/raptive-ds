@@ -394,7 +394,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     content = (
       <SubmissionSuccess
         title="You're on the list. We'll take it from here."
-        summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team may reach out with next steps."
+        summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
         progressMeter={progressMeter}
         timeline={[
           {
