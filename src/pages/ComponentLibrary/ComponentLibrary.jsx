@@ -5,13 +5,12 @@ import {
   Baby,
   BadgeCheck,
   BriefcaseBusiness,
-  Check,
-  Eye,
   HandCoins,
   House,
   IdCard,
   Image as ImageIcon,
   Link2,
+  LoaderCircle,
   Mail,
   Megaphone,
   MessageSquare,
@@ -20,8 +19,6 @@ import {
   Plus,
   Rocket,
   RotateCcw,
-  Search,
-  Send,
   Settings2,
   ShieldCheck,
   Sparkles,
@@ -223,6 +220,7 @@ const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
 const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
+const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
 const creatorShellStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
 const creatorShellGatherVideoLeadInMs = 2000
 const creatorShellGatherVideoPlaybackRate = 0.45
@@ -468,7 +466,7 @@ export function ComponentLibrary() {
       description: 'Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website. We’ll do the rest!',
       primaryLabel: 'Continue',
       primarySuccessLabel: 'Pulling data',
-      primarySuccessIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+      primarySuccessIcon: loadingSuccessIcon,
       image: singleFieldIntakeIllustrationUrl,
       imageAlt: 'Vibrant fantasy garden illustration for the creator application entry step',
     },
@@ -477,7 +475,7 @@ export function ComponentLibrary() {
       description: 'Give us a moment while we pull some details.',
       primaryLabel: 'Continue',
       primarySuccessLabel: 'Finding...',
-      primarySuccessIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+      primarySuccessIcon: loadingSuccessIcon,
       video: wonderVideoUrl,
       videoLabel: 'Fantastical garden video reveal for the creator data gathering step',
     },
@@ -486,16 +484,16 @@ export function ComponentLibrary() {
       description: 'Confirm the creator profile before we use it to shape the first community preview.',
       primaryLabel: 'Looks right',
       primarySuccessLabel: 'Sneak peaking...',
-      primarySuccessIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
+      primarySuccessIcon: loadingSuccessIcon,
       video: wonderVideoUrl,
       videoLabel: 'Fantastical garden video reveal for the creator confirmation step',
     },
     preview: {
       title: 'We used your brand to jumpstart your community. How does it look?',
-      description: 'Pick your community name carefully. You can adjust the brand color below and see how it feels.',
+      description: 'Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.',
       primaryLabel: 'Continue to Verification',
       primarySuccessLabel: "Let's verify...",
-      primarySuccessIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
+      primarySuccessIcon: loadingSuccessIcon,
       image: null,
       imageAlt: '',
     },
@@ -504,7 +502,7 @@ export function ComponentLibrary() {
       description: 'Complete verification for one of your channels to wrap up your application.',
       primaryLabel: 'Submit application',
       primarySuccessLabel: 'Submitting...',
-      primarySuccessIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
+      primarySuccessIcon: loadingSuccessIcon,
       image: verificationIllustrationUrl,
       imageAlt: 'Verification trust illustration for the creator application verification step',
     },
@@ -513,7 +511,7 @@ export function ComponentLibrary() {
       description: null,
       primaryLabel: 'Close',
       primarySuccessLabel: 'Close',
-      primarySuccessIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
+      primarySuccessIcon: loadingSuccessIcon,
       image: submissionIllustrationUrl,
       imageAlt: 'Completion illustration for the creator application submission success step',
       tone: 'dark',
@@ -1438,7 +1436,7 @@ export function ComponentLibrary() {
               <Row label="Success">
                 <Button success>Submitted</Button>
                 <Button success successLabel="Saved">Save draft</Button>
-                <Button success successLabel="Finding" successIcon={<LucideIcon icon={Search} size="md" />}>Continue</Button>
+                <Button success successLabel="Finding" successIcon={loadingSuccessIcon}>Continue</Button>
               </Row>
               <Row label="Disabled">
                 <Button disabled>Primary</Button>
@@ -2108,7 +2106,7 @@ export function ComponentLibrary() {
                 helperText={getDetectedSocialAccountHelperText(creatorUrl)}
                 ctaLabel="Continue"
                 ctaSuccessLabel="Pulling data"
-                ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
+                ctaSuccessIcon={loadingSuccessIcon}
                 ctaDisabled={!creatorUrl.trim() && !previewPatternCtaSuccess}
                 showAside={false}
               />
@@ -2130,7 +2128,7 @@ export function ComponentLibrary() {
                   label: 'Continue',
                   success: previewPatternCtaSuccess,
                   successLabel: 'Finding...',
-                  successIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+                  successIcon: loadingSuccessIcon,
                 }}
               />
             </Section>
@@ -2149,7 +2147,7 @@ export function ComponentLibrary() {
                   label: 'Continue',
                   success: previewPatternCtaSuccess,
                   successLabel: 'Finding...',
-                  successIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+                  successIcon: loadingSuccessIcon,
                 }}
               />
             </Section>
@@ -2177,7 +2175,7 @@ export function ComponentLibrary() {
                   label: 'Looks right',
                   success: previewPatternCtaSuccess,
                   successLabel: 'Sneak peaking...',
-                  successIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
+                  successIcon: loadingSuccessIcon,
                 }}
               />
             </Section>
@@ -2196,7 +2194,7 @@ export function ComponentLibrary() {
                           We used your brand to jumpstart your community. How does it look?
                         </h2>
                         <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                          Pick your community name carefully. You can adjust the brand color below and see how it feels.
+                          Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.
                         </p>
                       </div>
                     </div>
@@ -2206,7 +2204,7 @@ export function ComponentLibrary() {
                         label: 'Continue to Verification',
                         success: previewPatternCtaSuccess,
                         successLabel: "Let's verify...",
-                        successIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
+                        successIcon: loadingSuccessIcon,
                       }}
                     />
                   </div>
@@ -2249,7 +2247,7 @@ export function ComponentLibrary() {
                   label: 'Continue',
                   success: previewPatternCtaSuccess,
                   successLabel: 'Submitting...',
-                  successIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
+                  successIcon: loadingSuccessIcon,
                 }}
               />
             </Section>
@@ -2283,7 +2281,7 @@ export function ComponentLibrary() {
                   variant: 'black',
                   success: previewPatternCtaSuccess,
                   successLabel: 'Close',
-                  successIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
+                  successIcon: loadingSuccessIcon,
                 }}
               />
             </Section>
@@ -2353,7 +2351,7 @@ export function ComponentLibrary() {
                 primaryAction={{
                   label: 'Continue',
                   successLabel: 'Submitting...',
-                  successIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
+                  successIcon: loadingSuccessIcon,
                 }}
               />
             </Section>

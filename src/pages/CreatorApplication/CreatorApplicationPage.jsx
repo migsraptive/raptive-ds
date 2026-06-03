@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BadgeCheck, Check, Eye, Mail, Rocket, Search, Send, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, LoaderCircle, Mail, Rocket, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
@@ -13,6 +13,7 @@ import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSu
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
 
 const flowStepIds = ['entry', 'gather', 'review', 'verify', 'submit']
+const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
 
 const initialCreatorUrl = ''
 const initialAccounts = [
@@ -242,7 +243,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         helperText={getDetectedSocialAccountHelperText(creatorUrl)}
         ctaLabel="Continue"
         ctaSuccessLabel="Pulling data"
-        ctaSuccessIcon={<LucideIcon icon={Search} size="md" stroke="standard" />}
+        ctaSuccessIcon={loadingSuccessIcon}
         ctaDisabled={!creatorUrl.trim()}
         showAside={false}
         framed={!standalone}
@@ -276,7 +277,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
           disabled: !gatherRowsResolved || pendingPrimaryAction === 'gather-primary',
           success: pendingPrimaryAction === 'gather-primary',
           successLabel: 'Sneak peaking...',
-          successIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
+          successIcon: loadingSuccessIcon,
           onClick: () => triggerPrimaryAction({
             key: 'gather-primary',
             run: () => setActiveStep(2),
@@ -298,7 +299,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
                   We used your brand to jumpstart your community. How does it look?
                 </h2>
                 <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                  Pick your community name carefully. You can adjust the brand color below and see how it feels.
+                  Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.
                 </p>
               </div>
             </div>
@@ -317,7 +318,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
                 disabled: pendingPrimaryAction === 'review-primary',
                 success: pendingPrimaryAction === 'review-primary',
                 successLabel: "Let's verify...",
-                successIcon: <LucideIcon icon={BadgeCheck} size="md" stroke="standard" />,
+                successIcon: loadingSuccessIcon,
                 onClick: () => triggerPrimaryAction({
                   key: 'review-primary',
                   run: () => setActiveStep(3),
@@ -379,7 +380,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
           disabled: pendingPrimaryAction === 'verify-primary',
           success: pendingPrimaryAction === 'verify-primary',
           successLabel: 'Submitting...',
-          successIcon: <LucideIcon icon={Send} size="md" stroke="standard" />,
+          successIcon: loadingSuccessIcon,
           onClick: () => triggerPrimaryAction({
             key: 'verify-primary',
             run: handleVerificationContinue,
@@ -422,7 +423,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
           disabled: pendingPrimaryAction === 'submit-primary',
           success: pendingPrimaryAction === 'submit-primary',
           successLabel: 'Close',
-          successIcon: <LucideIcon icon={Check} size="md" stroke="standard" />,
+          successIcon: loadingSuccessIcon,
           onClick: () => triggerPrimaryAction({
             key: 'submit-primary',
             run: onOpenLibrary,

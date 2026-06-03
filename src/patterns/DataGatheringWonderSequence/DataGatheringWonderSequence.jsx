@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Eye, RotateCcw, Search } from 'lucide-react'
+import { LoaderCircle, RotateCcw } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { DataGatheringReview } from '../DataGatheringReview/DataGatheringReview.jsx'
 import { FetchConfirmation } from '../FetchConfirmation/FetchConfirmation.jsx'
+
+const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
 
 const accountRows = [
   {
@@ -215,7 +217,7 @@ export function DataGatheringWonderSequence({ previewCtaSuccess = false }) {
                       disabled: !rowsResolved,
                       success: previewCtaSuccess,
                       successLabel: 'Finding...',
-                      successIcon: <LucideIcon icon={Search} size="md" stroke="standard" />,
+                      successIcon: loadingSuccessIcon,
                     }}
                   />
                 </motion.div>
@@ -252,7 +254,7 @@ export function DataGatheringWonderSequence({ previewCtaSuccess = false }) {
                       label: 'Looks right',
                       success: previewCtaSuccess,
                       successLabel: 'Sneak peaking...',
-                      successIcon: <LucideIcon icon={Eye} size="md" stroke="standard" />,
+                      successIcon: loadingSuccessIcon,
                     }}
                   />
                 </motion.div>

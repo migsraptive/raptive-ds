@@ -17,6 +17,7 @@ export function CompactField({
   options = [],
   rows = 2,
   helperText = null,
+  maxLength,
   className = '',
 }) {
   const generatedId = useId()
@@ -41,6 +42,7 @@ export function CompactField({
             id={fieldId}
             value={value}
             rows={rows}
+            maxLength={maxLength}
             onChange={(event) => onChange?.(event.target.value)}
             className={[controlClassName, 'resize-none'].join(' ')}
             aria-describedby={helperId}
@@ -69,6 +71,7 @@ export function CompactField({
             id={fieldId}
             type="text"
             value={value}
+            maxLength={maxLength}
             onChange={(event) => onChange?.(event.target.value)}
             className={controlClassName}
             aria-describedby={helperId}

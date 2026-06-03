@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { BadgeCheck, Check, ChevronLeft, Eye, IdCard, Image as ImageIcon, Link2, Mail, Palette, Search, Send, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, ChevronLeft, IdCard, Image as ImageIcon, Link2, LoaderCircle, Mail, Palette, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
 import singleFieldIntakeIllustrationUrl from '../../assets/single-field-intake-illustration.png'
@@ -24,6 +24,12 @@ import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 import { COMMUNITY_VERTICAL_OPTIONS, COMMUNITY_VERTICAL_OTHER, getClosestCommunityVertical } from '../../utils/communityVerticals.js'
 
 const mobileStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
+const descriptionCharacterLimit = 130
+const shortDescriptionCharacterLimit = 40
+
+function getCharacterCountLabel(value, limit) {
+  return `${value.length}/${limit} characters`
+}
 
 const mobileStepMeta = {
   entry: {
@@ -32,31 +38,35 @@ const mobileStepMeta = {
     description: "Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website.",
     primaryLabel: 'Continue',
     primarySuccessLabel: 'Pulling data',
-    primarySuccessIcon: Search,
+    primarySuccessIcon: LoaderCircle,
+    primarySuccessIconClassName: 'animate-spin',
   },
   gather: {
     label: 'Gather',
     title: "We're finding your fandom",
     description: 'Give us a moment while we pull the creator profile and connected social signals.',
     primaryLabel: 'Looks right',
-    primarySuccessLabel: 'Sneak peeking',
-    primarySuccessIcon: Eye,
+    primarySuccessLabel: 'Sneak peaking...',
+    primarySuccessIcon: LoaderCircle,
+    primarySuccessIconClassName: 'animate-spin',
   },
   preview: {
     label: 'Preview',
     title: 'Your community preview is ready.',
     description: 'Adjust the community name, topic, and brand color before this moves to review.',
     primaryLabel: 'Continue',
-    primarySuccessLabel: "Let's verify",
-    primarySuccessIcon: BadgeCheck,
+    primarySuccessLabel: "Let's verify...",
+    primarySuccessIcon: LoaderCircle,
+    primarySuccessIconClassName: 'animate-spin',
   },
   verify: {
     label: 'Verify',
     title: "One last check to know it's really you.",
     description: 'Choose an ownership check so we can keep the application tied to the right creator.',
     primaryLabel: 'Submit',
-    primarySuccessLabel: 'Submitting',
-    primarySuccessIcon: Send,
+    primarySuccessLabel: 'Submitting...',
+    primarySuccessIcon: LoaderCircle,
+    primarySuccessIconClassName: 'animate-spin',
   },
   success: {
     label: 'Done',
@@ -64,7 +74,8 @@ const mobileStepMeta = {
     description: "We'll review the setup across brand, audience, and community fit.",
     primaryLabel: 'Close',
     primarySuccessLabel: 'Close',
-    primarySuccessIcon: Check,
+    primarySuccessIcon: LoaderCircle,
+    primarySuccessIconClassName: 'animate-spin',
   },
 }
 
@@ -156,7 +167,7 @@ function MobileFooter({
           disabled={primaryAction.disabled}
           success={forceSuccess}
           successLabel={primaryAction.successLabel}
-          successIcon={<LucideIcon icon={SuccessIcon} size="md" stroke="standard" />}
+          successIcon={<LucideIcon icon={SuccessIcon} size="md" stroke="standard" className={primaryAction.successIconClassName} />}
           className={canGoBack ? 'flex-1' : ''}
           fullWidth={!canGoBack}
         >
@@ -176,7 +187,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
   const [communityName, setCommunityName] = useState('Culture Crave Community')
   const [communityTopic, setCommunityTopic] = useState(getClosestCommunityVertical('Pop Culture'))
   const [communityDescription, setCommunityDescription] = useState('Pop culture community tracking movies, TV, music, celebrity moments, and the fandom conversations people cannot stop discussing.')
-  const [communityDiscoverText, setCommunityDiscoverText] = useState('React to the moments everyone is talking about.')
+  const [communityDiscoverText, setCommunityDiscoverText] = useState('React to the moments fans love most.')
   const [avatarUrl, setAvatarUrl] = useState(null)
   const [brandColor, setBrandColor] = useState(detectedBrandColor)
   const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
@@ -198,6 +209,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
     label: activeMeta.primaryLabel,
     successLabel: activeMeta.primarySuccessLabel,
     successIcon: activeMeta.primarySuccessIcon,
+    successIconClassName: activeMeta.primarySuccessIconClassName,
     disabled: primaryDisabled,
   }
 
@@ -222,6 +234,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
   const communityTopicHelperText = communityTopic === COMMUNITY_VERTICAL_OTHER
     ? 'Our team will reach out to confirm your community topic.'
     : null
+  const communityDescriptionHelperText = getCharacterCountLabel(communityDescription, descriptionCharacterLimit)
+  const communityDiscoverHelperText = getCharacterCountLabel(communityDiscoverText, shortDescriptionCharacterLimit)
 
   const previewEditorRows = [
     {
@@ -250,7 +264,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
             value={communityDescription}
             onChange={setCommunityDescription}
             rows={2}
-            helperText="0/130 characters"
+            maxLength={descriptionCharacterLimit}
+            helperText={communityDescriptionHelperText}
           />
           <CompactField
             label="short description"
@@ -258,7 +273,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
             value={communityDiscoverText}
             onChange={setCommunityDiscoverText}
             rows={2}
-            helperText="0/40 characters"
+            maxLength={shortDescriptionCharacterLimit}
+            helperText={communityDiscoverHelperText}
           />
         </div>
       ),

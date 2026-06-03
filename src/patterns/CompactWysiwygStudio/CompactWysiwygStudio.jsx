@@ -21,12 +21,46 @@ const defaultFields = {
   name: 'Culture Crave Community',
   topic: getClosestCommunityVertical('Pop Culture'),
   description: 'Pop culture community tracking movies, TV, music, celebrity moments, and the fandom conversations people cannot stop discussing.',
-  discoverText: 'React to the moments everyone is talking about.',
+  discoverText: 'React to the moments fans love most.',
 }
 
 const defaultColors = brandPreviewDefaults
 const defaultEditorColors = {
   brand: defaultColors.brand,
+}
+const descriptionCharacterLimit = 130
+const shortDescriptionCharacterLimit = 40
+
+function getCharacterCountLabel(value, limit) {
+  return `${value.length}/${limit} characters`
+}
+
+const previewGuideItems = [
+  {
+    label: 'Join module',
+    description: 'Introduces the community and gives fans a first action.',
+  },
+  {
+    label: 'Discovery card',
+    description: 'Shows how fans may find this community while browsing.',
+  },
+  {
+    label: 'Starter prompt',
+    description: 'Seeds the first conversation with a clear question.',
+  },
+]
+
+function PreviewGuideItem({ label, description }) {
+  return (
+    <div className="rounded-lg border border-border bg-surface px-3 py-2 shadow-xs">
+      <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
+        {label}
+      </p>
+      <p className="mt-0.5 text-xs leading-relaxed text-text-secondary">
+        {description}
+      </p>
+    </div>
+  )
 }
 
 export function CompactWysiwygStudio({
@@ -53,6 +87,8 @@ export function CompactWysiwygStudio({
   const topicHelperText = fields.topic === COMMUNITY_VERTICAL_OTHER
     ? 'Our team will reach out to confirm your community topic.'
     : null
+  const descriptionHelperText = getCharacterCountLabel(fields.description, descriptionCharacterLimit)
+  const shortDescriptionHelperText = getCharacterCountLabel(fields.discoverText, shortDescriptionCharacterLimit)
 
   const editorRows = [
     {
@@ -81,7 +117,8 @@ export function CompactWysiwygStudio({
             value={fields.description}
             onChange={(value) => updateField('description', value)}
             rows={2}
-            helperText="0/130 characters"
+            maxLength={descriptionCharacterLimit}
+            helperText={descriptionHelperText}
           />
           <CompactField
             label="short description"
@@ -89,7 +126,8 @@ export function CompactWysiwygStudio({
             value={fields.discoverText}
             onChange={(value) => updateField('discoverText', value)}
             rows={2}
-            helperText="0/40 characters"
+            maxLength={shortDescriptionCharacterLimit}
+            helperText={shortDescriptionHelperText}
           />
         </div>
       ),
@@ -162,42 +200,54 @@ export function CompactWysiwygStudio({
           </aside>
 
           <div className="preview-theme bg-surface-raised p-4" style={previewThemeStyle}>
-            <div className="grid items-stretch justify-center gap-4 lg:grid-cols-[320px_minmax(220px,1fr)]">
-              {/* no token available: this exploration previews the fixed-width right rail module beside compact community cards. */}
-              <RightRailWelcomeCard
-                className="h-full"
-                creatorName={fields.name}
-                title={fields.name}
-                description={fields.description}
-                websiteUrl="www.culturecrave.com"
-                highlight={null}
-                closing={null}
-                readerCount="186"
-                onlineCount="12"
-                primaryLabel="Join the community"
-              />
+            <div className="space-y-4">
+              <div className="grid gap-2 lg:grid-cols-3">
+                {previewGuideItems.map((item) => (
+                  <PreviewGuideItem
+                    key={item.label}
+                    label={item.label}
+                    description={item.description}
+                  />
+                ))}
+              </div>
 
-              <div className="grid min-w-0 gap-4">
-                <CommunityCreatorDiscoverCard
-                  name={fields.name}
-                  activeMembersLabel="186 early members"
-                  topicLabel={fields.topic}
-                  description={fields.discoverText}
-                  avatarSrc={squareLogoUrl}
-                  avatarShape="square"
-                  ctaLabel="Explore community"
-                  onExplore={() => {}}
+              <div className="grid items-stretch justify-center gap-4 lg:grid-cols-[320px_minmax(220px,1fr)]">
+                {/* no token available: this exploration previews the fixed-width right rail module beside compact community cards. */}
+                <RightRailWelcomeCard
+                  className="h-full"
+                  creatorName={fields.name}
+                  title={fields.name}
+                  description={fields.description}
+                  websiteUrl="www.culturecrave.com"
+                  highlight={null}
+                  closing={null}
+                  readerCount="186"
+                  onlineCount="12"
+                  primaryLabel="Join the community"
                 />
-                <CommunityAnswersCard
-                  authorName="Culture Crave"
-                  communityName={fields.name}
-                  question="Which pop culture moment should we unpack first?"
-                  answerCount={12}
-                  avatarSrc={squareLogoUrl}
-                  avatarShape="square"
-                  onAnswer={() => {}}
-                  onViewAnswers={() => {}}
-                />
+
+                <div className="grid min-w-0 gap-4">
+                  <CommunityCreatorDiscoverCard
+                    name={fields.name}
+                    activeMembersLabel="186 early members"
+                    topicLabel={fields.topic}
+                    description={fields.discoverText}
+                    avatarSrc={squareLogoUrl}
+                    avatarShape="square"
+                    ctaLabel="Explore community"
+                    onExplore={() => {}}
+                  />
+                  <CommunityAnswersCard
+                    authorName="Culture Crave"
+                    communityName={fields.name}
+                    question="Which pop culture moment should we unpack first?"
+                    answerCount={12}
+                    avatarSrc={squareLogoUrl}
+                    avatarShape="square"
+                    onAnswer={() => {}}
+                    onViewAnswers={() => {}}
+                  />
+                </div>
               </div>
             </div>
           </div>
