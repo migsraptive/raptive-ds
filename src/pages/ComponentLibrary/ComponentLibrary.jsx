@@ -64,6 +64,7 @@ import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/Home
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
+import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CreatorOnboardingShell } from '../../patterns/CreatorOnboardingShell/CreatorOnboardingShell.jsx'
 import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
@@ -365,6 +366,7 @@ export function ComponentLibrary() {
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
+  const [celebrationModalOpen, setCelebrationModalOpen] = useState(false)
   const [reviewFields] = useState({
     name: 'Culture Crave',
     url: 'instagram.com/culturecrave',
@@ -2252,7 +2254,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Submission Success" description="Completion state matching the creator onboarding flow.">
+            <Section title="Submission Success: Token Burst" description="Completion state with the lightweight token-dot celebration background.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
                 summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
@@ -2275,6 +2277,79 @@ export function ComponentLibrary() {
                   },
                 ]}
                 showAside={false}
+                showCelebrationBackground
+                secondaryAction={null}
+                primaryAction={{
+                  label: 'Close',
+                  variant: 'black',
+                  success: previewPatternCtaSuccess,
+                  successLabel: 'Close',
+                  successIcon: loadingSuccessIcon,
+                }}
+              />
+            </Section>
+
+            <Section title="Submission Success: React Confetti" description="Alternate completion state using react-confetti as the celebratory background moment.">
+              <SubmissionSuccess
+                title="You’re on the list. We’ll take it from here."
+                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
+                timeline={[
+                  {
+                    step: 'submitted',
+                    title: 'Submitted',
+                    description: 'Today your details move into review.',
+                    current: true,
+                  },
+                  {
+                    step: 'approved',
+                    title: 'Approved',
+                    description: "If there's a fit, we will reach out with next steps.",
+                  },
+                  {
+                    step: 'live',
+                    title: 'Live',
+                    description: 'When you’re ready.',
+                  },
+                ]}
+                showAside={false}
+                showCelebrationBackground
+                celebrationBackgroundVariant="react-confetti"
+                secondaryAction={null}
+                primaryAction={{
+                  label: 'Close',
+                  variant: 'black',
+                  success: previewPatternCtaSuccess,
+                  successLabel: 'Close',
+                  successIcon: loadingSuccessIcon,
+                }}
+              />
+            </Section>
+
+            <Section title="Submission Success: Cursor Burst" description="Alternate completion state with confetti charged around the cursor before bursting from that point.">
+              <SubmissionSuccess
+                title="You’re on the list. We’ll take it from here."
+                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
+                timeline={[
+                  {
+                    step: 'submitted',
+                    title: 'Submitted',
+                    description: 'Today your details move into review.',
+                    current: true,
+                  },
+                  {
+                    step: 'approved',
+                    title: 'Approved',
+                    description: "If there's a fit, we will reach out with next steps.",
+                  },
+                  {
+                    step: 'live',
+                    title: 'Live',
+                    description: 'When you’re ready.',
+                  },
+                ]}
+                showAside={false}
+                showCelebrationBackground
+                celebrationBackgroundVariant="cursor-burst"
                 secondaryAction={null}
                 primaryAction={{
                   label: 'Close',
@@ -2290,6 +2365,49 @@ export function ComponentLibrary() {
 
         {activeSection === 'Animation' && (
           <>
+            <Section
+              title="Celebration Modal"
+              description="Reference point for badge, streak, milestone, and role-earned celebration moments."
+            >
+              <div className="flex max-w-xl flex-col gap-4 rounded-xl border border-border bg-surface p-5 shadow-xs">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <Badge variant="gold" size="sm" dot>Milestone</Badge>
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      Opens the existing celebration pattern with confetti, badge focus, stats, and reduced-motion support.
+                    </p>
+                  </div>
+                  <Button onClick={() => setCelebrationModalOpen(true)}>
+                    Preview celebration
+                  </Button>
+                </div>
+              </div>
+              <CelebrationModal
+                type="milestone"
+                title="Community milestone reached"
+                description="Culture Crave unlocked a new contributor milestone after a strong week of helpful discussion."
+                badge={{
+                  icon: <LucideIcon icon={Award} size="xl" stroke="display" />,
+                  name: 'Top Contributor',
+                  tier: '2',
+                }}
+                user={{
+                  name: 'Culture Crave',
+                  avatar: avatarImageSet[0].src,
+                }}
+                stats={[
+                  { value: '18', label: 'Posts' },
+                  { value: '42', label: 'Replies' },
+                  { value: '7d', label: 'Streak' },
+                ]}
+                ctaLabel="Share Achievement"
+                secondaryLabel="Close"
+                isOpen={celebrationModalOpen}
+                onConfirm={() => setCelebrationModalOpen(false)}
+                onDismiss={() => setCelebrationModalOpen(false)}
+              />
+            </Section>
+
             <Section
               title="Projection Motion Lab"
               description="Exploration area for animated data storytelling patterns before they are introduced into creator onboarding flows."
