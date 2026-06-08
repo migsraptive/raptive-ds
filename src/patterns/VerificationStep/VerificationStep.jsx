@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
+import { CommunityTermsModal } from '../CommunityTermsModal/CommunityTermsModal.jsx'
 
 function InstagramDmInlineDetail({
   code,
@@ -81,13 +82,16 @@ export function VerificationStep({
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
+  const [termsModalOpen, setTermsModalOpen] = useState(false)
+
   return (
-    <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', framed ? 'border border-border' : ''].filter(Boolean).join(' ')}>
-      <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_360px]">
-        {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
-        <div className="flex h-full flex-col p-8 lg:p-12">
-          <div className="space-y-8">
-            {progressMeter}
+    <>
+      <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', framed ? 'border border-border' : ''].filter(Boolean).join(' ')}>
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_360px]">
+          {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
+          <div className="flex h-full flex-col p-8 lg:p-12">
+            <div className="space-y-8">
+              {progressMeter}
 
             <div className="space-y-4">
               <div className="space-y-3">
@@ -214,101 +218,113 @@ export function VerificationStep({
               )}
             </div>
 
-            <div className="grid gap-3">
-              <Checkbox
-                checked={confirmed}
-                onChange={(event) => onConfirmChange?.(event.target.checked)}
-                variant="plain"
-                label="I control this creator account and want to continue with verification."
-                description="This keeps the last step feeling intentional without adding a long security ceremony."
-              />
-              <Checkbox
-                checked={termsAccepted}
-                onChange={(event) => onTermsAcceptedChange?.(event.target.checked)}
-                variant="plain"
-                label="I agree to the Community terms."
-                description="By submitting this application, I agree to the Terms of Service and acknowledge the Privacy Policy."
-              />
+              <div className="grid gap-3">
+                <Checkbox
+                  checked={confirmed}
+                  onChange={(event) => onConfirmChange?.(event.target.checked)}
+                  variant="plain"
+                  label="I control this creator account and want to continue with verification."
+                  description="This keeps the last step feeling intentional without adding a long security ceremony."
+                />
+                <Checkbox
+                  checked={termsAccepted}
+                  onChange={() => setTermsModalOpen(true)}
+                  variant="plain"
+                  label={(
+                    <>
+                      You must agree to the{' '}
+                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
+                      {' '}before submitting your application.
+                    </>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
+              {secondaryAction && (
+                <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
+                  {secondaryAction.label}
+                </Button>
+              )}
+              {primaryAction ? (
+                <Button
+                  size="lg"
+                  variant={primaryAction.variant ?? 'primary'}
+                  onClick={primaryAction.onClick}
+                  disabled={methods.length === 0 || !selectedMethod || !confirmed || !termsAccepted || primaryAction.disabled}
+                  success={primaryAction.success}
+                  successLabel={primaryAction.successLabel}
+                  successIcon={primaryAction.successIcon}
+                  className={secondaryAction ? '' : 'ml-auto'}
+                >
+                  {primaryAction.label}
+                </Button>
+              ) : null}
             </div>
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
-            {secondaryAction && (
-              <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
-                {secondaryAction.label}
-              </Button>
-            )}
-            {primaryAction ? (
-              <Button
-                size="lg"
-                variant={primaryAction.variant ?? 'primary'}
-                onClick={primaryAction.onClick}
-                disabled={methods.length === 0 || !selectedMethod || !confirmed || !termsAccepted || primaryAction.disabled}
-                success={primaryAction.success}
-                successLabel={primaryAction.successLabel}
-                successIcon={primaryAction.successIcon}
-                className={secondaryAction ? '' : 'ml-auto'}
-              >
-                {primaryAction.label}
-              </Button>
-            ) : null}
-          </div>
-        </div>
-
-        <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
-          <div className={showAside ? 'space-y-5' : 'h-full'}>
-            <div className={['overflow-hidden', showAside ? 'rounded-xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
-              {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
-              <div className={['relative', showAside ? 'aspect-square' : 'h-full min-h-[720px]'].join(' ')}>
-                <img
-                  src={verificationIllustrationUrl}
-                  alt="Verification trust illustration for the creator application verification step"
-                  className="h-full w-full object-cover"
-                  loading="eager"
-                  decoding="async"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+          <aside className={['border-t border-border lg:border-l lg:border-t-0', showAside ? 'bg-surface-raised p-8 lg:p-10' : 'bg-surface-raised/40 p-0'].join(' ')}>
+            <div className={showAside ? 'space-y-5' : 'h-full'}>
+              <div className={['overflow-hidden', showAside ? 'rounded-xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
+                {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
+                <div className={['relative', showAside ? 'aspect-square' : 'h-full min-h-[720px]'].join(' ')}>
+                  <img
+                    src={verificationIllustrationUrl}
+                    alt="Verification trust illustration for the creator application verification step"
+                    className="h-full w-full object-cover"
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+                </div>
+                {showAside && (
+                  <div className="border-t border-border bg-surface px-4 py-3">
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      A calmer support visual that keeps the final handshake from feeling cold or security-heavy.
+                    </p>
+                  </div>
+                )}
               </div>
               {showAside && (
-                <div className="border-t border-border bg-surface px-4 py-3">
+                <>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-text">Final handshake</p>
                   <p className="text-sm leading-relaxed text-text-secondary">
-                    A calmer support visual that keeps the final handshake from feeling cold or security-heavy.
+                    Verification should feel like the last confident step before submission, not a cold compliance screen.
                   </p>
                 </div>
-              )}
-            </div>
-            {showAside && (
-              <>
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-text">Final handshake</p>
-                <p className="text-sm leading-relaxed text-text-secondary">
-                  Verification should feel like the last confident step before submission, not a cold compliance screen.
-                </p>
-              </div>
 
-              <div className="rounded-xl border border-border bg-surface p-5">
-                <div className="space-y-3">
-                  <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">What happens next</p>
+                <div className="rounded-xl border border-border bg-surface p-5">
                   <div className="space-y-3">
-                    {reassurance.map((item) => (
-                      <div key={item.title} className="flex gap-3">
-                        <span className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-brand-subtle text-xs text-brand-dark">
-                          {item.icon}
-                        </span>
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-text">{item.title}</p>
-                          <p className="text-sm leading-relaxed text-text-secondary">{item.description}</p>
+                    <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">What happens next</p>
+                    <div className="space-y-3">
+                      {reassurance.map((item) => (
+                        <div key={item.title} className="flex gap-3">
+                          <span className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-brand-subtle text-xs text-brand-dark">
+                            {item.icon}
+                          </span>
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-text">{item.title}</p>
+                            <p className="text-sm leading-relaxed text-text-secondary">{item.description}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-              </>
-            )}
-          </div>
-        </aside>
-      </div>
-    </section>
+                </>
+              )}
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <CommunityTermsModal
+        isOpen={termsModalOpen}
+        onDismiss={() => setTermsModalOpen(false)}
+        onAccept={() => onTermsAcceptedChange?.(true)}
+      />
+    </>
   )
 }

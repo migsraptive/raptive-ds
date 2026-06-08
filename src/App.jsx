@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { BrandLogo } from './components/BrandLogo/BrandLogo.jsx'
 import { Button } from './components/Button/Button.jsx'
 import { CreatorApplicationPage } from './pages/CreatorApplication/CreatorApplicationPage.jsx'
+import { CreatorOnboardingViewportPage } from './pages/CreatorOnboardingViewport/CreatorOnboardingViewportPage.jsx'
 import { ComponentLibrary } from './pages/ComponentLibrary/ComponentLibrary.jsx'
 
 const pageTransition = {
@@ -13,7 +14,7 @@ const pageTransition = {
   transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] },
 }
 
-const creatorApplicationViews = ['creator-application', 'creator-application-page']
+const creatorApplicationViews = ['creator-application', 'creator-application-page', 'creator-onboarding-viewport']
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -55,6 +56,18 @@ export default function App() {
             </div>
           </div>
           <ComponentLibrary />
+        </motion.div>
+      ) : view === 'creator-onboarding-viewport' ? (
+        <motion.div
+          key="creator-onboarding-viewport"
+          initial={pageTransition.initial}
+          animate={pageTransition.animate}
+          exit={pageTransition.exit}
+          transition={pageTransition.transition}
+        >
+          <CreatorOnboardingViewportPage
+            onOpenLibrary={() => setView('component-library')}
+          />
         </motion.div>
       ) : (
         <motion.div

@@ -65,8 +65,10 @@ import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/Righ
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
+import { CommunityTermsModal } from '../../patterns/CommunityTermsModal/CommunityTermsModal.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CreatorOnboardingShell } from '../../patterns/CreatorOnboardingShell/CreatorOnboardingShell.jsx'
+import { CreatorOnboardingViewportDemo } from '../../patterns/CreatorOnboardingViewportDemo/CreatorOnboardingViewportDemo.jsx'
 import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
 import { DataGatheringWonderSequence } from '../../patterns/DataGatheringWonderSequence/DataGatheringWonderSequence.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
@@ -363,9 +365,10 @@ export function ComponentLibrary() {
   const [fetchConfirmationDemoAccounts, setFetchConfirmationDemoAccounts] = useState(getFetchConfirmationDemoAccounts)
   const [fetchConfirmationEditingAccountId, setFetchConfirmationEditingAccountId] = useState(null)
   const [fetchConfirmationEditDraft, setFetchConfirmationEditDraft] = useState({ platform: '', handle: '', url: '' })
-  const [verificationMethod, setVerificationMethod] = useState(null)
+  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
+  const [termsModalOpen, setTermsModalOpen] = useState(false)
   const [celebrationModalOpen, setCelebrationModalOpen] = useState(false)
   const [reviewFields] = useState({
     name: 'Culture Crave',
@@ -2027,10 +2030,15 @@ export function ComponentLibrary() {
                           />
                           <Checkbox
                             checked={verificationTermsAccepted}
-                            onChange={(event) => setVerificationTermsAccepted(event.target.checked)}
+                            onChange={() => setTermsModalOpen(true)}
                             variant="plain"
-                            label="I agree to the Community terms."
-                            description="By submitting this application, I agree to the Terms of Service and acknowledge the Privacy Policy."
+                            label={(
+                              <>
+                                You must agree to the{' '}
+                                <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
+                                {' '}before submitting your application.
+                              </>
+                            )}
                           />
                         </div>
                       </div>
@@ -2087,6 +2095,10 @@ export function ComponentLibrary() {
                   </>
                 </CreatorOnboardingShell>
               </div>
+            </Section>
+
+            <Section title="Creator Onboarding Viewport Direction" description="Exploration of the desktop onboarding as a full-height viewport instead of a modal-like container. Existing onboarding remains unchanged.">
+              <CreatorOnboardingViewportDemo showStandaloneLink />
             </Section>
 
             <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
@@ -2254,7 +2266,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Submission Success: Token Burst" description="Completion state with the lightweight token-dot celebration background.">
+            <Section title="Submission Success: Cursor Burst" description="Completion state with confetti charged around the cursor before bursting from that point.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
                 summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
@@ -2277,7 +2289,6 @@ export function ComponentLibrary() {
                   },
                 ]}
                 showAside={false}
-                showCelebrationBackground
                 secondaryAction={null}
                 primaryAction={{
                   label: 'Close',
@@ -2289,7 +2300,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Submission Success: React Confetti" description="Alternate completion state using react-confetti as the celebratory background moment.">
+            <Section title="Submission Success: Cursor Burst Review" description="Design review duplicate for checking cursor-burst celebration with the submission timeline.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
                 summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
@@ -2312,8 +2323,6 @@ export function ComponentLibrary() {
                   },
                 ]}
                 showAside={false}
-                showCelebrationBackground
-                celebrationBackgroundVariant="react-confetti"
                 secondaryAction={null}
                 primaryAction={{
                   label: 'Close',
@@ -2325,7 +2334,7 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Submission Success: Cursor Burst" description="Alternate completion state with confetti charged around the cursor before bursting from that point.">
+            <Section title="Submission Success: Cursor Burst Interaction" description="Interaction review for the shared cursor-burst completion background.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
                 summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
@@ -2348,8 +2357,6 @@ export function ComponentLibrary() {
                   },
                 ]}
                 showAside={false}
-                showCelebrationBackground
-                celebrationBackgroundVariant="cursor-burst"
                 secondaryAction={null}
                 primaryAction={{
                   label: 'Close',
@@ -2478,6 +2485,11 @@ export function ComponentLibrary() {
 
       </main>
 
+      <CommunityTermsModal
+        isOpen={termsModalOpen}
+        onDismiss={() => setTermsModalOpen(false)}
+        onAccept={() => setVerificationTermsAccepted(true)}
+      />
     </div>
   )
 }

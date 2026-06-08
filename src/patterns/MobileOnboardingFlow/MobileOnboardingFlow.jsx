@@ -22,6 +22,8 @@ import { brandPreviewDefaults, compactWysiwygPalette } from '../../utils/brandPr
 import { normalizeHexColor } from '../../utils/colorContrast.js'
 import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 import { COMMUNITY_VERTICAL_OPTIONS, COMMUNITY_VERTICAL_OTHER, getClosestCommunityVertical } from '../../utils/communityVerticals.js'
+import { CommunityTermsModal } from '../CommunityTermsModal/CommunityTermsModal.jsx'
+import { CelebrationBackground } from '../SubmissionSuccess/SubmissionSuccess.jsx'
 
 const mobileStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
 const descriptionCharacterLimit = 130
@@ -196,6 +198,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
   const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
+  const [termsModalOpen, setTermsModalOpen] = useState(false)
   const [pendingPrimaryStep, setPendingPrimaryStep] = useState(null)
   const activeIndex = mobileStepOrder.indexOf(activeStep)
   const activeMeta = mobileStepMeta[activeStep]
@@ -504,59 +507,69 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
           />
           <Checkbox
             checked={verificationTermsAccepted}
-            onChange={(event) => setVerificationTermsAccepted(event.target.checked)}
+            onChange={() => setTermsModalOpen(true)}
             variant="plain"
-            label="I agree to the Community terms."
-            description="By submitting this application, I agree to the Terms of Service and acknowledge the Privacy Policy."
+            label={(
+              <>
+                You must agree to the{' '}
+                <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
+                {' '}before submitting your application.
+              </>
+            )}
           />
         </div>
       </div>
-    ),
-    success: (
-      <div className="space-y-4">
-        <div className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-xs">
-          <div className="relative h-44">
-            <img
-              src={submissionIllustrationUrl}
-              alt="Completion illustration for the creator application submission success step"
-              className="h-full w-full object-cover"
-              loading="eager"
-              decoding="async"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-          </div>
-        </div>
+        ),
+        success: (
+          <div className="relative overflow-hidden">
+            <CelebrationBackground active variant="token-burst" shouldReduceMotion={shouldReduceMotion} />
 
-        <MobileIntro title={activeMeta.title} description={activeMeta.description} dark />
-
-        <div className="space-y-2.5">
-          {[
-            ['Submitted', 'Today your details move into review.', true],
-            ['Approved', 'If there is a fit, we will reach out with next steps.', false],
-            ['Live', "When you're ready.", false],
-          ].map(([title, description, current]) => (
-            <div key={title} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
-              <span
-                className={[
-                  'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
-                  current ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15' : 'border-white/10 bg-white/5',
-                ].join(' ')}
-              >
-                <span className={['h-2.5 w-2.5 rounded-full', current ? 'bg-gamification-gold-light' : 'bg-white/28'].join(' ')} />
-              </span>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-white">{title}</p>
-                <p className="text-sm leading-relaxed text-white/80">{description}</p>
-              </div>
+            <div className="relative z-10 space-y-4">
+          <div className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 shadow-xs">
+            <div className="relative h-44">
+              <img
+                src={submissionIllustrationUrl}
+                alt="Completion illustration for the creator application submission success step"
+                className="h-full w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
             </div>
-          ))}
+          </div>
+
+          <MobileIntro title={activeMeta.title} description={activeMeta.description} dark />
+
+          <div className="space-y-2.5">
+            {[
+              ['Submitted', 'Today your details move into review.', true],
+              ['Approved', 'If there is a fit, we will reach out with next steps.', false],
+              ['Live', "When you're ready.", false],
+            ].map(([title, description, current]) => (
+              <div key={title} className="flex gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                <span
+                  className={[
+                    'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border',
+                    current ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15' : 'border-white/10 bg-white/5',
+                  ].join(' ')}
+                >
+                  <span className={['h-2.5 w-2.5 rounded-full', current ? 'bg-gamification-gold-light' : 'bg-white/28'].join(' ')} />
+                </span>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-white">{title}</p>
+                  <p className="text-sm leading-relaxed text-white/80">{description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     ),
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+    <>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
       {/* no token available: mobile design review uses a fixed phone preview rail. */}
       <div className="space-y-4">
         <div className="rounded-xl border border-border bg-surface p-5 shadow-xs">
@@ -602,7 +615,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
       <div className="mx-auto w-full max-w-sm">
         {/* no token available: fixed 390px-class handset frame for mobile review fidelity. */}
         <div className="overflow-hidden rounded-[32px] border border-border-strong bg-neutral-950 p-2 shadow-4">
-          <div className={['flex h-[812px] flex-col overflow-hidden rounded-[24px]', isSuccessStep ? 'bg-neutral-950' : 'bg-surface'].join(' ')}>
+          <div className={['relative flex h-[812px] flex-col overflow-hidden rounded-[24px]', isSuccessStep ? 'bg-neutral-950' : 'bg-surface'].join(' ')}>
             <header className={['border-b px-4 py-s', isSuccessStep ? 'border-neutral-800 bg-neutral-950' : 'border-border bg-surface'].join(' ')}>
               <div className="flex items-center justify-between gap-3">
                 <BrandLogo size="sm" />
@@ -634,9 +647,16 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
               forceSuccess={forceSuccess}
               dark={isSuccessStep}
             />
+            <CommunityTermsModal
+              isOpen={termsModalOpen}
+              onDismiss={() => setTermsModalOpen(false)}
+              onAccept={() => setVerificationTermsAccepted(true)}
+              presentation="mobile"
+            />
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

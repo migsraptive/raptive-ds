@@ -112,7 +112,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const [activeStep, setActiveStep] = useState(0)
   const [creatorUrl, setCreatorUrl] = useState(initialCreatorUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
-  const [verificationMethod, setVerificationMethod] = useState(null)
+  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
@@ -145,7 +145,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
 
   useEffect(() => {
     if (verificationMethod && !verificationMethods.some((method) => method.value === verificationMethod)) {
-      setVerificationMethod(null)
+      setVerificationMethod(verificationMethods[0]?.value)
       setVerificationConfirmed(false)
       setVerificationTermsAccepted(false)
     }
@@ -222,7 +222,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     setCreatorUrl(initialCreatorUrl)
     setFetchAccounts(getInitialAccounts())
     setGatherRowsResolved(false)
-    setVerificationMethod(null)
+    setVerificationMethod(verificationMethods[0]?.value)
     setVerificationConfirmed(false)
     setVerificationTermsAccepted(false)
     setActiveStep(0)

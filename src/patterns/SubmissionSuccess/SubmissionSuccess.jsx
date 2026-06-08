@@ -86,7 +86,7 @@ function CursorBurstConfettiBackground({ shouldReduceMotion }) {
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const phaseRef = useRef(phase)
   const burstTimerRef = useRef(null)
-  const canRenderConfetti = size.width > 0 && size.height > 0 && !shouldReduceMotion && phase !== 'idle'
+  const canRenderConfetti = size.width > 0 && size.height > 0 && !shouldReduceMotion && phase !== 'idle' && phase !== 'complete'
   const isCharging = phase === 'charge'
   const sourceSize = isCharging ? 8 : 20
 
@@ -97,11 +97,11 @@ function CursorBurstConfettiBackground({ shouldReduceMotion }) {
   useEffect(() => {
     if (phase !== 'burst') return undefined
 
-    const resetTimer = window.setTimeout(() => {
-      setPhase('idle')
+    const completeTimer = window.setTimeout(() => {
+      setPhase('complete')
     }, 3500)
 
-    return () => window.clearTimeout(resetTimer)
+    return () => window.clearTimeout(completeTimer)
   }, [phase])
 
   useEffect(() => {
@@ -118,7 +118,7 @@ function CursorBurstConfettiBackground({ shouldReduceMotion }) {
 
     const handlePointerMove = (event) => {
       const element = containerRef.current
-      if (!element || phaseRef.current === 'burst') return
+      if (!element || phaseRef.current === 'burst' || phaseRef.current === 'complete') return
 
       const bounds = element.getBoundingClientRect()
       const isInside = (
@@ -186,7 +186,7 @@ function CursorBurstConfettiBackground({ shouldReduceMotion }) {
   )
 }
 
-function CelebrationBackground({ active, variant, shouldReduceMotion }) {
+export function CelebrationBackground({ active, variant, shouldReduceMotion }) {
   if (!active) return null
 
   if (variant === 'react-confetti') {
@@ -230,8 +230,8 @@ export function SubmissionSuccess({
   footerContent = null,
   primaryAction = { label: 'Close' },
   secondaryAction = { label: 'Back to library', variant: 'ghost' },
-  showCelebrationBackground = false,
-  celebrationBackgroundVariant = 'token-burst',
+  showCelebrationBackground = true,
+  celebrationBackgroundVariant = 'cursor-burst',
 }) {
   const shouldReduceMotion = useReducedMotion()
 
