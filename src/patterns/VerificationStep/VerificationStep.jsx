@@ -37,11 +37,8 @@ function InstagramDmInlineDetail({
       aria-hidden={!open}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-3">
-          <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
-            Your code
-          </p>
-          <p className="font-mono text-5xl font-medium tracking-tight text-text">
+        <div>
+          <p className="font-mono text-3xl font-medium tracking-tight text-text">
             {code}
           </p>
         </div>
@@ -112,7 +109,6 @@ export function VerificationStep({
               {methods.length > 0 ? methods.map((method) => {
                 const isSelected = selectedMethod === method.value
                 const dmExpanded = method.value === 'instagram-dm' && isSelected && instagramDmDetail
-                const compressOtherRows = selectedMethod === 'instagram-dm' && method.value !== 'instagram-dm'
 
                 return (
                   <motion.div
@@ -129,10 +125,7 @@ export function VerificationStep({
                     <motion.button
                       type="button"
                       onClick={() => onSelectMethod?.(method.value)}
-                      className={[
-                        'flex w-full flex-col items-start gap-3 text-left',
-                        compressOtherRows ? 'min-h-28' : dmExpanded ? 'min-h-32' : 'min-h-36',
-                      ].join(' ')}
+                      className="flex w-full flex-col items-start gap-3 pb-2 text-left"
                       whileHover={{ y: -2, scale: 1.01 }}
                       whileTap={{ scale: 0.985 }}
                     >
