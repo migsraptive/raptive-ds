@@ -30,7 +30,6 @@ import submissionIllustrationUrl from '../../assets/submission-illustration.png'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Button } from '../../components/Button/Button.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
-import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
 import { Avatar, AvatarGroup } from '../../components/Avatar/Avatar.jsx'
 import { AvatarUpload } from '../../components/AvatarUpload/AvatarUpload.jsx'
@@ -726,11 +725,7 @@ export function ComponentLibrary() {
     <div className="min-h-screen bg-surface-raised">
       {/* Header */}
       <header className="bg-white border-b border-border sticky top-0 z-40 shadow-xs">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <BrandLogo size="sm" />
-            <Badge variant="default" size="xs">v0.1</Badge>
-          </div>
+        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center">
           <nav className="hidden md:flex items-center gap-0.5">
             {sections.map(s => (
               <button
