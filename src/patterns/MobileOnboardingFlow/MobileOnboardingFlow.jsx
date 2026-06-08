@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BadgeCheck, ChevronLeft, IdCard, Image as ImageIcon, Link2, LoaderCircle, Mail, Palette, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, ChevronLeft, IdCard, Image as ImageIcon, Link2, LoaderCircle, Mail, Palette, Plus, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
 import singleFieldIntakeIllustrationUrl from '../../assets/single-field-intake-illustration.png'
@@ -29,6 +29,14 @@ const mobileStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
 const descriptionCharacterLimit = 130
 const shortDescriptionCharacterLimit = 40
 const mobilePrimaryActionDelayMs = 900
+const mobileGatherVideoLeadInMs = 2000
+const mobileGatherRowFetchMs = 700
+const mobileGatherResolvedPauseMs = 1000
+const shimmerTransition = {
+  repeat: Infinity,
+  duration: 1.45,
+  ease: 'easeInOut',
+}
 
 function getCharacterCountLabel(value, limit) {
   return `${value.length}/${limit} characters`
@@ -45,6 +53,15 @@ const mobileStepMeta = {
     primarySuccessIconClassName: 'animate-spin',
   },
   gather: {
+    label: 'Review',
+    title: 'We’re finding your fandom',
+    description: 'Give us a moment while we pull some details.',
+    primaryLabel: 'Continue',
+    primarySuccessLabel: 'Finding...',
+    primarySuccessIcon: LoaderCircle,
+    primarySuccessIconClassName: 'animate-spin',
+  },
+  confirm: {
     label: 'Review',
     title: 'Take a look at what we found.',
     description: 'Confirm the creator profile before we use it to shape the first community preview.',
@@ -82,48 +99,87 @@ const mobileStepMeta = {
   },
 }
 
-const gatherRows = [
+const mobileSocialAccountDefaults = [
   {
-    id: 'identity',
-    icon: IdCard,
-    label: 'Identity',
-    subtext: 'Culture Crave / instagram.com/culturecrave',
-    trailing: <Badge variant="success" size="sm">Found</Badge>,
-    content: (
-      <div className="space-y-1">
-        <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Creator name</p>
-        <p className="text-base font-semibold text-text">Culture Crave</p>
-        <p className="text-sm leading-relaxed text-text-secondary">instagram.com/culturecrave</p>
-      </div>
-    ),
+    id: 'instagram',
+    platform: 'Instagram',
+    handle: '@culturecrave',
+    followers: '318,000 followers',
   },
   {
-    id: 'source',
-    icon: Link2,
-    label: 'Social accounts',
-    subtext: 'Instagram, TikTok, Pinterest',
-    trailing: <Badge variant="success" size="sm">Found</Badge>,
-    content: (
-      <div className="space-y-2 text-sm leading-relaxed text-text-secondary">
-        {[
-          ['Instagram', '@culturecrave', '318,000 followers'],
-          ['TikTok', '@culturecrave', '124,000 followers'],
-          ['Pinterest', '@culturecrave', '84,000 followers'],
-        ].map(([platform, handle, followers]) => (
-          <div key={platform} className="flex items-baseline justify-between gap-3">
-            <span className="min-w-0">
-              {platform}: <span className="font-semibold text-text">{handle}</span>
-            </span>
-            <span className="flex-shrink-0 text-xs text-text-tertiary">{followers}</span>
-          </div>
-        ))}
-      </div>
-    ),
+    id: 'tiktok',
+    platform: 'TikTok',
+    handle: '@culturecrave',
+    followers: '124,000 followers',
+  },
+  {
+    id: 'pinterest',
+    platform: 'Pinterest',
+    handle: '@culturecrave',
+    followers: '84,000 followers',
+  },
+  {
+    id: 'youtube',
+    platform: 'YouTube',
+    handle: '@culturecrave',
+    followers: 'Followers unavailable',
+  },
+  {
+    id: 'facebook',
+    platform: 'Facebook',
+    handle: '@culturecrave',
+    followers: 'Followers unavailable',
   },
 ]
 
+function getInitialMobileSocialAccounts() {
+  return mobileSocialAccountDefaults.slice(0, 3).map((account) => ({ ...account }))
+}
+
 function mobileIcon(Icon) {
   return <LucideIcon icon={Icon} size="lg" stroke="display" />
+}
+
+function FoundBadgeReveal() {
+  const shouldReduceMotion = useReducedMotion()
+  const motionProps = shouldReduceMotion
+    ? {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0, y: 4 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] },
+      }
+
+  return (
+    <motion.span {...motionProps}>
+      <Badge variant="success" size="sm">Found</Badge>
+    </motion.span>
+  )
+}
+
+function ShellRowShimmer({ label }) {
+  const shouldReduceMotion = useReducedMotion()
+
+  return (
+    <span
+      className="relative mt-1 block h-3 max-w-sm overflow-hidden rounded-full bg-border"
+      aria-label={label}
+    >
+      {!shouldReduceMotion ? (
+        <motion.span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent"
+          animate={{ x: ['0%', '420%'] }}
+          transition={shimmerTransition}
+        />
+      ) : null}
+      <span className="sr-only">{label}</span>
+    </span>
+  )
 }
 
 function MobileIntro({ title, description, dark = false }) {
@@ -195,13 +251,20 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
   const [horizontalLogoUrl, setHorizontalLogoUrl] = useState(null)
   const [squareLogoUrl, setSquareLogoUrl] = useState(null)
   const [brandColor, setBrandColor] = useState(detectedBrandColor)
+  const [resolvedGatherRows, setResolvedGatherRows] = useState([])
+  const [socialAccounts, setSocialAccounts] = useState(getInitialMobileSocialAccounts)
+  const [editingSocialAccountId, setEditingSocialAccountId] = useState(null)
+  const [socialAccountDraft, setSocialAccountDraft] = useState('')
   const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
   const [pendingPrimaryStep, setPendingPrimaryStep] = useState(null)
   const activeIndex = mobileStepOrder.indexOf(activeStep)
-  const activeMeta = mobileStepMeta[activeStep]
+  const mobileGatherResolved = activeStep === 'gather' && resolvedGatherRows.includes('source')
+  const activeMeta = activeStep === 'gather' && mobileGatherResolved
+    ? mobileStepMeta.confirm
+    : mobileStepMeta[activeStep]
   const previewThemeStyle = useMemo(() => createPreviewThemeStyle({ brandColor }), [brandColor])
   const isSuccessStep = activeStep === 'success'
   const screenTransition = shouldReduceMotion
@@ -229,6 +292,31 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
       }
     }
   ), [])
+
+  useEffect(() => {
+    if (activeStep !== 'gather') {
+      setResolvedGatherRows([])
+      return undefined
+    }
+
+    setResolvedGatherRows([])
+    setOpenGatherRow(null)
+    const identityResolveDelay = mobileGatherVideoLeadInMs + mobileGatherRowFetchMs
+    const sourceLoadDelay = identityResolveDelay + mobileGatherResolvedPauseMs
+    const sourceResolveDelay = sourceLoadDelay + mobileGatherRowFetchMs
+    const timers = [
+      window.setTimeout(() => {
+        setResolvedGatherRows(['identity'])
+        setOpenGatherRow('identity')
+      }, identityResolveDelay),
+      window.setTimeout(() => {
+        setResolvedGatherRows(['identity', 'source'])
+        setOpenGatherRow('source')
+      }, sourceResolveDelay),
+    ]
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer))
+  }, [activeStep])
 
   const goToNextStep = () => {
     if (primaryDisabled || pendingPrimaryStep) return
@@ -259,11 +347,149 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
     setVerificationConfirmed(false)
     setVerificationTermsAccepted(false)
   }
+  const isGatherRowResolved = (rowId) => resolvedGatherRows.includes(rowId)
+  const handleGatherOpenRowChange = (nextOpenRow, row) => {
+    if (!isGatherRowResolved(row?.id)) return
+
+    setOpenGatherRow(nextOpenRow)
+  }
+  const startSocialAccountEdit = (account) => {
+    setEditingSocialAccountId(account.id)
+    setSocialAccountDraft(account.handle)
+  }
+  const cancelSocialAccountEdit = () => {
+    setEditingSocialAccountId(null)
+    setSocialAccountDraft('')
+  }
+  const saveSocialAccountEdit = () => {
+    if (!editingSocialAccountId) return
+
+    setSocialAccounts((current) => current.map((account) => (
+      account.id === editingSocialAccountId
+        ? { ...account, handle: socialAccountDraft.trim() || account.handle }
+        : account
+    )))
+    cancelSocialAccountEdit()
+  }
+  const removeSocialAccount = (accountId) => {
+    setSocialAccounts((current) => current.filter((account) => account.id !== accountId))
+
+    if (editingSocialAccountId === accountId) {
+      cancelSocialAccountEdit()
+    }
+  }
+  const nextSocialAccount = mobileSocialAccountDefaults.find((account) => (
+    !socialAccounts.some((currentAccount) => currentAccount.id === account.id)
+  ))
+  const addSocialAccount = () => {
+    if (!nextSocialAccount) return
+
+    setSocialAccounts((current) => [...current, { ...nextSocialAccount }])
+  }
   const communityTopicHelperText = communityTopic === COMMUNITY_VERTICAL_OTHER
     ? 'Our team will reach out to confirm your community topic.'
     : null
   const communityDescriptionHelperText = getCharacterCountLabel(communityDescription, descriptionCharacterLimit)
   const communityDiscoverHelperText = getCharacterCountLabel(communityDiscoverText, shortDescriptionCharacterLimit)
+  const socialAccountsSummary = socialAccounts.length > 0
+    ? socialAccounts.map((account) => account.platform).join(', ')
+    : 'No social accounts'
+
+  const gatherRows = [
+    {
+      id: 'identity',
+      icon: IdCard,
+      label: 'Identity',
+      subtext: isGatherRowResolved('identity')
+        ? 'Culture Crave / instagram.com/culturecrave'
+        : <ShellRowShimmer label="Matching the submitted URL to a creator profile." />,
+      trailing: isGatherRowResolved('identity') ? <FoundBadgeReveal /> : null,
+      content: isGatherRowResolved('identity')
+        ? (
+          <div className="space-y-1">
+            <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Creator name</p>
+            <p className="text-base font-semibold text-text">Culture Crave</p>
+            <p className="text-sm leading-relaxed text-text-secondary">instagram.com/culturecrave</p>
+          </div>
+        )
+        : null,
+    },
+    {
+      id: 'source',
+      icon: Link2,
+      label: 'Social accounts',
+      subtext: isGatherRowResolved('source')
+        ? socialAccountsSummary
+        : <ShellRowShimmer label="Checking connected social accounts." />,
+      trailing: isGatherRowResolved('source') ? <FoundBadgeReveal /> : null,
+      content: isGatherRowResolved('source') ? (
+        <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
+          {socialAccounts.length > 0 ? (
+            <div className="space-y-2">
+              {socialAccounts.map((account) => (
+                <div key={account.id} className="flex items-baseline justify-between gap-3 text-sm leading-relaxed text-text-secondary">
+                  <div className="min-w-0">
+                    {account.platform}:{' '}
+                    {editingSocialAccountId === account.id ? (
+                      <input
+                        className="inline-block h-6 w-36 rounded-md border border-border bg-surface px-1.5 text-sm font-semibold leading-sm text-text outline-none transition-colors duration-150 focus:border-brand focus:ring-1 focus:ring-brand"
+                        value={socialAccountDraft}
+                        onChange={(event) => setSocialAccountDraft(event.target.value)}
+                        onBlur={saveSocialAccountEdit}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            event.currentTarget.blur()
+                          }
+                        }}
+                        autoFocus
+                        aria-label={`${account.platform} handle`}
+                      />
+                    ) : (
+                      <button
+                        type="button"
+                        className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                        onClick={() => startSocialAccountEdit(account)}
+                        aria-label={`Edit ${account.platform} handle`}
+                      >
+                        <span>{account.handle}</span>
+                        <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
+                          Edit
+                        </span>
+                      </button>
+                    )}{' '}
+                    · {account.followers}
+                  </div>
+                  <button
+                    type="button"
+                    className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                    onClick={() => removeSocialAccount(account.id)}
+                    aria-label={`Remove ${account.platform} account`}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm leading-relaxed text-text-secondary">
+              No social accounts are attached. Go back to the source step to use a different link.
+            </p>
+          )}
+
+          {nextSocialAccount ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              iconBefore={<LucideIcon icon={Plus} size="sm" />}
+              onClick={addSocialAccount}
+            >
+              Add another account
+            </Button>
+          ) : null}
+        </div>
+      ) : null,
+    },
+  ]
 
   const previewEditorRows = [
     {
@@ -405,7 +631,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
         <AccordionPanelGroup
           rows={gatherRows}
           openRow={openGatherRow}
-          onOpenRowChange={setOpenGatherRow}
+          onOpenRowChange={handleGatherOpenRowChange}
           allowCollapse={false}
           className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs"
         />

@@ -78,11 +78,13 @@ export function VerificationStep({
   reassurance = [],
   showAside = true,
   framed = true,
+  contentAlign = 'start',
   instagramDmDetail = null,
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   const [termsModalOpen, setTermsModalOpen] = useState(false)
+  const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
 
   return (
     <>
@@ -90,7 +92,7 @@ export function VerificationStep({
         <div className="grid gap-0 lg:grid-cols-[minmax(0,1.05fr)_360px]">
           {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
           <div className="flex h-full flex-col p-8 lg:p-12">
-            <div className="space-y-8">
+            <div className={['space-y-8', centeredContentClassName].filter(Boolean).join(' ')}>
               {progressMeter}
 
             <div className="space-y-4">
@@ -241,7 +243,7 @@ export function VerificationStep({
               </div>
             </div>
 
-            <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-8">
+            <div className={['mt-auto flex flex-wrap items-center justify-between gap-3 pt-8', centeredContentClassName].filter(Boolean).join(' ')}>
               {secondaryAction && (
                 <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
                   {secondaryAction.label}

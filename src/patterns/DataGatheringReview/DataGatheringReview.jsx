@@ -294,6 +294,7 @@ export function DataGatheringReview({
   loadingCopy = {},
   resultStatus = 'found',
   framed = true,
+  contentAlign = 'start',
   onRowsRevealStart,
   onRowsResolved,
   onResolvedChange,
@@ -305,6 +306,7 @@ export function DataGatheringReview({
   primaryAction = { label: 'Continue' },
 }) {
   const shouldReduceMotion = useReducedMotion()
+  const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
   const [resolvedRows, setResolvedRows] = useState([])
   const [editingRow, setEditingRow] = useState(null)
   const [identity, setIdentity] = useState('Culture Crave')
@@ -516,7 +518,7 @@ export function DataGatheringReview({
 
   const content = (
     <div className="flex h-full flex-col p-8 lg:p-12">
-          <div className={['space-y-8', contentClassName].filter(Boolean).join(' ')}>
+          <div className={['space-y-8', centeredContentClassName, contentClassName].filter(Boolean).join(' ')}>
             {progressMeter}
 
             <header className={['space-y-2', headerClassName].filter(Boolean).join(' ')}>
@@ -580,7 +582,7 @@ export function DataGatheringReview({
             )}
           </div>
 
-          <footer className="mt-auto flex w-full flex-col items-start justify-between gap-3 pt-8 sm:flex-row sm:items-center">
+          <footer className={['mt-auto flex w-full flex-col items-start justify-between gap-3 pt-8 sm:flex-row sm:items-center', centeredContentClassName].filter(Boolean).join(' ')}>
             {secondaryAction ? (
               <Button
                 size="lg"

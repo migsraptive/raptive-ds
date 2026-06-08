@@ -232,8 +232,10 @@ export function SubmissionSuccess({
   secondaryAction = { label: 'Back to library', variant: 'ghost' },
   showCelebrationBackground = true,
   celebrationBackgroundVariant = 'cursor-burst',
+  contentAlign = 'start',
 }) {
   const shouldReduceMotion = useReducedMotion()
+  const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-2xl' : ''
 
   return (
     <section className={['relative overflow-hidden rounded-xl bg-neutral-950 shadow-sm', framed ? 'border border-neutral-800' : ''].filter(Boolean).join(' ')}>
@@ -241,7 +243,7 @@ export function SubmissionSuccess({
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="relative flex h-full flex-col overflow-hidden bg-gradient-to-br from-neutral-900 to-neutral-950 p-8 lg:p-12">
           <CelebrationBackground active={showCelebrationBackground} variant={celebrationBackgroundVariant} shouldReduceMotion={shouldReduceMotion} />
-          <div className="relative z-10 space-y-8">
+          <div className={['relative z-10 space-y-8', centeredContentClassName].filter(Boolean).join(' ')}>
             {progressMeter && (
               <div className="[&_.text-text-secondary]:!text-white/84 [&_.text-text-tertiary]:!text-white/72 [&_.bg-surface-sunken]:bg-white/10">
                 {progressMeter}
@@ -297,9 +299,9 @@ export function SubmissionSuccess({
             )}
           </div>
 
-          <div className="relative z-10 mt-auto space-y-4 pt-8">
+          <div className={['relative z-10 mt-auto space-y-4 pt-8', centeredContentClassName].filter(Boolean).join(' ')}>
             {footerContent && (
-              <div className="ml-auto max-w-2xl">
+              <div className={contentAlign === 'center' ? 'lg:w-full' : 'ml-auto max-w-2xl'}>
                 {footerContent}
               </div>
             )}

@@ -531,7 +531,7 @@ export function CreatorOnboardingViewportDemo({
       >
         <>
           {previewStep === 'entry' ? (
-            <div className="max-w-2xl space-y-6">
+            <div className="mx-auto w-full max-w-2xl space-y-6">
               <SocialUrlInput
                 placeholder="Paste a creator URL or social profile"
                 value={creatorUrl}
@@ -543,7 +543,7 @@ export function CreatorOnboardingViewportDemo({
             </div>
           ) : null}
           {previewStep === 'gather' ? (
-            <div className="max-w-3xl space-y-6">
+            <div className="mx-auto w-full max-w-3xl space-y-6">
               <AccordionPanelGroup
                 rows={gatherRows}
                 openRow={openRow}
@@ -562,7 +562,7 @@ export function CreatorOnboardingViewportDemo({
             </div>
           ) : null}
           {previewStep === 'verify' ? (
-            <div className="max-w-3xl space-y-6">
+            <div className="mx-auto w-full max-w-3xl space-y-6">
               <div className="grid gap-4">
                 {[
                   {
@@ -616,7 +616,7 @@ export function CreatorOnboardingViewportDemo({
             </div>
           ) : null}
           {previewStep === 'success' ? (
-            <div className="max-w-2xl space-y-8">
+            <div className="mx-auto w-full max-w-2xl space-y-8">
               <p className="text-base leading-relaxed text-white">
                 We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps.
               </p>

@@ -20,58 +20,64 @@ export function SingleFieldIntake({
   ctaDisabled = false,
   showAside = true,
   framed = true,
+  contentAlign = 'start',
 }) {
+  const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-2xl' : ''
+  const centeredContentRegionClassName = contentAlign === 'center' ? 'lg:flex lg:flex-1 lg:items-center' : ''
+
   return (
     <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', framed ? 'border border-border' : ''].filter(Boolean).join(' ')}>
       <div className="grid lg:grid-cols-[minmax(0,1.15fr)_360px]">
         {/* no token available: creator-flow side rail uses a fixed 360px desktop column. */}
         <div className="flex h-full flex-col p-8 lg:p-12">
-          <div className="space-y-8">
-            {progressMeter}
+          <div className={centeredContentRegionClassName}>
+            <div className={['space-y-8', centeredContentClassName].filter(Boolean).join(' ')}>
+              {progressMeter}
 
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
-                  {title}
-                </h2>
-                {description && (
-                  <p className="max-w-xl text-base leading-relaxed text-text-secondary">
-                    {description}
-                  </p>
-                )}
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
+                    {title}
+                  </h2>
+                  {description && (
+                    <p className="max-w-xl text-base leading-relaxed text-text-secondary">
+                      {description}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="max-w-2xl">
-              <SocialUrlInput
-                placeholder="Paste a creator URL or social profile"
-                value={value}
-                onChange={onChange}
-                description={helperText}
-                suffix={loading ? (
-                  <span className="flex items-center text-text-tertiary">
-                    <LucideIcon icon={LoaderCircle} size="sm" stroke="standard" className="animate-spin" />
-                  </span>
-                ) : null}
-                inputClassName="text-lg"
-                affixLineHeight="md"
-              />
-            </div>
-
-            {trustPoints.length > 0 && (
-              <div className="grid gap-3 sm:grid-cols-3">
-                {trustPoints.map((point) => (
-                  <div key={point.title} className="rounded-xl border border-border bg-surface-raised p-4">
-                    <p className="text-sm font-medium text-text">{point.title}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-text-secondary">{point.description}</p>
-                  </div>
-                ))}
+              <div className="max-w-2xl">
+                <SocialUrlInput
+                  placeholder="Paste a creator URL or social profile"
+                  value={value}
+                  onChange={onChange}
+                  description={helperText}
+                  suffix={loading ? (
+                    <span className="flex items-center text-text-tertiary">
+                      <LucideIcon icon={LoaderCircle} size="sm" stroke="standard" className="animate-spin" />
+                    </span>
+                  ) : null}
+                  inputClassName="text-lg"
+                  affixLineHeight="md"
+                />
               </div>
-            )}
+
+              {trustPoints.length > 0 && (
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {trustPoints.map((point) => (
+                    <div key={point.title} className="rounded-xl border border-border bg-surface-raised p-4">
+                      <p className="text-sm font-medium text-text">{point.title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-text-secondary">{point.description}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="mt-auto pt-8">
-            <div className="flex flex-wrap items-center justify-end gap-3">
+            <div className={['flex flex-wrap items-center justify-end gap-3', centeredContentClassName].filter(Boolean).join(' ')}>
               <Button size="lg" onClick={onSubmit} success={loading} successLabel={ctaSuccessLabel} successIcon={ctaSuccessIcon} disabled={ctaDisabled}>
                 {ctaLabel}
               </Button>

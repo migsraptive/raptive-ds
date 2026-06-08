@@ -35,6 +35,25 @@ test('mobile verification uses an in-handset Community Terms modal', () => {
   assert.match(mobileFlowSource, /relative flex h-\[812px\]/)
 })
 
+test('mobile review social accounts expose edit and remove actions', () => {
+  assert.match(mobileFlowSource, /mobileSocialAccountDefaults/)
+  assert.match(mobileFlowSource, /editingSocialAccountId/)
+  assert.match(mobileFlowSource, /aria-label=\{`Edit \$\{account\.platform\} handle`\}/)
+  assert.match(mobileFlowSource, /aria-label=\{`Remove \$\{account\.platform\} account`\}/)
+  assert.match(mobileFlowSource, /setSocialAccounts\(\(current\) => current\.filter/)
+  assert.match(mobileFlowSource, /Add another account/)
+  assert.match(mobileFlowSource, /iconBefore=\{<LucideIcon icon=\{Plus\} size="sm" \/>/)
+})
+
+test('mobile review matches the desktop staged loader before resolved rows', () => {
+  assert.match(mobileFlowSource, /resolvedGatherRows/)
+  assert.match(mobileFlowSource, /ShellRowShimmer/)
+  assert.match(mobileFlowSource, /Matching the submitted URL to a creator profile\./)
+  assert.match(mobileFlowSource, /Checking connected social accounts\./)
+  assert.match(mobileFlowSource, /FoundBadgeReveal/)
+  assert.match(mobileFlowSource, /setResolvedGatherRows\(\['identity', 'source'\]\)/)
+})
+
 test('desktop verification defaults to an available method before checkbox acceptance', () => {
   for (const source of [creatorApplicationSource, componentLibrarySource]) {
     assert.match(source, /useState\('instagram-dm'\)/)

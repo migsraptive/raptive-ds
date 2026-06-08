@@ -247,6 +247,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         ctaDisabled={!creatorUrl.trim()}
         showAside={false}
         framed={!standalone}
+        contentAlign="center"
       />
     )
   }
@@ -271,6 +272,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         onRemoveSocialAccount={removeFetchAccount}
         onResolvedChange={setGatherRowsResolved}
         framed={!standalone}
+        contentAlign="center"
         secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: resetApplicationFlow }}
         primaryAction={{
           label: gatherRowsResolved ? 'Looks right' : 'Continue',
@@ -291,7 +293,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     content = (
       <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', !standalone ? 'border border-border' : ''].filter(Boolean).join(' ')}>
         <div className="flex h-full flex-col p-8 lg:p-12">
-          <div className="space-y-8">
+          <div className="space-y-8 lg:mx-auto lg:w-full lg:max-w-5xl">
             {progressMeter}
             <div className="space-y-4">
               <div className="space-y-3">
@@ -368,6 +370,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
           destinationHandle: '@raptive_community',
           originHandle: instagramAccount?.handle ?? '@culturecrave',
         }}
+        contentAlign="center"
         secondaryAction={{
           label: 'Back',
           variant: 'secondary',
@@ -416,6 +419,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         ]}
         showAside={false}
         framed={!standalone}
+        contentAlign="center"
         secondaryAction={null}
         primaryAction={{
           label: 'Close',
