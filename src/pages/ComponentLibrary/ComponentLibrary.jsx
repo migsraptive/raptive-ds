@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import {
   Award,
@@ -20,7 +20,6 @@ import {
   Rocket,
   RotateCcw,
   Settings2,
-  ShieldCheck,
   Sparkles,
   UtensilsCrossed,
   Waves,
@@ -68,13 +67,9 @@ import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationMod
 import { CommunityTermsModal } from '../../patterns/CommunityTermsModal/CommunityTermsModal.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CreatorOnboardingShell } from '../../patterns/CreatorOnboardingShell/CreatorOnboardingShell.jsx'
-import { CreatorOnboardingViewportDemo } from '../../patterns/CreatorOnboardingViewportDemo/CreatorOnboardingViewportDemo.jsx'
 import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
-import { DataGatheringWonderSequence } from '../../patterns/DataGatheringWonderSequence/DataGatheringWonderSequence.jsx'
 import { FetchConfirmation } from '../../patterns/FetchConfirmation/FetchConfirmation.jsx'
 import { GoalSelectionGrid } from '../../patterns/GoalSelectionGrid/GoalSelectionGrid.jsx'
-import { MobileOnboardingFlow } from '../../patterns/MobileOnboardingFlow/MobileOnboardingFlow.jsx'
-import { ProjectionMotionShowcase } from '../../patterns/ProjectionMotionShowcase/ProjectionMotionShowcase.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { StepLayout } from '../../patterns/StepLayout/StepLayout.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
@@ -83,6 +78,8 @@ import { colors as colorTokens } from '../../tokens/colors.js'
 import { typography as typographyTokens } from '../../tokens/typography.js'
 import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 import { COMMUNITY_VERTICAL_OPTIONS } from '../../utils/communityVerticals.js'
+
+const ComponentLibraryPrototypes = lazy(() => import('../../prototypes/ComponentLibraryPrototypes/ComponentLibraryPrototypes.jsx'))
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 function Section({ title, description, children }) {
@@ -218,7 +215,7 @@ function TimedShellVideo({ src, label, playbackRate = 1, pauseAfterMs = 3000 }) 
 }
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
-const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Mobile', 'Pages', 'Patterns', 'Animation']
+const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Prototypes', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
@@ -235,6 +232,24 @@ const creatorShellPreviewOptions = [
   { value: 'preview', label: 'Preview' },
   { value: 'verify', label: 'Verify' },
   { value: 'success', label: 'Success' },
+]
+const submissionSuccessTimeline = [
+  {
+    step: 'submitted',
+    title: 'Submitted',
+    description: 'Today your details move into review.',
+    current: true,
+  },
+  {
+    step: 'approved',
+    title: 'Approved',
+    description: "If there's a fit, we will reach out with next steps.",
+  },
+  {
+    step: 'live',
+    title: 'Live',
+    description: 'When you’re ready.',
+  },
 ]
 const avatarImageSet = [
   {
@@ -737,7 +752,7 @@ export function ComponentLibrary() {
 
       <main
         className={[
-          activeSection === 'Pages' ? 'max-w-none' : ['Mobile', 'Patterns'].includes(activeSection) ? 'max-w-6xl' : 'max-w-5xl',
+          activeSection === 'Pages' ? 'max-w-none' : ['Patterns', 'Prototypes'].includes(activeSection) ? 'max-w-6xl' : 'max-w-5xl',
           'mx-auto px-6 py-10 space-y-14',
         ].join(' ')}
       >
@@ -1842,29 +1857,6 @@ export function ComponentLibrary() {
           </>
         )}
 
-        {/* ── MOBILE ────────────────────────────────────────────────────── */}
-        {activeSection === 'Mobile' && (
-          <>
-            <div className="rounded-xl border border-border bg-surface px-4 py-3 shadow-xs">
-              <Checkbox
-                variant="plain"
-                label="Preview mobile CTA success labels"
-                description="Forces the mobile preview CTA into its success state so transition copy can be reviewed in the handset frame."
-                checked={previewPatternCtaSuccess}
-                onChange={(event) => setPreviewPatternCtaSuccess(event.target.checked)}
-              />
-            </div>
-
-            <Section title="Mobile Creator Onboarding Flow" description="Handset-first preview of the creator application onboarding story.">
-              <MobileOnboardingFlow forceSuccess={previewPatternCtaSuccess} />
-            </Section>
-
-            <DocumentationNote>
-              Mobile onboarding keeps the same behavior as the desktop flow: URL intake, fetched creator confirmation, preview editing, ownership verification, and submission. The layout changes to stacked content, a compact handset header, and bottom actions.
-            </DocumentationNote>
-          </>
-        )}
-
         {/* ── PAGES ─────────────────────────────────────────────────────── */}
         {activeSection === 'Pages' && (
           <div className="mx-auto flex w-[1440px] flex-col gap-4">
@@ -2097,10 +2089,6 @@ export function ComponentLibrary() {
               </div>
             </Section>
 
-            <Section title="Creator Onboarding Viewport Direction" description="Exploration of the desktop onboarding as a full-height viewport instead of a modal-like container. Existing onboarding remains unchanged.">
-              <CreatorOnboardingViewportDemo showStandaloneLink />
-            </Section>
-
             <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
               <SingleFieldIntake
                 title="Where do your fans live?"
@@ -2194,10 +2182,6 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Data Gathering Wonder Sequence" description="Standalone prototype for the data gathering review into fetch confirmation transition. Not wired into onboarding.">
-              <DataGatheringWonderSequence previewCtaSuccess={previewPatternCtaSuccess} />
-            </Section>
-
             <Section title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
               <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
                 <div className="flex h-full flex-col p-8 lg:p-12">
@@ -2270,24 +2254,7 @@ export function ComponentLibrary() {
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
                 summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
-                timeline={[
-                  {
-                    step: 'submitted',
-                    title: 'Submitted',
-                    description: 'Today your details move into review.',
-                    current: true,
-                  },
-                  {
-                    step: 'approved',
-                    title: 'Approved',
-                    description: "If there's a fit, we will reach out with next steps.",
-                  },
-                  {
-                    step: 'live',
-                    title: 'Live',
-                    description: 'When you’re ready.',
-                  },
-                ]}
+                timeline={submissionSuccessTimeline}
                 showAside={false}
                 secondaryAction={null}
                 primaryAction={{
@@ -2300,74 +2267,28 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section title="Submission Success: Cursor Burst Review" description="Design review duplicate for checking cursor-burst celebration with the submission timeline.">
-              <SubmissionSuccess
-                title="You’re on the list. We’ll take it from here."
-                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
-                timeline={[
-                  {
-                    step: 'submitted',
-                    title: 'Submitted',
-                    description: 'Today your details move into review.',
-                    current: true,
-                  },
-                  {
-                    step: 'approved',
-                    title: 'Approved',
-                    description: "If there's a fit, we will reach out with next steps.",
-                  },
-                  {
-                    step: 'live',
-                    title: 'Live',
-                    description: 'When you’re ready.',
-                  },
-                ]}
-                showAside={false}
-                secondaryAction={null}
-                primaryAction={{
-                  label: 'Close',
-                  variant: 'black',
-                  success: previewPatternCtaSuccess,
-                  successLabel: 'Close',
-                  successIcon: loadingSuccessIcon,
-                }}
-              />
-            </Section>
-
-            <Section title="Submission Success: Cursor Burst Interaction" description="Interaction review for the shared cursor-burst completion background.">
-              <SubmissionSuccess
-                title="You’re on the list. We’ll take it from here."
-                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
-                timeline={[
-                  {
-                    step: 'submitted',
-                    title: 'Submitted',
-                    description: 'Today your details move into review.',
-                    current: true,
-                  },
-                  {
-                    step: 'approved',
-                    title: 'Approved',
-                    description: "If there's a fit, we will reach out with next steps.",
-                  },
-                  {
-                    step: 'live',
-                    title: 'Live',
-                    description: 'When you’re ready.',
-                  },
-                ]}
-                showAside={false}
-                secondaryAction={null}
-                primaryAction={{
-                  label: 'Close',
-                  variant: 'black',
-                  success: previewPatternCtaSuccess,
-                  successLabel: 'Close',
-                  successIcon: loadingSuccessIcon,
-                }}
-              />
-            </Section>
           </>
+        )}
+
+        {/* ── PROTOTYPES ────────────────────────────────────────────────── */}
+        {activeSection === 'Prototypes' && (
+          <Suspense fallback={(
+            <div className="rounded-xl border border-border bg-surface px-4 py-3 text-sm text-text-secondary shadow-xs" aria-live="polite">
+              Loading prototypes...
+            </div>
+          )}
+          >
+            <ComponentLibraryPrototypes
+              previewPatternCtaSuccess={previewPatternCtaSuccess}
+              onPreviewPatternCtaSuccessChange={setPreviewPatternCtaSuccess}
+              verificationMethod={verificationMethod}
+              onVerificationMethodChange={handleVerificationMethodChange}
+              verificationConfirmed={verificationConfirmed}
+              onVerificationConfirmedChange={setVerificationConfirmed}
+              verificationTermsAccepted={verificationTermsAccepted}
+              onVerificationTermsAcceptedChange={setVerificationTermsAccepted}
+            />
+          </Suspense>
         )}
 
         {activeSection === 'Animation' && (
@@ -2415,71 +2336,6 @@ export function ComponentLibrary() {
               />
             </Section>
 
-            <Section
-              title="Projection Motion Lab"
-              description="Exploration area for animated data storytelling patterns before they are introduced into creator onboarding flows."
-            >
-              <ProjectionMotionShowcase />
-            </Section>
-
-            <Section
-              title="Verification Expansion"
-              description="Exploration area for the verification step where the Instagram DM option expands inline and compresses the alternate path."
-            >
-              <VerificationStep
-                title="One last check to know it's really you."
-                description="Complete verification for one of your channels to wrap up your application."
-                methods={[
-                  {
-                    value: 'instagram-dm',
-                    icon: tileIcon(Mail),
-                    title: 'Confirm with an Instagram DM',
-                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
-                  },
-                  {
-                    value: 'email-domain',
-                    icon: tileIcon(BadgeCheck),
-                    title: 'Confirm with a creator email',
-                    description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
-                  },
-                ]}
-                selectedMethod={verificationMethod}
-                onSelectMethod={handleVerificationMethodChange}
-                confirmed={verificationConfirmed}
-                onConfirmChange={setVerificationConfirmed}
-                termsAccepted={verificationTermsAccepted}
-                onTermsAcceptedChange={setVerificationTermsAccepted}
-                instagramDmDetail={{
-                  code: 'CULTURE-453',
-                  destinationHandle: '@raptive_community',
-                  originHandle: '@culturecrave',
-                }}
-                reassurance={[
-                  {
-                    icon: miniIcon(BadgeCheck),
-                    title: 'Short confirmation',
-                    description: 'The creator receives a quick ownership check, not a full application form all over again.',
-                  },
-                  {
-                    icon: miniIcon(Rocket),
-                    title: 'Submission follows immediately',
-                    description: 'Once confirmed, the final step can feel exclusive and complete instead of stalled.',
-                  },
-                  {
-                    icon: miniIcon(ShieldCheck),
-                    title: 'Trust stays intact',
-                    description: 'The screen explains why verification exists so the momentum from preview does not collapse here.',
-                  },
-                ]}
-                showAside={false}
-                secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
-                primaryAction={{
-                  label: 'Continue',
-                  successLabel: 'Submitting...',
-                  successIcon: loadingSuccessIcon,
-                }}
-              />
-            </Section>
           </>
         )}
 
