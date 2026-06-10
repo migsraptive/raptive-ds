@@ -215,7 +215,7 @@ function TimedShellVideo({ src, label, playbackRate = 1, pauseAfterMs = 3000 }) 
 }
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
-const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Prototypes', 'Animation']
+const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Emails', 'Prototypes', 'Animation']
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
@@ -748,7 +748,7 @@ export function ComponentLibrary() {
 
       <main
         className={[
-          activeSection === 'Pages' ? 'max-w-none' : ['Patterns', 'Prototypes'].includes(activeSection) ? 'max-w-6xl' : 'max-w-5xl',
+          activeSection === 'Pages' ? 'max-w-none' : ['Patterns', 'Emails', 'Prototypes'].includes(activeSection) ? 'max-w-6xl' : 'max-w-5xl',
           'mx-auto px-6 py-10 space-y-14',
         ].join(' ')}
       >
@@ -1882,10 +1882,6 @@ export function ComponentLibrary() {
               />
             </div>
 
-            <Section title="Application Emails" description="First-pass creator application email set mapped to verification, review, submission, approval, and not-a-fit moments.">
-              <ApplicationEmailSet />
-            </Section>
-
             <Section title="Creator Onboarding Shell" description="Stable guided-story frame for previewing onboarding height before wiring it into the live flow.">
               <div className="space-y-4">
                 <SegmentedControl
@@ -2268,6 +2264,13 @@ export function ComponentLibrary() {
             </Section>
 
           </>
+        )}
+
+        {/* ── EMAILS ─────────────────────────────────────────────────────── */}
+        {activeSection === 'Emails' && (
+          <Section title="Application Emails" description="First-pass creator application email set mapped to verification, review, submission, approval, and not-a-fit moments.">
+            <ApplicationEmailSet />
+          </Section>
         )}
 
         {/* ── PROTOTYPES ────────────────────────────────────────────────── */}

@@ -45,6 +45,8 @@ test('approval email keeps approval distinct from launch', () => {
 test('component library documents application emails with the preview pattern', () => {
   assert.match(applicationEmailSetSource, /export function ApplicationEmailSet/)
   assert.match(applicationEmailSetSource, /SegmentedControl/)
+  assert.match(componentLibrarySource, /'Emails'/)
+  assert.match(componentLibrarySource, /activeSection === 'Emails'/)
   assert.match(componentLibrarySource, /import \{ ApplicationEmailSet \}/)
   assert.match(componentLibrarySource, /title="Application Emails"/)
 })
