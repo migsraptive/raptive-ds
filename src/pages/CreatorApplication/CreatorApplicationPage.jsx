@@ -231,7 +231,6 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   let content = null
 
   if (activeStep === 0) {
-    // The opening step uses a warmer CTA while later steps keep task-specific labels.
     content = (
       <SingleFieldIntake
         title="Where do your fans live?"
