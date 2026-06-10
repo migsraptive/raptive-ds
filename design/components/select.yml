@@ -1,0 +1,94 @@
+schema_version: 0.1
+name: Select
+status: draft
+source:
+  repo: community-ds
+  path: src/components/Select/Select.jsx
+purpose: >
+  Select lets users choose one value from a compact list using native select
+  behavior and the shared field label, helper, error, and shell structure.
+use_when:
+  - The user must choose one value from a known list.
+  - Space is limited and showing every option would add too much visual weight.
+  - Native select behavior is acceptable for the platform.
+do_not_use_for:
+  - Choices that need rich descriptions or comparison; use RadioGroup or OptionTile.
+  - Multi-select choices; use Checkbox or a dedicated multi-select pattern.
+  - Navigation menus.
+agent_rules:
+  - Prefer Select over native select in patterns.
+  - Keep option labels concise.
+  - Do not use Select when the user needs to compare all choices at once.
+anatomy:
+  - name: field
+    required: false
+    description: Optional FormField wrapper.
+  - name: shell
+    required: true
+    description: Shared single-line field container.
+  - name: select
+    required: true
+    description: Native select control.
+  - name: indicator
+    required: true
+    description: Decorative disclosure icon.
+variants:
+  default:
+    description: Standard compact single-choice field.
+    intent: compact_choice
+states:
+  default:
+    description: Ready for selection.
+  focus_visible:
+    description: Focus is visible through the shell.
+  error:
+    description: Field is invalid and error text is shown.
+  disabled:
+    description: User cannot change the value.
+  read_only:
+    description: Value is visible but should not be changed.
+props:
+  id:
+    type: string
+    default: generated_when_wrapped
+  label:
+    type: node
+    default: null
+  description:
+    type: node
+    default: null
+  error:
+    type: node
+    default: null
+  required:
+    type: boolean
+    default: false
+  optional:
+    type: boolean
+    default: false
+  placeholder:
+    type: string
+    default: Select an option
+  options:
+    type: array
+    item_shape:
+      value: string
+      label: string
+    default: []
+content_guidelines:
+  - Use short option labels.
+  - Placeholder should prompt selection, not describe the entire field.
+  - Helper text should explain the choice only when labels cannot.
+accessibility:
+  role: combobox
+  keyboard:
+    - Native select keyboard behavior.
+  requirements:
+    - Use a visible label when the field is part of a form flow.
+    - Preserve aria-describedby and aria-invalid from FormField.
+    - Decorative indicator must not replace native select semantics.
+translation_notes:
+  - Target frameworks should keep native select behavior unless a custom combobox is explicitly approved.
+  - Do not copy Tailwind classes as the contract.
+open_questions:
+  - Should disabled options be part of the option item shape?

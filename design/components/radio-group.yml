@@ -1,0 +1,102 @@
+schema_version: 0.1
+name: RadioGroup
+status: draft
+source:
+  repo: community-ds
+  path: src/components/RadioGroup/RadioGroup.jsx
+purpose: >
+  RadioGroup presents a set of mutually exclusive choices where the user can
+  choose exactly one option.
+use_when:
+  - The user must choose one option from a small to moderate set.
+  - Showing all choices at once helps comparison.
+  - Each option may need a short description.
+do_not_use_for:
+  - Independent binary choices; use Checkbox.
+  - Compact lists where comparison is not important; use Select.
+  - Large icon-led cards or visual goals; use OptionTile.
+agent_rules:
+  - Prefer RadioGroup over hand-rolled radio inputs in patterns.
+  - Keep option labels parallel in grammar and length.
+  - Do not use RadioGroup for navigation tabs.
+  - Do not add per-option actions inside a radio option.
+anatomy:
+  - name: fieldset
+    required: true
+    description: Native group container.
+  - name: legend
+    required: false
+    description: Group label and optional description.
+  - name: option
+    required: true
+    description: Repeated selectable row.
+  - name: input
+    required: true
+    description: Native radio input for each option.
+  - name: indicator
+    required: true
+    description: Visual selected dot.
+  - name: option_label
+    required: true
+    description: Visible option text.
+  - name: option_description
+    required: false
+    description: Supporting detail for an option.
+variants:
+  card:
+    description: Framed radio rows with descriptions and larger touch targets.
+    intent: structured_single_choice
+states:
+  unchecked:
+    description: Option is not selected.
+  checked:
+    description: Option is selected.
+  hover:
+    description: Pointer feedback for enabled options.
+  focus_visible:
+    description: Keyboard-visible focus state on the native input.
+  disabled:
+    description: Option cannot be selected.
+props:
+  name:
+    type: string
+    required: true
+  label:
+    type: node
+    default: null
+  description:
+    type: node
+    default: null
+  options:
+    type: array
+    item_shape:
+      value: string
+      label: node
+      description: node
+      disabled: boolean
+    default: []
+  value:
+    type: string
+    default: null
+  onChange:
+    type: function
+    default: null
+content_guidelines:
+  - Use concise, parallel option labels.
+  - Put differentiating detail in descriptions only when needed.
+  - Avoid option labels that require reading another area of the page to understand.
+accessibility:
+  role: radiogroup
+  keyboard:
+    - Tab moves into and out of the group.
+    - Arrow keys move between native radio options.
+    - Space selects the focused option.
+  requirements:
+    - Use fieldset and legend when the group has a visible label.
+    - All options in a group must share the same name.
+    - Disabled options must be exposed on their native inputs.
+translation_notes:
+  - Target frameworks should preserve native radio behavior.
+  - Visual card styling must not replace radio semantics.
+open_questions:
+  - Should a bare or compact variant be formalized?

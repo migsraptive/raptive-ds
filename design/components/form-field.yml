@@ -1,0 +1,118 @@
+schema_version: 0.1
+name: FormField
+status: draft
+source:
+  repo: community-ds
+  path: src/components/FormField/FormField.jsx
+related_sources:
+  - src/components/FormField/FieldShell.jsx
+purpose: >
+  FormField provides the shared label, description, error, required, optional,
+  and accessible-description structure for form controls. FieldShell provides
+  the matching visual container for single-line controls.
+use_when:
+  - A control needs a visible label, helper text, error text, or required/optional marker.
+  - A custom control needs consistent field semantics without duplicating label logic.
+  - A single-line field needs the shared pill-shaped field container.
+do_not_use_for:
+  - Standalone controls that already provide complete form semantics.
+  - Field groups with multiple related controls; use fieldset or a purpose-built pattern.
+  - Read-only display rows that are not form controls.
+agent_rules:
+  - Prefer FormField through TextInput, Textarea, Select, or other field primitives before composing it directly.
+  - Do not hand-roll label, description, and error wiring in patterns.
+  - Do not use tertiary text for normal-size form labels.
+  - Required and optional markers are supplemental; labels must remain clear without them.
+anatomy:
+  - name: root
+    required: true
+    description: Vertical field wrapper.
+  - name: label
+    required: false
+    description: Visible label associated with the control.
+  - name: required_marker
+    required: false
+    description: Visual required indicator.
+  - name: optional_marker
+    required: false
+    description: Visual optional indicator.
+  - name: control
+    required: true
+    description: Child form control receiving id and described-by wiring.
+  - name: description
+    required: false
+    description: Helper text shown when no error is present.
+  - name: error
+    required: false
+    description: Error helper text that takes priority over description.
+  - name: field_shell
+    required: false
+    description: Shared control container for single-line controls.
+variants:
+  default:
+    description: Standard field wrapper.
+    intent: form_structure
+  shell:
+    description: Shared single-line visual control container.
+    intent: field_container
+states:
+  default:
+    description: Control is ready for input.
+  focus_within:
+    description: Field shell reflects focus inside the control.
+  error:
+    description: Error helper text is shown and control is marked invalid.
+  disabled:
+    description: Control cannot be edited.
+  read_only:
+    description: Control content can be read but not edited.
+props:
+  id:
+    type: string
+    default: generated
+  label:
+    type: node
+    default: null
+  description:
+    type: node
+    default: null
+  error:
+    type: node
+    default: null
+  required:
+    type: boolean
+    default: false
+  optional:
+    type: boolean
+    default: false
+  children:
+    type: node
+    required: true
+  FieldShell.error:
+    type: boolean
+    default: false
+  FieldShell.disabled:
+    type: boolean
+    default: false
+  FieldShell.readOnly:
+    type: boolean
+    default: false
+content_guidelines:
+  - Labels should name the requested information, not the input type.
+  - Helper text should explain constraints or examples only when useful.
+  - Error text should tell the user how to recover.
+accessibility:
+  role: native
+  keyboard:
+    - Keyboard behavior comes from the child control.
+  requirements:
+    - Label must be associated with the child control when visible.
+    - Description and error text must be referenced with aria-describedby.
+    - Error state must set aria-invalid on the child control.
+    - Error text takes priority over helper description.
+translation_notes:
+  - Keep label, helper, error, and described-by wiring centralized in target frameworks.
+  - FieldShell is an internal visual primitive; consumers should not style inside it.
+  - Map visual state to local semantic form tokens.
+open_questions:
+  - Should FieldShell become a private implementation detail once all fields use higher-level primitives?

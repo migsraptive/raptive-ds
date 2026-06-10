@@ -1,0 +1,81 @@
+schema_version: 0.1
+name: Textarea
+status: draft
+source:
+  repo: community-ds
+  path: src/components/Textarea/Textarea.jsx
+purpose: >
+  Textarea captures longer free-form text while using the shared field label,
+  helper, and error behavior.
+use_when:
+  - The answer may take multiple lines.
+  - The user benefits from seeing a paragraph-length response while editing.
+  - The content is free-form rather than selected from known options.
+do_not_use_for:
+  - Single-line answers; use TextInput.
+  - Rich text or formatted content; use a dedicated editor pattern.
+  - Long read-only content.
+agent_rules:
+  - Prefer Textarea over native textarea in patterns.
+  - Do not style the inner textarea from consuming surfaces.
+  - Keep validation messaging in the field props.
+anatomy:
+  - name: field
+    required: false
+    description: Optional FormField wrapper.
+  - name: control
+    required: true
+    description: Multi-line native textarea inside the shared field treatment.
+variants:
+  default:
+    description: Standard multi-line text field.
+    intent: long_text_entry
+states:
+  default:
+    description: Ready for input.
+  focus_visible:
+    description: Focus is visible through the control container.
+  error:
+    description: Field is invalid and error text is shown.
+  disabled:
+    description: User cannot edit or submit the value.
+  read_only:
+    description: Value is visible but not editable.
+props:
+  id:
+    type: string
+    default: generated_when_wrapped
+  label:
+    type: node
+    default: null
+  description:
+    type: node
+    default: null
+  error:
+    type: node
+    default: null
+  required:
+    type: boolean
+    default: false
+  optional:
+    type: boolean
+    default: false
+  rows:
+    type: number
+    default: 4
+content_guidelines:
+  - Label the kind of response needed, not the input type.
+  - Helper text should clarify format, length, or examples when needed.
+  - Error text should tell the user what to change.
+accessibility:
+  role: textbox
+  keyboard:
+    - Native textarea keyboard behavior.
+  requirements:
+    - Use a visible label when the field is part of a form flow.
+    - Preserve aria-describedby and aria-invalid from FormField.
+    - Do not rely on placeholder text as the only label.
+translation_notes:
+  - Target frameworks should preserve native textarea behavior.
+  - Keep resize policy and visual shell internal to the component.
+open_questions: []

@@ -1,0 +1,95 @@
+schema_version: 0.1
+name: Checkbox
+status: draft
+source:
+  repo: community-ds
+  path: src/components/Checkbox/Checkbox.jsx
+purpose: >
+  Checkbox captures an independent binary choice, consent, acknowledgement, or
+  one item in a multi-select set.
+use_when:
+  - The user can turn an option on or off independently.
+  - A consent or acknowledgement needs explicit checked state.
+  - Multiple options may be selected from a group.
+do_not_use_for:
+  - Mutually exclusive choices; use RadioGroup.
+  - Large visual choice cards with icons or descriptions; use OptionTile.
+  - Immediate actions; use Button.
+agent_rules:
+  - Prefer Checkbox over native checkbox in patterns.
+  - Use the card variant when the label and description need a clear touch target.
+  - Use the bare variant only when the surrounding layout already provides structure.
+  - Do not hide critical consent details in description text alone.
+anatomy:
+  - name: root_label
+    required: true
+    description: Clickable label wrapping the control and copy.
+  - name: input
+    required: true
+    description: Native checkbox input.
+  - name: indicator
+    required: true
+    description: Visual checkmark box.
+  - name: label
+    required: true
+    description: Primary choice text.
+  - name: description
+    required: false
+    description: Supporting detail for the choice.
+variants:
+  card:
+    description: Framed checkbox row with a larger touch target.
+    intent: structured_binary_choice
+  bare:
+    description: Minimal checkbox row for compact layouts.
+    intent: inline_binary_choice
+states:
+  unchecked:
+    description: Option is off.
+  checked:
+    description: Option is on.
+  hover:
+    description: Pointer feedback for enabled card variant.
+  focus_visible:
+    description: Keyboard-visible focus state on the native input.
+  disabled:
+    description: Option cannot be changed.
+props:
+  id:
+    type: string
+    default: generated
+  label:
+    type: node
+    required: true
+  description:
+    type: node
+    default: null
+  checked:
+    type: boolean
+    default: false
+  disabled:
+    type: boolean
+    default: false
+  onChange:
+    type: function
+    default: null
+  variant:
+    type: enum
+    values: [card, bare]
+    default: card
+content_guidelines:
+  - Write labels as the selected state when possible.
+  - Keep descriptions short and explanatory.
+  - Consent labels must be explicit about what the user is agreeing to.
+accessibility:
+  role: checkbox
+  keyboard:
+    - Space toggles the checkbox.
+  requirements:
+    - Preserve native checkbox semantics.
+    - Label click target must toggle the checkbox.
+    - Disabled state must be exposed on the native input.
+translation_notes:
+  - Target frameworks should keep native checkbox input behavior.
+  - Visual indicator can be custom, but semantics must remain native.
+open_questions: []

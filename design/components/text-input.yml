@@ -1,0 +1,102 @@
+schema_version: 0.1
+name: TextInput
+status: draft
+source:
+  repo: community-ds
+  path: src/components/TextInput/TextInput.jsx
+purpose: >
+  TextInput captures a single line of user-entered text or a single native input
+  value while using the shared field label, helper, error, and shell behavior.
+use_when:
+  - The answer fits on one line.
+  - The browser's native input type is appropriate.
+  - Prefix or suffix content clarifies the value.
+do_not_use_for:
+  - Multi-line answers; use Textarea.
+  - A fixed list of choices; use Select, RadioGroup, Checkbox, or OptionTile.
+  - Navigational URLs that should be detected as social accounts; use SocialUrlInput.
+agent_rules:
+  - Prefer TextInput over native input in patterns.
+  - Do not style the inner input from the consuming surface.
+  - Use prefix and suffix only when they clarify the expected value.
+  - Keep validation messaging in the field props, not adjacent custom text.
+anatomy:
+  - name: field
+    required: false
+    description: Optional FormField wrapper.
+  - name: shell
+    required: true
+    description: Shared single-line field container.
+  - name: prefix
+    required: false
+    description: Text or icon before the input value.
+  - name: input
+    required: true
+    description: Native single-line input.
+  - name: suffix
+    required: false
+    description: Text or icon after the input value.
+variants:
+  default:
+    description: Standard single-line text field.
+    intent: text_entry
+states:
+  default:
+    description: Ready for input.
+  focus_visible:
+    description: Focus is visible through the shell.
+  error:
+    description: Field is invalid and error text is shown.
+  disabled:
+    description: User cannot edit or submit the value.
+  read_only:
+    description: Value is visible but not editable.
+props:
+  id:
+    type: string
+    default: generated_when_wrapped
+  label:
+    type: node
+    default: null
+  description:
+    type: node
+    default: null
+  error:
+    type: node
+    default: null
+  required:
+    type: boolean
+    default: false
+  optional:
+    type: boolean
+    default: false
+  type:
+    type: string
+    default: text
+  prefix:
+    type: node
+    default: null
+  suffix:
+    type: node
+    default: null
+  affixLineHeight:
+    type: enum
+    values: [sm, md]
+    default: sm
+content_guidelines:
+  - Placeholder text may give an example but must not replace the label.
+  - Error text should be specific and recoverable.
+  - Prefix and suffix content should be short.
+accessibility:
+  role: textbox
+  keyboard:
+    - Native input keyboard behavior.
+  requirements:
+    - Use a visible label when the field is part of a form flow.
+    - Preserve aria-describedby and aria-invalid from FormField.
+    - Prefix and suffix icons must not be the only source of meaning.
+translation_notes:
+  - Target frameworks should preserve native input behavior.
+  - Keep the shell, label, error, and helper behavior centralized.
+  - Do not copy Tailwind classes as the contract.
+open_questions: []

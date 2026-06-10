@@ -5,96 +5,87 @@ source:
   repo: community-ds
   path: src/components/Badge/Badge.jsx
 purpose: >
-  Badge labels metadata, status, category, or lightweight achievement context.
-  It is compact, non-primary, and should not carry complex interaction by default.
+  Badge labels metadata, status, category, role, or lightweight achievement
+  context. It is compact supporting information, not a primary interaction.
+use_when:
+  - A short label helps users scan status, type, category, or recognition.
+  - Metadata needs visual grouping without becoming an action.
+  - A removable chip-like label is needed.
 do_not_use_for:
   - Primary calls to action.
   - Long explanatory text.
-  - Navigation tabs.
+  - Navigation tabs or filters that need selected state.
+  - Status that would be unclear without supporting text.
+agent_rules:
+  - Keep badge labels short.
+  - Do not create new color variants without design review.
+  - Do not use dot-only meaning; pair dots with text.
+  - Use Button or TextLink for actions outside the removable affordance.
 anatomy:
   - name: root
     required: true
-    description: Inline-flex label container.
-  - name: dot
-    required: false
-    description: Small status indicator.
-  - name: icon
-    required: false
-    description: Decorative or semantic icon.
+    description: Inline label container.
   - name: label
     required: true
     description: Short visible text.
+  - name: dot
+    required: false
+    description: Status accent that cannot carry meaning alone.
+  - name: icon
+    required: false
+    description: Supporting symbol before the label.
   - name: remove_button
     required: false
-    description: Optional dismiss affordance for removable badges.
+    description: Optional affordance for removing the badge.
 variants:
   default:
-    description: Neutral metadata.
-    token_intent:
-      background: color.surface.sunken
-      text: color.text.secondary
-      border: color.border.default
+    description: Neutral metadata or uncategorized label.
+    intent: neutral
   brand:
-    description: Branded system label.
-    token_intent:
-      background: color.surface.raised
-      text: color.action.primary
+    description: Raptive-owned or brand-highlighted label.
+    intent: brand
   success:
-    description: Positive status.
-    token_intent:
-      background: color.status.success
-      text: color.text.primary
+    description: Positive or confirmed status.
+    intent: positive_status
   warning:
-    description: Warning or attention state.
-    token_intent:
-      background: color.status.warning
-      text: color.text.primary
+    description: Attention, pending, or caution state.
+    intent: warning_status
   error:
-    description: Error or destructive state.
-    token_intent:
-      background: color.status.error
-      text: color.text.primary
+    description: Error, failed, or blocked state.
+    intent: error_status
   info:
-    description: Informational state.
-    token_intent:
-      background: color.status.info
-      text: color.text.primary
+    description: Informational status.
+    intent: informational_status
   gold:
-    description: Achievement or gamification emphasis.
-    token_intent:
-      background: color.surface.raised
-      text: color.action.primary
+    description: Achievement, leaderboard, or special recognition.
+    intent: achievement
   purple:
-    description: Role or special recognition emphasis.
-    token_intent:
-      background: color.surface.raised
-      text: color.action.primary
+    description: Role, special recognition, or community distinction.
+    intent: recognition
   outline:
-    description: Neutral outlined label.
-    token_intent:
-      background: transparent
-      text: color.text.primary
-      border: color.border.default
+    description: Neutral label when filled treatment would add too much weight.
+    intent: quiet_neutral
 sizes:
   xs:
-    min_height: 16px
-    typography: type.label.sm
+    description: Dense metadata.
   sm:
-    min_height: 20px
-    typography: type.label.md
+    description: Default badge.
   md:
-    min_height: 24px
-    typography: type.label.md
+    description: Emphasized metadata or status label.
 states:
   default:
-    description: Static badge.
+    description: Static label.
   hover:
-    description: Only applies when removable or otherwise interactive.
+    description: Only applies to the removable affordance.
   focus_visible:
-    description: Required for remove button.
+    description: Required for the removable affordance.
   disabled:
-    description: Only applies if a target implementation makes badge interactive.
+    description: Only applies if a target implementation makes the badge interactive.
 props:
+  children:
+    type: node
+    required: true
+    description: Visible badge label.
   variant:
     type: enum
     values: [default, brand, success, warning, error, info, gold, purple, outline]
@@ -109,30 +100,24 @@ props:
   icon:
     type: node
     default: null
-  removable:
-    type: boolean
-    default: false
+  onRemove:
+    type: function
+    default: null
 content_guidelines:
   - Use one to three words where possible.
-  - Prefer sentence case unless the label is a product/category name.
-  - Avoid making the badge carry the only explanation of an important state.
-token_intent:
-  radius:
-    default: radius.sm
-  spacing:
-    inline_padding: spacing.xs
-    content_gap: spacing.xxs
+  - Prefer sentence case unless the label is a proper name or product term.
+  - Do not make a badge carry the only explanation of an important state.
 accessibility:
   role: none
   keyboard:
-    - Badge itself is static unless removable.
+    - Badge itself is static unless it includes a remove button.
   requirements:
     - Remove affordance must be a native button.
-    - Remove button requires an accessible label that includes the badge text when possible.
-    - Dot-only meaning must also be present in text.
+    - Remove button needs an accessible label that identifies what will be removed.
+    - Dot and color meaning must also be available through text.
 translation_notes:
-  - Community implementation can be a leaf Glimmer component with SCSS.
-  - Do not port Tailwind classes.
-  - Keep removable behavior optional in the first pilot.
+  - Target frameworks should map variants to semantic status and recognition tokens.
+  - Keep removable behavior optional.
+  - Do not copy Tailwind classes as the contract.
 open_questions:
-  - Which Badge variants are needed for the creator application first?
+  - Should removable badges expose a required removeLabel prop instead of a default label?

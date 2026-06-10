@@ -1,0 +1,109 @@
+schema_version: 0.1
+name: OptionTile
+status: draft
+source:
+  repo: community-ds
+  path: src/components/OptionTile/OptionTile.jsx
+purpose: >
+  OptionTile presents a large visual choice for goals, categories, audiences, or
+  other selections where icon, description, and selected feedback help the user
+  compare options.
+use_when:
+  - The choice benefits from a card-like target, icon, or extra descriptive copy.
+  - The user is choosing goals, preferences, categories, or onboarding answers.
+  - A selection needs stronger visual feedback than a radio row.
+do_not_use_for:
+  - Simple binary consent; use Checkbox.
+  - Compact mutually exclusive fields; use RadioGroup or Select.
+  - Immediate actions that do not persist selected state; use Button.
+agent_rules:
+  - Prefer OptionTile for visual onboarding choices instead of custom cards.
+  - Use RadioGroup or Select when options are text-only and compact.
+  - Do not place primary actions inside OptionTile children.
+  - Honor reduced-motion behavior in target implementations.
+anatomy:
+  - name: root
+    required: true
+    description: Button-like tile that owns interaction and selected feedback.
+  - name: icon
+    required: false
+    description: Optional leading visual symbol.
+  - name: selection_indicator
+    required: true
+    description: Check or radio-style indicator.
+  - name: title
+    required: true
+    description: Primary option label.
+  - name: description
+    required: false
+    description: Supporting option copy.
+  - name: content
+    required: false
+    description: Optional supporting content below the description.
+variants:
+  check:
+    description: Multi-select friendly tile with checkmark indicator.
+    intent: visual_multi_choice
+  radio:
+    description: Single-choice tile with radio-style indicator.
+    intent: visual_single_choice
+states:
+  unselected:
+    description: Tile is available but not selected.
+  selected:
+    description: Tile is selected.
+  hover:
+    description: Pointer feedback for enabled tiles.
+  active:
+    description: Pressed feedback during activation.
+  focus_visible:
+    description: Keyboard-visible focus state.
+  disabled:
+    description: Tile cannot be selected.
+props:
+  title:
+    type: node
+    required: true
+  description:
+    type: node
+    default: null
+  children:
+    type: node
+    default: null
+  icon:
+    type: node
+    default: null
+  selected:
+    type: boolean
+    default: false
+  disabled:
+    type: boolean
+    default: false
+  multiSelect:
+    type: boolean
+    default: false
+  selectionStyle:
+    type: enum
+    values: [check, radio]
+    default: check
+  onClick:
+    type: function
+    default: null
+content_guidelines:
+  - Titles should be short and scannable.
+  - Descriptions should clarify why a user would choose the option.
+  - Keep option sets parallel in tone and detail.
+accessibility:
+  role: button
+  keyboard:
+    - Enter and Space activate native button behavior.
+  requirements:
+    - Multi-select tiles should expose pressed state with aria-pressed.
+    - Single-choice tile groups need surrounding group semantics in the parent pattern.
+    - Selection cannot be communicated by motion or color alone.
+translation_notes:
+  - Target frameworks should use a native button or equivalent accessible pressable primitive.
+  - Motion can be simplified, but selected, focus, disabled, and reduced-motion behavior must remain clear.
+  - Do not copy Tailwind classes as the contract.
+open_questions:
+  - Should single-select OptionTile groups expose a separate group component?

@@ -5,92 +5,99 @@ source:
   repo: community-ds
   path: src/components/Button/Button.jsx
 purpose: >
-  Button triggers a user action, submits a step, or opens a controlled surface.
-  It supports clear hierarchy, loading feedback, and optional icon content.
+  Button triggers an immediate user action, submits a step, or opens a
+  controlled surface. It communicates action hierarchy and can show in-place
+  loading or success feedback after the user activates it.
+use_when:
+  - The user is committing an action in the current view.
+  - The action needs button keyboard behavior.
+  - The action can be disabled, loading, or completed in place.
 do_not_use_for:
-  - Navigation that should behave as a link.
-  - Toggle controls that need persistent pressed state unless aria-pressed is specified.
+  - Navigation that should preserve link behavior; use TextLink or a routed link.
+  - Persistent selected state; use OptionTile, Checkbox, RadioGroup, or SegmentedControl.
+  - Inline body-copy links.
   - Menu items inside composite widgets.
+agent_rules:
+  - Do not invent new visual variants. Ask for design review if the available variants do not fit.
+  - Do not style Button internals from a consuming surface.
+  - Use at most one primary action in a local decision area unless a design explicitly calls for more.
+  - Use the paired-label-icon utility for label-adjacent icons.
 anatomy:
   - name: root
     required: true
-    description: Native button element or framework button primitive.
+    description: Native button behavior with optional motion wrapper.
   - name: label
     required: true
-    description: Visible action text.
+    description: Visible action text or an accessible name for icon-only usage.
   - name: icon_before
     required: false
-    description: Decorative or supporting icon before the label.
+    description: Supporting icon before the label.
   - name: icon_after
     required: false
-    description: Decorative or supporting icon after the label.
+    description: Supporting icon after the label.
   - name: loading_indicator
     required: false
-    description: Spinner or equivalent progress indicator shown during loading state.
+    description: Progress indicator shown while the action is running.
+  - name: success_indicator
+    required: false
+    description: Caller-provided confirmation icon or success label.
 variants:
   primary:
-    description: Main action on a screen or section.
-    token_intent:
-      background: color.action.primary
-      text: color.text.inverse
-      hover_background: color.action.primary.hover
+    description: Main action for a screen, modal, section, or final step.
+    intent: highest_emphasis
   secondary:
-    description: Secondary action with outlined treatment.
-    token_intent:
-      background: color.surface.default
-      text: color.text.primary
-      border: color.border.strong
+    description: Alternative or follow-up action that should remain visible.
+    intent: medium_emphasis
   ghost:
-    description: Low-emphasis action without a visible container until hover.
-    token_intent:
-      background: transparent
-      text: color.text.primary
-      hover_background: color.surface.sunken
+    description: Low-emphasis action where the surrounding layout already provides structure.
+    intent: low_emphasis
   danger:
     description: Destructive or high-risk action.
-    token_intent:
-      background: color.action.danger
-      text: color.text.inverse
+    intent: destructive
+  black:
+    description: Brand-forward action for dark, editorial, or special launch moments.
+    intent: special_emphasis
   link:
-    description: Inline action that visually behaves like text.
-    token_intent:
-      text: color.action.primary
+    description: Button behavior with text-link appearance for inline actions that are not navigation.
+    intent: inline_action
+  previewBrand:
+    description: Primary preview action using validated dynamic brand colors.
+    intent: dynamic_brand_primary
+  previewAccent:
+    description: Secondary preview action using validated dynamic brand colors.
+    intent: dynamic_brand_secondary
 sizes:
   xs:
-    min_height: 24px
-    inline_padding: spacing.xs
-    typography: type.label.md
+    description: Dense utility action.
   sm:
-    min_height: 32px
-    inline_padding: spacing.xs
-    typography: type.label.lg
+    description: Compact action in crowded surfaces.
   md:
-    min_height: 44px
-    inline_padding: spacing.s
-    typography: type.label.lg
+    description: Default action size.
   lg:
-    min_height: 56px
-    inline_padding: spacing.s
-    typography: type.body
+    description: High-emphasis action in spacious flow steps.
 states:
   default:
     description: Ready for interaction.
   hover:
-    description: Pointer hover feedback.
+    description: Pointer feedback for enabled buttons.
   active:
-    description: Pressed feedback.
+    description: Pressed feedback during activation.
   focus_visible:
-    description: Keyboard-visible focus ring.
+    description: Keyboard-visible focus state.
   disabled:
-    description: Non-interactive state with reduced contrast.
+    description: Non-interactive state.
   loading:
-    description: Action is in progress; click interaction is disabled.
+    description: Action is in progress and cannot be activated again.
   success:
-    description: Optional confirmation state after a successful action.
+    description: Completed state shown after an action resolves.
 props:
+  children:
+    type: node
+    required: false
+    description: Visible label content. Required unless an accessible label is supplied another way.
   variant:
     type: enum
-    values: [primary, secondary, ghost, danger, black, link]
+    values: [primary, secondary, ghost, danger, black, link, previewBrand, previewAccent]
     default: primary
   size:
     type: enum
@@ -108,36 +115,42 @@ props:
   successLabel:
     type: string
     default: null
+  successIcon:
+    type: node
+    default: null
   disabled:
     type: boolean
     default: false
+  iconBefore:
+    type: node
+    default: null
+  iconAfter:
+    type: node
+    default: null
   fullWidth:
     type: boolean
     default: false
+  type:
+    type: enum
+    values: [button, submit, reset]
+    default: button
 content_guidelines:
-  - Use a verb phrase when possible.
-  - Keep labels short enough to scan.
-  - Do not rely on icons alone unless an accessible label is supplied.
-token_intent:
-  radius:
-    default: radius.pill
-  spacing:
-    icon_gap: spacing.xs
-  typography:
-    weight: medium
+  - Use concise verb phrases.
+  - Prefer the user's outcome over implementation language.
+  - Keep loading and success labels understandable without animation.
 accessibility:
   role: button
   keyboard:
-    - Enter and Space activate the button.
+    - Enter and Space activate native button behavior.
   requirements:
-    - Use native disabled behavior when disabled or loading.
-    - Set aria-busy when loading.
-    - Icon-only buttons require an accessible label.
-    - Loading and success labels must remain understandable without animation.
+    - Use native disabled behavior when disabled, loading, or success locks the action.
+    - Set aria-busy while loading.
+    - Icon-only buttons require an explicit accessible label.
+    - Loading and success states must not be the only way critical status is communicated.
 translation_notes:
-  - Community implementation should prefer wrapping or extending Discourse DButton.
-  - Do not port Tailwind classes.
-  - Motion effects are optional; state clarity is required.
+  - Target frameworks should wrap their native button primitive rather than copy Tailwind classes.
+  - Map variants to local semantic action tokens.
+  - Motion is optional; the loading, success, disabled, and focus states are required.
 open_questions:
-  - Should the Community target support the black variant in the first pilot?
-  - Should success state be included in the first generated version or deferred?
+  - Should the black variant remain part of the portable contract or stay React-only?
+  - Should previewBrand and previewAccent move into a separate brand-preview contract later?
