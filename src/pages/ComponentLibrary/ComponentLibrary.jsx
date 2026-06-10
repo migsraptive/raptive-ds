@@ -61,6 +61,7 @@ import { CommunityTopNavigation } from '../../components/CommunityTopNavigation/
 import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/HomeFeedPageTemplate.jsx'
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
+import { ApplicationEmailSet } from '../../patterns/ApplicationEmailSet/ApplicationEmailSet.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
 import { CommunityTermsModal } from '../../patterns/CommunityTermsModal/CommunityTermsModal.jsx'
@@ -1880,6 +1881,10 @@ export function ComponentLibrary() {
                 onChange={(event) => setPreviewPatternCtaSuccess(event.target.checked)}
               />
             </div>
+
+            <Section title="Application Emails" description="First-pass creator application email set mapped to verification, review, submission, approval, and not-a-fit moments.">
+              <ApplicationEmailSet />
+            </Section>
 
             <Section title="Creator Onboarding Shell" description="Stable guided-story frame for previewing onboarding height before wiring it into the live flow.">
               <div className="space-y-4">
