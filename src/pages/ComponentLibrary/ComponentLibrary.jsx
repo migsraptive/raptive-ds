@@ -491,7 +491,7 @@ export function ComponentLibrary() {
       imageAlt: 'Vibrant fantasy garden illustration for the creator application entry step',
     },
     gather: {
-      title: 'We’re finding your fandom',
+      title: 'We’re finding your fans.',
       description: 'Give us a moment while we pull some details.',
       primaryLabel: 'Continue',
       primarySuccessLabel: 'Finding...',
@@ -501,8 +501,8 @@ export function ComponentLibrary() {
     },
     confirm: {
       title: 'Take a look at what we found.',
-      description: 'Confirm the creator profile before we use it to shape the first community preview.',
-      primaryLabel: 'Looks right',
+      description: "Check out what we found and make any changes you'd like before we continue. This doesn't have to be exactly perfect, it helps us figure out the potential of your community, and what branding to start with.",
+      primaryLabel: 'Looks good',
       primarySuccessLabel: 'Sneak peaking...',
       primarySuccessIcon: loadingSuccessIcon,
       video: wonderVideoUrl,
@@ -510,7 +510,7 @@ export function ComponentLibrary() {
     },
     preview: {
       title: 'We used your brand to jumpstart your community. How does it look?',
-      description: 'Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.',
+      description: "Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.",
       primaryLabel: 'Continue to Verification',
       primarySuccessLabel: "Let's verify...",
       primarySuccessIcon: loadingSuccessIcon,
@@ -1198,7 +1198,6 @@ export function ComponentLibrary() {
               <div className="max-w-xl">
                 <ColorInput
                   label="Brand Color"
-                  description="Used for buttons, links, creator marks, and the generated highlight tint."
                   value={brandColor}
                   fallbackColor={brandPreviewDefaults.brand}
                   onChange={setBrandColor}
@@ -2133,7 +2132,7 @@ export function ComponentLibrary() {
 
             <Section title="Data Gathering Review: No Data Found" description="Variation for submitted sources that resolve without a matching identity or connected social accounts.">
               <DataGatheringReview
-                title="We’re finding your fandom"
+                title="We’re finding your fans."
                 description="Give us a moment while we pull some details."
                 detectedSource="Website"
                 submittedSourceValue="https://example.com"
@@ -2170,7 +2169,7 @@ export function ComponentLibrary() {
                 onRemoveAccount={removeFetchConfirmationAccount}
                 secondaryAction={{ label: 'Back', variant: 'ghost' }}
                 primaryAction={{
-                  label: 'Looks right',
+                  label: 'Looks good',
                   success: previewPatternCtaSuccess,
                   successLabel: 'Sneak peaking...',
                   successIcon: loadingSuccessIcon,
@@ -2188,7 +2187,7 @@ export function ComponentLibrary() {
                           We used your brand to jumpstart your community. How does it look?
                         </h2>
                         <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                          Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.
+                          Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.
                         </p>
                       </div>
                     </div>

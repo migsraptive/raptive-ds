@@ -251,7 +251,7 @@ export function DataGatheringWonderSequence({ previewCtaSuccess = false }) {
                     onRemoveAccount={() => {}}
                     secondaryAction={{ label: 'Replay gather', variant: 'secondary', onClick: handleReplay }}
                     primaryAction={{
-                      label: 'Looks right',
+                      label: 'Looks good',
                       success: previewCtaSuccess,
                       successLabel: 'Sneak peaking...',
                       successIcon: loadingSuccessIcon,
