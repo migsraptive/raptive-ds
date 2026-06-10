@@ -7,7 +7,11 @@
     "dev": "vite --port 3700",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext .jsx,.js"
+    "lint": "eslint src --ext .jsx,.js",
+    "test": "node --test tests/*.test.js",
+    "design:export": "node scripts/export-design-manifest.mjs --out dist/design-sync/latest-main.json",
+    "figma:variables:sync": "node scripts/sync-figma-variables.mjs --manifest dist/design-sync/latest-main.json",
+    "figma:access:validate": "node scripts/validate-figma-access.mjs --manifest dist/design-sync/latest-main.json"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",

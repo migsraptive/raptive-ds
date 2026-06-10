@@ -19,6 +19,7 @@ design/
   patterns/
   tokens/
     canonical-token-language.md
+  automation.md
   README.md
   system-usage.md
 ```
@@ -35,6 +36,7 @@ Josh owns the engineering translation constraints in the Community monolith. The
 - Pattern specs that define multi-component user flows such as the creator application.
 - Canonical token language used when talking across React, Figma, and Community.
 - Design decisions that explain why the translation lane exists.
+- Automation notes for syncing repo-managed design context into Figma.
 
 ## What Does Not Belong Here
 
