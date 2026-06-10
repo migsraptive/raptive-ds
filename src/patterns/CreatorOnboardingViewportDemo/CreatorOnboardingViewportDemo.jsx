@@ -73,7 +73,7 @@ const previewSteps = {
     imageAlt: 'Vibrant fantasy garden illustration for the creator application entry step',
   },
   gather: {
-    title: 'We’re finding your fandom',
+    title: 'We’re finding your fans.',
     description: 'Give us a moment while we pull some details.',
     primaryLabel: 'Continue',
     primarySuccessLabel: 'Finding...',
@@ -83,8 +83,8 @@ const previewSteps = {
   },
   confirm: {
     title: 'Take a look at what we found.',
-    description: 'Confirm the creator profile before we use it to shape the first community preview.',
-    primaryLabel: 'Looks right',
+    description: "Check out what we found and make any changes you'd like before we continue. This doesn't have to be exactly perfect, it helps us figure out the potential of your community, and what branding to start with.",
+    primaryLabel: 'Looks good',
     primarySuccessLabel: 'Sneak peaking...',
     primarySuccessIcon: loadingSuccessIcon,
     video: wonderVideoUrl,
@@ -92,7 +92,7 @@ const previewSteps = {
   },
   preview: {
     title: 'We used your brand to jumpstart your community. How does it look?',
-    description: 'Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.',
+    description: "Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.",
     primaryLabel: 'Continue to Verification',
     primarySuccessLabel: "Let's verify...",
     primarySuccessIcon: loadingSuccessIcon,

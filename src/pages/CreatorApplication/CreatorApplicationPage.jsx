@@ -231,6 +231,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   let content = null
 
   if (activeStep === 0) {
+    // The opening step uses a warmer CTA while later steps keep task-specific labels.
     content = (
       <SingleFieldIntake
         title="Where do your fans live?"
@@ -241,7 +242,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         progressMeter={progressMeter}
         loading={intakeLoading}
         helperText={getDetectedSocialAccountHelperText(creatorUrl)}
-        ctaLabel="Continue"
+        ctaLabel="Let's go"
         ctaSuccessLabel="Pulling data"
         ctaSuccessIcon={loadingSuccessIcon}
         ctaDisabled={!creatorUrl.trim()}
@@ -255,9 +256,9 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   if (activeStep === 1) {
     content = (
       <DataGatheringReview
-        title={gatherRowsResolved ? 'Take a look at what we found.' : 'We’re finding your fandom'}
+        title={gatherRowsResolved ? 'Take a look at what we found.' : 'We’re finding your fans.'}
         description={gatherRowsResolved
-          ? 'Confirm the creator profile before we use it to shape the first community preview.'
+          ? "Check out what we found and make any changes you'd like before we continue. This doesn't have to be exactly perfect, it helps us figure out the potential of your community, and what branding to start with."
           : 'Give us a moment while we pull some details.'}
         detectedSource={getDetectedSourceLabel(creatorUrl)}
         submittedSourceValue={creatorUrl}
@@ -275,7 +276,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         contentAlign="center"
         secondaryAction={{ label: 'Start over', variant: 'ghost', onClick: resetApplicationFlow }}
         primaryAction={{
-          label: gatherRowsResolved ? 'Looks right' : 'Continue',
+          label: gatherRowsResolved ? 'Looks good' : 'Continue',
           disabled: !gatherRowsResolved || pendingPrimaryAction === 'gather-primary',
           success: pendingPrimaryAction === 'gather-primary',
           successLabel: 'Sneak peaking...',
@@ -301,7 +302,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
                   We used your brand to jumpstart your community. How does it look?
                 </h2>
                 <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
-                  Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear.
+                  Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.
                 </p>
               </div>
             </div>

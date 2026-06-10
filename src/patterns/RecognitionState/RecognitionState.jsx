@@ -33,7 +33,7 @@ export function RecognitionState({
   profile = null,
   signals = [],
   showAside = true,
-  primaryAction = { label: 'Looks right' },
+  primaryAction = { label: 'Looks good' },
   secondaryAction = { label: 'Edit details', variant: 'ghost' },
 }) {
   const shouldReduceMotion = useReducedMotion()

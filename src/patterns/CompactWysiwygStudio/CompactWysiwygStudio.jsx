@@ -100,6 +100,7 @@ export function CompactWysiwygStudio({
         <div className="space-y-2.5">
           <CompactField
             label="name"
+            labelEmphasis="strong"
             value={fields.name}
             onChange={(value) => updateField('name', value)}
           />
@@ -167,7 +168,7 @@ export function CompactWysiwygStudio({
     {
       id: 'colors',
       icon: Palette,
-      label: 'Community colors',
+      label: 'Community color',
       subtext: 'Brand and generated accent',
       content: (
         <div className="space-y-3">
@@ -176,7 +177,6 @@ export function CompactWysiwygStudio({
           </p>
           <ColorInput
             label="Brand Color"
-            description="Used for buttons, links, creator marks, and the generated highlight tint."
             value={brandColor}
             layout="compact"
             fallbackColor={defaultEditorColors.brand}

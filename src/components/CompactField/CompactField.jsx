@@ -19,10 +19,15 @@ export function CompactField({
   helperText = null,
   maxLength,
   className = '',
+  labelEmphasis = 'default',
 }) {
   const generatedId = useId()
   const fieldId = `compact-field-${generatedId}`
   const helperId = helperText ? `${fieldId}-helper` : undefined
+  // Only fields that pass strong emphasis opt into the bold label treatment; other compact labels keep the default secondary tone.
+  const labelToneClassName = labelEmphasis === 'strong'
+    ? 'font-bold text-text'
+    : 'font-medium text-text-secondary'
 
   return (
     <div
@@ -32,7 +37,10 @@ export function CompactField({
       ].filter(Boolean).join(' ')}
     >
       {/* no token available: compact editor labels use a fixed rail to keep fields aligned. */}
-      <label htmlFor={fieldId} className="pt-2 text-sm font-medium text-text-secondary">
+      <label
+        htmlFor={fieldId}
+        className={['pt-2 text-sm', labelToneClassName].join(' ')}
+      >
         {label}
       </label>
 

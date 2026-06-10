@@ -279,7 +279,7 @@ function SocialAccountsEditor({
 }
 
 export function DataGatheringReview({
-  title = 'We’re finding your fandom',
+  title = 'We’re finding your fans.',
   description = 'Give us a moment while we pull some details.',
   detectedSource = 'Instagram',
   submittedSourceValue = defaultSubmittedSourceValue,
