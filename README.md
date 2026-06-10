@@ -1,124 +1,236 @@
 # Raptive Community Design System
 
-Desktop-first design system prototype and creator-application flow for Raptive Community.
+Desktop-first React/Vite design system prototype for Raptive Community, creator
+application flows, and agent-readable design handoff documentation.
 
-Repository:
-- `https://github.com/migsraptive/community-ds`
+## Project Links
 
-This repo is being used for:
-- token alignment with Figma
-- component and pattern development
-- internal design review in a library surface
-- user-facing creator onboarding flow prototyping
+- Repository: `https://github.com/cafemedia/community-ds`
+- GitHub Pages: `https://migsraptive.github.io/community-ds/`
+- Vercel production: `https://community-ds.vercel.app`
+- Local dev: `http://127.0.0.1:3700/community-ds/`
+- Figma file: [Creator Application Flow](https://www.figma.com/design/infX09HpqqIzfmZ5YmAbI6/Creator-Application-Flow?node-id=40-2)
 
-## Current State
+## What This Repo Is For
 
-What is implemented now:
-- Figma-aligned token remap in `src/tokens/`
-- semantic text token refinements plus synchronized runtime CSS variables
-- shared form primitives:
-  - `FormField`
-  - `FieldShell`
-  - `TextInput`
-  - `Textarea`
-  - `Select`
-  - `Checkbox`
-  - `RadioGroup`
-  - `OptionTile`
-- shared display primitives:
-  - `Button`
-  - `Badge`
-  - `Avatar`
-  - `BrandLogo`
-  - `LucideIcon`
-- onboarding patterns:
-  - `SingleFieldIntake`
-  - `FetchConfirmation`
-  - `ReviewCorrection`
-  - `CommunityPreviewCard`
-  - `VerificationStep`
-  - `SubmissionSuccess`
-- supporting patterns:
-  - `GoalSelectionGrid`
-  - `CategoryPicker`
-  - `StepLayout`
-  - `CelebrationModal`
+- Build and review Raptive Community UI components.
+- Prototype the creator application onboarding experience.
+- Validate mobile and desktop onboarding patterns before production handoff.
+- Document design-system contracts for AI agents and implementation partners.
+- Sync token and component manifest data into Figma.
+- Capture rendered app screens into Figma for visual review.
 
-Two top-level app surfaces exist:
-- `ComponentLibrary` for internal review and design system inspection
-- `CreatorApplicationPage` for the real user-facing flow
+## Stack
 
-Latest creator-flow update:
-- replaced the earlier generic recognition screen with a richer `FetchConfirmation` step
-- added editable website, newsletter, and social-account review cards
-- moved the progress meter into each flow card above the eyebrow/headline area
-- bottom-aligned the action row inside each flow container for more consistent desktop composition
-- extended the library surface to document semantic text-token usage
+- React 18 with JSX
+- Vite 5, served under `/community-ds/`
+- Tailwind CSS v3
+- Motion for React animation
+- Lucide React icons
+- Node's built-in test runner
 
-## Creator Flow
+This repo does not use shadcn/ui. Components are custom and token-driven.
 
-The current creator application sequence is:
+## App Surfaces
 
-1. `Entry`
-2. `Fetch`
-3. `Review`
-4. `Preview`
-5. `Verify`
-6. `Submit`
+The root app switches between review surfaces with the `view` query param:
 
-This flow is based on the actual journey map, not the original generic onboarding backlog.
+- `?view=creator-application`
+  User-facing creator application flow.
+- `?view=creator-application-page`
+  Standalone creator application page with header.
+- `?view=creator-onboarding-viewport`
+  Viewport demo for onboarding states.
+- `?view=component-library`
+  Internal design review and component library.
 
-### User-Facing Behavior
+The component library supports section filtering with `section`, for example:
 
-The user-facing creator flow intentionally hides internal review notes and commentary.
+```text
+http://127.0.0.1:3700/community-ds/?view=component-library&section=Patterns
+```
 
-In the real flow:
-- right-side explanatory notes are hidden
-- illustration rails remain visible
-- the right illustration rail is fixed-width on desktop
-- illustrations fill the right rail in user mode
+## Current Creator Application Flow
 
-Current user-flow image rail behavior:
-- width: `360px`
-- minimum height: `720px`
-- effective frame: `1:2`
+The live creator application flow is implemented in
+`src/pages/CreatorApplication/CreatorApplicationPage.jsx`.
 
-## Brand + Assets
+The current sequence is:
 
-Branding updates already applied:
-- product name is now `Raptive Community Design System`
-- real SVG logo is wired into the app
-- sample creator identity was changed to `Culture Crave`
-- Lucide icons replaced placeholder/icon text usage where appropriate
-- social platform assets now support the fetch-confirmation account cards
+1. Entry
+   A single URL/social intake step.
+2. Gather / review
+   Data-gathering state that resolves into editable creator details and social accounts.
+3. Preview editor
+   Brand/community preview editor built with `CompactWysiwygStudio`.
+4. Verification
+   Ownership verification with Instagram DM and creator-email options.
+5. Submit / success
+   Submission confirmation with timeline and celebration treatment.
 
-Illustration assets currently wired into the flow:
-- `src/assets/entry-illustration.png`
-- `src/assets/recognition-illustration.png`
-- `src/assets/preview-illustration.png`
-- `src/assets/verification-illustration.png`
-- `src/assets/submission-illustration.png`
+The verification step includes a Community Terms modal acceptance flow before final
+submission.
 
-Important note:
-- these images are visually integrated, but the PNG files are still heavy and should be resized/compressed before treating this as production-ready
+## Component Library
+
+Core component primitives live in `src/components/`.
+
+High-priority primitives include:
+
+- `Button`
+- `Badge`
+- `FormField` / `FieldShell`
+- `TextInput`
+- `Textarea`
+- `Select`
+- `Checkbox`
+- `RadioGroup`
+- `OptionTile`
+- `SegmentedControl`
+- `TextLink`
+- `Avatar`
+- `AvatarUpload`
+- `ColorInput`
+- `ColorSwatchButton`
+- `SocialUrlInput`
+- `StepIndicator`
+
+Community/feed components include:
+
+- `AuthorRow`
+- `Comment`
+- `FeedPost`
+- `MediaGallery`
+- `PostActionBar`
+- `PostContent`
+- `CommunitySidebar`
+- `CommunityTopNavigation`
+- `HomeFeedPageTemplate`
+- `RightRailWelcomeCard`
+- `RightRailCommunityRulesCard`
+
+## Patterns
+
+Composite patterns live in `src/patterns/`.
+
+Current flow and review patterns include:
+
+- `SingleFieldIntake`
+- `DataGatheringReview`
+- `FetchConfirmation`
+- `ReviewCorrection`
+- `CompactWysiwygStudio`
+- `VerificationStep`
+- `CommunityTermsModal`
+- `SubmissionSuccess`
+- `MobileOnboardingFlow`
+- `CreatorOnboardingViewportDemo`
+- `CreatorOnboardingViewportShell`
+- `ApplicationEmailSet`
+
+Supporting and exploratory patterns include:
+
+- `GoalSelectionGrid`
+- `CategoryPicker`
+- `StepLayout`
+- `CelebrationModal`
+- `CommunityPreviewCard`
+- `PreviewBuilderStudio`
+- `ProjectionPreview`
+- `ProjectionMotionShowcase`
+- `RecognitionState`
+
+## Component Contracts
+
+Agent-readable design contracts live in `design/components/`.
+
+Current contracts:
+
+- `button.yml`
+- `badge.yml`
+- `form-field.yml`
+- `text-input.yml`
+- `textarea.yml`
+- `select.yml`
+- `checkbox.yml`
+- `radio-group.yml`
+- `option-tile.yml`
+
+The contract model is intentionally lean. Contracts explain when to use a
+component, when not to use it, allowed variants, states, public props,
+accessibility rules, and translation notes.
+
+Contracts should not expose fixed internals such as spacing, radius, typography,
+or Tailwind classes as consumer choices. Treat components as black boxes unless
+a named variant is needed.
+
+## Design Documentation
+
+Design-side documentation lives in `design/`.
+
+Important files:
+
+- `design/README.md`
+- `design/system-usage.md`
+- `design/accessibility/standards.md`
+- `design/tokens/canonical-token-language.md`
+- `design/decisions/0001-agent-translation-lane.md`
+- `design/automation.md`
+
+These docs describe design intent, agent handoff, token language, and Figma sync
+workflow. Ember, Discourse, or production implementation details should stay out
+of this repo's design contracts unless they affect design intent.
 
 ## Tokens
 
 Token files live in `src/tokens/`:
+
 - `colors.js`
 - `typography.js`
 - `spacing.js`
 - `effects.js`
 
-The project has already been remapped to the exported Figma token values as closely as possible while keeping the scaffold API stable.
+Tokens are exported through `src/tokens/index.js` and consumed by
+`tailwind.config.js`.
 
-That includes:
-- `DM Sans` typography mapping
-- `Newsreader` for high-emphasis editorial headings in the creator flow
-- exported spacing scale compatibility
-- exported radius scale compatibility
-- Raptive palette and semantic color mapping
-- semantic text aliases for placeholder and subtle actions
+The token layer includes:
+
+- Raptive brand palette
+- semantic color aliases
+- action tokens
+- form/status colors
+- gamification colors
+- DM Sans typography
+- Newsreader editorial heading treatment
+- JetBrains Mono mono treatment
+- spacing, radius, shadow, and motion effect scales
+
+## Figma Workflow
+
+The main Figma file is:
+
+[Creator Application Flow](https://www.figma.com/design/infX09HpqqIzfmZ5YmAbI6/Creator-Application-Flow?node-id=40-2)
+
+Recent imports added five raw HTML-to-Figma captures under `Latest from main`:
+
+- Entry: `60:2`
+- Gather / review: `61:2`
+- Preview editor: `62:2`
+- Verification: `63:2`
+- Success: `64:2`
+
+These captures preserve rendered layout from the local app. They are useful as
+pixel references, but they are not rebuilt with Figma component instances.
+
+Figma automation scripts:
+
+```bash
+npm run design:export
+npm run figma:variables:sync
+npm run figma:access:validate
+```
+
+Keep `.vercel/` and local Figma/session metadata untracked.
 
 ## Project Structure
 
@@ -128,60 +240,95 @@ src/
 ├── components/
 ├── pages/
 │   ├── ComponentLibrary/
-│   └── CreatorApplication/
+│   ├── CreatorApplication/
+│   └── CreatorOnboardingViewport/
 ├── patterns/
+├── prototypes/
 ├── tokens/
-└── globals.css
+├── utils/
+├── App.jsx
+├── globals.css
+└── main.jsx
+
+design/
+├── accessibility/
+├── components/
+├── decisions/
+├── tokens/
+├── README.md
+├── automation.md
+└── system-usage.md
+
+tests/
 ```
 
-Useful files:
+Useful entry files:
+
 - `src/App.jsx`
 - `src/pages/ComponentLibrary/ComponentLibrary.jsx`
 - `src/pages/CreatorApplication/CreatorApplicationPage.jsx`
+- `src/pages/CreatorOnboardingViewport/CreatorOnboardingViewportPage.jsx`
 
 ## Quick Start
 
+Install dependencies:
+
 ```bash
 npm install
-npm run dev
-npm run build
 ```
 
-Local dev:
-- `http://127.0.0.1:3700/community-ds/`
+Start local development:
 
-GitHub Pages:
-- `https://migsraptive.github.io/community-ds/`
+```bash
+npm run dev
+```
 
-## Figma
+Open:
 
-Figma MCP is now installed in Codex for this machine, but you need a fresh session to use the new Figma tools in-chat after installation.
+```text
+http://127.0.0.1:3700/community-ds/
+```
 
-Current Figma file being referenced:
-- `Community Design System`
+Build production assets:
 
-When implementing from Figma:
-- prefer the actual Figma row/frame over inferred layouts
-- reuse existing components before adding new ones
-- keep user-facing screens free of internal review copy
-
-## Next Steps
-
-Highest-value next work:
-
-1. Restore Figma MCP access under the correct Raptive account and bring in the selected sidebar component.
-2. Compress and resize the illustration PNG assets.
-3. Add a proper favicon/app mark derived from the real brand logo.
-4. Keep tightening the `ComponentLibrary` so it reflects current production direction rather than scaffold-era demos.
+```bash
+npm run build
+```
 
 ## Verification
 
-Primary verification command:
+Run the standard checks before merging:
 
 ```bash
 npm run build
+npm run lint
+npm test
 ```
 
-Notes:
-- builds are currently passing
-- lint is configured and should exit with 0 errors and 0 warnings
+When UI changes affect visible app surfaces, also smoke check:
+
+- `http://127.0.0.1:3700/community-ds/?view=component-library&section=Patterns`
+- `http://127.0.0.1:3700/community-ds/?view=creator-application`
+
+Browser smoke checks should render without page errors. `npm run lint` should
+exit with 0 errors and 0 warnings.
+
+## Deployment
+
+The project is Vercel-backed and also published to GitHub Pages.
+
+Production deploy target:
+
+```bash
+npx vercel deploy --prod --scope raptive
+```
+
+Only deploy production intentionally after verification.
+
+## Current Notes
+
+- Component contracts are now the preferred lightweight handoff format for agents.
+- The creator flow uses rendered React screens as the design source of truth.
+- Application email previews are available through `ApplicationEmailSet`.
+- PNG and video assets are intentionally high fidelity for review and may need production optimization.
+- Motion patterns are still emerging and should be documented once they stabilize.
