@@ -62,7 +62,7 @@ export function DataGatheringLoader({
       progressVariant={progressVariant}
       step={step}
       totalSteps={totalSteps}
-      title="We're finding your fandom"
+      title="We're finding your fans."
       titleClassName="max-w-3xl font-newsreader text-hero font-normal"
       description="Give us a moment while we pull some details."
       primaryAction={null}

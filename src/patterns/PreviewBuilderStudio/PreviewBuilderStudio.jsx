@@ -190,7 +190,6 @@ export function PreviewBuilderStudio({
 
                 <ColorInput
                   label="Brand Color"
-                  description="Used for buttons, links, creator marks, and the generated highlight tint."
                   value={brandColor}
                   fallbackColor={brandPreviewDefaults.brand}
                   onChange={setBrandColor}
