@@ -13,6 +13,7 @@ import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
+import { TextLink } from '../../components/TextLink/TextLink.jsx'
 import { applicationEmailTemplates } from './applicationEmails.js'
 
 const scenarioIcons = {
@@ -37,6 +38,169 @@ const stageSummaries = {
   Dashboard: 'Dashboard setup emails cover payment, tax, and non-Gmail account guidance.',
   Community: 'Community setup emails move approved creators into customization and first posts.',
   Launch: 'Launch prep nudges creators to seed content and invite their first members.',
+}
+
+const urlPattern = /https?:\/\/[^\s)]+/g
+const emailPattern = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
+const parenthesizedUrlPattern = /\((https?:\/\/[^)]+)\)/g
+const linkedLabelPattern = /([A-Z][A-Za-z0-9'-]*(?:\s+[A-Z][A-Za-z0-9'-]*)*)$/
+const fallbackLinkInstruction = 'If the button above does not work, copy and paste this link into your browser:'
+
+const getLinkedLabelStart = (text) => {
+  const trimmedText = text.trimEnd()
+  const titleCaseLabel = trimmedText.match(linkedLabelPattern)
+
+  if (titleCaseLabel) {
+    return trimmedText.length - titleCaseLabel[0].length
+  }
+
+  const fallbackLabel = trimmedText.match(/(\S+)$/)
+
+  return fallbackLabel ? trimmedText.length - fallbackLabel[0].length : trimmedText.length
+}
+
+const renderStandaloneEmails = (text, keyPrefix) => {
+  const segments = []
+  let cursor = 0
+
+  text.replace(emailPattern, (email, offset) => {
+    if (offset > cursor) {
+      segments.push(text.slice(cursor, offset))
+    }
+
+    segments.push({ label: email, href: `mailto:${email}` })
+    cursor = offset + email.length
+
+    return email
+  })
+
+  if (cursor < text.length) {
+    segments.push(text.slice(cursor))
+  }
+
+  return segments.map((segment, index) => {
+    if (typeof segment === 'string') {
+      return <span key={`${keyPrefix}-text-${index}`}>{segment}</span>
+    }
+
+    return (
+      <TextLink key={`${keyPrefix}-email-${index}`} href={segment.href}>
+        {segment.label}
+      </TextLink>
+    )
+  })
+}
+
+const renderStandaloneUrls = (text, keyPrefix) => {
+  const segments = []
+  let cursor = 0
+
+  text.replace(urlPattern, (url, offset) => {
+    if (offset > cursor) {
+      segments.push(text.slice(cursor, offset))
+    }
+
+    segments.push({ label: url, href: url })
+    cursor = offset + url.length
+
+    return url
+  })
+
+  if (cursor < text.length) {
+    segments.push(text.slice(cursor))
+  }
+
+  return segments.map((segment, index) => {
+    if (typeof segment === 'string') {
+      return renderStandaloneEmails(segment, `${keyPrefix}-text-${index}`)
+    }
+
+    return (
+      <TextLink key={`${keyPrefix}-link-${index}`} href={segment.href}>
+        {segment.label}
+      </TextLink>
+    )
+  })
+}
+
+const renderLinkedCopy = (copy) => {
+  const segments = []
+  let cursor = 0
+
+  copy.replace(parenthesizedUrlPattern, (match, url, offset) => {
+    const prefix = copy.slice(cursor, offset)
+    const labelStart = getLinkedLabelStart(prefix)
+    const beforeLabel = prefix.slice(0, labelStart)
+    const label = prefix.slice(labelStart).trimEnd()
+
+    if (beforeLabel) {
+      segments.push(beforeLabel)
+    }
+
+    if (label) {
+      segments.push({ label, href: url })
+    }
+
+    cursor = offset + match.length
+
+    return match
+  })
+
+  if (cursor < copy.length) {
+    segments.push(copy.slice(cursor))
+  }
+
+  return segments.flatMap((segment, index) => {
+    if (typeof segment === 'string') {
+      return renderStandaloneUrls(segment, `copy-${index}`)
+    }
+
+    return (
+      <TextLink key={`copy-link-${index}`} href={segment.href}>
+        {segment.label}
+      </TextLink>
+    )
+  })
+}
+
+function CopyParagraph({ children, className }) {
+  return (
+    <p className={className}>
+      {renderLinkedCopy(children)}
+    </p>
+  )
+}
+
+function FooterCopy({ paragraphs }) {
+  const rows = []
+
+  for (let index = 0; index < paragraphs.length; index += 1) {
+    const paragraph = paragraphs[index]
+    const nextParagraph = paragraphs[index + 1]
+    const shouldGroupFallbackLink = paragraph === fallbackLinkInstruction && nextParagraph?.startsWith('http')
+
+    if (shouldGroupFallbackLink) {
+      rows.push(
+        <div key={paragraph} className="space-y-0">
+          <CopyParagraph className="text-sm leading-relaxed text-text-secondary">
+            {paragraph}
+          </CopyParagraph>
+          <CopyParagraph className="text-sm leading-relaxed text-text-secondary">
+            {nextParagraph}
+          </CopyParagraph>
+        </div>,
+      )
+      index += 1
+    } else {
+      rows.push(
+        <CopyParagraph key={paragraph} className="text-sm leading-relaxed text-text-secondary">
+          {paragraph}
+        </CopyParagraph>,
+      )
+    }
+  }
+
+  return rows
 }
 
 export function ApplicationEmailSet({
@@ -163,7 +327,7 @@ export function ApplicationEmailSet({
                 <Badge variant={scenarioBadges[selectedTemplate.stage] ?? 'default'} size="sm">
                   {selectedTemplate.status}
                 </Badge>
-                <h2 className="font-newsreader text-2xl font-normal leading-tight text-text">
+                <h2 className="font-newsreader text-hero font-normal text-text">
                   {selectedTemplate.heading}
                 </h2>
               </div>
@@ -171,9 +335,9 @@ export function ApplicationEmailSet({
 
             <div className="space-y-4">
               {selectedTemplate.body.map((paragraph) => (
-                <p key={paragraph} className="text-base leading-relaxed text-text-secondary">
+                <CopyParagraph key={paragraph} className="text-base leading-relaxed text-text-secondary">
                   {paragraph}
-                </p>
+                </CopyParagraph>
               ))}
             </div>
 
@@ -201,9 +365,9 @@ export function ApplicationEmailSet({
             {selectedTemplate.afterSteps ? (
               <div className="space-y-4">
                 {selectedTemplate.afterSteps.map((paragraph) => (
-                  <p key={paragraph} className="text-base leading-relaxed text-text-secondary">
+                  <CopyParagraph key={paragraph} className="text-base leading-relaxed text-text-secondary">
                     {paragraph}
-                  </p>
+                  </CopyParagraph>
                 ))}
               </div>
             ) : null}
@@ -227,11 +391,7 @@ export function ApplicationEmailSet({
 
             {selectedTemplate.footer ? (
               <div className="space-y-3 border-t border-border pt-6">
-                {selectedTemplate.footer.map((paragraph) => (
-                  <p key={paragraph} className="text-sm leading-relaxed text-text-secondary">
-                    {paragraph}
-                  </p>
-                ))}
+                <FooterCopy paragraphs={selectedTemplate.footer} />
               </div>
             ) : null}
           </article>

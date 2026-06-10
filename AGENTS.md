@@ -57,6 +57,7 @@ src/
 - Reuse existing components before creating new ones
 - When adding or changing a component or variant, update `ComponentLibrary` examples and docs in the same task.
 - Patterns should compose `src/components` primitives; do not hand-roll native `button`, `input`, `textarea`, or `select` controls inside patterns. If a pattern needs a new interactive control, add it to `src/components` first and document it in the component library.
+- When copy includes a URL in parentheses immediately after linked text, link the preceding text with that URL and do not show the parenthesized URL. When copy includes a standalone URL that is not inside parentheses, render the full URL itself as the visible link text. Standalone email addresses should also render as visible email-address links using `mailto:`.
 - Detected brand palettes must be accessibility-gated: first usable color maps to primary action, second usable color maps to secondary action, and text on those colors must use computed black/white foreground contrast.
 - Detected and demo brand preview defaults must live in `src/utils/brandPreviewDefaults.js`, never defined locally in component files.
 

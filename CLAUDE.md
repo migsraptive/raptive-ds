@@ -49,6 +49,7 @@ src/
 - All patterns accept `showAside` prop to toggle design guidance panel
 - Tokens are the source of truth — never hardcode colors, spacing, or type values
 - Reuse existing components before creating new ones
+- When copy includes a URL in parentheses immediately after linked text, link the preceding text with that URL and do not show the parenthesized URL. When copy includes a standalone URL that is not inside parentheses, render the full URL itself as the visible link text. Standalone email addresses should also render as visible email-address links using `mailto:`.
 
 ## Verification
 ```bash
