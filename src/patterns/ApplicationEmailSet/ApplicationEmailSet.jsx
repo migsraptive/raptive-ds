@@ -1,90 +1,102 @@
 import { useState } from 'react'
 import {
   ArrowRight,
-  BadgeCheck,
-  Clock,
+  ClipboardCheck,
+  Home,
   MailCheck,
-  MessageSquareWarning,
   ShieldCheck,
-  Sparkles,
+  Users,
+  WalletCards,
 } from 'lucide-react'
+import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
-import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { applicationEmailTemplates } from './applicationEmails.js'
 
 const scenarioIcons = {
-  'ownership-code': ShieldCheck,
-  'review-draft': Sparkles,
-  submitted: MailCheck,
-  'needs-info': MessageSquareWarning,
-  'approved-next-steps': BadgeCheck,
-  'not-a-fit': Clock,
+  Account: ShieldCheck,
+  Application: ClipboardCheck,
+  Dashboard: WalletCards,
+  Community: Home,
+  Launch: Users,
 }
 
 const scenarioBadges = {
-  'ownership-code': 'info',
-  'review-draft': 'brand',
-  submitted: 'success',
-  'needs-info': 'warning',
-  'approved-next-steps': 'success',
-  'not-a-fit': 'default',
+  Account: 'info',
+  Application: 'brand',
+  Dashboard: 'warning',
+  Community: 'success',
+  Launch: 'success',
+}
+
+const stageSummaries = {
+  Account: 'Activation emails help creators confirm the account tied to the application.',
+  Application: 'Draft reminders bring creators back before the application is submitted.',
+  Dashboard: 'Dashboard setup emails cover payment, tax, and non-Gmail account guidance.',
+  Community: 'Community setup emails move approved creators into customization and first posts.',
+  Launch: 'Launch prep nudges creators to seed content and invite their first members.',
 }
 
 export function ApplicationEmailSet({
   templates = applicationEmailTemplates,
-  initialTemplateId = 'submitted',
+  initialTemplateId = 'dashboard-setup',
 }) {
   const [selectedTemplateId, setSelectedTemplateId] = useState(initialTemplateId)
+  const initialStage = templates.find((template) => template.id === initialTemplateId)?.stage ?? templates[0]?.stage
+  const [selectedStage, setSelectedStage] = useState(initialStage)
   const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0]
 
   if (!selectedTemplate) {
     return null
   }
 
-  const ScenarioIcon = scenarioIcons[selectedTemplate.id] ?? MailCheck
-  const options = templates.map((template) => ({
-    value: template.id,
-    label: template.label,
-  }))
+  const ScenarioIcon = scenarioIcons[selectedTemplate.stage] ?? MailCheck
+  const stages = Array.from(new Set(templates.map((template) => template.stage)))
 
-  return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      <aside className="space-y-4 rounded-lg border border-border bg-surface p-4 shadow-xs">
+  const handleStageChange = (stage) => {
+    setSelectedStage(stage)
+    setSelectedTemplateId((currentTemplateId) => {
+      const currentTemplate = templates.find((template) => template.id === currentTemplateId)
+
+      return currentTemplate?.stage === stage
+        ? currentTemplate.id
+        : templates.find((template) => template.stage === stage)?.id
+    })
+  }
+
+  const accordionRows = stages.map((stage) => {
+    const stageTemplates = templates.filter((template) => template.stage === stage)
+    const StageIcon = scenarioIcons[stage] ?? MailCheck
+
+    return {
+      id: stage,
+      icon: StageIcon,
+      label: stage,
+      subtext: stageSummaries[stage],
+      trailing: (
+        <Badge variant={scenarioBadges[stage] ?? 'default'} size="sm">
+          {stageTemplates.length}
+        </Badge>
+      ),
+      content: (
         <div className="space-y-2">
-          <Badge variant={scenarioBadges[selectedTemplate.id] ?? 'default'} size="md" dot>
-            {selectedTemplate.tone}
-          </Badge>
-          <h3 className="text-lg font-semibold text-text">Application email moments</h3>
-          <p className="text-sm leading-relaxed text-text-secondary">
-            First-pass lifecycle emails for the new creator application: verification, paused draft,
-            submitted review, missing information, approval, and not-a-fit decisions.
-          </p>
-        </div>
-
-        <SegmentedControl
-          label="Email"
-          value={selectedTemplate.id}
-          options={options}
-          onChange={setSelectedTemplateId}
-        />
-
-        <div className="space-y-3 border-t border-border pt-4">
-          {templates.map((template) => {
-            const TemplateIcon = scenarioIcons[template.id] ?? MailCheck
+          {stageTemplates.map((template) => {
             const isActive = template.id === selectedTemplate.id
 
             return (
-              <div
+              <button
                 key={template.id}
+                type="button"
                 className={[
                   'flex w-full items-start gap-3 rounded-md border px-3 py-2 text-left transition-colors duration-150',
                   isActive
                     ? 'border-brand bg-brand-subtle'
-                    : 'border-border bg-surface',
+                    : 'border-border bg-surface hover:bg-surface-sunken',
                 ].join(' ')}
+                onClick={() => setSelectedTemplateId(template.id)}
+                aria-pressed={isActive}
               >
                 <span
                   className={[
@@ -92,16 +104,41 @@ export function ApplicationEmailSet({
                     isActive ? 'bg-surface text-brand-dark' : 'bg-surface-sunken text-text-secondary',
                   ].join(' ')}
                 >
-                  <LucideIcon icon={TemplateIcon} size="md" />
+                  <LucideIcon icon={StageIcon} size="md" />
                 </span>
                 <span className="min-w-0 space-y-0.5">
                   <span className="block text-sm font-semibold text-text">{template.label}</span>
                   <span className="block text-xs leading-snug text-text-secondary">{template.status}</span>
                 </span>
-              </div>
+              </button>
             )
           })}
         </div>
+      ),
+    }
+  })
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-3">
+      <aside className="space-y-4 rounded-lg border border-border bg-surface p-4 shadow-xs">
+        <div className="space-y-2">
+          <Badge variant={scenarioBadges[selectedTemplate.stage] ?? 'default'} size="md" dot>
+            {selectedTemplate.tone}
+          </Badge>
+          <h3 className="text-lg font-semibold text-text">Application email moments</h3>
+          <p className="text-sm leading-relaxed text-text-secondary">
+            Creator lifecycle emails from the application flow: account activation, incomplete
+            applications, dashboard setup, community setup, and launch readiness.
+          </p>
+        </div>
+
+        <AccordionPanelGroup
+          rows={accordionRows}
+          openRow={selectedStage}
+          onOpenRowChange={handleStageChange}
+          allowCollapse={false}
+          className="overflow-hidden rounded-lg border border-border bg-surface"
+        />
       </aside>
 
       <section className="rounded-lg border border-border bg-surface p-4 shadow-xs lg:col-span-2">
@@ -123,7 +160,7 @@ export function ApplicationEmailSet({
             <header className="space-y-6">
               <BrandLogo size="md" />
               <div className="space-y-3">
-                <Badge variant={scenarioBadges[selectedTemplate.id] ?? 'default'} size="sm">
+                <Badge variant={scenarioBadges[selectedTemplate.stage] ?? 'default'} size="sm">
                   {selectedTemplate.status}
                 </Badge>
                 <h2 className="font-newsreader text-2xl font-normal leading-tight text-text">
@@ -140,6 +177,37 @@ export function ApplicationEmailSet({
               ))}
             </div>
 
+            {selectedTemplate.steps ? (
+              <ol className="space-y-4 pl-5">
+                {selectedTemplate.steps.map((step) => (
+                  <li key={step.title} className="list-decimal text-base leading-relaxed text-text-secondary">
+                    <span className="font-semibold text-text">{step.title}</span>
+                    <span className="mt-1 block">{step.body}</span>
+                  </li>
+                ))}
+              </ol>
+            ) : null}
+
+            {selectedTemplate.bullets ? (
+              <ul className="space-y-2 pl-5">
+                {selectedTemplate.bullets.map((bullet) => (
+                  <li key={bullet} className="list-disc text-base leading-relaxed text-text-secondary">
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {selectedTemplate.afterSteps ? (
+              <div className="space-y-4">
+                {selectedTemplate.afterSteps.map((paragraph) => (
+                  <p key={paragraph} className="text-base leading-relaxed text-text-secondary">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            ) : null}
+
             {selectedTemplate.code ? (
               <div className="rounded-lg border border-border bg-surface-sunken px-5 py-4">
                 <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Verification code</p>
@@ -155,10 +223,17 @@ export function ApplicationEmailSet({
               >
                 {selectedTemplate.primaryAction.label}
               </Button>
-              <p className="text-sm leading-relaxed text-text-secondary sm:max-w-sm">
-                {selectedTemplate.secondaryNote}
-              </p>
             </div>
+
+            {selectedTemplate.footer ? (
+              <div className="space-y-3 border-t border-border pt-6">
+                {selectedTemplate.footer.map((paragraph) => (
+                  <p key={paragraph} className="text-sm leading-relaxed text-text-secondary">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            ) : null}
           </article>
         </div>
       </section>
