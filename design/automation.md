@@ -61,9 +61,7 @@ Run the same project checks used by CI when changing design specs, tokens, or
 automation scripts:
 
 ```bash
-npm run lint
-npm test
-npm run build
+npm run ci
 ```
 
 ## Main-Merge Workflow
