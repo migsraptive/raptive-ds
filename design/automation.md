@@ -30,6 +30,42 @@ Use this automation as an artifact-first, MCP-assisted sync:
 
 This is the primary path because the available Figma token UI does not expose the REST Variables API scopes required for CI variable writes.
 
+## Local Setup
+
+From the repo root, install dependencies before running design automation:
+
+```bash
+npm ci
+```
+
+The automation commands use local scripts and write generated artifacts under
+`dist/design-sync/`.
+
+Figma import, capture, update, and sync steps are explicit-only. Do not run them
+as an automatic follow-up to code, docs, commit, merge, or push work unless the
+user explicitly asks for Figma in that request.
+
+Create the design-sync manifest:
+
+```bash
+npm run design:export
+```
+
+This writes:
+
+```text
+dist/design-sync/latest-main.json
+```
+
+Run the same project checks used by CI when changing design specs, tokens, or
+automation scripts:
+
+```bash
+npm run lint
+npm test
+npm run build
+```
+
 ## Main-Merge Workflow
 
 GitHub Actions runs `.github/workflows/design-sync.yml` on every push to `main` and on manual dispatch.
@@ -87,4 +123,9 @@ npm run design:export
 npm run figma:access:validate
 ```
 
+Run `npm run design:export` first because the validation command reads
+`dist/design-sync/latest-main.json`.
+
 `figma:access:validate` will skip cleanly unless `FIGMA_ACCESS_TOKEN` is present.
+Keep local `.env` files untracked; `.gitignore` already excludes `.env`,
+`.env.*`, and `*.local`.

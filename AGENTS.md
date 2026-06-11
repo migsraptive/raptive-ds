@@ -15,6 +15,11 @@
 - Agents are allowed to deploy to Vercel for this project, including production deploys with `npx vercel deploy --prod --scope raptive`.
 - Keep `.vercel/` untracked; local project metadata should not be committed.
 
+## Figma Sync
+- Do not import, capture, update, or sync Figma automatically after code, docs, commit, merge, or push work.
+- Only run Figma import/sync/update workflows when the user explicitly asks for Figma in that request.
+- If a Figma capture requires a temporary script tag, remove it before finishing and do not commit it.
+
 ## Stack
 - React 18 (JSX, not TypeScript)
 - Vite 5 with base path `/community-ds/`

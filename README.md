@@ -31,9 +31,82 @@ application flows, and agent-readable design handoff documentation.
 
 This repo does not use shadcn/ui. Components are custom and token-driven.
 
-## App Surfaces
+## Local Setup
+
+Prerequisites:
+
+- Node.js 18.18 or newer
+- npm, included with Node.js
+
+Clone the repo and install locked dependencies:
+
+```bash
+git clone https://github.com/cafemedia/community-ds.git
+cd community-ds
+npm ci
+```
+
+Start the Vite dev server:
+
+```bash
+npm run dev
+```
+
+Open the local app at:
+
+```text
+http://127.0.0.1:3700/community-ds/
+```
+
+The `/community-ds/` path matters in local development because Vite uses the
+same base path as GitHub Pages. Vercel production serves from the domain root.
+
+If port `3700` is already in use, stop the other process or start Vite on a
+temporary port:
+
+```bash
+npm run dev -- --port 3701
+```
+
+Then open `http://127.0.0.1:3701/community-ds/`.
+
+## Common Local URLs
 
 The root app switches between review surfaces with the `view` query param:
+
+- Creator application flow:
+  `http://127.0.0.1:3700/community-ds/?view=creator-application`
+- Creator application page with header:
+  `http://127.0.0.1:3700/community-ds/?view=creator-application-page`
+- Creator onboarding viewport demo:
+  `http://127.0.0.1:3700/community-ds/?view=creator-onboarding-viewport`
+- Component library:
+  `http://127.0.0.1:3700/community-ds/?view=component-library`
+- Component library patterns section:
+  `http://127.0.0.1:3700/community-ds/?view=component-library&section=Patterns`
+
+## Daily Commands
+
+```bash
+npm run dev       # start local development at http://127.0.0.1:3700/community-ds/
+npm run build     # build production assets into dist/
+npm run lint      # run ESLint over src/**/*.js and src/**/*.jsx
+npm test          # run node:test specs in tests/
+```
+
+Before merging or deploying, run:
+
+```bash
+npm run build
+npm run lint
+npm test
+```
+
+`npm run lint` should exit with 0 errors and 0 warnings.
+
+## App Surfaces
+
+The available app surfaces are:
 
 - `?view=creator-application`
   User-facing creator application flow.
@@ -44,11 +117,7 @@ The root app switches between review surfaces with the `view` query param:
 - `?view=component-library`
   Internal design review and component library.
 
-The component library supports section filtering with `section`, for example:
-
-```text
-http://127.0.0.1:3700/community-ds/?view=component-library&section=Patterns
-```
+The component library supports section filtering with `section`.
 
 ## Current Creator Application Flow
 
@@ -269,35 +338,9 @@ Useful entry files:
 - `src/pages/CreatorApplication/CreatorApplicationPage.jsx`
 - `src/pages/CreatorOnboardingViewport/CreatorOnboardingViewportPage.jsx`
 
-## Quick Start
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start local development:
-
-```bash
-npm run dev
-```
-
-Open:
-
-```text
-http://127.0.0.1:3700/community-ds/
-```
-
-Build production assets:
-
-```bash
-npm run build
-```
-
 ## Verification
 
-Run the standard checks before merging:
+For UI changes, run the standard checks:
 
 ```bash
 npm run build
