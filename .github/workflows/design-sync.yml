@@ -1,6 +1,7 @@
 name: Design Sync
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -27,17 +28,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
-
-      - name: Export design manifest
-        run: npm run design:export
+      - name: Run CI checks
+        run: npm run ci
 
       - name: Upload design manifest
         uses: actions/upload-artifact@v4

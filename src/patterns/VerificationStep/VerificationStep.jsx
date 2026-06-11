@@ -296,7 +296,7 @@ export function VerificationStep({
                     <div className="space-y-3">
                       {reassurance.map((item) => (
                         <div key={item.title} className="flex gap-3">
-                          <span className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-brand-subtle text-xs text-brand-dark">
+                          <span className="paired-label-icon text-sm leading-sm mt-0.5 rounded-full bg-brand-subtle text-brand-dark">
                             {item.icon}
                           </span>
                           <div className="space-y-1">

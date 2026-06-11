@@ -91,15 +91,14 @@ The root app switches between review surfaces with the `view` query param:
 npm run dev       # start local development at http://127.0.0.1:3700/community-ds/
 npm run build     # build production assets into dist/
 npm run lint      # run ESLint over src/**/*.js and src/**/*.jsx
-npm test          # run node:test specs in tests/
+npm test          # run unit tests and repo contract checks
+npm run ci        # run the same checks as GitHub Actions
 ```
 
 Before merging or deploying, run:
 
 ```bash
-npm run build
-npm run lint
-npm test
+npm run ci
 ```
 
 `npm run lint` should exit with 0 errors and 0 warnings.
@@ -343,9 +342,7 @@ Useful entry files:
 For UI changes, run the standard checks:
 
 ```bash
-npm run build
-npm run lint
-npm test
+npm run ci
 ```
 
 When UI changes affect visible app surfaces, also smoke check:
