@@ -35,34 +35,6 @@ function getCharacterCountLabel(value, limit) {
   return `${value.length}/${limit} characters`
 }
 
-const previewGuideItems = [
-  {
-    label: 'Join module',
-    description: 'Introduces the community and gives fans a first action.',
-  },
-  {
-    label: 'Discovery card',
-    description: 'Shows how fans may find this community while browsing.',
-  },
-  {
-    label: 'Starter prompt',
-    description: 'Seeds the first conversation with a clear question.',
-  },
-]
-
-function PreviewGuideItem({ label, description }) {
-  return (
-    <div className="rounded-lg border border-border bg-surface px-3 py-2 shadow-xs">
-      <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">
-        {label}
-      </p>
-      <p className="mt-0.5 text-xs leading-relaxed text-text-secondary">
-        {description}
-      </p>
-    </div>
-  )
-}
-
 export function CompactWysiwygStudio({
   brandAssets = {
     palette: compactWysiwygPalette,
@@ -201,16 +173,6 @@ export function CompactWysiwygStudio({
 
           <div className="preview-theme bg-surface-raised p-4" style={previewThemeStyle}>
             <div className="space-y-4">
-              <div className="grid gap-2 lg:grid-cols-3">
-                {previewGuideItems.map((item) => (
-                  <PreviewGuideItem
-                    key={item.label}
-                    label={item.label}
-                    description={item.description}
-                  />
-                ))}
-              </div>
-
               <div className="grid items-stretch justify-center gap-4 lg:grid-cols-[320px_minmax(220px,1fr)]">
                 {/* no token available: this exploration previews the fixed-width right rail module beside compact community cards. */}
                 <RightRailWelcomeCard
