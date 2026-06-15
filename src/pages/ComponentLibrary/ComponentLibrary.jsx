@@ -233,6 +233,11 @@ const creatorShellPreviewOptions = [
   { value: 'verify', label: 'Verify' },
   { value: 'success', label: 'Success' },
 ]
+const simplifiedVerificationOptions = [
+  { value: 'standard', label: 'Standard' },
+  { value: 'known-lead', label: 'Known lead' },
+  { value: 'meta-fallback', label: 'Meta fallback' },
+]
 const submissionSuccessTimeline = [
   {
     step: 'submitted',
@@ -380,9 +385,12 @@ export function ComponentLibrary() {
   const [fetchConfirmationDemoAccounts, setFetchConfirmationDemoAccounts] = useState(getFetchConfirmationDemoAccounts)
   const [fetchConfirmationEditingAccountId, setFetchConfirmationEditingAccountId] = useState(null)
   const [fetchConfirmationEditDraft, setFetchConfirmationEditDraft] = useState({ platform: '', handle: '', url: '' })
-  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
+  const [verificationMethod, setVerificationMethod] = useState('meta-login')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
+  const [simplifiedVerificationState, setSimplifiedVerificationState] = useState('standard')
+  const [simplifiedVerificationMethod, setSimplifiedVerificationMethod] = useState(null)
+  const [simplifiedVerificationTermsAccepted, setSimplifiedVerificationTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
   const [celebrationModalOpen, setCelebrationModalOpen] = useState(false)
   const [reviewFields] = useState({
@@ -509,7 +517,7 @@ export function ComponentLibrary() {
       videoLabel: 'Fantastical garden video reveal for the creator confirmation step',
     },
     preview: {
-      title: 'We used your brand to jumpstart your community. How does it look?',
+      title: 'How does everything look?',
       description: "Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.",
       primaryLabel: 'Continue to Verification',
       primarySuccessLabel: "Let's verify...",
@@ -556,6 +564,19 @@ export function ComponentLibrary() {
     setVerificationConfirmed(false)
     setVerificationTermsAccepted(false)
   }
+  const handleSimplifiedVerificationStateChange = (value) => {
+    setSimplifiedVerificationState(value)
+    setSimplifiedVerificationMethod(null)
+    setSimplifiedVerificationTermsAccepted(false)
+  }
+  const simplifiedVerificationIsKnownLead = simplifiedVerificationState === 'known-lead'
+  const simplifiedVerificationSelectedMethod = simplifiedVerificationIsKnownLead
+    ? null
+    : previewPatternCtaSuccess ? 'meta' : simplifiedVerificationMethod
+  const simplifiedVerificationTermsValue = previewPatternCtaSuccess || simplifiedVerificationTermsAccepted
+  const simplifiedVerificationFallbackMessage = simplifiedVerificationState === 'meta-fallback'
+    ? 'That didn’t work. You can try Meta again or have us email you to get the verification project started.'
+    : null
   const creatorShellVerificationIncomplete = creatorShellPreviewStep === 'verify'
     && (!verificationConfirmed || !verificationTermsAccepted)
   const handleCreatorShellNext = () => {
@@ -1258,7 +1279,7 @@ export function ComponentLibrary() {
               <div className="max-w-sm">
                 <OptionTile
                   icon={tileIcon(Mail)}
-                  title="Confirm with an Instagram DM"
+                  title="We'll email you to get the verification project started"
                   description="Use an inline detail area when the selected tile needs a short next step."
                   selected
                   selectionStyle="radio"
@@ -1982,13 +2003,13 @@ export function ComponentLibrary() {
                           {[
                             {
                               icon: tileIcon(Mail),
-                              title: 'Confirm with an Instagram DM',
-                              description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
+                              title: 'Login with Meta to verify your Instagram account',
+                              description: 'Use Login with Meta to verify @culturecrave without a manual message.',
                             },
                             {
                               icon: tileIcon(BadgeCheck),
-                              title: 'Confirm with a creator email',
-                              description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+                              title: "We'll email you to get the verification project started",
+                              description: 'Use this path when Meta login is not convenient today.',
                             },
                           ].map((method) => (
                             <div key={method.title} className="rounded-xl border border-border bg-surface px-5 py-4">
@@ -2184,7 +2205,7 @@ export function ComponentLibrary() {
                     <div className="space-y-4">
                       <div className="space-y-3">
                         <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
-                          We used your brand to jumpstart your community. How does it look?
+                          How does everything look?
                         </h2>
                         <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
                           Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.
@@ -2211,29 +2232,93 @@ export function ComponentLibrary() {
                 description="Complete verification for one of your channels to wrap up your application."
                 methods={[
                   {
-                    value: 'instagram-dm',
-                    icon: tileIcon(Mail),
-                    title: 'Confirm with an Instagram DM',
-                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
+                    value: 'meta-login',
+                    icon: tileIcon(BadgeCheck),
+                    title: 'Login with Meta to verify your Instagram account',
+                    description: 'Use Login with Meta to verify @culturecrave without a manual message.',
                   },
                   {
                     value: 'email-domain',
-                    icon: tileIcon(BadgeCheck),
-                    title: 'Confirm with a creator email',
-                    description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+                    icon: tileIcon(Mail),
+                    title: "We'll email you to get the verification project started",
+                    description: 'Use this path when Meta login is not convenient today.',
                   },
                 ]}
-                selectedMethod={previewPatternCtaSuccess ? 'instagram-dm' : verificationMethod}
+                selectedMethod={previewPatternCtaSuccess ? 'meta-login' : verificationMethod}
                 onSelectMethod={handleVerificationMethodChange}
                 confirmed={previewPatternCtaSuccess || verificationConfirmed}
                 onConfirmChange={setVerificationConfirmed}
                 termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
                 onTermsAcceptedChange={setVerificationTermsAccepted}
-                instagramDmDetail={{
-                  code: 'CULTURE-453',
-                  destinationHandle: '@raptive_community',
-                  originHandle: '@culturecrave',
+                showAside={false}
+                secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                primaryAction={{
+                  label: 'Continue',
+                  success: previewPatternCtaSuccess,
+                  successLabel: 'Submitting...',
+                  successIcon: loadingSuccessIcon,
                 }}
+              />
+            </Section>
+
+            <Section title="Verification Step: Simplified Option" description="Exploration for a lower-friction verification choice with known-lead and Meta fallback states.">
+              <div className="space-y-4">
+                <SegmentedControl
+                  label="Verification state"
+                  value={simplifiedVerificationState}
+                  options={simplifiedVerificationOptions}
+                  onChange={handleSimplifiedVerificationStateChange}
+                />
+                <VerificationStep
+                  simplified
+                  title={simplifiedVerificationIsKnownLead ? "You're already verified!" : 'Verify your creator account'}
+                  description={simplifiedVerificationIsKnownLead
+                    ? 'We’ve already confirmed ownership of @culturecrave, so you can continue your application.'
+                    : 'Choose how you’d like to confirm ownership before submitting your application.'}
+                  methods={[
+                    {
+                      value: 'meta',
+                      icon: tileIcon(BadgeCheck),
+                      badge: 'Recommended',
+                      title: 'Login with Meta to verify your Instagram account',
+                      description: 'Fastest option. Confirm ownership of @culturecrave in a few clicks.',
+                    },
+                    {
+                      value: 'email',
+                      icon: tileIcon(Mail),
+                      title: "We'll email you to get the verification project started",
+                      description: 'Use this path when Meta login is not convenient today.',
+                    },
+                  ]}
+                  selectedMethod={simplifiedVerificationSelectedMethod}
+                  onSelectMethod={setSimplifiedVerificationMethod}
+                  termsAccepted={simplifiedVerificationTermsValue}
+                  onTermsAcceptedChange={setSimplifiedVerificationTermsAccepted}
+                  alreadyVerified={simplifiedVerificationIsKnownLead}
+                  verifiedHandle="@culturecrave"
+                  fallbackMessage={simplifiedVerificationFallbackMessage}
+                  showAside={false}
+                  secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
+                  primaryAction={{
+                    label: 'Continue',
+                    success: previewPatternCtaSuccess,
+                    successLabel: simplifiedVerificationSelectedMethod === 'email' ? 'Manual pending' : 'Continuing...',
+                    successIcon: loadingSuccessIcon,
+                  }}
+                />
+              </div>
+            </Section>
+
+            <Section title="Verification Step: Known Lead" description="Known-lead variation that skips method selection because the creator is already verified.">
+              <VerificationStep
+                title="You're already verified!"
+                description="We found this creator on our known leads list."
+                methods={[]}
+                selectedMethod={null}
+                confirmed
+                termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
+                onTermsAcceptedChange={setVerificationTermsAccepted}
+                alreadyVerified
                 showAside={false}
                 secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
                 primaryAction={{

@@ -1,65 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Copy } from 'lucide-react'
+import { useState } from 'react'
+import { BadgeCheck } from 'lucide-react'
 import { motion } from 'motion/react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
+import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { CommunityTermsModal } from '../CommunityTermsModal/CommunityTermsModal.jsx'
-
-function InstagramDmInlineDetail({
-  code,
-  open = true,
-}) {
-  const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    if (!copied) return undefined
-
-    const timeoutId = window.setTimeout(() => setCopied(false), 1600)
-    return () => window.clearTimeout(timeoutId)
-  }, [copied])
-
-  const handleCopyCode = async () => {
-    try {
-      await navigator.clipboard.writeText(code)
-      setCopied(true)
-    } catch {
-      setCopied(false)
-    }
-  }
-
-  return (
-    <div
-      className={[
-        'overflow-hidden transition-[max-height]',
-        open ? 'max-h-96 duration-200 ease-out' : 'max-h-0 duration-150 ease-in',
-      ].join(' ')}
-      aria-hidden={!open}
-    >
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <p className="font-mono text-3xl font-medium tracking-tight text-text">
-            {code}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap gap-2 lg:flex-shrink-0">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={handleCopyCode}
-            success={copied}
-            successLabel="Copied"
-            disabled={!open}
-            iconBefore={<Copy aria-hidden="true" strokeWidth={2} />}
-          >
-            Copy code
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export function VerificationStep({
   title,
@@ -76,12 +22,28 @@ export function VerificationStep({
   showAside = true,
   framed = true,
   contentAlign = 'start',
-  instagramDmDetail = null,
+  simplified = false,
+  fallbackMessage = null,
+  verifiedHandle = '@culturecrave',
+  disabledHelperText = 'Select a verification method and agree to the Community Terms to continue.',
+  requireControlConfirmation = !simplified,
+  alreadyVerified = false,
+  alreadyVerifiedTitle = "You're already verified!",
+  alreadyVerifiedDescription = 'We found this creator on our known leads list, so you can skip the channel verification step.',
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
   const [termsModalOpen, setTermsModalOpen] = useState(false)
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
+  const needsMethodSelection = !alreadyVerified && methods.length > 0
+  const hasNoMethodOptions = !alreadyVerified && methods.length === 0
+  const primaryDisabled = (
+    hasNoMethodOptions
+    || (needsMethodSelection && !selectedMethod)
+    || (!alreadyVerified && requireControlConfirmation && !confirmed)
+    || !termsAccepted
+    || primaryAction.disabled
+  )
 
   return (
     <>
@@ -105,127 +67,155 @@ export function VerificationStep({
               </div>
             </div>
 
-            <div className="grid gap-4">
-              {methods.length > 0 ? methods.map((method) => {
-                const isSelected = selectedMethod === method.value
-                const dmExpanded = method.value === 'instagram-dm' && isSelected && instagramDmDetail
+            {fallbackMessage && !alreadyVerified ? (
+              <div className="rounded-xl border border-status-warning bg-status-warning-bg px-4 py-3">
+                <p className="text-sm font-medium leading-relaxed text-status-warning-text">
+                  {fallbackMessage}
+                </p>
+              </div>
+            ) : null}
 
-                return (
-                  <motion.div
-                    key={method.value}
-                    layout
-                    transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-                    className={[
-                      'overflow-hidden rounded-xl border px-5 py-4 transition-[background-color,color,border-color,box-shadow] duration-150',
-                      isSelected
-                        ? 'border-brand bg-brand-subtle shadow-brand-glow'
-                        : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
-                    ].join(' ')}
-                  >
-                    <motion.button
-                      type="button"
-                      onClick={() => onSelectMethod?.(method.value)}
-                      className="flex w-full flex-col items-start gap-3 pb-2 text-left"
-                      whileHover={{ y: -2, scale: 1.01 }}
-                      whileTap={{ scale: 0.985 }}
+            {alreadyVerified ? (
+              <div className="rounded-xl border border-brand bg-brand-subtle p-6 shadow-brand-glow">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <span className="paired-label-icon flex-shrink-0 rounded-full bg-surface text-action-primary">
+                    <BadgeCheck aria-hidden="true" strokeWidth={2} />
+                  </span>
+                  <div className="space-y-2">
+                    {simplified ? (
+                      <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-text shadow-xs">
+                        <span className="paired-label-icon text-status-success-text">
+                          <BadgeCheck aria-hidden="true" strokeWidth={2} />
+                        </span>
+                        {verifiedHandle}
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-lg font-medium text-text">{alreadyVerifiedTitle}</p>
+                        <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
+                          {alreadyVerifiedDescription}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {methods.length > 0 ? methods.map((method) => {
+                  const isSelected = selectedMethod === method.value
+                  return (
+                    <motion.div
+                      key={method.value}
+                      layout
+                      transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+                      className={[
+                        'overflow-hidden rounded-xl border px-5 py-4 transition-[background-color,color,border-color,box-shadow] duration-150',
+                        isSelected
+                          ? 'border-brand bg-brand-subtle shadow-brand-glow'
+                          : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
+                      ].join(' ')}
                     >
-                      <span className="flex w-full items-start justify-between gap-3">
-                        {method.icon ? (
+                      <motion.button
+                        type="button"
+                        onClick={() => onSelectMethod?.(method.value)}
+                        className="flex w-full flex-col items-start gap-3 pb-2 text-left"
+                        whileHover={{ y: -2, scale: 1.01 }}
+                        whileTap={{ scale: 0.985 }}
+                      >
+                        <span className="flex w-full items-start justify-between gap-3">
+                          {method.icon ? (
+                            <motion.span
+                              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised text-xl"
+                              animate={{
+                                rotate: isSelected ? -4 : 0,
+                                scale: isSelected ? 1.05 : 1,
+                              }}
+                              transition={{
+                                type: 'spring',
+                                stiffness: 340,
+                                damping: 24,
+                              }}
+                            >
+                              {method.icon}
+                            </motion.span>
+                          ) : <span />}
                           <motion.span
-                            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised text-xl"
                             animate={{
-                              rotate: isSelected ? -4 : 0,
-                              scale: isSelected ? 1.05 : 1,
+                              scale: isSelected ? 1 : 0.92,
                             }}
                             transition={{
                               type: 'spring',
-                              stiffness: 340,
+                              stiffness: 380,
                               damping: 24,
                             }}
+                            className={[
+                              'flex h-6 w-6 items-center justify-center rounded-full border',
+                              isSelected ? 'border-brand bg-surface' : 'border-border bg-surface',
+                            ].join(' ')}
                           >
-                            {method.icon}
+                            <motion.span
+                              animate={{
+                                opacity: isSelected ? 1 : 0,
+                                scale: isSelected ? 1 : 0.45,
+                              }}
+                              transition={{ duration: 0.18, ease: 'easeOut' }}
+                              className="h-3 w-3 rounded-full bg-brand"
+                            />
                           </motion.span>
-                        ) : <span />}
-                        <motion.span
-                          animate={{
-                            scale: isSelected ? 1 : 0.92,
-                          }}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 380,
-                            damping: 24,
-                          }}
-                          className={[
-                            'flex h-6 w-6 items-center justify-center rounded-full border',
-                            isSelected ? 'border-brand bg-surface' : 'border-border bg-surface',
-                          ].join(' ')}
-                        >
+                        </span>
+                        <span className="space-y-1">
+                          {method.badge ? (
+                            <Badge variant="brand" size="sm" className="mb-2">
+                              {method.badge}
+                            </Badge>
+                          ) : null}
                           <motion.span
-                            animate={{
-                              opacity: isSelected ? 1 : 0,
-                              scale: isSelected ? 1 : 0.45,
+                            className="block text-base font-medium text-text"
+                            animate={{ x: isSelected ? 2 : 0 }}
+                            transition={{
+                              type: 'spring',
+                              stiffness: 320,
+                              damping: 28,
                             }}
-                            transition={{ duration: 0.18, ease: 'easeOut' }}
-                            className="h-3 w-3 rounded-full bg-brand"
-                          />
-                        </motion.span>
-                      </span>
-                      <span className="space-y-1">
-                        <motion.span
-                          className="block text-base font-medium text-text"
-                          animate={{ x: isSelected ? 2 : 0 }}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 320,
-                            damping: 28,
-                          }}
-                        >
-                          {method.title}
-                        </motion.span>
-                        {method.description && <span className="block text-sm text-text-secondary">{method.description}</span>}
-                      </span>
-                    </motion.button>
-
-                    {method.value === 'instagram-dm' && instagramDmDetail ? (
-                      <div
-                        className={[
-                          'overflow-hidden transition-[max-height]',
-                          dmExpanded ? 'max-h-96 duration-200 ease-out' : 'max-h-0 duration-150 ease-in',
-                        ].join(' ')}
-                        aria-hidden={!dmExpanded}
-                      >
-                        <div className="pt-3">
-                          <InstagramDmInlineDetail
-                            code={instagramDmDetail.code}
-                            open={dmExpanded}
-                          />
-                        </div>
-                      </div>
-                    ) : null}
-                  </motion.div>
-                )
-              }) : (
-                <div className="rounded-xl border border-border bg-surface-raised p-5">
-                  <p className="text-sm leading-relaxed text-text-secondary">
-                    Verification methods will appear here once a creator contact path is available.
-                  </p>
-                </div>
-              )}
-            </div>
+                          >
+                            {method.title}
+                          </motion.span>
+                          {method.description && <span className="block text-sm text-text-secondary">{method.description}</span>}
+                        </span>
+                      </motion.button>
+                    </motion.div>
+                  )
+                }) : (
+                  <div className="rounded-xl border border-border bg-surface-raised p-5">
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      Verification methods will appear here once a creator contact path is available.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
               <div className="grid gap-3">
-                <Checkbox
-                  checked={confirmed}
-                  onChange={(event) => onConfirmChange?.(event.target.checked)}
-                  variant="plain"
-                  label="I control this creator account and want to continue with verification."
-                  description="This keeps the last step feeling intentional without adding a long security ceremony."
-                />
+                {!alreadyVerified && requireControlConfirmation ? (
+                  <Checkbox
+                    checked={confirmed}
+                    onChange={(event) => onConfirmChange?.(event.target.checked)}
+                    variant="plain"
+                    label="I control this creator account and want to continue with verification."
+                    description="This keeps the last step feeling intentional without adding a long security ceremony."
+                  />
+                ) : null}
                 <Checkbox
                   checked={termsAccepted}
                   onChange={() => setTermsModalOpen(true)}
                   variant="plain"
-                  label={(
+                  label={simplified ? (
+                    <>
+                      I agree to the{' '}
+                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>.
+                    </>
+                  ) : (
                     <>
                       You must agree to the{' '}
                       <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
@@ -243,18 +233,26 @@ export function VerificationStep({
                 </Button>
               )}
               {primaryAction ? (
-                <Button
-                  size="lg"
-                  variant={primaryAction.variant ?? 'primary'}
-                  onClick={primaryAction.onClick}
-                  disabled={methods.length === 0 || !selectedMethod || !confirmed || !termsAccepted || primaryAction.disabled}
-                  success={primaryAction.success}
-                  successLabel={primaryAction.successLabel}
-                  successIcon={primaryAction.successIcon}
-                  className={secondaryAction ? '' : 'ml-auto'}
-                >
-                  {primaryAction.label}
-                </Button>
+                <div className={['flex flex-col items-start gap-2', secondaryAction ? '' : 'ml-auto', secondaryAction ? 'sm:items-end' : 'items-end'].filter(Boolean).join(' ')}>
+                  {simplified && primaryDisabled ? (
+                    <p className="max-w-sm text-sm leading-relaxed text-text-secondary">
+                      {alreadyVerified
+                        ? 'Agree to the Community Terms to continue.'
+                        : disabledHelperText}
+                    </p>
+                  ) : null}
+                  <Button
+                    size="lg"
+                    variant={primaryAction.variant ?? 'primary'}
+                    onClick={primaryAction.onClick}
+                    disabled={primaryDisabled}
+                    success={primaryAction.success}
+                    successLabel={primaryAction.successLabel}
+                    successIcon={primaryAction.successIcon}
+                  >
+                    {primaryAction.label}
+                  </Button>
+                </div>
               ) : null}
             </div>
           </div>

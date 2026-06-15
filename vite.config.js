@@ -18,10 +18,6 @@ function manualChunks(id) {
     return 'prototypes'
   }
 
-  if (normalizedId.includes('/src/components/')) {
-    return undefined
-  }
-
   return undefined
 }
 

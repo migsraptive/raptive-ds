@@ -24,6 +24,12 @@ test('separates exploratory work into a prototypes section', () => {
   assert.match(componentLibraryPrototypesSource, /title="Verification Expansion"/)
 })
 
+test('documents the current verification paths and known lead variant', () => {
+  assert.match(componentLibrarySource, /Login with Meta to verify your Instagram account/)
+  assert.match(componentLibrarySource, /We'll email you to get the verification project started/)
+  assert.match(componentLibrarySource, /You're already verified!/)
+})
+
 test('lazy-loads prototype-only modules into a dedicated Vite chunk', () => {
   assert.match(componentLibrarySource, /import \{ Suspense, lazy, useEffect, useRef, useState \} from 'react'/)
   assert.match(componentLibrarySource, /lazy\(\(\) => import\('\.\.\/\.\.\/prototypes\/ComponentLibraryPrototypes\/ComponentLibraryPrototypes\.jsx'\)\)/)

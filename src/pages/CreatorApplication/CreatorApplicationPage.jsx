@@ -40,6 +40,17 @@ const initialAccounts = [
   },
 ]
 
+const manualAccountPlatformOptions = [
+  'Instagram',
+  'TikTok',
+  'Pinterest',
+  'YouTube',
+  'X/Twitter',
+  'Facebook',
+  'Substack',
+  'Website',
+]
+
 const getInitialAccounts = () => initialAccounts.map((account) => ({ ...account }))
 
 const stepTransition = {
@@ -112,7 +123,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const [activeStep, setActiveStep] = useState(0)
   const [creatorUrl, setCreatorUrl] = useState(initialCreatorUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
-  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
+  const [verificationMethod, setVerificationMethod] = useState('meta-login')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
@@ -120,18 +131,19 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
   const actionTimeoutRef = useRef(null)
   const instagramAccount = initialAccounts.find((account) => account.platform === 'Instagram')
+  const creatorIsKnownLead = false
   const verificationMethods = useMemo(() => [
     ...(instagramAccount ? [{
-      value: 'instagram-dm',
-      icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
-      title: 'Confirm with an Instagram DM',
-      description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
+      value: 'meta-login',
+      icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
+      title: 'Login with Meta to verify your Instagram account',
+      description: `Use Login with Meta to verify ${instagramAccount.handle} without a manual message.`,
     }] : []),
     {
       value: 'email-domain',
-      icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
-      title: 'Confirm with a creator email',
-      description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+      icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
+      title: "We'll email you to get the verification project started",
+      description: 'Use this path when Meta login is not convenient today.',
     },
   ], [instagramAccount])
 
@@ -187,12 +199,30 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   }
 
   const addFetchAccount = () => {
-    const existingAccountIds = new Set(fetchAccounts.map((account) => account.id))
-    const nextDetectedAccount = initialAccounts.find((account) => !existingAccountIds.has(account.id))
+    setFetchAccounts((current) => {
+      const existingAccountIds = new Set(current.map((account) => account.id))
+      const nextDetectedAccount = initialAccounts.find((account) => !existingAccountIds.has(account.id))
 
-    if (nextDetectedAccount) {
-      setFetchAccounts((current) => [...current, { ...nextDetectedAccount }])
-    }
+      if (nextDetectedAccount) {
+        return [...current, { ...nextDetectedAccount }]
+      }
+
+      const manualAccountCount = current.filter((account) => account.id.startsWith('manual-account-')).length + 1
+      const currentPlatforms = new Set(current.map((account) => account.platform))
+      const nextPlatform = manualAccountPlatformOptions.find((platform) => !currentPlatforms.has(platform)) ?? 'Website'
+
+      return [
+        ...current,
+        {
+          id: `manual-account-${Date.now()}`,
+          platform: nextPlatform,
+          handle: '',
+          url: '',
+          followers: manualAccountCount === 1 ? 'Add details' : `Additional account ${manualAccountCount}`,
+          isManual: true,
+        },
+      ]
+    })
   }
 
   const triggerPrimaryAction = ({ key, delay = 1100, run }) => {
@@ -298,7 +328,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
             <div className="space-y-4">
               <div className="space-y-3">
                 <h2 className="max-w-2xl font-newsreader text-hero font-normal text-text">
-                  We used your brand to jumpstart your community. How does it look?
+                  How does everything look?
                 </h2>
                 <p className="max-w-2xl text-base leading-relaxed text-text-secondary">
                   Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.
@@ -336,8 +366,10 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   if (activeStep === 3) {
     content = (
       <VerificationStep
-        title="One last check to know it's really you."
-        description="Complete verification for one of your channels to wrap up your application."
+        title={creatorIsKnownLead ? "You're already verified!" : "One last check to know it's really you."}
+        description={creatorIsKnownLead
+          ? 'We found this creator on our known leads list, so you can skip channel verification.'
+          : 'Complete verification for one of your channels to wrap up your application.'}
         methods={verificationMethods}
         selectedMethod={verificationMethod}
         onSelectMethod={handleVerificationMethodChange}
@@ -346,6 +378,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         onConfirmChange={setVerificationConfirmed}
         termsAccepted={verificationTermsAccepted}
         onTermsAcceptedChange={setVerificationTermsAccepted}
+        alreadyVerified={creatorIsKnownLead}
         reassurance={[
           {
             icon: <LucideIcon icon={BadgeCheck} size="sm" />,
@@ -365,11 +398,6 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         ]}
         showAside={false}
         framed={!standalone}
-        instagramDmDetail={{
-          code: 'CULTURE-453',
-          destinationHandle: '@raptive_community',
-          originHandle: instagramAccount?.handle ?? '@culturecrave',
-        }}
         contentAlign="center"
         secondaryAction={{
           label: 'Back',

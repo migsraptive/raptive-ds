@@ -188,6 +188,57 @@ function SourceEditor({ primarySource, additionalSources, onPrimarySourceChange,
   )
 }
 
+function ManualSocialAccountFields({ account, onAccountChange, onRemoveAccount }) {
+  const canConfirm = Boolean(account.platform && account.handle.trim())
+  const confirmAccount = () => {
+    if (!canConfirm) return
+
+    onAccountChange?.(account.id, {
+      handle: account.handle.trim(),
+      isManual: false,
+    })
+  }
+
+  return (
+    <div className="grid gap-3 rounded-xl border border-border bg-surface-raised p-3 md:grid-cols-3">
+      <Select
+        label="Source"
+        value={account.platform}
+        onChange={(event) => onAccountChange?.(account.id, { platform: event.target.value })}
+        options={sourceOptions}
+      />
+      <TextInput
+        label="Handle or URL"
+        value={account.handle}
+        placeholder="@handle or https://..."
+        onChange={(event) => onAccountChange?.(account.id, { handle: event.target.value })}
+      />
+      <div className="flex items-end">
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={confirmAccount}
+            disabled={!canConfirm}
+          >
+            Confirm
+          </Button>
+          {onRemoveAccount ? (
+            <Button
+              size="sm"
+              variant="ghost"
+              iconBefore={<LucideIcon icon={Trash2} size="sm" />}
+              onClick={() => onRemoveAccount(account.id)}
+            >
+              Remove
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function SocialAccountsEditor({
   accounts,
   onAccountChange,
@@ -197,6 +248,7 @@ function SocialAccountsEditor({
   const [editingAccountId, setEditingAccountId] = useState(null)
   const [handleDraft, setHandleDraft] = useState('')
   const canAddAccount = typeof onAddAccount === 'function'
+  const hasIncompleteManualAccount = accounts.some((account) => account.isManual)
 
   const startHandleEdit = (account) => {
     setEditingAccountId(account.id)
@@ -218,61 +270,70 @@ function SocialAccountsEditor({
     <div className="space-y-3">
       <div className="space-y-2">
         {accounts.map((account) => (
-          <div key={account.id} className="flex items-baseline justify-between gap-3 text-sm leading-relaxed text-text-secondary">
-            <div className="min-w-0">
-              {account.platform}:{' '}
-              {editingAccountId === account.id ? (
-                <input
-                  className="inline-block h-6 w-36 rounded-md border border-border bg-surface px-1.5 text-sm font-semibold leading-sm text-text outline-none transition-colors duration-150 focus:border-brand focus:ring-1 focus:ring-brand"
-                  value={handleDraft}
-                  onChange={(event) => setHandleDraft(event.target.value)}
-                  onBlur={saveHandleEdit}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      event.currentTarget.blur()
-                    }
-                  }}
-                  autoFocus
-                  aria-label={`${account.platform} handle`}
-                />
-              ) : (
+          account.isManual ? (
+            <ManualSocialAccountFields
+              key={account.id}
+              account={account}
+              onAccountChange={onAccountChange}
+              onRemoveAccount={onRemoveAccount}
+            />
+          ) : (
+            <div key={account.id} className="flex items-baseline justify-between gap-3 text-sm leading-relaxed text-text-secondary">
+              <div className="min-w-0">
+                {account.platform}:{' '}
+                {editingAccountId === account.id ? (
+                  <input
+                    className="inline-block h-6 w-36 rounded-md border border-border bg-surface px-1.5 text-sm font-semibold leading-sm text-text outline-none transition-colors duration-150 focus:border-brand focus:ring-1 focus:ring-brand"
+                    value={handleDraft}
+                    onChange={(event) => setHandleDraft(event.target.value)}
+                    onBlur={saveHandleEdit}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.currentTarget.blur()
+                      }
+                    }}
+                    autoFocus
+                    aria-label={`${account.platform} handle`}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                    onClick={() => startHandleEdit(account)}
+                    aria-label={`Edit ${account.platform} handle`}
+                  >
+                    <span>{account.handle}</span>
+                    <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
+                      Edit
+                    </span>
+                  </button>
+                )}{' '}
+                · {account.followers}
+              </div>
+              {accounts.length > 1 && onRemoveAccount ? (
                 <button
                   type="button"
-                  className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
-                  onClick={() => startHandleEdit(account)}
-                  aria-label={`Edit ${account.platform} handle`}
+                  className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  onClick={() => onRemoveAccount(account.id)}
+                  aria-label={`Remove ${account.platform} account`}
                 >
-                  <span>{account.handle}</span>
-                  <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
-                    Edit
-                  </span>
+                  Remove
                 </button>
-              )}{' '}
-              · {account.followers}
+              ) : null}
             </div>
-            {accounts.length > 1 && onRemoveAccount ? (
-              <button
-                type="button"
-                className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
-                onClick={() => onRemoveAccount(account.id)}
-                aria-label={`Remove ${account.platform} account`}
-              >
-                Remove
-              </button>
-            ) : null}
-          </div>
+          )
         ))}
       </div>
 
-      {canAddAccount ? (
-        <Button
-          size="sm"
-          variant="secondary"
-          iconBefore={<LucideIcon icon={Plus} size="sm" />}
-          onClick={onAddAccount}
-        >
-          Add another account
-        </Button>
+      {canAddAccount && !hasIncompleteManualAccount ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            iconBefore={<LucideIcon icon={Plus} size="sm" />}
+            onClick={onAddAccount}
+          >
+            Add another account
+          </Button>
       ) : null}
     </div>
   )

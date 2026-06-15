@@ -83,10 +83,6 @@ const expectations = [
     file: 'src/patterns/VerificationStep/VerificationStep.jsx',
     includes: ['paired-label-icon text-sm leading-sm'],
   },
-  {
-    file: 'src/patterns/InstagramDmVerificationDetail/InstagramDmVerificationDetail.jsx',
-    includes: ['paired-label-icon text-base leading-sm'],
-  },
 ]
 
 const failures = []

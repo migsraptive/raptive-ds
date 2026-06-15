@@ -125,23 +125,23 @@ export default function ComponentLibraryPrototypes({
 
       <Section
         title="Verification Expansion"
-        description="Exploration area for the verification step where the Instagram DM option expands inline and compresses the alternate path."
+        description="Exploration area for the verification step where Meta login is primary and the email project-start path stays available."
       >
         <VerificationStep
           title="One last check to know it's really you."
           description="Complete verification for one of your channels to wrap up your application."
           methods={[
             {
-              value: 'instagram-dm',
-              icon: tileIcon(Mail),
-              title: 'Confirm with an Instagram DM',
-              description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
+              value: 'meta-login',
+              icon: tileIcon(BadgeCheck),
+              title: 'Login with Meta to verify your Instagram account',
+              description: 'Use Login with Meta to verify @culturecrave without a manual message.',
             },
             {
               value: 'email-domain',
-              icon: tileIcon(BadgeCheck),
-              title: 'Confirm with a creator email',
-              description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+              icon: tileIcon(Mail),
+              title: "We'll email you to get the verification project started",
+              description: 'Use this path when Meta login is not convenient today.',
             },
           ]}
           selectedMethod={verificationMethod}
@@ -150,11 +150,6 @@ export default function ComponentLibraryPrototypes({
           onConfirmChange={onVerificationConfirmedChange}
           termsAccepted={verificationTermsAccepted}
           onTermsAcceptedChange={onVerificationTermsAcceptedChange}
-          instagramDmDetail={{
-            code: 'CULTURE-453',
-            destinationHandle: '@raptive_community',
-            originHandle: '@culturecrave',
-          }}
           reassurance={[
             {
               icon: miniIcon(BadgeCheck),

@@ -72,7 +72,7 @@ const mobileStepMeta = {
   },
   preview: {
     label: 'Preview',
-    title: 'We used your brand to jumpstart your community. How does it look?',
+    title: 'How does everything look?',
     description: "Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.",
     primaryLabel: 'Continue to Verification',
     primarySuccessLabel: "Let's verify...",
@@ -255,7 +255,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
   const [socialAccounts, setSocialAccounts] = useState(getInitialMobileSocialAccounts)
   const [editingSocialAccountId, setEditingSocialAccountId] = useState(null)
   const [socialAccountDraft, setSocialAccountDraft] = useState('')
-  const [verificationMethod, setVerificationMethod] = useState('instagram-dm')
+  const [verificationMethod, setVerificationMethod] = useState('meta-login')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
@@ -694,28 +694,18 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
 
         <div className="space-y-2.5">
           <OptionTile
-            icon={mobileIcon(Mail)}
-            title="Confirm with an Instagram DM"
-            description="Send a short code from @culturecrave to @raptive_community."
-            selected={verificationMethod === 'instagram-dm'}
-            selectionStyle="radio"
-            onClick={() => handleVerificationMethodChange('instagram-dm')}
-            className="min-h-24 px-4 py-3"
-          >
-            {verificationMethod === 'instagram-dm' ? (
-              <span className="mt-1 block rounded-lg border border-border bg-surface px-3 py-2">
-                <span className="block text-xs font-medium uppercase tracking-caps text-text-secondary">Your code</span>
-                <span className="mt-1 block font-mono text-2xl font-medium text-text">CULTURE-453</span>
-                <span className="mt-1 block text-sm leading-relaxed text-text-secondary">
-                  DM this code from @culturecrave. Then return here to submit.
-                </span>
-              </span>
-            ) : null}
-          </OptionTile>
-          <OptionTile
             icon={mobileIcon(BadgeCheck)}
-            title="Confirm with a creator email"
-            description="Use a domain-linked email when social access is not nearby."
+            title="Login with Meta to verify your Instagram account"
+            description="Verify @culturecrave without a manual message."
+            selected={verificationMethod === 'meta-login'}
+            selectionStyle="radio"
+            onClick={() => handleVerificationMethodChange('meta-login')}
+            className="min-h-24 px-4 py-3"
+          />
+          <OptionTile
+            icon={mobileIcon(Mail)}
+            title="We'll email you to get the verification project started"
+            description="Use this path when Meta login is not convenient today."
             selected={verificationMethod === 'email-domain'}
             selectionStyle="radio"
             onClick={() => handleVerificationMethodChange('email-domain')}

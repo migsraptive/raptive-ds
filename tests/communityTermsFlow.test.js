@@ -56,7 +56,7 @@ test('mobile review matches the desktop staged loader before resolved rows', () 
 
 test('desktop verification defaults to an available method before checkbox acceptance', () => {
   for (const source of [creatorApplicationSource, componentLibrarySource]) {
-    assert.match(source, /useState\('instagram-dm'\)/)
+    assert.match(source, /useState\('meta-login'\)/)
   }
 
   assert.doesNotMatch(creatorApplicationSource, /setVerificationMethod\(null\)/)

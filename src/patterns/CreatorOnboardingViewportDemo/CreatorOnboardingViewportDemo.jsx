@@ -91,7 +91,7 @@ const previewSteps = {
     videoLabel: 'Fantastical garden video reveal for the creator confirmation step',
   },
   preview: {
-    title: 'We used your brand to jumpstart your community. How does it look?',
+    title: 'How does everything look?',
     description: "Fine-tune the details fans will see first. The preview shows where your name, logo, copy, and color can appear. Really only worry about your community's name here, everything else can be customized again later.",
     primaryLabel: 'Continue to Verification',
     primarySuccessLabel: "Let's verify...",
@@ -566,14 +566,14 @@ export function CreatorOnboardingViewportDemo({
               <div className="grid gap-4">
                 {[
                   {
-                    icon: tileIcon(Mail),
-                    title: 'Confirm with an Instagram DM',
-                    description: 'We’ll send a short code to the linked creator account so the creator can confirm ownership without leaving the flow for long. Just DM code to @raptive_community from @culturecrave.',
+                    icon: tileIcon(BadgeCheck),
+                    title: 'Login with Meta to verify your Instagram account',
+                    description: 'Use Login with Meta to verify @culturecrave without a manual message.',
                   },
                   {
-                    icon: tileIcon(BadgeCheck),
-                    title: 'Confirm with a creator email',
-                    description: 'Use a domain-linked creator email for a faster verification path when direct social access is not convenient.',
+                    icon: tileIcon(Mail),
+                    title: "We'll email you to get the verification project started",
+                    description: 'Use this path when Meta login is not convenient today.',
                   },
                 ].map((method) => (
                   <div key={method.title} className="rounded-xl border border-border bg-surface px-5 py-4">
