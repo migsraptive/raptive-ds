@@ -33,6 +33,34 @@ When building something new:
 - Archive displaced concepts instead of deleting them when they may still be useful references.
 - Do not hand-roll native `button`, `input`, `textarea`, or `select` controls inside patterns. Promote new interactive controls to `src/components` first, add them to the component library, and then compose them from patterns.
 - Treat detected brand colors as inputs that must be validated before use. The first usable detected color becomes the primary action color, the second becomes the secondary action color, and both must compute black or white foreground text that passes WCAG AA contrast.
+- Bound media rails in review surfaces. Production creator-flow screens may use full-height illustration rails, but Component Library pattern examples are stacked review cards and should pass a bounded frame class, such as `illustrationFrameClassName="h-96"`, or use an explicit aspect ratio. Do not let `h-full` side rails inherit the full content height of a long review card.
+
+## Pattern review image rules
+
+Pattern components can expose a frame override for review-only sizing while
+keeping their production defaults. Use this when the same pattern needs a tall
+side rail in the live creator application but a compact image in the Component
+Library Patterns section.
+
+```jsx
+<VerificationStep
+  showAside={false}
+  illustrationFrameClassName="h-96"
+  {...reviewProps}
+/>
+```
+
+For custom preview shells, place the image or video in a stable wrapper:
+
+```jsx
+<div className="relative h-96 overflow-hidden">
+  <img className="h-full w-full object-cover" />
+</div>
+```
+
+When verifying image fixes, check both asset loading and layout dimensions. A
+successful `naturalWidth` / `naturalHeight` only proves the file loaded; also
+confirm the rendered height is intentionally bounded in the review surface.
 
 ## Questions to answer before adding a new pattern
 
@@ -45,7 +73,6 @@ When building something new:
 ## Documentation to add over time
 
 - page-level layout guidance
-- sidebar image usage rules
 - motion guidance for screen transitions and loading states
 - form-to-preview mapping rules
 - archive policy for retired flow screens

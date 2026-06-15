@@ -58,6 +58,11 @@ src/
   icon and label pairings. Do not set icon sizes manually
   when the icon sits next to text.
 - All patterns accept `showAside` prop to toggle design guidance panel
+- When a pattern is rendered in the Component Library Patterns section with
+  `showAside={false}`, keep illustration/media rails bounded for review.
+  Prefer a stable frame prop such as `illustrationFrameClassName="h-96"` or an
+  equivalent fixed/aspect-ratio wrapper. Do not let `h-full min-h-[720px]`
+  production rails stretch inside stacked review cards.
 - Tokens are the source of truth — never hardcode colors, spacing, or type values
 - Reuse existing components before creating new ones
 - When adding or changing a component or variant, update `ComponentLibrary` examples and docs in the same task.

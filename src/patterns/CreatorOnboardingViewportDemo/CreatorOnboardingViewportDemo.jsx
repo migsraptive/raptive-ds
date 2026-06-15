@@ -572,8 +572,8 @@ export function CreatorOnboardingViewportDemo({
                   },
                   {
                     icon: tileIcon(Mail),
-                    title: "We'll email you to get the verification project started",
-                    description: 'Use this path when Meta login is not convenient today.',
+                    title: "Verify with Persona",
+                    description: 'Use Persona when Meta login is not convenient today.',
                   },
                 ].map((method) => (
                   <div key={method.title} className="rounded-xl border border-border bg-surface px-5 py-4">
@@ -606,9 +606,8 @@ export function CreatorOnboardingViewportDemo({
                   variant="plain"
                   label={(
                     <>
-                      You must agree to the{' '}
+                      I agree to the{' '}
                       <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
-                      {' '}before submitting your application.
                     </>
                   )}
                 />

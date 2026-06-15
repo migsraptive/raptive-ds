@@ -704,8 +704,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
           />
           <OptionTile
             icon={mobileIcon(Mail)}
-            title="We'll email you to get the verification project started"
-            description="Use this path when Meta login is not convenient today."
+            title="Verify with Persona"
+            description="Use Persona when Meta login is not convenient today."
             selected={verificationMethod === 'email-domain'}
             selectionStyle="radio"
             onClick={() => handleVerificationMethodChange('email-domain')}
@@ -727,9 +727,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
             variant="plain"
             label={(
               <>
-                You must agree to the{' '}
+                I agree to the{' '}
                 <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
-                {' '}before submitting your application.
               </>
             )}
           />

@@ -132,7 +132,7 @@ The current sequence is:
 3. Preview editor
    Brand/community preview editor built with `CompactWysiwygStudio`.
 4. Verification
-   Ownership verification with Instagram DM and creator-email options.
+   Ownership verification with Meta login and a Persona fallback.
 5. Submit / success
    Submission confirmation with timeline and celebration treatment.
 
@@ -181,6 +181,12 @@ Community/feed components include:
 
 Composite patterns live in `src/patterns/`.
 
+When pattern examples render inside the Component Library Patterns section,
+their illustration rails should use bounded review frames. Live flow screens can
+keep their full-height side rails, but stacked review examples should pass a
+stable frame such as `illustrationFrameClassName="h-96"` or use an equivalent
+aspect-ratio wrapper so portrait artwork does not stretch with card content.
+
 Current flow and review patterns include:
 
 - `SingleFieldIntake`
@@ -207,6 +213,23 @@ Supporting and exploratory patterns include:
 - `ProjectionPreview`
 - `ProjectionMotionShowcase`
 - `RecognitionState`
+
+### Pattern Image Checks
+
+After changing pattern illustration rails or Component Library pattern examples,
+verify both local dev and production preview:
+
+```bash
+npm run dev
+npm run build
+npm run preview
+```
+
+Open `?view=component-library&section=Patterns` and confirm the images load and
+the review-gallery artwork remains bounded. In browser checks, inspect both
+`naturalWidth` / `naturalHeight` and rendered dimensions; an image can load
+successfully while still appearing broken because its container stretches too
+tall.
 
 ## Component Contracts
 

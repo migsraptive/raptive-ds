@@ -26,7 +26,7 @@ test('separates exploratory work into a prototypes section', () => {
 
 test('documents the current verification paths and known lead variant', () => {
   assert.match(componentLibrarySource, /Login with Meta to verify your Instagram account/)
-  assert.match(componentLibrarySource, /We'll email you to get the verification project started/)
+  assert.match(componentLibrarySource, /Verify with Persona/)
   assert.match(componentLibrarySource, /You're already verified!/)
 })
 

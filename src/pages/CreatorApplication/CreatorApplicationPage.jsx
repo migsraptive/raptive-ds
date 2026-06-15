@@ -142,8 +142,8 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     {
       value: 'email-domain',
       icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
-      title: "We'll email you to get the verification project started",
-      description: 'Use this path when Meta login is not convenient today.',
+      title: "Verify with Persona",
+      description: 'Use Persona when Meta login is not convenient today.',
     },
   ], [instagramAccount])
 

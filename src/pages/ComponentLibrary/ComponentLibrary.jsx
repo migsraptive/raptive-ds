@@ -575,7 +575,7 @@ export function ComponentLibrary() {
     : previewPatternCtaSuccess ? 'meta' : simplifiedVerificationMethod
   const simplifiedVerificationTermsValue = previewPatternCtaSuccess || simplifiedVerificationTermsAccepted
   const simplifiedVerificationFallbackMessage = simplifiedVerificationState === 'meta-fallback'
-    ? 'That didn’t work. You can try Meta again or have us email you to get the verification project started.'
+    ? 'That didn’t work. You can try Meta again or use Persona instead.'
     : null
   const creatorShellVerificationIncomplete = creatorShellPreviewStep === 'verify'
     && (!verificationConfirmed || !verificationTermsAccepted)
@@ -1279,7 +1279,7 @@ export function ComponentLibrary() {
               <div className="max-w-sm">
                 <OptionTile
                   icon={tileIcon(Mail)}
-                  title="We'll email you to get the verification project started"
+                  title="Verify with Persona"
                   description="Use an inline detail area when the selected tile needs a short next step."
                   selected
                   selectionStyle="radio"
@@ -1920,7 +1920,7 @@ export function ComponentLibrary() {
                   contentKey={creatorShellPreviewStep}
                   tone={creatorShellPreview.tone}
                   aside={creatorShellPreview.image || creatorShellPreview.video ? (
-                    <div className="relative h-full min-h-96 overflow-hidden">
+                    <div className="relative h-96 overflow-hidden">
                       {creatorShellPreview.video ? (
                           <TimedShellVideo
                             src={creatorShellPreview.video}
@@ -2008,8 +2008,8 @@ export function ComponentLibrary() {
                             },
                             {
                               icon: tileIcon(BadgeCheck),
-                              title: "We'll email you to get the verification project started",
-                              description: 'Use this path when Meta login is not convenient today.',
+                              title: "Verify with Persona",
+                              description: 'Use Persona when Meta login is not convenient today.',
                             },
                           ].map((method) => (
                             <div key={method.title} className="rounded-xl border border-border bg-surface px-5 py-4">
@@ -2042,9 +2042,8 @@ export function ComponentLibrary() {
                             variant="plain"
                             label={(
                               <>
-                                You must agree to the{' '}
+                                I agree to the{' '}
                                 <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
-                                {' '}before submitting your application.
                               </>
                             )}
                           />
@@ -2127,6 +2126,7 @@ export function ComponentLibrary() {
                 ctaSuccessIcon={loadingSuccessIcon}
                 ctaDisabled={!creatorUrl.trim() && !previewPatternCtaSuccess}
                 showAside={false}
+                illustrationFrameClassName="h-96"
               />
             </Section>
 
@@ -2148,6 +2148,7 @@ export function ComponentLibrary() {
                   successLabel: 'Finding...',
                   successIcon: loadingSuccessIcon,
                 }}
+                illustrationFrameClassName="h-96"
               />
             </Section>
 
@@ -2167,6 +2168,7 @@ export function ComponentLibrary() {
                   successLabel: 'Finding...',
                   successIcon: loadingSuccessIcon,
                 }}
+                illustrationFrameClassName="h-96"
               />
             </Section>
 
@@ -2240,8 +2242,8 @@ export function ComponentLibrary() {
                   {
                     value: 'email-domain',
                     icon: tileIcon(Mail),
-                    title: "We'll email you to get the verification project started",
-                    description: 'Use this path when Meta login is not convenient today.',
+                    title: "Verify with Persona",
+                    description: 'Use Persona when Meta login is not convenient today.',
                   },
                 ]}
                 selectedMethod={previewPatternCtaSuccess ? 'meta-login' : verificationMethod}
@@ -2251,6 +2253,7 @@ export function ComponentLibrary() {
                 termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
                 onTermsAcceptedChange={setVerificationTermsAccepted}
                 showAside={false}
+                illustrationFrameClassName="h-96"
                 secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
                 primaryAction={{
                   label: 'Continue',
@@ -2286,8 +2289,8 @@ export function ComponentLibrary() {
                     {
                       value: 'email',
                       icon: tileIcon(Mail),
-                      title: "We'll email you to get the verification project started",
-                      description: 'Use this path when Meta login is not convenient today.',
+                      title: "Verify with Persona",
+                      description: 'Use Persona when Meta login is not convenient today.',
                     },
                   ]}
                   selectedMethod={simplifiedVerificationSelectedMethod}
@@ -2298,6 +2301,7 @@ export function ComponentLibrary() {
                   verifiedHandle="@culturecrave"
                   fallbackMessage={simplifiedVerificationFallbackMessage}
                   showAside={false}
+                  illustrationFrameClassName="h-96"
                   secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
                   primaryAction={{
                     label: 'Continue',
@@ -2320,6 +2324,7 @@ export function ComponentLibrary() {
                 onTermsAcceptedChange={setVerificationTermsAccepted}
                 alreadyVerified
                 showAside={false}
+                illustrationFrameClassName="h-96"
                 secondaryAction={{ label: 'Back to preview', variant: 'secondary' }}
                 primaryAction={{
                   label: 'Continue',
@@ -2336,6 +2341,7 @@ export function ComponentLibrary() {
                 summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
                 timeline={submissionSuccessTimeline}
                 showAside={false}
+                illustrationFrameClassName="h-96"
                 secondaryAction={null}
                 primaryAction={{
                   label: 'Close',

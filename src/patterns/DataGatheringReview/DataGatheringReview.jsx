@@ -348,6 +348,7 @@ export function DataGatheringReview({
   contentOnly = false,
   rowPresentation = 'cards',
   aside = null,
+  illustrationFrameClassName = null,
   revealKey = null,
   rowRevealDelay = 0,
   headerClassName = '',
@@ -368,6 +369,7 @@ export function DataGatheringReview({
 }) {
   const shouldReduceMotion = useReducedMotion()
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
+  const illustrationFrameClasses = illustrationFrameClassName ?? 'h-full min-h-[620px]'
   const [resolvedRows, setResolvedRows] = useState([])
   const [editingRow, setEditingRow] = useState(null)
   const [identity, setIdentity] = useState('Culture Crave')
@@ -685,7 +687,7 @@ export function DataGatheringReview({
         <aside className="border-t border-border bg-surface-raised/40 p-0 lg:border-l lg:border-t-0">
           {aside ?? (
             /* no token available: full-height illustration mock uses a fixed desktop minimum. */
-            <div className="relative h-full min-h-[620px]">
+            <div className={['relative', illustrationFrameClasses].join(' ')}>
               <img
                 src={recognitionIllustrationUrl}
                 alt="Recognition reveal illustration for the creator data gathering step"

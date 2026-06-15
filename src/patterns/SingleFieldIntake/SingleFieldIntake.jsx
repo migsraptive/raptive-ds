@@ -21,9 +21,11 @@ export function SingleFieldIntake({
   showAside = true,
   framed = true,
   contentAlign = 'start',
+  illustrationFrameClassName = null,
 }) {
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-2xl' : ''
   const centeredContentRegionClassName = contentAlign === 'center' ? 'lg:flex lg:flex-1 lg:items-center' : ''
+  const illustrationFrameClasses = illustrationFrameClassName ?? (showAside ? 'aspect-[4/3]' : 'h-full min-h-[720px]')
 
   return (
     <section className={['overflow-hidden rounded-xl bg-surface shadow-sm', framed ? 'border border-border' : ''].filter(Boolean).join(' ')}>
@@ -89,7 +91,7 @@ export function SingleFieldIntake({
           <div className={showAside ? 'space-y-5' : 'h-full'}>
             <div className={['overflow-hidden', showAside ? 'rounded-xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
               {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
-              <div className={['relative', showAside ? 'aspect-[4/3]' : 'h-full min-h-[720px]'].join(' ')}>
+              <div className={['relative', illustrationFrameClasses].join(' ')}>
                 <img
                   src={singleFieldIntakeIllustrationUrl}
                   alt="Vibrant fantasy garden illustration for the creator application entry step"

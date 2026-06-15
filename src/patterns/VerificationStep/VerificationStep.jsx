@@ -25,6 +25,7 @@ export function VerificationStep({
   simplified = false,
   fallbackMessage = null,
   verifiedHandle = '@culturecrave',
+  illustrationFrameClassName = null,
   disabledHelperText = 'Select a verification method and agree to the Community Terms to continue.',
   requireControlConfirmation = !simplified,
   alreadyVerified = false,
@@ -35,6 +36,7 @@ export function VerificationStep({
 }) {
   const [termsModalOpen, setTermsModalOpen] = useState(false)
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
+  const illustrationFrameClasses = illustrationFrameClassName ?? (showAside ? 'aspect-square' : 'h-full min-h-[720px]')
   const needsMethodSelection = !alreadyVerified && methods.length > 0
   const hasNoMethodOptions = !alreadyVerified && methods.length === 0
   const primaryDisabled = (
@@ -217,9 +219,8 @@ export function VerificationStep({
                     </>
                   ) : (
                     <>
-                      You must agree to the{' '}
+                      I agree to the{' '}
                       <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
-                      {' '}before submitting your application.
                     </>
                   )}
                 />
@@ -261,7 +262,7 @@ export function VerificationStep({
             <div className={showAside ? 'space-y-5' : 'h-full'}>
               <div className={['overflow-hidden', showAside ? 'rounded-xl border border-brand/20 bg-surface shadow-xs' : 'relative h-full'].join(' ')}>
                 {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
-                <div className={['relative', showAside ? 'aspect-square' : 'h-full min-h-[720px]'].join(' ')}>
+                <div className={['relative', illustrationFrameClasses].join(' ')}>
                   <img
                     src={verificationIllustrationUrl}
                     alt="Verification trust illustration for the creator application verification step"

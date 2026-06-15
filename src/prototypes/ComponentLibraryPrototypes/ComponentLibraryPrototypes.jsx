@@ -125,7 +125,7 @@ export default function ComponentLibraryPrototypes({
 
       <Section
         title="Verification Expansion"
-        description="Exploration area for the verification step where Meta login is primary and the email project-start path stays available."
+        description="Exploration area for the verification step where Meta login is primary and the Persona fallback path stays available."
       >
         <VerificationStep
           title="One last check to know it's really you."
@@ -140,8 +140,8 @@ export default function ComponentLibraryPrototypes({
             {
               value: 'email-domain',
               icon: tileIcon(Mail),
-              title: "We'll email you to get the verification project started",
-              description: 'Use this path when Meta login is not convenient today.',
+              title: "Verify with Persona",
+              description: 'Use Persona when Meta login is not convenient today.',
             },
           ]}
           selectedMethod={verificationMethod}

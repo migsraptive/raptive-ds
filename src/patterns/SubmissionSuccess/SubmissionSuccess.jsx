@@ -233,9 +233,11 @@ export function SubmissionSuccess({
   showCelebrationBackground = true,
   celebrationBackgroundVariant = 'cursor-burst',
   contentAlign = 'start',
+  illustrationFrameClassName = null,
 }) {
   const shouldReduceMotion = useReducedMotion()
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-2xl' : ''
+  const illustrationFrameClasses = illustrationFrameClassName ?? (showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]')
 
   return (
     <section className={['relative overflow-hidden rounded-xl bg-neutral-950 shadow-sm', framed ? 'border border-neutral-800' : ''].filter(Boolean).join(' ')}>
@@ -350,7 +352,7 @@ export function SubmissionSuccess({
           <div className={showAside ? 'space-y-5' : 'h-full'}>
             <div className={['overflow-hidden', showAside ? 'rounded-xl border border-white/10 bg-neutral-950 shadow-xs' : 'relative h-full'].join(' ')}>
               {/* no token available: full-height illustration mock uses a fixed desktop minimum. */}
-              <div className={['relative', showAside ? 'aspect-[16/9]' : 'h-full min-h-[720px]'].join(' ')}>
+              <div className={['relative', illustrationFrameClasses].join(' ')}>
                 <img
                   src={submissionIllustrationUrl}
                   alt="Completion illustration for the creator application submission success step"
