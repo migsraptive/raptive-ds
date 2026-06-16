@@ -19,6 +19,20 @@ agent_rules:
   - Prefer Textarea over native textarea in patterns.
   - Do not style the inner textarea from consuming surfaces.
   - Keep validation messaging in the field props.
+governance:
+  component_contract:
+    - Textarea is a black-box multi-line text entry component.
+    - Consumers may position Textarea from a parent layout only.
+    - Consumers may not style Textarea internals or target the native textarea, label, helper, or error elements with CSS.
+    - Consumers must not hard-code Textarea radius, spacing, typography, color, border, shadow, icon sizing, resize behavior, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - Pass-through attributes are allowed for accessibility, form behavior, ids, and data attributes.
+    - className and style, when present in code, are restricted compatibility escape hatches, not styling APIs.
+  escalate_when:
+    - A field needs rich text, formatting, autosize, or behavior beyond native textarea semantics.
+    - A consumer wants to override Textarea-owned visual styling.
+    - A repeated long-form writing flow needs a dedicated pattern.
 anatomy:
   - name: field
     required: false
@@ -63,6 +77,30 @@ props:
   rows:
     type: number
     default: 4
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+  textareaClassName:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+pass_through_props:
+  governance: restricted_compatibility_escape_hatch
+  allowed_for:
+    - aria attributes
+    - data attributes
+    - id
+    - name
+    - disabled
+    - readOnly
+    - native textarea behavior
+  not_allowed_for:
+    - overriding visual internals
+    - replacing documented variants
+    - adding undocumented styling hooks
 content_guidelines:
   - Label the kind of response needed, not the input type.
   - Helper text should clarify format, length, or examples when needed.

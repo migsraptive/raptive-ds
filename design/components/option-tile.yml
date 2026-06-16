@@ -21,6 +21,19 @@ agent_rules:
   - Use RadioGroup or Select when options are text-only and compact.
   - Do not place primary actions inside OptionTile children.
   - Honor reduced-motion behavior in target implementations.
+governance:
+  component_contract:
+    - OptionTile is a black-box visual selection component.
+    - Consumers may position OptionTile from a parent layout only.
+    - Consumers may not style OptionTile internals or target icon, title, description, content, or selection indicator with CSS.
+    - Consumers must not hard-code OptionTile radius, spacing, typography, color, border, shadow, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - className, when present in code, is a restricted compatibility escape hatch, not a styling API.
+  escalate_when:
+    - A visual choice needs a new semantic variant or selection behavior.
+    - A consumer wants to override OptionTile-owned visual styling.
+    - The interaction behaves like an immediate action instead of selection.
 anatomy:
   - name: root
     required: true
@@ -89,6 +102,11 @@ props:
   onClick:
     type: function
     default: null
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
 content_guidelines:
   - Titles should be short and scannable.
   - Descriptions should clarify why a user would choose the option.

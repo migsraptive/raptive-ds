@@ -4,10 +4,29 @@ status: draft
 source:
   repo: community-ds
   path: src/components/ComponentName/ComponentName.jsx
+  intent_path: src/components/ComponentName/intent.md
 purpose: >
   One-paragraph description of what this component is for and when it should be used.
 do_not_use_for:
   - Cases where this component is not the right pattern.
+agent_rules:
+  - Do not invent new variants or props.
+  - Ask for design-system review when available guidance is insufficient.
+governance:
+  component_contract:
+    - Components are black boxes.
+    - Consumers may control layout and positioning only.
+    - Consumers may not style component internals.
+    - Consumers must not target internal elements with CSS.
+    - Consumers must not hard-code styling values already owned by the component.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - Pass-through attributes are allowed for accessibility, form behavior, ids, and data attributes.
+    - className and style, when present in code, are restricted compatibility escape hatches, not styling APIs.
+  escalate_when:
+    - A new variant, component, prop, or pattern seems necessary.
+    - A consumer wants to override radius, spacing, typography, color, border, shadow, icon sizing, or state styling.
+    - Intent guidance is missing or ambiguous.
 anatomy:
   - name: root
     required: true

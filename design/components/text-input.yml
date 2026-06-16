@@ -20,6 +20,20 @@ agent_rules:
   - Do not style the inner input from the consuming surface.
   - Use prefix and suffix only when they clarify the expected value.
   - Keep validation messaging in the field props, not adjacent custom text.
+governance:
+  component_contract:
+    - TextInput is a black-box single-line text entry component.
+    - Consumers may position TextInput from a parent layout only.
+    - Consumers may not style TextInput internals or target shell, native input, prefix, suffix, label, helper, or error elements with CSS.
+    - Consumers must not hard-code TextInput radius, spacing, typography, color, border, shadow, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - Pass-through attributes are allowed for accessibility, form behavior, ids, and data attributes.
+    - className and style, when present in code, are restricted compatibility escape hatches, not styling APIs.
+  escalate_when:
+    - A field needs behavior beyond native single-line input semantics.
+    - A consumer wants to override TextInput-owned visual styling.
+    - Prefix, suffix, or validation needs are reused enough to become a new pattern.
 anatomy:
   - name: field
     required: false
@@ -83,6 +97,30 @@ props:
     type: enum
     values: [sm, md]
     default: sm
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+  inputClassName:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+pass_through_props:
+  governance: restricted_compatibility_escape_hatch
+  allowed_for:
+    - aria attributes
+    - data attributes
+    - id
+    - name
+    - disabled
+    - readOnly
+    - native input behavior
+  not_allowed_for:
+    - overriding visual internals
+    - replacing documented variants
+    - adding undocumented styling hooks
 content_guidelines:
   - Placeholder text may give an example but must not replace the label.
   - Error text should be specific and recoverable.

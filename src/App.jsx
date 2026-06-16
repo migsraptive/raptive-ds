@@ -2,6 +2,7 @@ import './globals.css'
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { BrandLogo } from './components/BrandLogo/BrandLogo.jsx'
+import { Badge } from './components/Badge/Badge.jsx'
 import { Button } from './components/Button/Button.jsx'
 import { CreatorApplicationPage } from './pages/CreatorApplication/CreatorApplicationPage.jsx'
 import { CreatorOnboardingViewportPage } from './pages/CreatorOnboardingViewport/CreatorOnboardingViewportPage.jsx'
@@ -47,8 +48,10 @@ export default function App() {
           <div className="sticky top-0 z-50 border-b border-border bg-white/90 px-6 py-3 backdrop-blur">
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
               <div className="space-y-1">
-                <BrandLogo size="sm" />
-                <p className="text-sm text-text-secondary">Component review surface</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <BrandLogo size="sm" />
+                  <Badge variant="info" size="sm" dot>Documentation in progress</Badge>
+                </div>
               </div>
               <Button variant="ghost" onClick={() => setView('creator-application')}>
                 Open creator application

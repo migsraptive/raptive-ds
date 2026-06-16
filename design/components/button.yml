@@ -4,6 +4,7 @@ status: pilot
 source:
   repo: community-ds
   path: src/components/Button/Button.jsx
+  intent_path: src/components/Button/intent.md
 purpose: >
   Button triggers an immediate user action, submits a step, or opens a
   controlled surface. It communicates action hierarchy and can show in-place
@@ -22,6 +23,21 @@ agent_rules:
   - Do not style Button internals from a consuming surface.
   - Use at most one primary action in a local decision area unless a design explicitly calls for more.
   - Use the paired-label-icon utility for label-adjacent icons.
+governance:
+  component_contract:
+    - Button is a black-box action component.
+    - Consumers may position Button from a parent layout only.
+    - Consumers may not style Button internals or target internal elements with CSS.
+    - Consumers must not hard-code Button radius, spacing, typography, color, border, shadow, icon sizing, or state treatment.
+    - Consumers must use documented variants for visual hierarchy and product meaning.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - Pass-through attributes are allowed for accessibility, form behavior, ids, and data attributes.
+    - className and style, when present in code, are restricted compatibility escape hatches, not styling APIs.
+  escalate_when:
+    - A new action hierarchy or semantic treatment seems necessary.
+    - More than one primary action appears necessary in the same viewport or local decision area.
+    - A consumer wants to override Button-owned visual styling.
 anatomy:
   - name: root
     required: true
@@ -134,6 +150,23 @@ props:
     type: enum
     values: [button, submit, reset]
     default: button
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+pass_through_props:
+  governance: restricted_compatibility_escape_hatch
+  allowed_for:
+    - aria attributes
+    - data attributes
+    - id
+    - form attributes
+    - native button behavior
+  not_allowed_for:
+    - overriding visual internals
+    - replacing documented variants
+    - adding undocumented styling hooks
 content_guidelines:
   - Use concise verb phrases.
   - Prefer the user's outcome over implementation language.

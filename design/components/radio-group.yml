@@ -20,6 +20,19 @@ agent_rules:
   - Keep option labels parallel in grammar and length.
   - Do not use RadioGroup for navigation tabs.
   - Do not add per-option actions inside a radio option.
+governance:
+  component_contract:
+    - RadioGroup is a black-box mutually exclusive selection component.
+    - Consumers may position RadioGroup from a parent layout only.
+    - Consumers may not style RadioGroup internals or target fieldset, legend, inputs, indicators, labels, or descriptions with CSS.
+    - Consumers must not hard-code RadioGroup radius, spacing, typography, color, border, shadow, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - className, when present in code, is a restricted compatibility escape hatch, not a styling API.
+  escalate_when:
+    - A single-choice control needs a new semantic presentation.
+    - A consumer wants to override RadioGroup-owned visual styling.
+    - The interaction behaves like navigation, multi-select, or an immediate action.
 anatomy:
   - name: fieldset
     required: true
@@ -81,6 +94,11 @@ props:
   onChange:
     type: function
     default: null
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
 content_guidelines:
   - Use concise, parallel option labels.
   - Put differentiating detail in descriptions only when needed.

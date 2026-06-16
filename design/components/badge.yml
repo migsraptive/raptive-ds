@@ -21,6 +21,19 @@ agent_rules:
   - Do not create new color variants without design review.
   - Do not use dot-only meaning; pair dots with text.
   - Use Button or TextLink for actions outside the removable affordance.
+governance:
+  component_contract:
+    - Badge is a black-box status and metadata component.
+    - Consumers may position Badge from a parent layout only.
+    - Consumers may not style Badge internals or target its label, dot, icon, or remove affordance with CSS.
+    - Consumers must not hard-code Badge color, radius, spacing, typography, border, shadow, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - className, when present in code, is a restricted compatibility escape hatch, not a styling API.
+  escalate_when:
+    - A new status, recognition, or metadata meaning needs a variant.
+    - A badge needs custom styling that is not represented by a documented variant.
+    - A removable badge needs behavior beyond the documented remove affordance.
 anatomy:
   - name: root
     required: true
@@ -103,6 +116,11 @@ props:
   onRemove:
     type: function
     default: null
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
 content_guidelines:
   - Use one to three words where possible.
   - Prefer sentence case unless the label is a proper name or product term.

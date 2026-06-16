@@ -1,5 +1,84 @@
 # Raptive Design System
 
+## CommunityDS Agent Governance
+
+This root-level agent file is the global rule source for AI agents working in
+CommunityDS. Read these constraints before selecting, composing, or changing
+components.
+
+### Component Usage
+
+- Never invent new component variants.
+- Never invent new component props.
+- Never hard-code styling values already owned by a component.
+- Components are black boxes.
+- Consumers may control layout and positioning only.
+- Consumers may not style component internals.
+- Do not target internal elements with CSS.
+- If guidance is missing, ask a question instead of guessing.
+- If a new variant, component, or pattern seems necessary, flag it for review.
+
+### Allowed Usage
+
+Use components directly:
+
+```jsx
+<Card />
+<Button />
+```
+
+Position components from the outside:
+
+```jsx
+<div className="flex gap-4">
+  <Button />
+</div>
+```
+
+### Disallowed Usage
+
+Do not restyle component internals through consumer class names:
+
+```jsx
+<Button className="rounded-[18px]" />
+```
+
+Do not override component-owned spacing:
+
+```jsx
+<Button className="px-8" />
+```
+
+Do not target internal DOM structure:
+
+```css
+.button span {
+  color: red;
+}
+```
+
+### React API Compatibility
+
+Existing React props are not automatically design-system contract options.
+Keep compatibility props available unless a cleanup is explicitly approved, but
+agents must treat them as restricted:
+
+- `className` may support legacy compatibility or outside layout hooks, but must
+  not override component-owned visual styling.
+- `style` may support controlled CSS custom properties or measured runtime
+  values, but must not become an arbitrary styling API.
+- Pass-through props may support accessibility, form behavior, ids, and data
+  attributes, but must not replace documented variants or target internals.
+
+### Component Update Log
+
+Use this table to track proposed additions before changing component APIs or
+creating new patterns.
+
+| date | component or pattern | proposed change | reason | status | reviewer |
+|---|---|---|---|---|---|
+| _Add date_ | _Name_ | _Variant, prop, component, or pattern_ | _Why existing guidance is insufficient_ | proposed | _Design/system owner_ |
+
 ## Project
 - **Directory**: `~/community-ds`
 - **Port**: 3700
@@ -76,6 +155,10 @@ src/
 npm run build
 npm run lint
 ```
+- Do not run build, lint, test, browser smoke, or preview checks automatically
+  during normal design iteration or documentation updates.
+- Run verification only when the user explicitly asks for it, or when the user
+  says the work is ready to commit, push, merge, or deploy.
 - `npm run lint` must exit with 0 errors and 0 warnings.
 - Browser smoke check: Patterns page and Creator Application render without console errors.
 
@@ -93,10 +176,16 @@ npm run dev
 - Flag anything ambiguous and wait for confirmation before proceeding
 
 ### After every task
-- Confirm `npm run build` passes
-- Confirm `npm run lint` exits with 0 errors and 0 warnings
-- Browser smoke check: Patterns page and Creator Application render
-  without console errors
+- Do not automatically run build, lint, tests, browser smoke checks, previews,
+  or deployment checks unless the user explicitly asks for verification or says
+  the work is ready to commit, push, merge, or deploy.
+- When verification is requested or the work is ready for commit/push/merge,
+  confirm `npm run build` passes.
+- When verification is requested or the work is ready for commit/push/merge,
+  confirm `npm run lint` exits with 0 errors and 0 warnings.
+- When verification is requested or the work is ready for commit/push/merge,
+  browser smoke check: Patterns page and Creator Application render without
+  console errors.
 - Output a summary table:
 
   | file | what changed | why |
@@ -104,6 +193,16 @@ npm run dev
 
 - If a bug is found and fixed outside the original scope,
   call it out explicitly as a bonus fix with its own table entry
+
+### Plugins and automation
+- Do not automatically trigger plugins, skill workflows, browser automation,
+  Figma sync, GitHub workflows, deployment workflows, or named automation such
+  as Superpowers.
+- Wait until the user explicitly prompts the agent to use a plugin, workflow,
+  or automation before invoking it.
+- If a system-level instruction requires an automation step, state the
+  requirement first and wait for user confirmation before proceeding unless the
+  user has already asked for that exact action.
 
 ### Code quality
 - Remove unused imports, props, and variables in any file you touch

@@ -19,6 +19,20 @@ agent_rules:
   - Prefer Select over native select in patterns.
   - Keep option labels concise.
   - Do not use Select when the user needs to compare all choices at once.
+governance:
+  component_contract:
+    - Select is a black-box compact choice field.
+    - Consumers may position Select from a parent layout only.
+    - Consumers may not style Select internals or target shell, native select, indicator, label, helper, or error elements with CSS.
+    - Consumers must not hard-code Select radius, spacing, typography, color, border, shadow, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - Pass-through attributes are allowed for accessibility, form behavior, ids, and data attributes.
+    - className and style, when present in code, are restricted compatibility escape hatches, not styling APIs.
+  escalate_when:
+    - A choice field needs rich options, multi-select, search, or custom combobox behavior.
+    - A consumer wants to override Select-owned visual styling.
+    - Native select behavior is not sufficient for the product need.
 anatomy:
   - name: field
     required: false
@@ -75,6 +89,30 @@ props:
       value: string
       label: string
     default: []
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+  selectClassName:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+pass_through_props:
+  governance: restricted_compatibility_escape_hatch
+  allowed_for:
+    - aria attributes
+    - data attributes
+    - id
+    - name
+    - disabled
+    - readOnly
+    - native select behavior
+  not_allowed_for:
+    - overriding visual internals
+    - replacing documented variants
+    - adding undocumented styling hooks
 content_guidelines:
   - Use short option labels.
   - Placeholder should prompt selection, not describe the entire field.

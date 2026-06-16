@@ -97,14 +97,33 @@ function Section({ title, description, children }) {
 // ─── Token swatch ──────────────────────────────────────────────────────────────
 function ColorSwatch({ token, value, label }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="min-w-0">
       <div
-        className="w-full h-10 rounded-md border border-border shadow-xs"
+        className="aspect-square w-full rounded-md border border-border shadow-xs"
         style={{ backgroundColor: value }}
         title={value}
       />
-      <p className="text-2xs font-mono text-text-secondary leading-snug">{token}</p>
-      {label && <p className="text-2xs text-text-tertiary">{label}</p>}
+      <div className="mt-2 space-y-0.5">
+        <p className="break-words font-mono text-2xs leading-snug text-text-secondary">{token}</p>
+        {label && <p className="text-2xs leading-snug text-text-tertiary">{label}</p>}
+      </div>
+    </div>
+  )
+}
+
+function ColorSwatchGrid({ children }) {
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+      {children}
+    </div>
+  )
+}
+
+function ColorSwatchGroup({ title, children }) {
+  return (
+    <div className="space-y-3">
+      <p className="text-xs font-semibold text-text-secondary">{title}</p>
+      <ColorSwatchGrid>{children}</ColorSwatchGrid>
     </div>
   )
 }
@@ -171,6 +190,219 @@ function DocumentationNote({ children }) {
   return (
     <aside className="rounded-xl border border-border bg-surface-sunken px-3 py-2 text-sm leading-relaxed text-text-secondary">
       {children}
+    </aside>
+  )
+}
+
+const componentIntentDocs = import.meta.glob('../../components/*/intent.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+const tokenIntentDocs = import.meta.glob('../../tokens/*.intent.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+const buttonIntentMarkdown = componentIntentDocs['../../components/Button/intent.md']
+const formIntentMarkdown = componentIntentDocs['../../components/FormField/intent.md']
+const colorIntentMarkdown = tokenIntentDocs['../../tokens/colors.intent.md']
+const typographyIntentMarkdown = tokenIntentDocs['../../tokens/typography.intent.md']
+
+function parseIntentBlocks(lines) {
+  const blocks = []
+  let paragraphLines = []
+  let listBlock = null
+
+  const flushParagraph = () => {
+    if (!paragraphLines.length) return
+    blocks.push({ type: 'paragraph', text: paragraphLines.join(' ') })
+    paragraphLines = []
+  }
+
+  lines.forEach((rawLine) => {
+    const line = rawLine.trim()
+
+    if (!line) {
+      flushParagraph()
+      listBlock = null
+      return
+    }
+
+    if (line.startsWith('- ')) {
+      flushParagraph()
+      if (!listBlock) {
+        listBlock = { type: 'list', items: [] }
+        blocks.push(listBlock)
+      }
+      listBlock.items.push(line.slice(2))
+      return
+    }
+
+    if (listBlock && rawLine.startsWith('  ')) {
+      const lastIndex = listBlock.items.length - 1
+      listBlock.items[lastIndex] = `${listBlock.items[lastIndex]} ${line}`
+      return
+    }
+
+    listBlock = null
+    paragraphLines.push(line)
+  })
+
+  flushParagraph()
+  return blocks
+}
+
+function parseIntentMarkdown(markdown) {
+  const lines = markdown.split(/\r?\n/)
+  let title = 'Component'
+  let currentSection = null
+  const sections = []
+
+  lines.forEach((line) => {
+    if (line.startsWith('# ')) {
+      title = line.replace(/^#\s+/, '').trim()
+      return
+    }
+
+    if (line.startsWith('## ')) {
+      currentSection = {
+        title: line.replace(/^##\s+/, '').trim(),
+        lines: [],
+      }
+      sections.push(currentSection)
+      return
+    }
+
+    if (currentSection) {
+      currentSection.lines.push(line)
+    }
+  })
+
+  return {
+    title,
+    sections: sections.map((section) => ({
+      ...section,
+      blocks: parseIntentBlocks(section.lines),
+    })),
+  }
+}
+
+function InlineIntentText({ text }) {
+  return text.split(/(`[^`]+`)/g).filter(Boolean).map((part, index) => {
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return (
+        <code key={`${part}-${index}`} className="rounded-sm bg-surface-sunken px-1 py-0.5 font-mono text-xs text-text">
+          {part.slice(1, -1)}
+        </code>
+      )
+    }
+
+    return <span key={`${part}-${index}`}>{part}</span>
+  })
+}
+
+function IntentSection({ section }) {
+  const listBlock = section.blocks.find((block) => block.type === 'list')
+  const paragraphBlocks = section.blocks.filter((block) => block.type === 'paragraph')
+  const markerClassName = section.title === 'Escalate When' ? 'bg-status-warning' : 'bg-brand'
+
+  return (
+    <section className="space-y-3">
+      <h3 className="text-sm font-semibold text-text">{section.title}</h3>
+      <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
+        {paragraphBlocks.map((block, index) => (
+          <p key={`${section.title}-paragraph-${index}`}>
+            <InlineIntentText text={block.text} />
+          </p>
+        ))}
+        {listBlock ? (
+          <ul className="space-y-2">
+            {listBlock.items.map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className={['mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full', markerClassName].join(' ')} aria-hidden="true" />
+                <span><InlineIntentText text={item} /></span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
+function ComponentIntentDoc({ markdown, eyebrow = 'Usage guidance' }) {
+  if (!markdown) return null
+
+  const intent = parseIntentMarkdown(markdown)
+  const purposeSection = intent.sections.find((section) => section.title === 'Purpose')
+  const guidanceSections = intent.sections.filter((section) => section.title !== 'Purpose')
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-border bg-surface-raised shadow-xs">
+      <div className="border-b border-border bg-surface px-5 py-4">
+        <p className="text-xs font-semibold uppercase tracking-caps text-text-tertiary">{eyebrow}</p>
+        <h3 className="mt-1 text-lg font-semibold text-text">{intent.title}</h3>
+        {purposeSection ? (
+          <div className="mt-2 max-w-3xl space-y-2 text-sm leading-relaxed text-text-secondary">
+            {purposeSection.blocks.map((block, index) => (
+              block.type === 'paragraph' ? (
+                <p key={`purpose-${index}`}>
+                  <InlineIntentText text={block.text} />
+                </p>
+              ) : null
+            ))}
+          </div>
+        ) : null}
+      </div>
+      <div className="divide-y divide-border">
+        {guidanceSections.map((section) => (
+          <div key={section.title} className="px-5 py-4">
+            <IntentSection section={section} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function IntentPurposePanel({ markdown, eyebrow = 'Usage guidance' }) {
+  if (!markdown) return null
+
+  const intent = parseIntentMarkdown(markdown)
+  const purposeSection = intent.sections.find((section) => section.title === 'Purpose')
+
+  return (
+    <section className="h-full rounded-xl border border-border bg-surface-raised p-5 shadow-xs">
+      <p className="text-xs font-semibold uppercase tracking-caps text-text-tertiary">{eyebrow}</p>
+      <h2 className="mt-1 text-lg font-semibold text-text">{intent.title}</h2>
+      {purposeSection ? (
+        <div className="mt-3 space-y-2 text-sm leading-relaxed text-text-secondary">
+          {purposeSection.blocks.map((block, index) => (
+            block.type === 'paragraph' ? (
+              <p key={`purpose-panel-${index}`}>
+                <InlineIntentText text={block.text} />
+              </p>
+            ) : null
+          ))}
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
+function IntentSectionPanel({ markdown, sectionTitle, eyebrow, ariaLabel }) {
+  if (!markdown) return null
+
+  const intent = parseIntentMarkdown(markdown)
+  const section = intent.sections.find((item) => item.title === sectionTitle)
+
+  if (!section) return null
+
+  return (
+    <aside className="h-full rounded-xl border border-border bg-surface-raised p-5 shadow-xs" aria-label={ariaLabel}>
+      {eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-caps text-text-tertiary">{eyebrow}</p>}
+      <IntentSection section={section} />
     </aside>
   )
 }
@@ -769,170 +1001,274 @@ export function ComponentLibrary() {
 
       <main
         className={[
-          activeSection === 'Pages' ? 'max-w-none' : ['Patterns', 'Emails', 'Prototypes'].includes(activeSection) ? 'max-w-6xl' : 'max-w-5xl',
+          activeSection === 'Pages' ? 'max-w-none' : ['Colors', 'Typography', 'Forms', 'Patterns', 'Emails', 'Prototypes'].includes(activeSection) ? 'max-w-6xl' : 'max-w-5xl',
           'mx-auto px-6 py-10 space-y-14',
         ].join(' ')}
       >
 
         {/* ── COLORS ─────────────────────────────────────────────────────── */}
         {activeSection === 'Colors' && (
-          <>
-            <Section title="Brand Colors" description="Primary brand palette. Use semantic tokens in components, not primitives.">
-              <div className="grid grid-cols-5 md:grid-cols-11 gap-2">
-                {[50,100,200,300,400,500,600,700,800,900,950].map(w => (
-                  <ColorSwatch key={w} token={`raptive-${w}`} value={colorTokens[`raptive-${w}`]} label={w === 500 ? 'primary' : ''} />
-                ))}
-              </div>
-            </Section>
+          <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+            <div className="space-y-8 xl:col-span-2">
+              <Section title="Brand Colors" description="Primary brand palette. Use semantic tokens in components, not primitives.">
+                <ColorSwatchGrid>
+                  {[50,100,200,300,400,500,600,700,800,900,950].map(w => (
+                    <ColorSwatch key={w} token={`raptive-${w}`} value={colorTokens[`raptive-${w}`]} label={w === 500 ? 'primary' : ''} />
+                  ))}
+                </ColorSwatchGrid>
+              </Section>
 
-            <Section title="Semantic Tokens" description="Purpose-named aliases. These map to Figma variables.">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Brand</p>
-                  <ColorSwatch token="brand.DEFAULT" value={colorTokens.brand.DEFAULT} label="primary" />
-                  <ColorSwatch token="brand.light" value={colorTokens.brand.light} />
-                  <ColorSwatch token="brand.dark" value={colorTokens.brand.dark} />
-                  <ColorSwatch token="brand.subtle" value={colorTokens.brand.subtle} />
-                  <ColorSwatch token="brand.muted" value={colorTokens.brand.muted} />
+              <Section title="Semantic Tokens" description="Purpose-named aliases. These map to Figma variables.">
+                <div className="space-y-6">
+                  <ColorSwatchGroup title="Brand">
+                    <ColorSwatch token="brand.DEFAULT" value={colorTokens.brand.DEFAULT} label="primary" />
+                    <ColorSwatch token="brand.light" value={colorTokens.brand.light} />
+                    <ColorSwatch token="brand.dark" value={colorTokens.brand.dark} />
+                    <ColorSwatch token="brand.subtle" value={colorTokens.brand.subtle} />
+                    <ColorSwatch token="brand.muted" value={colorTokens.brand.muted} />
+                  </ColorSwatchGroup>
+                  <ColorSwatchGroup title="Action">
+                    <ColorSwatch token="action.primary" value={colorTokens.action.primary} />
+                    <ColorSwatch token="action.primary-hover" value={colorTokens.action['primary-hover']} />
+                    <ColorSwatch token="action.primary-active" value={colorTokens.action['primary-active']} />
+                  </ColorSwatchGroup>
+                  <ColorSwatchGroup title="Surface">
+                    <ColorSwatch token="surface.DEFAULT" value={colorTokens.surface.DEFAULT} />
+                    <ColorSwatch token="surface.raised" value={colorTokens.surface.raised} />
+                    <ColorSwatch token="surface.sunken" value={colorTokens.surface.sunken} />
+                    <ColorSwatch token="surface.overlay" value={colorTokens.surface.overlay} />
+                    <ColorSwatch token="surface.invert" value={colorTokens.surface.invert} />
+                  </ColorSwatchGroup>
+                  <ColorSwatchGroup title="Text">
+                    <ColorSwatch token="text.DEFAULT" value={colorTokens.text.DEFAULT} />
+                    <ColorSwatch token="text.secondary" value={colorTokens.text.secondary} />
+                    <ColorSwatch token="text.tertiary" value={colorTokens.text.tertiary} />
+                    <ColorSwatch token="text.placeholder" value={colorTokens.text.placeholder} />
+                    <ColorSwatch token="text.action-subtle" value={colorTokens.text['action-subtle']} />
+                    <ColorSwatch token="text.disabled" value={colorTokens.text.disabled} />
+                    <ColorSwatch token="text.invert" value={colorTokens.text.invert} />
+                    <ColorSwatch token="text.brand" value={colorTokens.text.brand} />
+                  </ColorSwatchGroup>
+                  <ColorSwatchGroup title="Border">
+                    <ColorSwatch token="border.DEFAULT" value={colorTokens.border.DEFAULT} />
+                    <ColorSwatch token="border.strong" value={colorTokens.border.strong} />
+                    <ColorSwatch token="border.subtle" value={colorTokens.border.subtle} />
+                    <ColorSwatch token="border.focus" value={colorTokens.border.focus} />
+                  </ColorSwatchGroup>
+                  <ColorSwatchGroup title="Status">
+                    <ColorSwatch token="status.success" value={colorTokens.status.success} />
+                    <ColorSwatch token="status.success-bg" value={colorTokens.status['success-bg']} />
+                    <ColorSwatch token="status.success-text" value={colorTokens.status['success-text']} />
+                    <ColorSwatch token="status.warning" value={colorTokens.status.warning} />
+                    <ColorSwatch token="status.warning-bg" value={colorTokens.status['warning-bg']} />
+                    <ColorSwatch token="status.warning-text" value={colorTokens.status['warning-text']} />
+                    <ColorSwatch token="status.error" value={colorTokens.status.error} />
+                    <ColorSwatch token="status.error-bg" value={colorTokens.status['error-bg']} />
+                    <ColorSwatch token="status.error-text" value={colorTokens.status['error-text']} />
+                    <ColorSwatch token="status.info" value={colorTokens.status.info} />
+                    <ColorSwatch token="status.info-bg" value={colorTokens.status['info-bg']} />
+                    <ColorSwatch token="status.info-text" value={colorTokens.status['info-text']} />
+                  </ColorSwatchGroup>
+                  <ColorSwatchGroup title="Gamification">
+                    <ColorSwatch token="gamification.gold" value={colorTokens.gamification.gold} />
+                    <ColorSwatch token="gamification.gold-light" value={colorTokens.gamification['gold-light']} />
+                    <ColorSwatch token="gamification.gold-bg" value={colorTokens.gamification['gold-bg']} />
+                    <ColorSwatch token="gamification.purple" value={colorTokens.gamification.purple} />
+                    <ColorSwatch token="gamification.purple-light" value={colorTokens.gamification['purple-light']} />
+                    <ColorSwatch token="gamification.purple-bg" value={colorTokens.gamification['purple-bg']} />
+                  </ColorSwatchGroup>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Surface</p>
-                  <ColorSwatch token="surface.DEFAULT" value={colorTokens.surface.DEFAULT} />
-                  <ColorSwatch token="surface.raised" value={colorTokens.surface.raised} />
-                  <ColorSwatch token="surface.sunken" value={colorTokens.surface.sunken} />
-                  <ColorSwatch token="surface.overlay" value={colorTokens.surface.overlay} />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Text + Border</p>
-                  <ColorSwatch token="text.DEFAULT" value={colorTokens.text.DEFAULT} />
-                  <ColorSwatch token="text.secondary" value={colorTokens.text.secondary} />
-                  <ColorSwatch token="text.tertiary" value={colorTokens.text.tertiary} />
-                  <ColorSwatch token="border.DEFAULT" value={colorTokens.border.DEFAULT} />
-                  <ColorSwatch token="border.strong" value={colorTokens.border.strong} />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Status + Gamification</p>
-                  <ColorSwatch token="status.success" value={colorTokens.status.success} />
-                  <ColorSwatch token="status.warning" value={colorTokens.status.warning} />
-                  <ColorSwatch token="status.error" value={colorTokens.status.error} />
-                  <ColorSwatch token="status.info" value={colorTokens.status.info} />
-                  <ColorSwatch token="gamification.gold" value={colorTokens.gamification.gold} />
-                  <ColorSwatch token="gamification.purple" value={colorTokens.gamification.purple} />
-                </div>
-              </div>
-            </Section>
-          </>
+              </Section>
+            </div>
+
+            <aside className="xl:sticky xl:top-24" aria-label="Color Usage Guidance">
+              <ComponentIntentDoc markdown={colorIntentMarkdown} eyebrow="Token guidance" />
+            </aside>
+          </div>
         )}
 
         {/* ── TYPOGRAPHY ─────────────────────────────────────────────────── */}
         {activeSection === 'Typography' && (
-          <Section title="Typography Scale" description="Current token values from tokens/typography.js. This section reflects both the size scale and the text-color intent from the provided token set.">
-            <div className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Text Color Tokens</p>
-                  <ColorSwatch token="Typography.text-color.primary" value={colorTokens.text.DEFAULT} />
-                  <ColorSwatch token="Typography.text-color.secondary" value={colorTokens.text.secondary} />
-                  <ColorSwatch token="Typography.text-color.tertiary" value={colorTokens.text.tertiary} />
-                  <ColorSwatch token="Typography.text-color.placeholder" value={colorTokens.text.placeholder} />
-                  <ColorSwatch token="text.action-subtle" value={colorTokens.text['action-subtle']} />
-                  <ColorSwatch token="text.disabled" value={colorTokens.text.disabled} />
-                  <ColorSwatch token="text.brand" value={colorTokens.text.brand} />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Usage Notes</p>
-                  <div className="space-y-2 rounded-xl border border-border bg-surface-raised p-4">
-                    <p className="text-sm text-text"><span className="font-medium">Primary:</span> headings, body, default actions</p>
-                    <p className="text-sm text-text-secondary"><span className="font-medium text-text">Secondary:</span> supporting labels, helper text, and metadata</p>
-                    <p className="text-sm text-text-tertiary"><span className="font-medium text-text">Tertiary:</span> lower-emphasis metadata and optional inline qualifiers</p>
-                    <p className="text-sm text-text-placeholder"><span className="font-medium text-text">Placeholder:</span> empty field hints and example input text</p>
-                    <p className="text-sm text-text-action-subtle"><span className="font-medium text-text">Action Subtle:</span> quiet form actions like cancel and remove</p>
-                    <p className="text-sm text-text-disabled"><span className="font-medium text-text">Disabled:</span> unavailable or locked input content</p>
-                    <p className="text-sm text-text-brand"><span className="font-medium text-text">Brand:</span> branded links, accents, and emphasized inline actions</p>
-                  </div>
-                </div>
-              </div>
+          <div className="space-y-8">
+            <div className="grid gap-5 xl:grid-cols-3 xl:items-stretch">
+              <IntentPurposePanel markdown={typographyIntentMarkdown} eyebrow="Type guidance" />
+              <IntentSectionPanel
+                markdown={typographyIntentMarkdown}
+                sectionTitle="Use When"
+                eyebrow="Decision fit"
+                ariaLabel="Typography Use When Guidance"
+              />
+              <IntentSectionPanel
+                markdown={typographyIntentMarkdown}
+                sectionTitle="Do Not Use When"
+                eyebrow="Avoid"
+                ariaLabel="Typography Do Not Use When Guidance"
+              />
+            </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Font Family + Weight Tokens</p>
-                  <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
-                    <div className="flex items-baseline justify-between gap-4">
-                      <span className="text-xs font-mono text-text-tertiary">family.font family</span>
-                      <span className="font-sans text-sm text-text">DM Sans</span>
-                    </div>
-                    <div className="flex items-baseline justify-between gap-4">
-                      <span className="text-xs font-mono text-text-tertiary">family.newsreader</span>
-                      <span className="font-newsreader text-sm text-text">Newsreader</span>
-                    </div>
+            <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+              <div className="xl:col-span-2">
+                <Section title="Type Scale" description="Semantic text roles from tokens/typography.js, shown with their intended content hierarchy.">
+                  <div className="space-y-6 divide-y divide-border">
                     {[
-                      ['light', typographyTokens.fontWeight.light],
-                      ['regular', typographyTokens.fontWeight.normal],
-                      ['medium', typographyTokens.fontWeight.medium],
-                      ['bold', typographyTokens.fontWeight.bold],
-                    ].map(([name, value]) => (
-                      <div key={name} className="flex items-baseline justify-between gap-4">
-                        <span className="text-xs font-mono text-text-tertiary">{`font-weight.${name}`}</span>
-                        <span className="text-sm text-text">{value}</span>
+                      { label: tokenTypographyLabel('hero'), className: 'font-newsreader text-hero font-normal text-text', sample: 'Bring creators in with confidence' },
+                      { label: tokenTypographyLabel('display'), className: 'font-display text-4xl font-bold text-text', sample: 'Community First' },
+                      { label: tokenTypographyLabel('heading-1'), className: 'font-display text-2xl font-bold text-text', sample: 'Welcome Back, Maria' },
+                      { label: tokenTypographyLabel('heading-2'), className: 'font-display text-lg font-medium text-text', sample: 'Your Achievements' },
+                      { label: tokenTypographyLabel('body'), className: 'font-sans text-base text-text', sample: 'Share what\u2019s on your mind with your community.' },
+                      { label: tokenTypographyLabel('label-lg'), className: 'font-sans text-sm font-medium text-text-secondary', sample: 'Joined 3 months ago · 142 posts · 1.2k reactions' },
+                      { label: tokenTypographyLabel('label-md'), className: 'font-sans text-xs font-medium text-text-secondary', sample: 'This appears on your public profile.' },
+                      { label: tokenTypographyLabel('label-sm'), className: 'font-sans text-2xs font-medium text-text-tertiary', sample: 'MEMBER SINCE 2026' },
+                      { label: tokenTypographyLabel('body-sm'), className: 'font-sans text-sm text-text-placeholder', sample: 'Paste your website URL' },
+                      { label: tokenTypographyLabel('label-lg'), className: 'font-sans text-sm font-medium text-text-action-subtle', sample: 'Cancel' },
+                      { label: tokenTypographyLabel('body-sm'), className: 'font-sans text-sm text-text-disabled', sample: 'creator@raptive.com' },
+                      { label: tokenTypographyLabel('label-lg'), className: 'font-sans text-sm font-medium text-text-brand', sample: 'View guidelines' },
+                      { label: 'mono / utility', className: 'font-mono text-sm text-text-secondary', sample: 'badge_id: community-champion-v1' },
+                    ].map(({ label, className, sample }) => (
+                      <div key={`${label}-${sample}`} className="grid gap-2 pt-4 first:pt-0 md:grid-cols-3 md:items-baseline md:gap-6">
+                        <span className="text-xs font-mono leading-snug text-text-secondary">{label}</span>
+                        <span className={['md:col-span-2', className].join(' ')}>{sample}</span>
                       </div>
                     ))}
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-text-secondary">Line Height + Letter Spacing Tokens</p>
-                  <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
-                    {[
-                      ['line-height.xs', typographyTokens.lineHeight.xs],
-                      ['line-height.sm', typographyTokens.lineHeight.sm],
-                      ['line-height.md', typographyTokens.lineHeight.md],
-                      ['line-height.lg', typographyTokens.lineHeight.lg],
-                      ['line-height.xl', typographyTokens.lineHeight.xl],
-                      ['line-height.xxl', typographyTokens.lineHeight.xxl],
-                      ['letter-spacing.sm', typographyTokens.letterSpacing.sm],
-                      ['letter-spacing.md', typographyTokens.letterSpacing.md],
-                      ['letter-spacing.lg', typographyTokens.letterSpacing.lg],
-                    ].map(([name, value]) => (
-                      <div key={name} className="flex items-baseline justify-between gap-4">
-                        <span className="text-xs font-mono text-text-tertiary">{name}</span>
-                        <span className="text-sm text-text">
-                          {name.startsWith('line-height') ? pxFromRemString(value) : `${value}rem`}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                </Section>
               </div>
 
-              <div className="space-y-6 divide-y divide-border">
-              {[
-                { label: `${tokenTypographyLabel('hero')} · text-color.primary`, className: 'font-newsreader text-hero font-normal text-text', sample: 'Bring creators in with confidence' },
-                { label: `${tokenTypographyLabel('display')} · text-color.primary`, className: 'font-display text-4xl font-bold text-text', sample: 'Community First' },
-                { label: `${tokenTypographyLabel('heading-1')} · text-color.primary`, className: 'font-display text-2xl font-bold text-text', sample: 'Welcome Back, Maria' },
-                { label: `${tokenTypographyLabel('heading-2')} · text-color.primary`, className: 'font-display text-lg font-medium text-text', sample: 'Your Achievements' },
-                { label: `${tokenTypographyLabel('body')} · text-color.primary`, className: 'font-sans text-base text-text', sample: 'Share what\u2019s on your mind with your community.' },
-                { label: `${tokenTypographyLabel('label-lg')} · text-color.secondary`, className: 'font-sans text-sm font-medium text-text-secondary', sample: 'Joined 3 months ago · 142 posts · 1.2k reactions' },
-                { label: `${tokenTypographyLabel('label-md')} · text-color.secondary`, className: 'font-sans text-xs font-medium text-text-secondary', sample: 'This appears on your public profile.' },
-                { label: `${tokenTypographyLabel('label-sm')} · text-color.tertiary`, className: 'font-sans text-2xs font-medium text-text-tertiary', sample: 'MEMBER SINCE 2026' },
-                { label: `${tokenTypographyLabel('body-sm')} · text-color.placeholder`, className: 'font-sans text-sm text-text-placeholder', sample: 'Paste your website URL' },
-                { label: `${tokenTypographyLabel('label-lg')} · text.action-subtle`, className: 'font-sans text-sm font-medium text-text-action-subtle', sample: 'Cancel' },
-                { label: `${tokenTypographyLabel('body-sm')} · text.disabled`, className: 'font-sans text-sm text-text-disabled', sample: 'creator@raptive.com' },
-                { label: `${tokenTypographyLabel('label-lg')} · text.brand`, className: 'font-sans text-sm font-medium text-text-brand', sample: 'View guidelines' },
-                { label: 'mono / utility', className: 'font-mono text-sm text-text-secondary', sample: 'badge_id: community-champion-v1' },
-              ].map(({ label, className, sample }) => (
-                <div key={label} className="pt-4 flex items-baseline justify-between gap-8 first:pt-0">
-                  <span className="text-xs font-mono text-text-secondary w-40 flex-shrink-0">{label}</span>
-                  <span className={className}>{sample}</span>
-                </div>
-              ))}
+              <IntentSectionPanel
+                markdown={typographyIntentMarkdown}
+                sectionTitle="Type Roles"
+                eyebrow="Role map"
+                ariaLabel="Typography Type Roles Guidance"
+              />
             </div>
+
+            <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+              <div className="xl:col-span-2">
+                <Section title="Text Color Roles" description="Typography color choices should support hierarchy and comprehension. Use the Colors guidance for broader token rules.">
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <div className="space-y-3">
+                      <p className="text-xs font-semibold text-text-secondary">Text color tokens</p>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        <ColorSwatch token="Typography.text-color.primary" value={colorTokens.text.DEFAULT} />
+                        <ColorSwatch token="Typography.text-color.secondary" value={colorTokens.text.secondary} />
+                        <ColorSwatch token="Typography.text-color.tertiary" value={colorTokens.text.tertiary} />
+                        <ColorSwatch token="Typography.text-color.placeholder" value={colorTokens.text.placeholder} />
+                        <ColorSwatch token="text.action-subtle" value={colorTokens.text['action-subtle']} />
+                        <ColorSwatch token="text.disabled" value={colorTokens.text.disabled} />
+                        <ColorSwatch token="text.brand" value={colorTokens.text.brand} />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-text-secondary">Role notes</p>
+                      <div className="space-y-2 rounded-xl border border-border bg-surface-raised p-4">
+                        <p className="text-sm text-text"><span className="font-medium">Primary:</span> headings, body, default actions</p>
+                        <p className="text-sm text-text-secondary"><span className="font-medium text-text">Secondary:</span> supporting labels, helper text, and metadata</p>
+                        <p className="text-sm text-text-tertiary"><span className="font-medium text-text">Tertiary:</span> lower-emphasis metadata and optional inline qualifiers</p>
+                        <p className="text-sm text-text-placeholder"><span className="font-medium text-text">Placeholder:</span> empty field hints and example input text</p>
+                        <p className="text-sm text-text-action-subtle"><span className="font-medium text-text">Action Subtle:</span> quiet form actions like cancel and remove</p>
+                        <p className="text-sm text-text-disabled"><span className="font-medium text-text">Disabled:</span> unavailable or locked input content</p>
+                        <p className="text-sm text-text-brand"><span className="font-medium text-text">Brand:</span> branded links, accents, and emphasized inline actions</p>
+                      </div>
+                    </div>
+                  </div>
+                </Section>
+              </div>
+
+              <IntentSectionPanel
+                markdown={typographyIntentMarkdown}
+                sectionTitle="Usage Rules"
+                eyebrow="Governance"
+                ariaLabel="Typography Usage Rules Guidance"
+              />
             </div>
-          </Section>
+
+            <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+              <div className="xl:col-span-2">
+                <Section title="Families And Metrics" description="Reference values for families, weights, line height, and letter spacing. Keep selection guidance in the nearby review triggers.">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-text-secondary">Font family + weight tokens</p>
+                      <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
+                        <div className="flex items-baseline justify-between gap-4">
+                          <span className="text-xs font-mono text-text-tertiary">font-family.sans</span>
+                          <span className="font-sans text-sm text-text">DM Sans</span>
+                        </div>
+                        <div className="flex items-baseline justify-between gap-4">
+                          <span className="text-xs font-mono text-text-tertiary">font-family.newsreader</span>
+                          <span className="font-newsreader text-sm text-text">Newsreader</span>
+                        </div>
+                        {[
+                          ['light', typographyTokens.fontWeight.light],
+                          ['regular', typographyTokens.fontWeight.normal],
+                          ['medium', typographyTokens.fontWeight.medium],
+                          ['bold', typographyTokens.fontWeight.bold],
+                        ].map(([name, value]) => (
+                          <div key={name} className="flex items-baseline justify-between gap-4">
+                            <span className="text-xs font-mono text-text-tertiary">{`font-weight.${name}`}</span>
+                            <span className="text-sm text-text">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-text-secondary">Line height + letter spacing tokens</p>
+                      <div className="space-y-3 rounded-xl border border-border bg-surface-raised p-4">
+                        {[
+                          ['line-height.xs', typographyTokens.lineHeight.xs],
+                          ['line-height.sm', typographyTokens.lineHeight.sm],
+                          ['line-height.md', typographyTokens.lineHeight.md],
+                          ['line-height.lg', typographyTokens.lineHeight.lg],
+                          ['line-height.xl', typographyTokens.lineHeight.xl],
+                          ['line-height.xxl', typographyTokens.lineHeight.xxl],
+                          ['letter-spacing.sm', typographyTokens.letterSpacing.sm],
+                          ['letter-spacing.md', typographyTokens.letterSpacing.md],
+                          ['letter-spacing.lg', typographyTokens.letterSpacing.lg],
+                        ].map(([name, value]) => (
+                          <div key={name} className="flex items-baseline justify-between gap-4">
+                            <span className="text-xs font-mono text-text-tertiary">{name}</span>
+                            <span className="text-sm text-text">
+                              {name.startsWith('line-height') ? pxFromRemString(value) : value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </Section>
+              </div>
+
+              <IntentSectionPanel
+                markdown={typographyIntentMarkdown}
+                sectionTitle="Escalate When"
+                eyebrow="Review triggers"
+                ariaLabel="Typography Escalation Guidance"
+              />
+            </div>
+          </div>
         )}
 
         {/* ── FORMS ─────────────────────────────────────────────────────── */}
         {activeSection === 'Forms' && (
-          <>
-            <Section title="Text Input" description="Reusable single-line field built on the shared FormField wrapper.">
+          <div className="space-y-8">
+            <div className="grid gap-5 xl:grid-cols-3 xl:items-stretch">
+              <IntentPurposePanel markdown={formIntentMarkdown} eyebrow="Form guidance" />
+              <IntentSectionPanel
+                markdown={formIntentMarkdown}
+                sectionTitle="Use When"
+                eyebrow="Decision fit"
+                ariaLabel="Forms Use When Guidance"
+              />
+              <IntentSectionPanel
+                markdown={formIntentMarkdown}
+                sectionTitle="Do Not Use When"
+                eyebrow="Avoid"
+                ariaLabel="Forms Do Not Use When Guidance"
+              />
+            </div>
+
+            <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+              <div className="space-y-8 xl:col-span-2">
+                <Section title="Text Input" description="Reusable single-line field built on the shared FormField wrapper.">
               <div className="grid gap-6 md:grid-cols-2">
                 <TextInput
                   label="Creator Name"
@@ -976,9 +1312,9 @@ export function ComponentLibrary() {
                   affixLineHeight="md"
                 />
               </div>
-            </Section>
+                </Section>
 
-            <Section title="Social URL Input" description="Single URL field that detects supported social platforms locally as the value changes.">
+                <Section title="Social URL Input" description="Single URL field that detects supported social platforms locally as the value changes.">
               <div className="grid gap-6 md:grid-cols-2">
                 <SocialUrlInput
                   label="Live detection"
@@ -1000,9 +1336,9 @@ export function ComponentLibrary() {
                   />
                 ))}
               </div>
-            </Section>
+                </Section>
 
-            <Section title="Field States">
+                <Section title="Field States">
               <div className="grid gap-6 md:grid-cols-2">
                 <TextInput
                   label="Headline"
@@ -1030,9 +1366,20 @@ export function ComponentLibrary() {
                   </FieldShell>
                 </FormField>
               </div>
-            </Section>
+                </Section>
+              </div>
 
-            <Section title="Textarea And Select" description="Shared field family extended to multi-line and native selection controls.">
+              <IntentSectionPanel
+                markdown={formIntentMarkdown}
+                sectionTitle="Control Families"
+                eyebrow="Choose a control"
+                ariaLabel="Forms Control Families Guidance"
+              />
+            </div>
+
+            <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+              <div className="space-y-8 xl:col-span-2">
+                <Section title="Textarea And Select" description="Shared field family extended to multi-line and native selection controls.">
               <div className="grid gap-6 md:grid-cols-2">
                 <Textarea
                   label="Creator Bio"
@@ -1088,9 +1435,9 @@ export function ComponentLibrary() {
               <DocumentationNote>
                 Always pair with a visible label. The chevron affordance is decorative — do not rely on it as the only indicator of interactivity.
               </DocumentationNote>
-            </Section>
+                </Section>
 
-            <Section title="Selection Controls" description="Primitives for onboarding choices, consents, and goal selection.">
+                <Section title="Selection Controls" description="Primitives for onboarding choices, consents, and goal selection.">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-3">
                   <Checkbox
@@ -1122,9 +1469,9 @@ export function ComponentLibrary() {
                   ]}
                 />
               </div>
-            </Section>
+                </Section>
 
-            <Section title="Accordion Panel Group" description="Reusable collapsible editor rows with customizable icon, label, subtext, and content.">
+                <Section title="Accordion Panel Group" description="Reusable collapsible editor rows with customizable icon, label, subtext, and content.">
               <div className="max-w-xl overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
                 <AccordionPanelGroup
                   openRow={accordionDemoOpenRow}
@@ -1193,11 +1540,22 @@ export function ComponentLibrary() {
                 />
               </div>
               <DocumentationNote>
-                Use `AccordionPanelGroup` when a screen needs the same compact row shell with different labels and row bodies. Set `allRowsOpen` on editor surfaces where every option should remain visible.
+                Use AccordionPanelGroup when a screen needs the same compact row shell with different labels and row bodies. Set allRowsOpen on editor surfaces where every option should remain visible.
               </DocumentationNote>
-            </Section>
+                </Section>
+              </div>
 
-            <Section title="Color Swatch Button" description="Reusable palette-choice control for theme and brand-preview flows.">
+              <IntentSectionPanel
+                markdown={formIntentMarkdown}
+                sectionTitle="Usage Rules"
+                eyebrow="Governance"
+                ariaLabel="Forms Usage Rules Guidance"
+              />
+            </div>
+
+            <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+              <div className="space-y-8 xl:col-span-2">
+                <Section title="Color Swatch Button" description="Reusable palette-choice control for theme and brand-preview flows.">
               <FormField
                 label="Detected brand color"
                 description="Use swatches when a detected color needs a compact visual confirmation."
@@ -1213,9 +1571,9 @@ export function ComponentLibrary() {
                   ))}
                 </div>
               </FormField>
-            </Section>
+                </Section>
 
-            <Section title="Color Input" description="Hex entry plus native color picker with automatic black/white foreground guidance.">
+                <Section title="Color Input" description="Hex entry plus native color picker with automatic black/white foreground guidance.">
               <div className="max-w-xl">
                 <ColorInput
                   label="Brand Color"
@@ -1224,9 +1582,9 @@ export function ComponentLibrary() {
                   onChange={setBrandColor}
                 />
               </div>
-            </Section>
+                </Section>
 
-            <Section title="Logo Upload Areas" description="Reusable upload controls for horizontal and square logo assets.">
+                <Section title="Logo Upload Areas" description="Reusable upload controls for horizontal and square logo assets.">
               <div className="grid gap-6 md:grid-cols-2">
                 <AvatarUpload
                   label="Horizontal"
@@ -1247,9 +1605,9 @@ export function ComponentLibrary() {
                   onChange={setDemoAvatar}
                 />
               </div>
-            </Section>
+                </Section>
 
-            <Section title="Option Tiles" description="Reusable selectable cards for goals, audiences, and category pickers.">
+                <Section title="Option Tiles" description="Reusable selectable cards for goals, audiences, and category pickers.">
               <div className="grid gap-4 md:grid-cols-3">
                 <OptionTile
                   icon={tileIcon(Megaphone)}
@@ -1297,9 +1655,9 @@ export function ComponentLibrary() {
               <DocumentationNote>
                 Hover, tap, and selection animations respect prefers-reduced-motion. Use the optional detail slot for selected radio tiles that need a short inline confirmation step.
               </DocumentationNote>
-            </Section>
+                </Section>
 
-            <Section title="Goal Selection Grid" description="First onboarding pattern composed directly from OptionTile primitives.">
+                <Section title="Goal Selection Grid" description="First onboarding pattern composed directly from OptionTile primitives.">
               <GoalSelectionGrid
                 title="What do you want this creator to prioritize?"
                 description="Choose one or more outcomes so onboarding can tailor recommendations and next steps."
@@ -1399,99 +1757,93 @@ export function ComponentLibrary() {
                   },
                 ]}
               />
-            </Section>
-          </>
+                </Section>
+              </div>
+
+              <IntentSectionPanel
+                markdown={formIntentMarkdown}
+                sectionTitle="Escalate When"
+                eyebrow="Review triggers"
+                ariaLabel="Forms Escalation Guidance"
+              />
+            </div>
+          </div>
         )}
 
         {/* ── BUTTONS ────────────────────────────────────────────────────── */}
         {activeSection === 'Buttons' && (
-          <>
-            <Section title="Variants" description="Six semantic variants covering all use cases. Secondary maps to the Figma outline treatment.">
-              <Row>
-                <Button variant="primary">Primary</Button>
-                <Button variant="secondary">Secondary</Button>
-                <Button variant="ghost">Ghost</Button>
-                <Button variant="danger">Danger</Button>
-                <Button variant="black">Black</Button>
-                <Button variant="link">Link</Button>
-              </Row>
-            </Section>
-            <Section title="Paired Icons" description="Inline icons inherit the label line-height through the shared paired icon utility.">
-              <Row label="Icon before and after">
-                <Button iconBefore={miniIcon(Sparkles)}>Create preview</Button>
-                <Button variant="secondary" iconAfter={miniIcon(Rocket)}>Continue</Button>
-              </Row>
-            </Section>
-            <Section title="Text Links" description="Inline action primitive for text-only links when alignment needs to be controlled independently from Button.">
-              <Row>
-                <TextLink onClick={() => {}}>Left text link</TextLink>
-                <TextLink align="center" underline onClick={() => {}}>Centered underlined link</TextLink>
-                <TextLink tone="invert" className="rounded-md bg-neutral-950 px-3 py-2" onClick={() => {}}>
-                  Inverted link
-                </TextLink>
-              </Row>
-            </Section>
-            <Section title="Canonical Token References" description="Reference button treatments aligned to the current shared action tokens.">
-              <Row label="Action token treatment">
-                <Button
-                  variant="ghost"
-                  className="bg-transparent text-text hover:bg-surface-sunken active:bg-neutral-100"
-                >
-                  Naked
-                </Button>
-                <Button>Action Primary</Button>
-              </Row>
-            </Section>
-            <Section title="Sizes">
-              <Row label="Shared button scale">
-                <Button size="xs">Extra Small</Button>
-                <Button size="sm">Small</Button>
-                <Button size="md">Medium</Button>
-                <Button size="lg">Large</Button>
-              </Row>
-              <Row label="Canonical treatment references">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="bg-transparent text-text hover:bg-surface-sunken active:bg-neutral-100"
-                >
-                  Naked / Small
-                </Button>
-                <Button size="md" variant="secondary">
-                  Secondary / Outline
-                </Button>
-                <Button size="lg">Action Primary / Large</Button>
-              </Row>
-            </Section>
-            <Section title="States">
-              <Row label="Loading">
-                <Button loading>Primary</Button>
-                <Button variant="secondary" loading>Secondary</Button>
-                <Button loading loadingLabel="Saving">Save draft</Button>
-              </Row>
-              <Row label="Success">
-                <Button success>Submitted</Button>
-                <Button success successLabel="Saved">Save draft</Button>
-                <Button success successLabel="Finding" successIcon={loadingSuccessIcon}>Continue</Button>
-              </Row>
-              <Row label="Disabled">
-                <Button disabled>Primary</Button>
-                <Button variant="secondary" disabled>Secondary</Button>
-                <Button variant="ghost" disabled>Ghost</Button>
-                <Button variant="danger" disabled>Danger</Button>
-                <Button variant="black" disabled>Black</Button>
-                <Button variant="link" disabled>Link</Button>
-              </Row>
-              <Row label="Full Width">
-                <div className="w-full max-w-xs">
-                  <Button fullWidth>Full Width Button</Button>
-                </div>
-              </Row>
-              <DocumentationNote>
-                Decorative scale and label swap animations respect prefers-reduced-motion. Loading and success animations always run.
-              </DocumentationNote>
-            </Section>
-          </>
+          <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
+            <div className="space-y-8 xl:col-span-2">
+              <Section title="Action Hierarchy" description="Choose the variant by product meaning first; layout and local spacing belong outside the Button.">
+                <Row label="Primary decision area">
+                  <Button variant="primary">Primary</Button>
+                  <Button variant="secondary">Secondary</Button>
+                  <Button variant="ghost">Ghost</Button>
+                  <Button variant="link">Inline action</Button>
+                </Row>
+                <Row label="High-risk and special contexts">
+                  <Button variant="danger">Danger</Button>
+                  <Button variant="black">Black</Button>
+                </Row>
+                <Row label="Brand-preview context">
+                  <div className="preview-theme flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface px-4 py-3">
+                    <Button variant="previewBrand">Preview brand</Button>
+                    <Button variant="previewAccent">Preview accent</Button>
+                  </div>
+                </Row>
+              </Section>
+
+              <Section title="Composition" description="Icons, full-width behavior, and neighboring text links should preserve Button ownership of its own internals.">
+                <Row label="Icon before and after">
+                  <Button iconBefore={miniIcon(Sparkles)}>Create preview</Button>
+                  <Button variant="secondary" iconAfter={miniIcon(Rocket)}>Continue</Button>
+                </Row>
+                <Row label="Full width inside a layout container">
+                  <div className="w-full max-w-xs">
+                    <Button fullWidth>Full Width Button</Button>
+                  </div>
+                </Row>
+                <Row label="Adjacent text-link primitive">
+                  <TextLink onClick={() => {}}>Left text link</TextLink>
+                  <TextLink align="center" underline onClick={() => {}}>Centered underlined link</TextLink>
+                </Row>
+              </Section>
+
+              <Section title="Sizes And States" description="Size and state props are part of the component contract; visual overrides are not.">
+                <Row label="Shared button scale">
+                  <Button size="xs">Extra Small</Button>
+                  <Button size="sm">Small</Button>
+                  <Button size="md">Medium</Button>
+                  <Button size="lg">Large</Button>
+                </Row>
+                <Row label="Loading">
+                  <Button loading>Primary</Button>
+                  <Button variant="secondary" loading>Secondary</Button>
+                  <Button loading loadingLabel="Saving">Save draft</Button>
+                </Row>
+                <Row label="Success">
+                  <Button success>Submitted</Button>
+                  <Button success successLabel="Saved">Save draft</Button>
+                  <Button success successLabel="Finding" successIcon={loadingSuccessIcon}>Continue</Button>
+                </Row>
+                <Row label="Disabled">
+                  <Button disabled>Primary</Button>
+                  <Button variant="secondary" disabled>Secondary</Button>
+                  <Button variant="ghost" disabled>Ghost</Button>
+                  <Button variant="danger" disabled>Danger</Button>
+                  <Button variant="black" disabled>Black</Button>
+                  <Button variant="link" disabled>Link</Button>
+                </Row>
+                <DocumentationNote>
+                  Decorative scale and label swap animations respect prefers-reduced-motion. Loading and success animations always run.
+                </DocumentationNote>
+              </Section>
+            </div>
+
+            <aside className="xl:sticky xl:top-24" aria-label="Button Usage Guidance">
+              <ComponentIntentDoc markdown={buttonIntentMarkdown} />
+            </aside>
+          </div>
         )}
 
         {/* ── BADGES ─────────────────────────────────────────────────────── */}

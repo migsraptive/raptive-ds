@@ -20,6 +20,19 @@ agent_rules:
   - Use the card variant when the label and description need a clear touch target.
   - Use the bare variant only when the surrounding layout already provides structure.
   - Do not hide critical consent details in description text alone.
+governance:
+  component_contract:
+    - Checkbox is a black-box binary choice component.
+    - Consumers may position Checkbox from a parent layout only.
+    - Consumers may not style Checkbox internals or target its input, indicator, label, or description with CSS.
+    - Consumers must not hard-code Checkbox radius, spacing, typography, color, border, shadow, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - className, when present in code, is a restricted compatibility escape hatch, not a styling API.
+  escalate_when:
+    - A binary choice needs a new semantic presentation.
+    - A consumer wants to override Checkbox-owned visual styling.
+    - The choice behaves like navigation, an action, or mutually exclusive selection.
 anatomy:
   - name: root_label
     required: true
@@ -77,6 +90,11 @@ props:
     type: enum
     values: [card, bare]
     default: card
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
 content_guidelines:
   - Write labels as the selected state when possible.
   - Keep descriptions short and explanatory.

@@ -23,6 +23,19 @@ agent_rules:
   - Do not hand-roll label, description, and error wiring in patterns.
   - Do not use tertiary text for normal-size form labels.
   - Required and optional markers are supplemental; labels must remain clear without them.
+governance:
+  component_contract:
+    - FormField and FieldShell are black-box form structure components.
+    - Consumers may position fields from a parent layout only.
+    - Consumers may not style FormField or FieldShell internals or target label, helper, error, shell, or child wiring with CSS.
+    - Consumers must not hard-code field radius, spacing, typography, color, border, shadow, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - className, when present in code, is a restricted compatibility escape hatch, not a styling API.
+  escalate_when:
+    - A form control needs label, helper, error, or shell behavior that existing field primitives do not support.
+    - A consumer wants to override FormField-owned visual styling or accessibility wiring.
+    - A new field composition is reused across patterns.
 anatomy:
   - name: root
     required: true
@@ -88,6 +101,11 @@ props:
   children:
     type: node
     required: true
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
   FieldShell.error:
     type: boolean
     default: false
@@ -97,6 +115,16 @@ props:
   FieldShell.readOnly:
     type: boolean
     default: false
+  FieldShell.className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+  FieldHelperText.className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
 content_guidelines:
   - Labels should name the requested information, not the input type.
   - Helper text should explain constraints or examples only when useful.
