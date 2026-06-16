@@ -9,14 +9,13 @@ const componentLibrarySource = readFileSync(new URL('../src/pages/ComponentLibra
 const mobileFlowSource = readFileSync(new URL('../src/patterns/MobileOnboardingFlow/MobileOnboardingFlow.jsx', import.meta.url), 'utf8')
 const viewportDemoSource = readFileSync(new URL('../src/patterns/CreatorOnboardingViewportDemo/CreatorOnboardingViewportDemo.jsx', import.meta.url), 'utf8')
 
-test('verification terms must be reviewed and accepted inside the modal', () => {
+test('desktop verification terms toggle directly without the modal', () => {
   assert.match(verificationStepSource, /Community Terms/)
-  assert.match(verificationStepSource, /CommunityTermsModal/)
-  assert.match(verificationStepSource, /setTermsModalOpen\(true\)/)
+  assert.doesNotMatch(verificationStepSource, /CommunityTermsModal/)
+  assert.doesNotMatch(verificationStepSource, /setTermsModalOpen\(true\)/)
+  assert.match(verificationStepSource, /href="#"/)
   assert.match(verificationStepSource, /text-action-primary underline underline-offset-2/)
-  assert.match(verificationStepSource, /onTermsAcceptedChange\?\.\(true\)/)
-  assert.match(communityTermsModalSource, /role="dialog"/)
-  assert.match(communityTermsModalSource, /Agree and continue/)
+  assert.match(verificationStepSource, /onTermsAcceptedChange\?\.\(event\.target\.checked\)/)
 })
 
 test('mobile and viewport verification demos expose the Community Terms modal flow', () => {

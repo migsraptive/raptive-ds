@@ -188,6 +188,11 @@ npm run lint
   says the work is ready to commit, push, merge, or deploy.
 - `npm run lint` must exit with 0 errors and 0 warnings.
 - Browser smoke check: Patterns page and Creator Application render without console errors.
+- Before commit, push, merge, or deploy after a behavior or flow change, search
+  tests for removed or renamed implementation markers, copy, and flow contracts.
+  Update stale tests in the same task so CI protects the current behavior rather
+  than restoring the previous one. Run the targeted test file when a matching
+  test changes.
 
 ## Dev Server
 ```bash
@@ -213,6 +218,9 @@ npm run dev
 - When verification is requested or the work is ready for commit/push/merge,
   browser smoke check: Patterns page and Creator Application render without
   console errors.
+- When behavior or flow changes are ready for commit/push/merge, confirm tests
+  that mention removed or renamed symbols, components, copy, or flow state have
+  been updated. Run the affected test file if one exists.
 - Output a summary table:
 
   | file | what changed | why |

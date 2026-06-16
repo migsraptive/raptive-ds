@@ -103,6 +103,11 @@ npm run ci
 
 `npm run lint` should exit with 0 errors and 0 warnings.
 
+When a behavior or flow changes, search `tests/` for removed components,
+renamed copy, or old flow markers before committing. Update those tests in the
+same change and run the affected test file, so CI verifies the current behavior
+instead of trying to restore a previous implementation.
+
 ## App Surfaces
 
 The available app surfaces are:
@@ -451,6 +456,11 @@ When UI changes affect visible app surfaces, also smoke check:
 
 Browser smoke checks should render without page errors. `npm run lint` should
 exit with 0 errors and 0 warnings.
+
+For behavior or flow changes, also check `tests/` for source-level contracts
+that mention removed components, renamed copy, or old state transitions. Update
+the matching tests with the behavior change and run the targeted test file
+before merging.
 
 ## Deployment
 
