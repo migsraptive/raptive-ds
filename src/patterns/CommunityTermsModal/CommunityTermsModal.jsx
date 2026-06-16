@@ -97,7 +97,7 @@ export function CommunityTermsModal({
         <div className={headerClassName}>
           <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">Required review</p>
           <h2 id={titleId} className={titleClassName}>
-            Community Terms
+            Raptive’s Creator Agreement
           </h2>
         </div>
 
@@ -123,7 +123,7 @@ export function CommunityTermsModal({
             checked={reviewConfirmed}
             onChange={(event) => setReviewConfirmed(event.target.checked)}
             variant="plain"
-            label="I have reviewed and agree to the Community Terms."
+            label="I have read and accept Raptive’s Creator Agreement"
             description="This agreement is required before the application can be submitted."
           />
           <div className={actionsClassName}>

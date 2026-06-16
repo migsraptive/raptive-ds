@@ -31,6 +31,12 @@ export default function App() {
   useEffect(() => {
     const url = new URL(window.location.href)
     url.searchParams.set('view', view)
+    if (view !== 'component-library') {
+      url.searchParams.delete('section')
+    } else {
+      url.searchParams.delete('capture')
+      url.searchParams.delete('captureStep')
+    }
     window.history.replaceState({}, '', url)
   }, [view])
 

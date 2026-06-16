@@ -316,6 +316,9 @@ pixel references, but they are not rebuilt with Figma component instances.
 Creator application capture URLs are deterministic so Figma imports do not need
 manual click-through:
 
+These capture URLs are import-only shortcuts. They are not part of the normal
+creator onboarding flow; the live flow still advances through user actions.
+
 - Entry:
   `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=entry`
 - Gather / review:

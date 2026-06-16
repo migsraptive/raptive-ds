@@ -55,8 +55,6 @@ export default function ComponentLibraryPrototypes({
   onPreviewPatternCtaSuccessChange,
   verificationMethod,
   onVerificationMethodChange,
-  verificationConfirmed,
-  onVerificationConfirmedChange,
   verificationTermsAccepted,
   onVerificationTermsAcceptedChange,
 }) {
@@ -146,8 +144,6 @@ export default function ComponentLibraryPrototypes({
           ]}
           selectedMethod={verificationMethod}
           onSelectMethod={onVerificationMethodChange}
-          confirmed={verificationConfirmed}
-          onConfirmChange={onVerificationConfirmedChange}
           termsAccepted={verificationTermsAccepted}
           onTermsAcceptedChange={onVerificationTermsAcceptedChange}
           reassurance={[

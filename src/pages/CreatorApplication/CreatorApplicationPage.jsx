@@ -153,7 +153,6 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const [creatorUrl, setCreatorUrl] = useState(initialCaptureUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState('meta-login')
-  const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
   const [gatherRowsResolved, setGatherRowsResolved] = useState(initialCaptureStep === 1)
@@ -187,7 +186,6 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   useEffect(() => {
     if (verificationMethod && !verificationMethods.some((method) => method.value === verificationMethod)) {
       setVerificationMethod(verificationMethods[0]?.value)
-      setVerificationConfirmed(false)
       setVerificationTermsAccepted(false)
     }
   }, [verificationMethod, verificationMethods])
@@ -223,7 +221,6 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
 
   const handleVerificationMethodChange = (value) => {
     setVerificationMethod(value)
-    setVerificationConfirmed(false)
     setVerificationTermsAccepted(false)
   }
 
@@ -296,7 +293,6 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     setFetchAccounts(getInitialAccounts())
     setGatherRowsResolved(false)
     setVerificationMethod(verificationMethods[0]?.value)
-    setVerificationConfirmed(false)
     setVerificationTermsAccepted(false)
     setActiveStep(0)
   }
@@ -417,8 +413,6 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         selectedMethod={verificationMethod}
         onSelectMethod={handleVerificationMethodChange}
         progressMeter={progressMeter}
-        confirmed={verificationConfirmed}
-        onConfirmChange={setVerificationConfirmed}
         termsAccepted={verificationTermsAccepted}
         onTermsAcceptedChange={setVerificationTermsAccepted}
         alreadyVerified={creatorIsKnownLead}

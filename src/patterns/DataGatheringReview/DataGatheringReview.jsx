@@ -200,40 +200,39 @@ function ManualSocialAccountFields({ account, onAccountChange, onRemoveAccount }
   }
 
   return (
-    <div className="grid gap-3 rounded-xl border border-border bg-surface-raised p-3 md:grid-cols-3">
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-raised p-2 sm:flex-row sm:items-center">
       <Select
-        label="Source"
+        aria-label="Source"
+        className="sm:w-40"
         value={account.platform}
         onChange={(event) => onAccountChange?.(account.id, { platform: event.target.value })}
         options={sourceOptions}
       />
       <TextInput
-        label="Handle or URL"
+        aria-label="Handle or URL"
+        className="min-w-0 flex-1"
         value={account.handle}
         placeholder="@handle or https://..."
         onChange={(event) => onAccountChange?.(account.id, { handle: event.target.value })}
       />
-      <div className="flex items-end">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 sm:flex-shrink-0">
+        <Button
+          size="xs"
+          variant="secondary"
+          onClick={confirmAccount}
+          disabled={!canConfirm}
+        >
+          Confirm
+        </Button>
+        {onRemoveAccount ? (
           <Button
-            size="sm"
-            variant="secondary"
-            onClick={confirmAccount}
-            disabled={!canConfirm}
-          >
-            Confirm
-          </Button>
-          {onRemoveAccount ? (
-            <Button
-              size="sm"
-              variant="ghost"
-              iconBefore={<LucideIcon icon={Trash2} size="sm" />}
-              onClick={() => onRemoveAccount(account.id)}
-            >
-              Remove
-            </Button>
-          ) : null}
-        </div>
+            size="xs"
+            variant="ghost"
+            iconBefore={<LucideIcon icon={Trash2} size="sm" />}
+            aria-label={`Remove ${account.platform} account`}
+            onClick={() => onRemoveAccount(account.id)}
+          />
+        ) : null}
       </div>
     </div>
   )

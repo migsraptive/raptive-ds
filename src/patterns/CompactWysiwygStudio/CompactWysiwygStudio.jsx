@@ -175,18 +175,28 @@ export function CompactWysiwygStudio({
             <div className="space-y-4">
               <div className="grid items-stretch justify-center gap-4 lg:grid-cols-[320px_minmax(220px,1fr)]">
                 {/* no token available: this exploration previews the fixed-width right rail module beside compact community cards. */}
-                <RightRailWelcomeCard
-                  className="h-full"
-                  creatorName={fields.name}
-                  title={fields.name}
-                  description={fields.description}
-                  websiteUrl="www.culturecrave.com"
-                  highlight={null}
-                  closing={null}
-                  readerCount="186"
-                  onlineCount="12"
-                  primaryLabel="Join the community"
-                />
+                <div className="flex w-80 flex-col gap-4">
+                  <RightRailWelcomeCard
+                    creatorName={fields.name}
+                    title={fields.name}
+                    description={fields.description}
+                    websiteUrl="www.culturecrave.com"
+                    highlight={null}
+                    closing={null}
+                    readerCount="186"
+                    onlineCount="12"
+                    primaryLabel="Join the community"
+                  />
+
+                  <div className="space-y-1 px-2 text-left">
+                    <p className="text-sm font-bold leading-5 tracking-sm text-text">
+                      Join module
+                    </p>
+                    <p className="text-sm leading-5 tracking-sm text-text-secondary">
+                      Introduces the community and gives fan a first action
+                    </p>
+                  </div>
+                </div>
 
                 <div className="grid min-w-0 gap-4">
                   <CommunityCreatorDiscoverCard
@@ -199,6 +209,14 @@ export function CompactWysiwygStudio({
                     ctaLabel="Explore community"
                     onExplore={() => {}}
                   />
+                  <div className="space-y-1 px-2 text-left">
+                    <p className="text-sm font-bold leading-5 tracking-sm text-text">
+                      Discovery Card
+                    </p>
+                    <p className="text-sm leading-5 tracking-sm text-text-secondary">
+                      Show how fans may find this community while browsing
+                    </p>
+                  </div>
                   <CommunityAnswersCard
                     authorName="Culture Crave"
                     communityName={fields.name}
@@ -209,6 +227,14 @@ export function CompactWysiwygStudio({
                     onAnswer={() => {}}
                     onViewAnswers={() => {}}
                   />
+                  <div className="space-y-1 px-2 text-left">
+                    <p className="text-sm font-bold leading-5 tracking-sm text-text">
+                      Starter Prompt
+                    </p>
+                    <p className="text-sm leading-5 tracking-sm text-text-secondary">
+                      Seeds the first conversation with a clear question
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

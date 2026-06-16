@@ -14,8 +14,6 @@ export function VerificationStep({
   methods = [],
   selectedMethod = null,
   onSelectMethod,
-  confirmed = false,
-  onConfirmChange,
   termsAccepted = false,
   onTermsAcceptedChange,
   reassurance = [],
@@ -26,8 +24,7 @@ export function VerificationStep({
   fallbackMessage = null,
   verifiedHandle = '@culturecrave',
   illustrationFrameClassName = null,
-  disabledHelperText = 'Select a verification method and agree to the Community Terms to continue.',
-  requireControlConfirmation = !simplified,
+  disabledHelperText = 'Select a verification method and accept Raptive’s Creator Agreement to continue.',
   alreadyVerified = false,
   alreadyVerifiedTitle = "You're already verified!",
   alreadyVerifiedDescription = 'We found this creator on our known leads list, so you can skip the channel verification step.',
@@ -42,7 +39,6 @@ export function VerificationStep({
   const primaryDisabled = (
     hasNoMethodOptions
     || (needsMethodSelection && !selectedMethod)
-    || (!alreadyVerified && requireControlConfirmation && !confirmed)
     || !termsAccepted
     || primaryAction.disabled
   )
@@ -199,28 +195,19 @@ export function VerificationStep({
             )}
 
               <div className="grid gap-3">
-                {!alreadyVerified && requireControlConfirmation ? (
-                  <Checkbox
-                    checked={confirmed}
-                    onChange={(event) => onConfirmChange?.(event.target.checked)}
-                    variant="plain"
-                    label="I control this creator account and want to continue with verification."
-                    description="This keeps the last step feeling intentional without adding a long security ceremony."
-                  />
-                ) : null}
                 <Checkbox
                   checked={termsAccepted}
                   onChange={() => setTermsModalOpen(true)}
                   variant="plain"
                   label={simplified ? (
                     <>
-                      I agree to the{' '}
-                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>.
+                      I have read and accept{' '}
+                      <span className="font-bold text-action-primary underline underline-offset-2">Raptive’s Creator Agreement</span>
                     </>
                   ) : (
                     <>
-                      I agree to the{' '}
-                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
+                      I have read and accept{' '}
+                      <span className="font-bold text-action-primary underline underline-offset-2">Raptive’s Creator Agreement</span>
                     </>
                   )}
                 />
@@ -238,7 +225,7 @@ export function VerificationStep({
                   {simplified && primaryDisabled ? (
                     <p className="max-w-sm text-sm leading-relaxed text-text-secondary">
                       {alreadyVerified
-                        ? 'Agree to the Community Terms to continue.'
+                        ? 'Accept Raptive’s Creator Agreement to continue.'
                         : disabledHelperText}
                     </p>
                   ) : null}

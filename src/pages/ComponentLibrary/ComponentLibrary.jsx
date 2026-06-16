@@ -2394,8 +2394,8 @@ export function ComponentLibrary() {
                             variant="plain"
                             label={(
                               <>
-                                I agree to the{' '}
-                                <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
+                                I have read and accept{' '}
+                                <span className="font-bold text-action-primary underline underline-offset-2">Raptive’s Creator Agreement</span>
                               </>
                             )}
                           />
@@ -2600,8 +2600,6 @@ export function ComponentLibrary() {
                 ]}
                 selectedMethod={previewPatternCtaSuccess ? 'meta-login' : verificationMethod}
                 onSelectMethod={handleVerificationMethodChange}
-                confirmed={previewPatternCtaSuccess || verificationConfirmed}
-                onConfirmChange={setVerificationConfirmed}
                 termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
                 onTermsAcceptedChange={setVerificationTermsAccepted}
                 showAside={false}
@@ -2671,7 +2669,6 @@ export function ComponentLibrary() {
                 description="We found this creator on our known leads list."
                 methods={[]}
                 selectedMethod={null}
-                confirmed
                 termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
                 onTermsAcceptedChange={setVerificationTermsAccepted}
                 alreadyVerified
@@ -2728,8 +2725,6 @@ export function ComponentLibrary() {
               onPreviewPatternCtaSuccessChange={setPreviewPatternCtaSuccess}
               verificationMethod={verificationMethod}
               onVerificationMethodChange={handleVerificationMethodChange}
-              verificationConfirmed={verificationConfirmed}
-              onVerificationConfirmedChange={setVerificationConfirmed}
               verificationTermsAccepted={verificationTermsAccepted}
               onVerificationTermsAcceptedChange={setVerificationTermsAccepted}
             />
