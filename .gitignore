@@ -6,5 +6,6 @@ dist/
 .env.*
 .vercel
 .playwright-mcp/
+.worktrees/
 NEXT_SESSION.md
 developer_lens.md
