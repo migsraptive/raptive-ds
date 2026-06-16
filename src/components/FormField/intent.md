@@ -38,6 +38,11 @@ Forms collect, validate, confirm, or refine creator-provided information through
 - Consumers may arrange fields in a layout but may not target or restyle field internals.
 - Pair validation with clear text feedback, not color alone.
 - Use existing form primitives inside patterns before creating new controls.
+- Form primitives render traceability metadata such as `data-ds-component`,
+  `data-ds-variant`, and `data-ds-size` on the interactive control or control
+  wrapper they own.
+- Prototype-only form controls should map back to the closest existing form
+  primitive and documented variant with `data-ds-*` attributes.
 
 ## Escalate When
 
@@ -46,3 +51,5 @@ Forms collect, validate, confirm, or refine creator-provided information through
 - A consuming surface needs to alter internal control structure or state styling.
 - Labels, helper text, error feedback, or accessibility relationships are unclear.
 - A repeated form pattern appears across flows and may need a named composite pattern.
+- A rendered prototype control cannot be traced to an existing form primitive or
+  documented variant.

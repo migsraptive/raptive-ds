@@ -33,6 +33,9 @@ Josh owns the engineering translation constraints in the Community monolith. The
 ## What Belongs Here
 
 - Component specs that define purpose, anatomy, variants, states, content rules, token intent, and accessibility requirements.
+- Component specs should also define rendered traceability metadata, including
+  `data-ds-component`, `data-ds-variant`, `data-ds-size`, and any allowed
+  flow-level correlation attributes.
 - Pattern specs that define multi-component user flows such as the creator application.
 - Canonical token language used when talking across React, Figma, and Community.
 - Design decisions that explain why the translation lane exists.
@@ -44,6 +47,7 @@ Josh owns the engineering translation constraints in the Community monolith. The
 - Discourse plugin ownership decisions.
 - Generated monolith code.
 - Tailwind classes as a handoff contract.
+- `data-ds-*` attributes as styling hooks.
 - One-off notes that only matter to a single implementation task.
 
 ## Current Pilot

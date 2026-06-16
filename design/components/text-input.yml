@@ -121,6 +121,18 @@ pass_through_props:
     - overriding visual internals
     - replacing documented variants
     - adding undocumented styling hooks
+traceability:
+  control:
+    data-ds-component: TextInput
+    data-ds-variant: default
+    data-ds-size: md
+  static_contract:
+    variants: [default]
+    sizes: [md]
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
 content_guidelines:
   - Placeholder text may give an example but must not replace the label.
   - Error text should be specific and recoverable.

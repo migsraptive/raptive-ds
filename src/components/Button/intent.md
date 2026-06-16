@@ -53,6 +53,11 @@ surface, or starting a process.
   meaningful product or design distinction.
 - Consumers may position a Button from the outside, but may not style its
   internals.
+- Button renders its own traceability identity with `data-ds-component="Button"`,
+  the selected `data-ds-variant`, and the selected `data-ds-size`.
+- Flow screens may add `data-ds-role` or `data-ds-instance` to clarify the
+  button's job in an organism, but those attributes do not change the Button
+  variant.
 
 ## Escalate When
 
@@ -62,3 +67,4 @@ surface, or starting a process.
 - A requested style change is cosmetic rather than semantic.
 - The action behaves like navigation, selection, or disclosure instead of a
   button action.
+- A prototype button cannot be mapped back to an existing Button variant.

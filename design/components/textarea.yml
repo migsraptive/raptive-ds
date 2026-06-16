@@ -101,6 +101,18 @@ pass_through_props:
     - overriding visual internals
     - replacing documented variants
     - adding undocumented styling hooks
+traceability:
+  control:
+    data-ds-component: Textarea
+    data-ds-variant: default
+    data-ds-size: md
+  static_contract:
+    variants: [default]
+    sizes: [md]
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
 content_guidelines:
   - Label the kind of response needed, not the input type.
   - Helper text should clarify format, length, or examples when needed.

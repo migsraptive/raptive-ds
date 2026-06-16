@@ -55,6 +55,18 @@ src/
 - All patterns accept `showAside` prop to toggle design guidance panel
 - Tokens are the source of truth — never hardcode colors, spacing, or type values
 - Reuse existing components before creating new ones
+- Base components stamp their rendered identity with stable traceability
+  attributes such as `data-ds-component`, `data-ds-variant`, and
+  `data-ds-size`. These attributes are for design review, QA, and automation;
+  never use them as styling hooks.
+- Component variant and size names should come from static lists exported by
+  the base component when those values are part of the public contract.
+- Patterns, prototypes, and larger organisms may add correlation metadata such
+  as `data-ds-role` or `data-ds-instance` through pass-through props, but the
+  base component identity must remain owned by the component itself.
+- If an organism reimplements a control shape for a prototype, map it back to
+  the closest base component with `data-ds-component` and an existing
+  `data-ds-variant`; do not invent new trace variants or duplicate DOM ids.
 - When copy includes a URL in parentheses immediately after linked text, link the preceding text with that URL and do not show the parenthesized URL. When copy includes a standalone URL that is not inside parentheses, render the full URL itself as the visible link text. Standalone email addresses should also render as visible email-address links using `mailto:`.
 
 ## Verification

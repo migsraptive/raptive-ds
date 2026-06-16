@@ -37,8 +37,15 @@ design-system terms.
 
 - List constraints that help agents choose and compose the component or token
   family correctly.
+- For components, describe the traceability contract at a semantic level:
+  whether the rendered component stamps `data-ds-component`,
+  `data-ds-variant`, `data-ds-size`, or other stable review metadata.
+- Do not describe traceability attributes as styling hooks or expose internal
+  DOM structure as part of the contract.
 
 ## Escalate When
 
 - List the moments when an agent should ask a question or flag design/system
   review instead of guessing.
+- Include cases where an organism cannot map a rendered prototype control back
+  to an existing base component or documented variant.

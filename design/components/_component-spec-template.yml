@@ -59,6 +59,19 @@ props:
     required: false
     default: null
     description: Public behavior or content input.
+traceability:
+  root:
+    data-ds-component: ComponentName
+    data-ds-variant: variant_name
+    data-ds-size: md
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
+    guidance: >
+      Flow-level attributes may identify how the component is used in an
+      organism, but they must not replace documented variants or become styling
+      hooks.
 content_guidelines:
   - Keep labels concise.
 token_intent:

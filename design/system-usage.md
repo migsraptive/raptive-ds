@@ -32,6 +32,16 @@ When building something new:
 - Prefer editable previews over disconnected form-only screens when the user benefits from immediate feedback.
 - Archive displaced concepts instead of deleting them when they may still be useful references.
 - Do not hand-roll native `button`, `input`, `textarea`, or `select` controls inside patterns. Promote new interactive controls to `src/components` first, add them to the component library, and then compose them from patterns.
+- Preserve component traceability in prototypes and organisms. Base components
+  should render `data-ds-component`, `data-ds-variant`, and size when
+  applicable. Flow screens may add `data-ds-role` and `data-ds-instance` to
+  identify how that base component is being used.
+- Treat traceability attributes as review and automation metadata, not styling
+  hooks. Do not create trace-only variants or duplicate DOM ids for component
+  correlation.
+- If a prototype temporarily reimplements a control shape, map it back to the
+  closest existing base component and variant with `data-ds-*` attributes. If
+  the mapping is unclear, flag the gap instead of guessing.
 - Treat detected brand colors as inputs that must be validated before use. The first usable detected color becomes the primary action color, the second becomes the secondary action color, and both must compute black or white foreground text that passes WCAG AA contrast.
 - Bound media rails in review surfaces. Production creator-flow screens may use full-height illustration rails, but Component Library pattern examples are stacked review cards and should pass a bounded frame class, such as `illustrationFrameClassName="h-96"`, or use an explicit aspect ratio. Do not let `h-full` side rails inherit the full content height of a long review card.
 

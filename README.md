@@ -163,6 +163,48 @@ High-priority primitives include:
 - `SocialUrlInput`
 - `StepIndicator`
 
+### Component Traceability
+
+Rendered components stamp stable `data-ds-*` attributes so prototypes and larger
+organisms can be inspected without reverse-engineering CSS class strings.
+
+Base component identity is owned by the component itself:
+
+```html
+<button
+  data-ds-component="Button"
+  data-ds-variant="primary"
+  data-ds-size="md"
+>
+  Continue
+</button>
+```
+
+Patterns and flow screens may add correlation metadata:
+
+```jsx
+<Button
+  variant="primary"
+  data-ds-role="primary-action"
+  data-ds-instance="creator-application.verification.primary"
+>
+  Submit application
+</Button>
+```
+
+Use the attributes this way:
+
+- `data-ds-component`: base component or closest mapped base component.
+- `data-ds-variant`: existing component variant from the static component
+  contract.
+- `data-ds-size`: existing component size when size is part of the public
+  contract.
+- `data-ds-role`: the component's job inside a flow or organism.
+- `data-ds-instance`: stable correlation point for a specific flow location.
+
+Do not use `data-ds-*` attributes for styling. Do not create trace-only variants.
+Do not use duplicate DOM ids such as `id="primary"` for component correlation.
+
 Community/feed components include:
 
 - `AuthorRow`
@@ -254,6 +296,11 @@ accessibility rules, and translation notes.
 Contracts should not expose fixed internals such as spacing, radius, typography,
 or Tailwind classes as consumer choices. Treat components as black boxes unless
 a named variant is needed.
+
+Component traceability is part of the rendered contract but not a styling API.
+When a component exposes variants or sizes, keep its static variant/size list,
+rendered `data-ds-*` attributes, Component Library examples, and intent docs in
+sync.
 
 ## Design Documentation
 

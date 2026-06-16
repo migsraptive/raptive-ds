@@ -167,6 +167,22 @@ pass_through_props:
     - overriding visual internals
     - replacing documented variants
     - adding undocumented styling hooks
+traceability:
+  root:
+    data-ds-component: Button
+    data-ds-variant: variant
+    data-ds-size: size
+  static_contract:
+    variants: [primary, secondary, ghost, danger, black, link, previewBrand, previewAccent]
+    sizes: [xs, sm, md, lg]
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
+    guidance: >
+      Use role and instance metadata to describe the Button's job in an
+      organism, such as primary-action or creator-application.verify.primary.
+      These values do not change the Button variant.
 content_guidelines:
   - Use concise verb phrases.
   - Prefer the user's outcome over implementation language.

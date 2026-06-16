@@ -121,6 +121,20 @@ props:
     default: ''
     governance: restricted_compatibility_escape_hatch
     description: Present in the React implementation but not a consumer styling contract.
+traceability:
+  root:
+    data-ds-component: Badge
+    data-ds-variant: variant
+    data-ds-size: size
+  static_contract:
+    variants: [default, brand, success, warning, error, info, gold, purple, outline]
+    sizes: [xs, sm, md]
+  internal_affordances:
+    remove_button:
+      data-ds-component: Button
+      data-ds-variant: ghost
+      data-ds-size: xs
+      data-ds-role: badge-remove
 content_guidelines:
   - Use one to three words where possible.
   - Prefer sentence case unless the label is a proper name or product term.

@@ -107,6 +107,20 @@ props:
     default: ''
     governance: restricted_compatibility_escape_hatch
     description: Present in the React implementation but not a consumer styling contract.
+traceability:
+  root:
+    data-ds-component: OptionTile
+    data-ds-variant: selectionStyle
+    data-ds-size: md
+    data-ds-selection-mode: multiSelect
+  static_contract:
+    variants: [check, radio]
+    sizes: [md]
+    selection_modes: [single, multiple]
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
 content_guidelines:
   - Titles should be short and scannable.
   - Descriptions should clarify why a user would choose the option.

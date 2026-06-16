@@ -19,6 +19,7 @@ Use these files as the design-system source map:
 | Token intent docs | `src/tokens/*.intent.md` | Selection guidance for token families without duplicating fixed token values. |
 | Component contracts | `design/components/*.yml` | Machine-readable component contract metadata aligned to the same black-box governance rules. |
 | Rendered review surface | `src/pages/ComponentLibrary/ComponentLibrary.jsx` | Internal design review surface that renders examples and colocated intent guidance. |
+| Traceability markers | rendered `data-ds-*` attributes | Stable component, variant, size, role, and instance metadata for design review, QA, and automation. |
 
 ## Current Intent Docs
 
@@ -46,6 +47,8 @@ families.
 - Components are black boxes.
 - Agents should read intent docs first, then code only when implementation
   details are needed.
+- Base components own rendered traceability attributes such as
+  `data-ds-component`, `data-ds-variant`, and `data-ds-size`.
 - Design tokens and fixed styling values should not be exposed as
   consumer-facing contract options.
 - If visual variation is needed, prefer a named semantic variant over token
@@ -69,6 +72,35 @@ Compatibility props should be documented as restricted when they exist:
 Restricted compatibility props are not a substitute for semantic variants. If a
 consumer needs a visual difference that changes product meaning, propose a named
 variant for design-system review.
+
+## Traceability Model
+
+Traceability attributes make the rendered prototype inspectable without turning
+CSS class names, DOM ids, or internal markup into the contract.
+
+Base components should stamp their own identity:
+
+- `data-ds-component`: component name, such as `Button`.
+- `data-ds-variant`: existing semantic variant, such as `primary`.
+- `data-ds-size`: existing size when size is a public contract value.
+
+Patterns, prototypes, and larger organisms may add correlation metadata:
+
+- `data-ds-role`: the component's job inside a flow, such as `primary-action`.
+- `data-ds-instance`: a stable flow location, such as
+  `creator-application.gather.primary`.
+
+Traceability does not create a new styling surface:
+
+- Do not target `data-ds-*` attributes with CSS.
+- Do not invent trace-only variants.
+- Do not override component internals to make trace markers work.
+- Do not use duplicate DOM ids for correlation.
+
+When an organism reimplements a control shape for prototype speed, the rendered
+control must map back to the closest base component and existing variant. If no
+base component or variant is close enough, flag the gap for design-system review
+instead of minting a new trace value.
 
 ## Documentation Responsibilities
 
@@ -117,6 +149,7 @@ YAML contracts answer machine-readable contract questions:
 - Which compatibility props exist but should not be treated as styling
   contract options.
 - Which governance warnings should be surfaced to agents.
+- Which traceability values should appear in rendered prototype output.
 
 ## Component Library Rendering
 
@@ -125,6 +158,8 @@ It should show examples and intent guidance together:
 
 - Buttons use a component intent rail beside action, composition, size, and state
   examples.
+- Buttons also include the Traceability Contract table so reviewers can see the
+  current component, variant, and size markers in one place.
 - Forms split intent guidance by proximity: decision guidance first, control
   families beside text fields, usage rules beside field and selection controls,
   and escalation guidance beside brand and choice patterns.

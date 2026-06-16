@@ -70,6 +70,28 @@ agents must treat them as restricted:
 - Pass-through props may support accessibility, form behavior, ids, and data
   attributes, but must not replace documented variants or target internals.
 
+### Component Traceability
+
+Rendered prototypes and organisms must expose component identity outside of CSS
+classes so designers, engineers, QA, and automation can correlate what appears
+on screen with the base design-system primitive.
+
+- Base components own their own trace identity with stable attributes such as
+  `data-ds-component`, `data-ds-variant`, and `data-ds-size`.
+- Variant and size values must come from the component's documented/static
+  contract. Do not invent trace-only variants.
+- Patterns, prototypes, and larger organisms may add correlation metadata such
+  as `data-ds-role` or `data-ds-instance` through pass-through props.
+- `data-ds-role` describes the job in the flow, such as `primary-action` or
+  `secondary-action`; it must not replace the base component variant.
+- `data-ds-instance` may identify a stable flow location, such as
+  `creator-application.verification.primary`.
+- Reimplemented prototype controls must map back to the closest base component
+  with `data-ds-component` and an existing `data-ds-variant`.
+- Do not use DOM ids such as `id="primary"` for traceability. IDs must remain
+  unique and tied to accessibility, forms, anchors, or native behavior.
+- Do not use traceability attributes as CSS styling hooks.
+
 ### Component Update Log
 
 Use this table to track proposed additions before changing component APIs or
@@ -146,6 +168,11 @@ src/
 - Reuse existing components before creating new ones
 - When adding or changing a component or variant, update `ComponentLibrary` examples and docs in the same task.
 - Patterns should compose `src/components` primitives; do not hand-roll native `button`, `input`, `textarea`, or `select` controls inside patterns. If a pattern needs a new interactive control, add it to `src/components` first and document it in the component library.
+- When adding or changing a base component variant or size, update the
+  component-owned static variant/size list and the Component Library
+  Traceability Contract in the same task.
+- When adding a prototype or organism action, add `data-ds-role` and, when the
+  flow location needs stable correlation, `data-ds-instance`.
 - When copy includes a URL in parentheses immediately after linked text, link the preceding text with that URL and do not show the parenthesized URL. When copy includes a standalone URL that is not inside parentheses, render the full URL itself as the visible link text. Standalone email addresses should also render as visible email-address links using `mailto:`.
 - Detected brand palettes must be accessibility-gated: first usable color maps to primary action, second usable color maps to secondary action, and text on those colors must use computed black/white foreground contrast.
 - Detected and demo brand preview defaults must live in `src/utils/brandPreviewDefaults.js`, never defined locally in component files.

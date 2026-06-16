@@ -18,7 +18,7 @@ do_not_use_for:
 agent_rules:
   - Prefer Checkbox over native checkbox in patterns.
   - Use the card variant when the label and description need a clear touch target.
-  - Use the bare variant only when the surrounding layout already provides structure.
+  - Use the plain variant only when the surrounding layout already provides structure.
   - Do not hide critical consent details in description text alone.
 governance:
   component_contract:
@@ -53,7 +53,7 @@ variants:
   card:
     description: Framed checkbox row with a larger touch target.
     intent: structured_binary_choice
-  bare:
+  plain:
     description: Minimal checkbox row for compact layouts.
     intent: inline_binary_choice
 states:
@@ -88,13 +88,25 @@ props:
     default: null
   variant:
     type: enum
-    values: [card, bare]
+    values: [card, plain]
     default: card
   className:
     type: string
     default: ''
     governance: restricted_compatibility_escape_hatch
     description: Present in the React implementation but not a consumer styling contract.
+traceability:
+  root:
+    data-ds-component: Checkbox
+    data-ds-variant: variant
+    data-ds-size: md
+  static_contract:
+    variants: [card, plain]
+    sizes: [md]
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
 content_guidelines:
   - Write labels as the selected state when possible.
   - Keep descriptions short and explanatory.

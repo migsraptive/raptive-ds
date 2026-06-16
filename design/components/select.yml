@@ -113,6 +113,18 @@ pass_through_props:
     - overriding visual internals
     - replacing documented variants
     - adding undocumented styling hooks
+traceability:
+  control:
+    data-ds-component: Select
+    data-ds-variant: default
+    data-ds-size: md
+  static_contract:
+    variants: [default]
+    sizes: [md]
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
 content_guidelines:
   - Use short option labels.
   - Placeholder should prompt selection, not describe the entire field.
