@@ -2,6 +2,8 @@ import { useRef } from 'react'
 import { Trash2, Upload } from 'lucide-react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
+export const avatarUploadVariants = Object.freeze(['dropzone', 'button'])
+
 export function AvatarUpload({
   label = 'Avatar',
   uploadLabel = 'Click to upload avatar',
@@ -35,7 +37,11 @@ export function AvatarUpload({
   }
 
   return (
-    <div className={['space-y-2', className].filter(Boolean).join(' ')}>
+    <div
+      className={['space-y-2', className].filter(Boolean).join(' ')}
+      data-ds-component="AvatarUpload"
+      data-ds-variant={layout}
+    >
       {label && <p className="text-sm font-medium text-text-secondary">{label}</p>}
       {layout === 'button' ? (
         <div className="flex items-center gap-2">
@@ -45,6 +51,7 @@ export function AvatarUpload({
             accept="image/*"
             className="sr-only"
             onChange={handleFileChange}
+            data-ds-element="AvatarUploadInput"
           />
           {hasUploadedAsset ? (
             <>
@@ -53,6 +60,8 @@ export function AvatarUpload({
                   src={value}
                   alt={`${previewLabel} circle preview`}
                   className="h-9 w-9 rounded-full border border-border object-cover"
+                  data-ds-element="AvatarUploadPreview"
+                  data-ds-variant="circle"
                 />
               ) : null}
               {previewShape === 'both' || previewShape === 'rectangle' ? (
@@ -60,6 +69,8 @@ export function AvatarUpload({
                   src={value}
                   alt={`${previewLabel} rectangle preview`}
                   className="h-9 w-12 rounded-lg border border-border object-cover"
+                  data-ds-element="AvatarUploadPreview"
+                  data-ds-variant="rectangle"
                 />
               ) : null}
               {previewShape === 'both' || previewShape === 'square' ? (
@@ -67,6 +78,8 @@ export function AvatarUpload({
                   src={value}
                   alt={`${previewLabel} square preview`}
                   className="h-9 w-9 rounded-lg border border-border object-cover"
+                  data-ds-element="AvatarUploadPreview"
+                  data-ds-variant="square"
                 />
               ) : null}
               <button
@@ -74,6 +87,10 @@ export function AvatarUpload({
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-text-secondary shadow-xs transition-colors duration-150 hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                 aria-label={`Delete ${previewLabel}`}
                 onClick={handleDeleteAsset}
+                data-ds-component="Button"
+                data-ds-variant="secondary"
+                data-ds-size="sm"
+                data-ds-role="avatar-upload-delete"
               >
                 <span className="paired-label-icon text-sm leading-sm">
                   <LucideIcon icon={Trash2} size="sm" />
@@ -85,6 +102,10 @@ export function AvatarUpload({
               type="button"
               className="inline-flex h-9 items-center gap-2 rounded-full border border-border bg-surface px-3 text-sm font-medium text-text-secondary shadow-xs transition-colors duration-150 hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
               onClick={() => fileInputRef.current?.click()}
+              data-ds-component="Button"
+              data-ds-variant="secondary"
+              data-ds-size="sm"
+              data-ds-role="avatar-upload-trigger"
             >
               <span className="paired-label-icon text-sm leading-sm">
                 <LucideIcon icon={Upload} size="sm" />
@@ -94,12 +115,16 @@ export function AvatarUpload({
           )}
         </div>
       ) : (
-        <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border-strong bg-surface-raised px-4 py-5 text-center transition-colors duration-150 hover:bg-surface-sunken">
+        <label
+          className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border-strong bg-surface-raised px-4 py-5 text-center transition-colors duration-150 hover:bg-surface-sunken"
+          data-ds-element="AvatarUploadDropzone"
+        >
           <input
             type="file"
             accept="image/*"
             className="sr-only"
             onChange={handleFileChange}
+            data-ds-element="AvatarUploadInput"
           />
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary shadow-xs">
             <LucideIcon icon={Upload} size="md" />
@@ -115,6 +140,8 @@ export function AvatarUpload({
               src={value}
               alt={`${previewLabel} circle preview`}
               className="h-12 w-12 rounded-full border border-border object-cover"
+              data-ds-element="AvatarUploadPreview"
+              data-ds-variant="circle"
             />
           ) : null}
           {previewShape === 'both' || previewShape === 'rectangle' ? (
@@ -122,6 +149,8 @@ export function AvatarUpload({
               src={value}
               alt={`${previewLabel} rectangle preview`}
               className="h-12 w-16 rounded-lg border border-border object-cover"
+              data-ds-element="AvatarUploadPreview"
+              data-ds-variant="rectangle"
             />
           ) : null}
           {previewShape === 'both' || previewShape === 'square' ? (
@@ -129,6 +158,8 @@ export function AvatarUpload({
               src={value}
               alt={`${previewLabel} square preview`}
               className="h-12 w-12 rounded-lg border border-border object-cover"
+              data-ds-element="AvatarUploadPreview"
+              data-ds-variant="square"
             />
           ) : null}
         </div>

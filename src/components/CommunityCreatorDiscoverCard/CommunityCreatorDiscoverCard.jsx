@@ -2,6 +2,8 @@ import { Button } from '../Button/Button.jsx'
 import { Avatar } from '../Avatar/Avatar.jsx'
 import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
+export const communityCreatorDiscoverCardVariants = Object.freeze(['preview'])
+
 export function CommunityCreatorDiscoverCard({
   name,
   activeMembersLabel = '12 active members',
@@ -29,6 +31,8 @@ export function CommunityCreatorDiscoverCard({
         className,
       ].join(' ')}
       style={mergedStyle}
+      data-ds-component="CommunityCreatorDiscoverCard"
+      data-ds-variant="preview"
     >
       <Avatar
         src={avatarSrc}
@@ -55,6 +59,7 @@ export function CommunityCreatorDiscoverCard({
           size="sm"
           variant="previewBrand"
           onClick={onExplore}
+          data-ds-role="preview-primary-action"
         >
           {ctaLabel}
         </Button>

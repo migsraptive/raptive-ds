@@ -12,6 +12,9 @@ const baseSelectClassName = [
   'disabled:cursor-not-allowed disabled:text-text-disabled',
 ].join(' ')
 
+export const selectVariants = Object.freeze(['default'])
+export const selectSizes = Object.freeze(['md'])
+
 export const Select = forwardRef(function Select(
   {
     id,
@@ -43,6 +46,9 @@ export const Select = forwardRef(function Select(
             selectClassName,
           ].filter(Boolean).join(' ')}
           {...props}
+          data-ds-component="Select"
+          data-ds-variant="default"
+          data-ds-size="md"
         >
           {placeholder && (
             <option value="" disabled>

@@ -10,6 +10,19 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
  * Success icons are caller-provided with successIcon so labels can choose the right pairing.
  */
 
+export const buttonVariants = Object.freeze([
+  'primary',
+  'secondary',
+  'ghost',
+  'danger',
+  'black',
+  'link',
+  'previewBrand',
+  'previewAccent',
+])
+
+export const buttonSizes = Object.freeze(['xs', 'sm', 'md', 'lg'])
+
 const variants = {
   primary: [
     'bg-action-primary text-white',
@@ -141,6 +154,9 @@ export function Button({
       }}
       transition={{ duration: scaleDuration, ease: [0.22, 1, 0.36, 1] }}
       {...props}
+      data-ds-component="Button"
+      data-ds-variant={variant}
+      data-ds-size={size}
     >
       {success && successOverlay && (
         <motion.span

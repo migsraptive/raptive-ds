@@ -3,10 +3,24 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
 /**
  * Badge
- * Variants: default | success | warning | error | info | gold | purple | outline
+ * Variants: default | brand | success | warning | error | info | gold | purple | outline
  * Sizes: xs | sm | md
  * Optional dot indicator, icon, and removable affordance
  */
+
+export const badgeVariants = Object.freeze([
+  'default',
+  'brand',
+  'success',
+  'warning',
+  'error',
+  'info',
+  'gold',
+  'purple',
+  'outline',
+])
+
+export const badgeSizes = Object.freeze(['xs', 'sm', 'md'])
 
 const variants = {
   default: 'bg-surface-sunken text-text-secondary border border-border',
@@ -55,6 +69,9 @@ export function Badge({
         sizes[size],
         className,
       ].join(' ')}
+      data-ds-component="Badge"
+      data-ds-variant={variant}
+      data-ds-size={size}
     >
       {dot && (
         <span
@@ -70,6 +87,10 @@ export function Badge({
           onClick={onRemove}
           className="flex-shrink-0 ml-0.5 -mr-0.5 w-3.5 h-3.5 rounded-full opacity-60 hover:opacity-100 hover:bg-black/10 flex items-center justify-center transition-opacity"
           aria-label="Remove"
+          data-ds-component="Button"
+          data-ds-variant="ghost"
+          data-ds-size="xs"
+          data-ds-role="badge-remove"
         >
           <LucideIcon icon={X} size="xs" />
         </button>

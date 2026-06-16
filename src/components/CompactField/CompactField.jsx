@@ -9,6 +9,9 @@ const controlClassName = [
   'outline-none focus:outline-none focus-visible:ring-0',
 ].join(' ')
 
+export const compactFieldVariants = Object.freeze(['text', 'select', 'textarea'])
+export const compactFieldSizes = Object.freeze(['sm'])
+
 export function CompactField({
   label,
   value,
@@ -35,6 +38,9 @@ export function CompactField({
         'grid grid-cols-[92px_minmax(0,1fr)] items-start gap-x-3 gap-y-2',
         className,
       ].filter(Boolean).join(' ')}
+      data-ds-component="CompactField"
+      data-ds-variant={type}
+      data-ds-size="sm"
     >
       {/* no token available: compact editor labels use a fixed rail to keep fields aligned. */}
       <label
@@ -54,6 +60,9 @@ export function CompactField({
             onChange={(event) => onChange?.(event.target.value)}
             className={[controlClassName, 'resize-none'].join(' ')}
             aria-describedby={helperId}
+            data-ds-component="CompactFieldControl"
+            data-ds-variant="textarea"
+            data-ds-size="sm"
           />
         ) : type === 'select' ? (
           <div className="flex items-center gap-2">
@@ -63,6 +72,9 @@ export function CompactField({
               onChange={(event) => onChange?.(event.target.value)}
               className={controlClassName}
               aria-describedby={helperId}
+              data-ds-component="CompactFieldControl"
+              data-ds-variant="select"
+              data-ds-size="sm"
             >
               {options.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -83,6 +95,9 @@ export function CompactField({
             onChange={(event) => onChange?.(event.target.value)}
             className={controlClassName}
             aria-describedby={helperId}
+            data-ds-component="CompactFieldControl"
+            data-ds-variant="text"
+            data-ds-size="sm"
           />
         )}
       </div>

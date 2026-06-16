@@ -507,7 +507,12 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
       {standalone ? (
         <header className="border-b border-border bg-surface">
           <div className="mx-auto flex max-w-6xl items-center gap-4 px-6 py-4">
-            <a href="https://raptive.com/community/creators/" aria-label="Raptive Community">
+            <a
+              href="https://raptive.com/community/creators/"
+              aria-label="Raptive Community"
+              data-ds-element="BrandLogoLink"
+              data-ds-role="brand-home-link"
+            >
               <BrandLogo size="md" />
             </a>
           </div>
@@ -515,7 +520,15 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
       ) : null}
       <main className="mx-auto max-w-6xl px-6 py-4">
         <div className="mb-4 flex justify-end">
-          <Button size="sm" variant="ghost" onClick={onOpenLibrary}>Component library</Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onOpenLibrary}
+            data-ds-role="navigation-action"
+            data-ds-instance="creator-application.open-component-library"
+          >
+            Component library
+          </Button>
         </div>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div

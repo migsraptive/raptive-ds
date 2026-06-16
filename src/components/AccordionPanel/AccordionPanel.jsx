@@ -3,6 +3,8 @@ import { ChevronDown } from 'lucide-react'
 import { useReducedMotion } from 'motion/react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
+export const accordionPanelVariants = Object.freeze(['toggleable', 'static'])
+
 export function AccordionPanel({
   icon,
   label,
@@ -22,7 +24,12 @@ export function AccordionPanel({
   const HeaderElement = toggleable ? 'button' : 'div'
 
   return (
-    <div className="bg-surface">
+    <div
+      className="bg-surface"
+      data-ds-component="AccordionPanel"
+      data-ds-variant={toggleable ? 'toggleable' : 'static'}
+      data-ds-state={open ? 'open' : 'closed'}
+    >
       <HeaderElement
         {...(toggleable ? {
           type: 'button',
@@ -30,6 +37,7 @@ export function AccordionPanel({
           'aria-controls': panelId,
           onClick: onToggle,
         } : {})}
+        data-ds-element="AccordionPanelHeader"
         className={[
           'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150',
           toggleable ? 'hover:bg-surface-sunken' : '',

@@ -28,27 +28,27 @@ import wonderVideoUrl from '../../assets/data-gathering-wonder.mp4'
 import singleFieldIntakeIllustrationUrl from '../../assets/single-field-intake-illustration.png'
 import submissionIllustrationUrl from '../../assets/submission-illustration.png'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
-import { Button } from '../../components/Button/Button.jsx'
-import { Badge } from '../../components/Badge/Badge.jsx'
+import { Button, buttonSizes, buttonVariants } from '../../components/Button/Button.jsx'
+import { Badge, badgeSizes, badgeVariants } from '../../components/Badge/Badge.jsx'
 import { AccordionPanelGroup } from '../../components/AccordionPanelGroup/AccordionPanelGroup.jsx'
 import { Avatar, AvatarGroup } from '../../components/Avatar/Avatar.jsx'
 import { AvatarUpload } from '../../components/AvatarUpload/AvatarUpload.jsx'
-import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
+import { Checkbox, checkboxVariants } from '../../components/Checkbox/Checkbox.jsx'
 import { ColorInput } from '../../components/ColorInput/ColorInput.jsx'
 import { ColorSwatchButton } from '../../components/ColorSwatchButton/ColorSwatchButton.jsx'
 import { CompactField } from '../../components/CompactField/CompactField.jsx'
 import { FieldShell } from '../../components/FormField/FieldShell.jsx'
 import { FormField } from '../../components/FormField/FormField.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
-import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
+import { OptionTile, optionTileVariants } from '../../components/OptionTile/OptionTile.jsx'
 import { RadioGroup } from '../../components/RadioGroup/RadioGroup.jsx'
-import { Select } from '../../components/Select/Select.jsx'
+import { Select, selectVariants } from '../../components/Select/Select.jsx'
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { getDetectedSocialAccountHelperText, SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
 import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
 import { TextLink } from '../../components/TextLink/TextLink.jsx'
-import { Textarea } from '../../components/Textarea/Textarea.jsx'
-import { TextInput } from '../../components/TextInput/TextInput.jsx'
+import { Textarea, textareaVariants } from '../../components/Textarea/Textarea.jsx'
+import { TextInput, textInputVariants } from '../../components/TextInput/TextInput.jsx'
 import { AuthorRow } from '../../components/AuthorRow/AuthorRow.jsx'
 import { StreakBadge } from '../../components/StreakBadge/StreakBadge.jsx'
 import { MediaGallery } from '../../components/MediaGallery/MediaGallery.jsx'
@@ -515,6 +515,50 @@ const socialUrlExamples = [
   { label: 'Facebook', value: 'https://facebook.com/culturecrave' },
   { label: 'Substack', value: 'https://culturecrave.substack.com' },
   { label: 'Default website', value: 'https://www.culturecrave.com' },
+]
+const traceabilityRows = [
+  {
+    component: 'Button',
+    variants: buttonVariants.join(', '),
+    sizes: buttonSizes.join(', '),
+    example: 'data-ds-component="Button" data-ds-variant="primary"',
+  },
+  {
+    component: 'Badge',
+    variants: badgeVariants.join(', '),
+    sizes: badgeSizes.join(', '),
+    example: 'data-ds-component="Badge" data-ds-variant="success"',
+  },
+  {
+    component: 'TextInput',
+    variants: textInputVariants.join(', '),
+    sizes: 'md',
+    example: 'data-ds-component="TextInput" data-ds-variant="default"',
+  },
+  {
+    component: 'Select',
+    variants: selectVariants.join(', '),
+    sizes: 'md',
+    example: 'data-ds-component="Select" data-ds-variant="default"',
+  },
+  {
+    component: 'Textarea',
+    variants: textareaVariants.join(', '),
+    sizes: 'md',
+    example: 'data-ds-component="Textarea" data-ds-variant="default"',
+  },
+  {
+    component: 'Checkbox',
+    variants: checkboxVariants.join(', '),
+    sizes: 'md',
+    example: 'data-ds-component="Checkbox" data-ds-variant="plain"',
+  },
+  {
+    component: 'OptionTile',
+    variants: optionTileVariants.join(', '),
+    sizes: 'md',
+    example: 'data-ds-component="OptionTile" data-ds-variant="radio"',
+  },
 ]
 const creatorShellSocialAccountDefaults = [
   {
@@ -1774,6 +1818,38 @@ export function ComponentLibrary() {
         {activeSection === 'Buttons' && (
           <div className="grid gap-8 xl:grid-cols-3 xl:items-start">
             <div className="space-y-8 xl:col-span-2">
+              <Section title="Traceability Contract" description="Rendered primitives stamp stable data attributes so prototypes and organisms can be audited without reading CSS class strings.">
+                <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
+                  <table className="w-full border-collapse text-left text-sm">
+                    <thead className="bg-surface-sunken text-xs font-semibold uppercase tracking-caps text-text-tertiary">
+                      <tr>
+                        <th className="px-4 py-3">Component</th>
+                        <th className="px-4 py-3">Variants</th>
+                        <th className="px-4 py-3">Sizes</th>
+                        <th className="px-4 py-3">Rendered marker</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border text-text-secondary">
+                      {traceabilityRows.map((row) => (
+                        <tr key={row.component}>
+                          <td className="px-4 py-3 font-medium text-text">{row.component}</td>
+                          <td className="px-4 py-3">{row.variants}</td>
+                          <td className="px-4 py-3">{row.sizes}</td>
+                          <td className="px-4 py-3">
+                            <code className="break-words rounded-sm bg-surface-sunken px-1 py-0.5 font-mono text-xs text-text">
+                              {row.example}
+                            </code>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <DocumentationNote>
+                  Base identity is owned by the component through <code className="rounded-sm bg-surface px-1 py-0.5 font-mono text-xs text-text">data-ds-component</code>, <code className="rounded-sm bg-surface px-1 py-0.5 font-mono text-xs text-text">data-ds-variant</code>, and size when applicable. Patterns may add <code className="rounded-sm bg-surface px-1 py-0.5 font-mono text-xs text-text">data-ds-role</code> or <code className="rounded-sm bg-surface px-1 py-0.5 font-mono text-xs text-text">data-ds-instance</code> for flow correlation.
+                </DocumentationNote>
+              </Section>
+
               <Section title="Action Hierarchy" description="Choose the variant by product meaning first; layout and local spacing belong outside the Button.">
                 <Row label="Primary decision area">
                   <Button variant="primary">Primary</Button>

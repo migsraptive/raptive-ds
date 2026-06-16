@@ -21,6 +21,11 @@ const statusColors = {
   offline: 'bg-neutral-300 ring-white',
 }
 
+export const avatarVariants = Object.freeze(['image', 'initials', 'overflow'])
+export const avatarSizes = Object.freeze(['xs', 'sm', 'md', 'lg', 'xl', '2xl'])
+export const avatarShapes = Object.freeze(['circle', 'square'])
+export const avatarStatuses = Object.freeze(['online', 'away', 'busy', 'offline'])
+
 // Deterministic color from a name string — same name always gets same color
 const avatarColors = [
   'bg-raptive-100 text-raptive-700',
@@ -59,9 +64,17 @@ export function Avatar({
   const initials = getInitials(name)
   const colorClass = getColorFromName(name)
   const shapeClass = shape === 'square' ? 'rounded-lg' : 'rounded-full'
+  const variant = src ? 'image' : 'initials'
 
   return (
-    <div className={`relative inline-flex flex-shrink-0 rounded-full ${className}`} style={style}>
+    <div
+      className={`relative inline-flex flex-shrink-0 rounded-full ${className}`}
+      style={style}
+      data-ds-component="Avatar"
+      data-ds-variant={variant}
+      data-ds-size={size}
+      data-ds-shape={shape}
+    >
       <div
         className={[
           'flex items-center justify-center overflow-hidden',
@@ -138,6 +151,9 @@ export function AvatarGroup({ avatars = [], max = 4, size = 'sm' }) {
             sizes[size].text,
           ].join(' ')}
           style={{ zIndex: 0 }}
+          data-ds-component="Avatar"
+          data-ds-variant="overflow"
+          data-ds-size={size}
         >
           +{overflow}
         </div>

@@ -15,6 +15,9 @@ const affixLineHeightClassNames = {
   md: 'text-lg leading-md',
 }
 
+export const textInputVariants = Object.freeze(['default'])
+export const textInputSizes = Object.freeze(['md'])
+
 export const TextInput = forwardRef(function TextInput(
   {
     id,
@@ -59,6 +62,9 @@ export const TextInput = forwardRef(function TextInput(
           inputClassName,
         ].filter(Boolean).join(' ')}
         {...props}
+        data-ds-component="TextInput"
+        data-ds-variant="default"
+        data-ds-size="md"
       />
       {suffix && <span className={affixClassName(suffix)}>{suffix}</span>}
     </FieldShell>

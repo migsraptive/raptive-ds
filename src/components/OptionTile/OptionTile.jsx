@@ -2,6 +2,9 @@ import { Check } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
+export const optionTileVariants = Object.freeze(['check', 'radio'])
+export const optionTileSizes = Object.freeze(['md'])
+
 export function OptionTile({
   title,
   description,
@@ -66,6 +69,10 @@ export function OptionTile({
         disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
         className,
       ].filter(Boolean).join(' ')}
+      data-ds-component="OptionTile"
+      data-ds-variant={selectionStyle}
+      data-ds-size="md"
+      data-ds-selection-mode={multiSelect ? 'multiple' : 'single'}
     >
       <span className="flex w-full items-start justify-between gap-3">
         {icon ? (

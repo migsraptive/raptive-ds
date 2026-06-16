@@ -2,6 +2,9 @@ import { useId } from 'react'
 import { Check } from 'lucide-react'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
 
+export const checkboxVariants = Object.freeze(['card', 'plain'])
+export const checkboxSizes = Object.freeze(['md'])
+
 export function Checkbox({
   id,
   label,
@@ -25,6 +28,9 @@ export function Checkbox({
         !disabled && variant === 'card' ? 'hover:bg-surface-raised' : '',
         className,
       ].filter(Boolean).join(' ')}
+      data-ds-component="Checkbox"
+      data-ds-variant={variant}
+      data-ds-size="md"
     >
       <span className="relative mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center">
         <input

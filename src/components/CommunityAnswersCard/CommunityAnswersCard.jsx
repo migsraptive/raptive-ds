@@ -4,6 +4,8 @@ import { LucideIcon } from '../Icon/LucideIcon.jsx'
 import { TextLink } from '../TextLink/TextLink.jsx'
 import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
+export const communityAnswersCardVariants = Object.freeze(['preview'])
+
 export function CommunityAnswersCard({
   authorName = 'Sally McKenney',
   communityName = 'Sally’s Baking',
@@ -33,6 +35,8 @@ export function CommunityAnswersCard({
         className,
       ].join(' ')}
       style={mergedStyle}
+      data-ds-component="CommunityAnswersCard"
+      data-ds-variant="preview"
     >
       <div className="flex h-14 w-full shrink-0 items-center gap-2 px-4 py-2">
         <Avatar
@@ -66,6 +70,7 @@ export function CommunityAnswersCard({
             align="left"
             tone="current"
             className="flex-1 py-1 text-label-lg"
+            data-ds-role="preview-primary-action"
           >
             {answerCtaLabel}
           </TextLink>
@@ -76,6 +81,10 @@ export function CommunityAnswersCard({
               onClick={onViewAnswers}
               aria-label={`View ${answerCountLabel}`}
               className="flex h-6 shrink-0 items-center justify-center gap-1 rounded-full py-1 pl-2 pr-1 font-sans text-label-lg font-bold text-current transition-opacity duration-150 hover:opacity-80 active:opacity-70"
+              data-ds-component="Button"
+              data-ds-variant="link"
+              data-ds-size="xs"
+              data-ds-role="preview-answer-count-action"
             >
               <span className="paired-label-icon text-label-lg">
                 <LucideIcon icon={MessageCircle} />

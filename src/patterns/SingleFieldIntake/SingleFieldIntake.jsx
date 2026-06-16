@@ -80,7 +80,16 @@ export function SingleFieldIntake({
 
           <div className="mt-auto pt-8">
             <div className={['flex flex-wrap items-center justify-end gap-3', centeredContentClassName].filter(Boolean).join(' ')}>
-              <Button size="lg" onClick={onSubmit} success={loading} successLabel={ctaSuccessLabel} successIcon={ctaSuccessIcon} disabled={ctaDisabled}>
+              <Button
+                size="lg"
+                onClick={onSubmit}
+                success={loading}
+                successLabel={ctaSuccessLabel}
+                successIcon={ctaSuccessIcon}
+                disabled={ctaDisabled}
+                data-ds-role="primary-action"
+                data-ds-instance="creator-application.entry.continue"
+              >
                 {ctaLabel}
               </Button>
             </div>

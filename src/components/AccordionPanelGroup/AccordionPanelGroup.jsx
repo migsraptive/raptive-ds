@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { AccordionPanel } from '../AccordionPanel/AccordionPanel.jsx'
 
+export const accordionPanelGroupVariants = Object.freeze(['single', 'multiple', 'static'])
+
 export function AccordionPanelGroup({
   rows = [],
   openRow,
@@ -55,7 +57,11 @@ export function AccordionPanelGroup({
   }
 
   return (
-    <div className={['divide-y divide-border', className].filter(Boolean).join(' ')}>
+    <div
+      className={['divide-y divide-border', className].filter(Boolean).join(' ')}
+      data-ds-component="AccordionPanelGroup"
+      data-ds-variant={allRowsOpen ? 'static' : usesMultipleRows ? 'multiple' : 'single'}
+    >
       {rows.map((row) => (
         <AccordionPanel
           key={row.id}

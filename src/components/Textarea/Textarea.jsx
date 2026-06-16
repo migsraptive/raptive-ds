@@ -9,6 +9,9 @@ const baseTextareaClassName = [
   'disabled:cursor-not-allowed disabled:text-text-disabled',
 ].join(' ')
 
+export const textareaVariants = Object.freeze(['default'])
+export const textareaSizes = Object.freeze(['md'])
+
 export const Textarea = forwardRef(function Textarea(
   {
     id,
@@ -50,6 +53,9 @@ export const Textarea = forwardRef(function Textarea(
           textareaClassName,
         ].filter(Boolean).join(' ')}
         {...props}
+        data-ds-component="Textarea"
+        data-ds-variant="default"
+        data-ds-size="md"
       />
     </div>
   )

@@ -319,6 +319,8 @@ export function SubmissionSuccess({
                       ? '!border-white/16 !bg-transparent !text-white hover:!bg-white/8'
                       : '!text-white hover:!bg-white/10'
                   }
+                  data-ds-role="secondary-action"
+                  data-ds-instance="creator-application.submission.secondary"
                 >
                   {secondaryAction.label}
                 </Button>
@@ -340,6 +342,8 @@ export function SubmissionSuccess({
                       : '',
                     ].filter(Boolean).join(' ')
                   }
+                  data-ds-role="primary-action"
+                  data-ds-instance="creator-application.submission.primary"
                 >
                   {primaryAction.label}
                 </Button>

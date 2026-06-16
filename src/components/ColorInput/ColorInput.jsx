@@ -4,6 +4,9 @@ import { brandPreviewDefaults } from '../../utils/brandPreviewDefaults.js'
 import { getAccessibleColorPair, normalizeHexColor } from '../../utils/colorContrast.js'
 import { FieldHelperText } from '../FormField/FormField.jsx'
 
+export const colorInputVariants = Object.freeze(['stack', 'compact'])
+export const colorInputSizes = Object.freeze(['md', 'sm'])
+
 export const ColorInput = forwardRef(function ColorInput(
   {
     id,
@@ -51,6 +54,9 @@ export const ColorInput = forwardRef(function ColorInput(
         isCompact ? 'grid grid-cols-[92px_minmax(0,1fr)] items-start gap-x-3 gap-y-2' : 'flex flex-col gap-2',
         className,
       ].filter(Boolean).join(' ')}
+      data-ds-component="ColorInput"
+      data-ds-variant={layout}
+      data-ds-size={isCompact ? 'sm' : 'md'}
     >
       {label && (
         <label
@@ -74,11 +80,12 @@ export const ColorInput = forwardRef(function ColorInput(
         >
           <input
             type="color"
-            value={normalizedColor ?? normalizedFallbackColor}
-            onChange={(event) => handleValueChange(event.target.value)}
-            className="absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent p-0 opacity-0"
-            aria-label={`${label ?? 'Color'} picker`}
-          />
+          value={normalizedColor ?? normalizedFallbackColor}
+          onChange={(event) => handleValueChange(event.target.value)}
+          className="absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent p-0 opacity-0"
+          aria-label={`${label ?? 'Color'} picker`}
+          data-ds-element="ColorInputPicker"
+        />
         </label>
         <input
           ref={ref}
@@ -93,6 +100,9 @@ export const ColorInput = forwardRef(function ColorInput(
           inputMode="text"
           placeholder={normalizedFallbackColor.replace('#', '').toUpperCase()}
           {...props}
+          data-ds-component="ColorInputControl"
+          data-ds-variant={layout}
+          data-ds-size={isCompact ? 'sm' : 'md'}
         />
         <span className="h-full w-px flex-shrink-0 bg-white" aria-hidden="true" />
         <span className={['flex-shrink-0 whitespace-nowrap text-xs text-text-secondary', isCompact ? 'px-2' : 'px-3'].join(' ')}>

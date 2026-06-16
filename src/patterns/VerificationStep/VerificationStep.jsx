@@ -120,6 +120,10 @@ export function VerificationStep({
                         className="flex w-full flex-col items-start gap-3 pb-2 text-left"
                         whileHover={{ y: -2, scale: 1.01 }}
                         whileTap={{ scale: 0.985 }}
+                        data-ds-component="OptionTile"
+                        data-ds-variant="radio"
+                        data-ds-size="md"
+                        data-ds-role="verification-method-option"
                       >
                         <span className="flex w-full items-start justify-between gap-3">
                           {method.icon ? (
@@ -216,7 +220,13 @@ export function VerificationStep({
 
             <div className={['mt-auto flex flex-wrap items-center justify-between gap-3 pt-8', centeredContentClassName].filter(Boolean).join(' ')}>
               {secondaryAction && (
-                <Button size="lg" variant={secondaryAction.variant ?? 'ghost'} onClick={secondaryAction.onClick}>
+                <Button
+                  size="lg"
+                  variant={secondaryAction.variant ?? 'ghost'}
+                  onClick={secondaryAction.onClick}
+                  data-ds-role="secondary-action"
+                  data-ds-instance="creator-application.verification.secondary"
+                >
                   {secondaryAction.label}
                 </Button>
               )}
@@ -237,6 +247,8 @@ export function VerificationStep({
                     success={primaryAction.success}
                     successLabel={primaryAction.successLabel}
                     successIcon={primaryAction.successIcon}
+                    data-ds-role="primary-action"
+                    data-ds-instance="creator-application.verification.primary"
                   >
                     {primaryAction.label}
                   </Button>

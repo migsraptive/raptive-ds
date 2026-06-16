@@ -3,6 +3,9 @@ function boundedStep(currentStep, steps) {
   return Math.min(Math.max(numericStep, 1), steps)
 }
 
+export const stepIndicatorVariants = Object.freeze(['dots'])
+export const stepIndicatorSizes = Object.freeze(['sm'])
+
 export function StepIndicator({ steps, currentStep }) {
   const totalSteps = Number.isFinite(steps) ? Math.max(0, Math.floor(steps)) : 0
   const activeStep = boundedStep(currentStep, totalSteps)
@@ -14,6 +17,9 @@ export function StepIndicator({ steps, currentStep }) {
       className="flex items-center justify-center gap-[4px]"
       aria-label="Progress"
       role="group"
+      data-ds-component="StepIndicator"
+      data-ds-variant="dots"
+      data-ds-size="sm"
     >
       {Array.from({ length: totalSteps }, (_, index) => {
         const step = index + 1
@@ -28,6 +34,8 @@ export function StepIndicator({ steps, currentStep }) {
             aria-current={isCurrent ? 'step' : undefined}
             aria-label={`Step ${step} of ${totalSteps}, ${stepState}`}
             role="img"
+            data-ds-element="StepIndicatorDot"
+            data-ds-state={isCurrent ? 'current' : isComplete ? 'completed' : 'idle'}
             className={[
               'block h-[6px] flex-shrink-0 rounded-full transition-all duration-200',
               isCurrent

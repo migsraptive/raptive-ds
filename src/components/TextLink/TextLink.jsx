@@ -10,6 +10,8 @@ const toneClasses = {
   current: 'text-current hover:text-current active:text-current',
 }
 
+export const textLinkVariants = Object.freeze(['default', 'invert', 'current'])
+
 export function TextLink({
   children,
   align = 'left',
@@ -31,14 +33,26 @@ export function TextLink({
 
   if (href) {
     return (
-      <a href={href} className={classes} {...props}>
+      <a
+        href={href}
+        className={classes}
+        {...props}
+        data-ds-component="TextLink"
+        data-ds-variant={tone}
+      >
         {children}
       </a>
     )
   }
 
   return (
-    <button type={type} className={classes} {...props}>
+    <button
+      type={type}
+      className={classes}
+      {...props}
+      data-ds-component="TextLink"
+      data-ds-variant={tone}
+    >
       {children}
     </button>
   )

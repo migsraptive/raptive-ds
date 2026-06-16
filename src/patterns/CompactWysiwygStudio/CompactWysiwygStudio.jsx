@@ -252,6 +252,8 @@ export function CompactWysiwygStudio({
             success={secondaryAction.success}
             successLabel={secondaryAction.successLabel}
             successIcon={secondaryAction.successIcon}
+            data-ds-role="secondary-action"
+            data-ds-instance="creator-application.preview.secondary"
           >
             {secondaryAction.label}
           </Button>
@@ -266,6 +268,8 @@ export function CompactWysiwygStudio({
             successLabel={primaryAction.successLabel}
             successIcon={primaryAction.successIcon}
             className="ml-auto"
+            data-ds-role="primary-action"
+            data-ds-instance="creator-application.preview.primary"
           >
             {primaryAction.label}
           </Button>

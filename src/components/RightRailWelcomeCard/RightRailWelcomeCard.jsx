@@ -2,6 +2,8 @@ import { Button } from '../Button/Button.jsx'
 import { TextLink } from '../TextLink/TextLink.jsx'
 import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
 
+export const rightRailWelcomeCardVariants = Object.freeze(['preview'])
+
 function getInitials(name = '') {
   return name
     .trim()
@@ -67,6 +69,8 @@ export function RightRailWelcomeCard({
         className,
       ].join(' ')}
       style={mergedStyle}
+      data-ds-component="RightRailWelcomeCard"
+      data-ds-variant="preview"
     >
       <CreatorMark name={creatorName} />
 
@@ -104,6 +108,7 @@ export function RightRailWelcomeCard({
           size="md"
           variant="previewBrand"
           onClick={onPrimaryAction}
+          data-ds-role="preview-primary-action"
         >
           {primaryLabel}
         </Button>

@@ -98,7 +98,12 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
 
         <div className="flex flex-shrink-0 items-center gap-3">
           {resolved && !editing ? (
-            <Button size="xs" variant="secondary" onClick={onEdit}>
+            <Button
+              size="xs"
+              variant="secondary"
+              onClick={onEdit}
+              data-ds-role="row-edit-action"
+            >
               Edit
             </Button>
           ) : null}
@@ -110,7 +115,12 @@ function ReviewRow({ label, loadingCopy, resolved, value, editing, onEdit, onSav
         <div className="mt-4 space-y-3 border-t border-border pt-4">
           {children}
           <div className="flex justify-end">
-            <Button size="sm" variant="secondary" onClick={onSave}>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={onSave}
+              data-ds-role="row-save-action"
+            >
               Save
             </Button>
           </div>
@@ -142,6 +152,7 @@ function SourceFields({ source, onSourceChange, onRemoveSource }) {
             variant="ghost"
             iconBefore={<LucideIcon icon={Trash2} size="sm" />}
             onClick={onRemoveSource}
+            data-ds-role="source-remove-action"
           >
             Remove
           </Button>
@@ -181,6 +192,7 @@ function SourceEditor({ primarySource, additionalSources, onPrimarySourceChange,
         iconBefore={<LucideIcon icon={Plus} size="sm" />}
         onClick={onAddSource}
         disabled={!canAddSource}
+        data-ds-role="source-add-action"
       >
         Add another source
       </Button>
@@ -221,6 +233,7 @@ function ManualSocialAccountFields({ account, onAccountChange, onRemoveAccount }
           variant="secondary"
           onClick={confirmAccount}
           disabled={!canConfirm}
+          data-ds-role="social-account-confirm-action"
         >
           Confirm
         </Button>
@@ -231,6 +244,7 @@ function ManualSocialAccountFields({ account, onAccountChange, onRemoveAccount }
             iconBefore={<LucideIcon icon={Trash2} size="sm" />}
             aria-label={`Remove ${account.platform} account`}
             onClick={() => onRemoveAccount(account.id)}
+            data-ds-role="social-account-remove-action"
           />
         ) : null}
       </div>
@@ -293,6 +307,9 @@ function SocialAccountsEditor({
                     }}
                     autoFocus
                     aria-label={`${account.platform} handle`}
+                    data-ds-component="TextInput"
+                    data-ds-variant="default"
+                    data-ds-role="social-account-handle-edit"
                   />
                 ) : (
                   <button
@@ -300,6 +317,10 @@ function SocialAccountsEditor({
                     className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                     onClick={() => startHandleEdit(account)}
                     aria-label={`Edit ${account.platform} handle`}
+                    data-ds-component="Button"
+                    data-ds-variant="link"
+                    data-ds-size="xs"
+                    data-ds-role="social-account-handle-edit"
                   >
                     <span>{account.handle}</span>
                     <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
@@ -315,6 +336,10 @@ function SocialAccountsEditor({
                   className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                   onClick={() => onRemoveAccount(account.id)}
                   aria-label={`Remove ${account.platform} account`}
+                  data-ds-component="Button"
+                  data-ds-variant="link"
+                  data-ds-size="xs"
+                  data-ds-role="social-account-remove-action"
                 >
                   Remove
                 </button>
@@ -330,6 +355,7 @@ function SocialAccountsEditor({
             variant="secondary"
             iconBefore={<LucideIcon icon={Plus} size="sm" />}
             onClick={onAddAccount}
+            data-ds-role="social-account-add-action"
           >
             Add another account
           </Button>
@@ -650,6 +676,8 @@ export function DataGatheringReview({
                 size="lg"
                 variant={secondaryAction.variant ?? 'ghost'}
                 onClick={secondaryAction.onClick}
+                data-ds-role="secondary-action"
+                data-ds-instance="creator-application.gather.secondary"
               >
                 {secondaryAction.label}
               </Button>
@@ -665,6 +693,8 @@ export function DataGatheringReview({
                 successLabel={primaryAction.successLabel}
                 successIcon={primaryAction.successIcon}
                 className={secondaryAction ? '' : 'ml-auto'}
+                data-ds-role="primary-action"
+                data-ds-instance="creator-application.gather.primary"
               >
                 {primaryAction.label}
               </Button>
