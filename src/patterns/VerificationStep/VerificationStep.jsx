@@ -24,7 +24,7 @@ export function VerificationStep({
   fallbackMessage = null,
   verifiedHandle = '@culturecrave',
   illustrationFrameClassName = null,
-  disabledHelperText = 'Select a verification method and accept Raptive’s Creator Agreement to continue.',
+  disabledHelperText = 'Select a verification method and accept the Community Terms to continue.',
   alreadyVerified = false,
   alreadyVerifiedTitle = "You're already verified!",
   alreadyVerifiedDescription = 'We found this creator on our known leads list, so you can skip the channel verification step.',
@@ -206,12 +206,12 @@ export function VerificationStep({
                   label={simplified ? (
                     <>
                       I have read and accept{' '}
-                      <span className="font-bold text-action-primary underline underline-offset-2">Raptive’s Creator Agreement</span>
+                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
                     </>
                   ) : (
                     <>
                       I have read and accept{' '}
-                      <span className="font-bold text-action-primary underline underline-offset-2">Raptive’s Creator Agreement</span>
+                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
                     </>
                   )}
                 />
@@ -235,7 +235,7 @@ export function VerificationStep({
                   {simplified && primaryDisabled ? (
                     <p className="max-w-sm text-sm leading-relaxed text-text-secondary">
                       {alreadyVerified
-                        ? 'Accept Raptive’s Creator Agreement to continue.'
+                        ? 'Accept the Community Terms to continue.'
                         : disabledHelperText}
                     </p>
                   ) : null}
