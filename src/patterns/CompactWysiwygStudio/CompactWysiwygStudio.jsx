@@ -175,8 +175,9 @@ export function CompactWysiwygStudio({
             <div className="space-y-4">
               <div className="grid items-stretch justify-center gap-4 lg:grid-cols-[320px_minmax(220px,1fr)]">
                 {/* no token available: this exploration previews the fixed-width right rail module beside compact community cards. */}
-                <div className="flex w-80 flex-col gap-4">
+                <div className="flex h-full w-80 flex-col gap-4">
                   <RightRailWelcomeCard
+                    className="flex-1"
                     creatorName={fields.name}
                     title={fields.name}
                     description={fields.description}
