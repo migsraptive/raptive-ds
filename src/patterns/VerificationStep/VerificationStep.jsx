@@ -42,6 +42,18 @@ export function VerificationStep({
     || !termsAccepted
     || primaryAction.disabled
   )
+  const communityTermsLink = (
+    <a
+      href="#"
+      className="font-bold text-action-primary underline underline-offset-2"
+      onClick={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+      }}
+    >
+      Community Terms
+    </a>
+  )
 
   return (
     <>
@@ -206,12 +218,12 @@ export function VerificationStep({
                   label={simplified ? (
                     <>
                       I have read and accept{' '}
-                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
+                      {communityTermsLink}
                     </>
                   ) : (
                     <>
                       I have read and accept{' '}
-                      <span className="font-bold text-action-primary underline underline-offset-2">Community Terms</span>
+                      {communityTermsLink}
                     </>
                   )}
                 />
