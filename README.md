@@ -313,10 +313,36 @@ Recent imports added five raw HTML-to-Figma captures under `Latest from main`:
 These captures preserve rendered layout from the local app. They are useful as
 pixel references, but they are not rebuilt with Figma component instances.
 
+Creator application capture URLs are deterministic so Figma imports do not need
+manual click-through:
+
+- Entry:
+  `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=entry`
+- Gather / review:
+  `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=gather`
+- Preview editor:
+  `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=review`
+- Verification:
+  `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=verify`
+- Success:
+  `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=success`
+
+To run the import helper, first generate one Figma capture ID per screen with
+the Figma MCP capture tool, then run:
+
+```bash
+npm run figma:capture:creator-flow -- --captures entry=ID,gather=ID,review=ID,verify=ID,success=ID
+```
+
+The helper temporarily injects the Figma HTML-to-design capture script into
+`index.html`, opens each deterministic capture URL with `agent-browser`,
+submits each capture, and restores `index.html` before exiting.
+
 Figma automation scripts:
 
 ```bash
 npm run design:export
+npm run figma:capture:creator-flow -- --captures entry=ID,gather=ID,review=ID,verify=ID,success=ID
 npm run figma:variables:sync
 npm run figma:access:validate
 ```

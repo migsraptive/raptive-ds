@@ -88,6 +88,28 @@ Use this boundary:
 
 That split keeps CI reliable and avoids depending on REST Variables API scopes that are not visible in the current token creation UI.
 
+Creator Application flow captures use deterministic local URLs and a helper
+script so imports do not require manual click-through of the React flow:
+
+```bash
+npm run figma:capture:creator-flow -- --captures entry=ID,gather=ID,review=ID,verify=ID,success=ID
+```
+
+Generate one Figma MCP capture ID per screen, then pass the IDs to the helper.
+The helper temporarily injects the Figma HTML-to-design capture script into
+`index.html`, opens each capture URL with `agent-browser`, submits each capture,
+and restores `index.html` before exiting.
+
+Deterministic capture URLs:
+
+| screen | URL |
+|---|---|
+| Entry | `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=entry` |
+| Gather / review | `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=gather` |
+| Preview editor | `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=review` |
+| Verification | `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=verify` |
+| Success | `http://localhost:3700/community-ds/?view=creator-application&capture=true&captureStep=success` |
+
 ## Optional REST Variable Sync
 
 The repo still includes `npm run figma:variables:sync`, but it is optional and admin-gated.
@@ -118,6 +140,7 @@ npm run figma:variables:sync
 
 ```bash
 npm run design:export
+npm run figma:capture:creator-flow -- --captures entry=ID,gather=ID,review=ID,verify=ID,success=ID
 npm run figma:access:validate
 ```
 

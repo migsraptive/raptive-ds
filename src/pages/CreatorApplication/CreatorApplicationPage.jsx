@@ -13,9 +13,19 @@ import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSu
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
 
 const flowStepIds = ['entry', 'gather', 'review', 'verify', 'submit']
+const captureStepIndexes = {
+  entry: 0,
+  gather: 1,
+  review: 2,
+  verify: 3,
+  verification: 3,
+  success: 4,
+  submit: 4,
+}
 const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
 
 const initialCreatorUrl = ''
+const captureCreatorUrl = 'https://instagram.com/culturecrave'
 const initialAccounts = [
   {
     id: 'instagram',
@@ -120,14 +130,33 @@ function getDetectedSourceLabel(value) {
 }
 
 export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
-  const [activeStep, setActiveStep] = useState(0)
-  const [creatorUrl, setCreatorUrl] = useState(initialCreatorUrl)
+  const captureConfig = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return {
+        captureMode: false,
+        stepIndex: null,
+      }
+    }
+
+    const params = new URLSearchParams(window.location.search)
+    const captureStep = params.get('captureStep')?.trim().toLowerCase()
+    const stepIndex = captureStepIndexes[captureStep] ?? null
+
+    return {
+      captureMode: params.get('capture') === 'true' || stepIndex !== null,
+      stepIndex,
+    }
+  }, [])
+  const initialCaptureStep = captureConfig.stepIndex ?? 0
+  const initialCaptureUrl = initialCaptureStep > 0 ? captureCreatorUrl : initialCreatorUrl
+  const [activeStep, setActiveStep] = useState(initialCaptureStep)
+  const [creatorUrl, setCreatorUrl] = useState(initialCaptureUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState('meta-login')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
-  const [gatherRowsResolved, setGatherRowsResolved] = useState(false)
+  const [gatherRowsResolved, setGatherRowsResolved] = useState(initialCaptureStep === 1)
   const [pendingPrimaryAction, setPendingPrimaryAction] = useState(null)
   const actionTimeoutRef = useRef(null)
   const instagramAccount = initialAccounts.find((account) => account.platform === 'Instagram')
@@ -165,6 +194,20 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
 
   const activeStepId = flowStepIds[activeStep] ?? 'current-step'
   const progressMeter = null
+  const gatherRowRevealDelay = captureConfig.captureMode ? 0 : gatherVideoLeadInMs
+  const stepMotionProps = captureConfig.captureMode
+    ? {
+        initial: false,
+        animate: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' },
+        exit: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0, y: 16, scale: 0.996, filter: 'blur(4px)' },
+        animate: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' },
+        exit: { opacity: 0, y: -10, scale: 0.996, filter: 'blur(3px)' },
+        transition: stepTransition,
+      }
 
   const handleIntakeSubmit = () => {
     if (intakeLoading || !creatorUrl.trim()) return
@@ -292,7 +335,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         detectedSource={getDetectedSourceLabel(creatorUrl)}
         submittedSourceValue={creatorUrl}
         progressMeter={progressMeter}
-        rowRevealDelay={gatherVideoLeadInMs}
+        rowRevealDelay={gatherRowRevealDelay}
         headerClassName="pt-6"
         rowPresentation="accordion"
         aside={<GatherVideoAside />}
@@ -483,10 +526,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeStepId}
-            initial={{ opacity: 0, y: 16, scale: 0.996, filter: 'blur(4px)' }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -10, scale: 0.996, filter: 'blur(3px)' }}
-            transition={stepTransition}
+            {...stepMotionProps}
             className="will-change-transform"
           >
             {content}

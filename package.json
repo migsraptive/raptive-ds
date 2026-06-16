@@ -16,6 +16,7 @@
     "test:contracts": "node scripts/verify-icon-label-sizing.mjs",
     "ci": "npm run lint && npm test && npm run build && npm run design:export",
     "design:export": "node scripts/export-design-manifest.mjs --out dist/design-sync/latest-main.json",
+    "figma:capture:creator-flow": "node scripts/capture-creator-flow.mjs",
     "figma:variables:sync": "node scripts/sync-figma-variables.mjs --manifest dist/design-sync/latest-main.json",
     "figma:access:validate": "node scripts/validate-figma-access.mjs --manifest dist/design-sync/latest-main.json"
   },
