@@ -2320,6 +2320,13 @@ export function ComponentLibrary() {
         {/* ── PATTERNS ───────────────────────────────────────────────────── */}
         {activeSection === 'Patterns' && (
           <>
+            <div className="rounded-xl border border-border bg-surface px-5 py-4 shadow-xs">
+              <p className="text-sm font-semibold text-text">Patterns are explorations</p>
+              <p className="mt-1 text-sm leading-relaxed text-text-secondary">
+                These pattern examples are not the final design. To review the final Creator Application experience, use the Open creator application CTA in the top navigation.
+              </p>
+            </div>
+
             <div className="rounded-xl border border-border bg-surface px-4 py-3 shadow-xs">
               <Checkbox
                 variant="plain"
