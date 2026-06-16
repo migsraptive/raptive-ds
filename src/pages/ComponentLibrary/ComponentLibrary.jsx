@@ -661,7 +661,7 @@ export function ComponentLibrary() {
   const [fetchConfirmationDemoAccounts, setFetchConfirmationDemoAccounts] = useState(getFetchConfirmationDemoAccounts)
   const [fetchConfirmationEditingAccountId, setFetchConfirmationEditingAccountId] = useState(null)
   const [fetchConfirmationEditDraft, setFetchConfirmationEditDraft] = useState({ platform: '', handle: '', url: '' })
-  const [verificationMethod, setVerificationMethod] = useState('meta-login')
+  const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [simplifiedVerificationState, setSimplifiedVerificationState] = useState('standard')
@@ -838,7 +838,6 @@ export function ComponentLibrary() {
   const handleVerificationMethodChange = (value) => {
     setVerificationMethod(value)
     setVerificationConfirmed(false)
-    setVerificationTermsAccepted(false)
   }
   const handleSimplifiedVerificationStateChange = (value) => {
     setSimplifiedVerificationState(value)
@@ -2673,15 +2672,32 @@ export function ComponentLibrary() {
                     icon: tileIcon(BadgeCheck),
                     title: 'Login with Meta to verify your Instagram account',
                     description: 'Use Login with Meta to verify @culturecrave without a manual message.',
+                    actionLabel: 'Continue with Facebook',
+                    actionBrand: 'facebook',
+                    pendingLabel: 'Opening Meta...',
+                    successTitle: 'Your Instagram account has been verified.',
+                    successDescription: "You're all set!",
+                    modalBrand: 'Instagram',
+                    modalTitle: 'You previously connected community_verify-IG to your instagram account.',
+                    modalPrompt: 'Would you like to continue sharing information about @culturecrave to community_verify-IG?',
+                    modalDescription: 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.',
                   },
                   {
                     value: 'email-domain',
                     icon: tileIcon(Mail),
                     title: "Verify with Persona",
                     description: 'Use Persona when Meta login is not convenient today.',
+                    actionLabel: 'Verify with Persona',
+                    pendingLabel: 'Opening Persona...',
+                    successTitle: 'Your Persona verification has been completed.',
+                    successDescription: "You're all set!",
+                    modalBrand: 'Persona',
+                    modalTitle: 'Verify with Persona',
+                    modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
+                    modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
                   },
                 ]}
-                selectedMethod={previewPatternCtaSuccess ? 'meta-login' : verificationMethod}
+                completedMethod={previewPatternCtaSuccess ? 'meta-login' : verificationMethod}
                 onSelectMethod={handleVerificationMethodChange}
                 termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
                 onTermsAcceptedChange={setVerificationTermsAccepted}
@@ -2718,15 +2734,32 @@ export function ComponentLibrary() {
                       badge: 'Recommended',
                       title: 'Login with Meta to verify your Instagram account',
                       description: 'Fastest option. Confirm ownership of @culturecrave in a few clicks.',
+                      actionLabel: 'Continue with Facebook',
+                      actionBrand: 'facebook',
+                      pendingLabel: 'Opening Meta...',
+                      successTitle: 'Your Instagram account has been verified.',
+                      successDescription: "You're all set!",
+                      modalBrand: 'Instagram',
+                      modalTitle: 'You previously connected community_verify-IG to your instagram account.',
+                      modalPrompt: 'Would you like to continue sharing information about @culturecrave to community_verify-IG?',
+                      modalDescription: 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.',
                     },
                     {
                       value: 'email',
                       icon: tileIcon(Mail),
                       title: "Verify with Persona",
                       description: 'Use Persona when Meta login is not convenient today.',
+                      actionLabel: 'Verify with Persona',
+                      pendingLabel: 'Opening Persona...',
+                      successTitle: 'Your Persona verification has been completed.',
+                      successDescription: "You're all set!",
+                      modalBrand: 'Persona',
+                      modalTitle: 'Verify with Persona',
+                      modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
+                      modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
                     },
                   ]}
-                  selectedMethod={simplifiedVerificationSelectedMethod}
+                  completedMethod={simplifiedVerificationSelectedMethod}
                   onSelectMethod={setSimplifiedVerificationMethod}
                   termsAccepted={simplifiedVerificationTermsValue}
                   onTermsAcceptedChange={setSimplifiedVerificationTermsAccepted}
@@ -2751,7 +2784,7 @@ export function ComponentLibrary() {
                 title="You're already verified!"
                 description="We found this creator on our known leads list."
                 methods={[]}
-                selectedMethod={null}
+                completedMethod={null}
                 termsAccepted={previewPatternCtaSuccess || verificationTermsAccepted}
                 onTermsAcceptedChange={setVerificationTermsAccepted}
                 alreadyVerified

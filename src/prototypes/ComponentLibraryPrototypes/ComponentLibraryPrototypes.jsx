@@ -134,15 +134,32 @@ export default function ComponentLibraryPrototypes({
               icon: tileIcon(BadgeCheck),
               title: 'Login with Meta to verify your Instagram account',
               description: 'Use Login with Meta to verify @culturecrave without a manual message.',
+              actionLabel: 'Continue with Facebook',
+              actionBrand: 'facebook',
+              pendingLabel: 'Opening Meta...',
+              successTitle: 'Your Instagram account has been verified.',
+              successDescription: "You're all set!",
+              modalBrand: 'Instagram',
+              modalTitle: 'You previously connected community_verify-IG to your instagram account.',
+              modalPrompt: 'Would you like to continue sharing information about @culturecrave to community_verify-IG?',
+              modalDescription: 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.',
             },
             {
               value: 'email-domain',
               icon: tileIcon(Mail),
               title: "Verify with Persona",
               description: 'Use Persona when Meta login is not convenient today.',
+              actionLabel: 'Verify with Persona',
+              pendingLabel: 'Opening Persona...',
+              successTitle: 'Your Persona verification has been completed.',
+              successDescription: "You're all set!",
+              modalBrand: 'Persona',
+              modalTitle: 'Verify with Persona',
+              modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
+              modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
             },
           ]}
-          selectedMethod={verificationMethod}
+          completedMethod={verificationMethod}
           onSelectMethod={onVerificationMethodChange}
           termsAccepted={verificationTermsAccepted}
           onTermsAcceptedChange={onVerificationTermsAcceptedChange}

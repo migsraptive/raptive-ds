@@ -1,9 +1,17 @@
 import { BadgeCheck } from 'lucide-react'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
+import facebookIconUrl from '@/assets/social/facebook.svg?react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
+
+// no token available: third-party Facebook login brand color.
+const facebookLoginButtonStyle = {
+  '--preview-brand': '#1877F2',
+  '--preview-brand-hover': '#166FE5',
+  '--preview-brand-active': '#1464CC',
+}
 
 export function VerificationStep({
   title,
@@ -11,7 +19,11 @@ export function VerificationStep({
   progressMeter = null,
   methods = [],
   selectedMethod = null,
+  completedMethod = null,
+  pendingMethod = null,
   onSelectMethod,
+  onConfirmMethod,
+  onCancelMethod,
   termsAccepted = false,
   onTermsAcceptedChange,
   reassurance = [],
@@ -22,7 +34,7 @@ export function VerificationStep({
   fallbackMessage = null,
   verifiedHandle = '@culturecrave',
   illustrationFrameClassName = null,
-  disabledHelperText = 'Select a verification method and accept the Community Terms to continue.',
+  disabledHelperText = "Complete verification and accept Raptive's Creator Agreement to continue.",
   alreadyVerified = false,
   alreadyVerifiedTitle = "You're already verified!",
   alreadyVerifiedDescription = 'We found this creator on our known leads list, so you can skip the channel verification step.',
@@ -31,15 +43,22 @@ export function VerificationStep({
 }) {
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
   const illustrationFrameClasses = illustrationFrameClassName ?? (showAside ? 'aspect-square' : 'h-full min-h-[720px]')
-  const needsMethodSelection = !alreadyVerified && methods.length > 0
+  const completedMethodValue = completedMethod ?? selectedMethod
+  const completedMethodDetails = methods.find((method) => method.value === completedMethodValue)
+  const pendingMethodDetails = methods.find((method) => method.value === pendingMethod)
+  const pendingModalBrand = pendingMethodDetails?.modalBrand ?? 'Instagram'
+  const pendingModalTitle = pendingMethodDetails?.modalTitle ?? 'You previously connected community_verify-IG to your instagram account.'
+  const pendingModalPrompt = pendingMethodDetails?.modalPrompt ?? 'Would you like to continue sharing information about @culturecrave to community_verify-IG?'
+  const pendingModalDescription = pendingMethodDetails?.modalDescription ?? 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.'
+  const needsMethodCompletion = !alreadyVerified && methods.length > 0 && !completedMethodDetails
   const hasNoMethodOptions = !alreadyVerified && methods.length === 0
   const primaryDisabled = (
     hasNoMethodOptions
-    || (needsMethodSelection && !selectedMethod)
+    || needsMethodCompletion
     || !termsAccepted
     || primaryAction.disabled
   )
-  const communityTermsLink = (
+  const creatorAgreementLink = (
     <a
       href="#"
       className="font-bold text-action-primary underline underline-offset-2"
@@ -47,7 +66,7 @@ export function VerificationStep({
         event.preventDefault()
       }}
     >
-      Community Terms
+      Raptive's Creator Agreement
     </a>
   )
 
@@ -106,40 +125,49 @@ export function VerificationStep({
                   </div>
                 </div>
               </div>
+            ) : completedMethodDetails ? (
+              <motion.div
+                layout
+                transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+                className="rounded-xl border border-brand bg-brand-subtle p-5 shadow-brand-glow"
+              >
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <span className="paired-label-icon flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-surface text-action-primary">
+                    <BadgeCheck aria-hidden="true" strokeWidth={2} />
+                  </span>
+                  <div className="space-y-1">
+                    <p className="text-base font-medium text-text">
+                      {completedMethodDetails.successTitle ?? "You're all set!"}
+                    </p>
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      {completedMethodDetails.successDescription ?? "Your Instagram account has been verified. You're all set!"}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             ) : (
               <div className="grid gap-4">
                 {methods.length > 0 ? methods.map((method) => {
-                  const isSelected = selectedMethod === method.value
+                  const isPending = pendingMethod === method.value
+                  const isFacebookAction = method.actionBrand === 'facebook'
+                  const actionIcon = method.actionIcon ?? (isFacebookAction ? (
+                    <img src={facebookIconUrl} alt="" aria-hidden="true" className="h-4 w-4 invert" loading="eager" decoding="async" />
+                  ) : null)
                   return (
                     <motion.div
                       key={method.value}
                       layout
                       transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-                      className={[
-                        'overflow-hidden rounded-xl border px-5 py-4 transition-[background-color,color,border-color,box-shadow] duration-150',
-                        isSelected
-                          ? 'border-brand bg-brand-subtle shadow-brand-glow'
-                          : 'border-border bg-surface hover:border-border-strong hover:bg-surface-raised',
-                      ].join(' ')}
+                      className="rounded-xl border border-border bg-surface p-5 transition-[background-color,border-color,box-shadow] duration-150 hover:border-border-strong hover:bg-surface-raised"
                     >
-                      <motion.button
-                        type="button"
-                        onClick={() => onSelectMethod?.(method.value)}
-                        className="flex w-full flex-col items-start gap-3 pb-2 text-left"
-                        whileHover={{ y: -2, scale: 1.01 }}
-                        whileTap={{ scale: 0.985 }}
-                        data-ds-component="OptionTile"
-                        data-ds-variant="radio"
-                        data-ds-size="md"
-                        data-ds-role="verification-method-option"
-                      >
-                        <span className="flex w-full items-start justify-between gap-3">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex min-w-0 gap-3">
                           {method.icon ? (
                             <motion.span
-                              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised text-xl"
+                              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-surface-raised text-xl"
                               animate={{
-                                rotate: isSelected ? -4 : 0,
-                                scale: isSelected ? 1.05 : 1,
+                                rotate: isPending ? -4 : 0,
+                                scale: isPending ? 1.05 : 1,
                               }}
                               transition={{
                                 type: 'spring',
@@ -150,50 +178,35 @@ export function VerificationStep({
                               {method.icon}
                             </motion.span>
                           ) : <span />}
-                          <motion.span
-                            animate={{
-                              scale: isSelected ? 1 : 0.92,
-                            }}
-                            transition={{
-                              type: 'spring',
-                              stiffness: 380,
-                              damping: 24,
-                            }}
-                            className={[
-                              'flex h-6 w-6 items-center justify-center rounded-full border',
-                              isSelected ? 'border-brand bg-surface' : 'border-border bg-surface',
-                            ].join(' ')}
+                          <span className="min-w-0 space-y-1">
+                            {method.badge ? (
+                              <Badge variant="brand" size="sm" className="mb-2">
+                                {method.badge}
+                              </Badge>
+                            ) : null}
+                            <span className="block text-base font-medium text-text">
+                              {method.title}
+                            </span>
+                            {method.description && <span className="block text-sm leading-relaxed text-text-secondary">{method.description}</span>}
+                          </span>
+                        </div>
+                        <div className="flex justify-end sm:w-52 sm:flex-shrink-0">
+                          <Button
+                            size="md"
+                            variant={isFacebookAction ? 'previewBrand' : method.actionVariant ?? 'secondary'}
+                            style={isFacebookAction ? facebookLoginButtonStyle : method.actionStyle}
+                            loading={isPending}
+                            loadingLabel={method.pendingLabel ?? 'Opening...'}
+                            disabled={Boolean(pendingMethod)}
+                            onClick={() => onSelectMethod?.(method.value)}
+                            iconBefore={actionIcon}
+                            data-ds-role="verification-method-action"
+                            data-ds-instance={`creator-application.verification.${method.value}`}
                           >
-                            <motion.span
-                              animate={{
-                                opacity: isSelected ? 1 : 0,
-                                scale: isSelected ? 1 : 0.45,
-                              }}
-                              transition={{ duration: 0.18, ease: 'easeOut' }}
-                              className="h-3 w-3 rounded-full bg-brand"
-                            />
-                          </motion.span>
-                        </span>
-                        <span className="space-y-1">
-                          {method.badge ? (
-                            <Badge variant="brand" size="sm" className="mb-2">
-                              {method.badge}
-                            </Badge>
-                          ) : null}
-                          <motion.span
-                            className="block text-base font-medium text-text"
-                            animate={{ x: isSelected ? 2 : 0 }}
-                            transition={{
-                              type: 'spring',
-                              stiffness: 320,
-                              damping: 28,
-                            }}
-                          >
-                            {method.title}
-                          </motion.span>
-                          {method.description && <span className="block text-sm text-text-secondary">{method.description}</span>}
-                        </span>
-                      </motion.button>
+                            {method.actionLabel ?? method.title}
+                          </Button>
+                        </div>
+                      </div>
                     </motion.div>
                   )
                 }) : (
@@ -213,13 +226,13 @@ export function VerificationStep({
                   variant="plain"
                   label={simplified ? (
                     <>
-                      I have read and accept{' '}
-                      {communityTermsLink}
+                      I have read and accepted{' '}
+                      {creatorAgreementLink}
                     </>
                   ) : (
                     <>
-                      I have read and accept{' '}
-                      {communityTermsLink}
+                      I have read and accepted{' '}
+                      {creatorAgreementLink}
                     </>
                   )}
                 />
@@ -243,7 +256,7 @@ export function VerificationStep({
                   {simplified && primaryDisabled ? (
                     <p className="max-w-sm text-sm leading-relaxed text-text-secondary">
                       {alreadyVerified
-                        ? 'Accept the Community Terms to continue.'
+                        ? "Accept Raptive's Creator Agreement to continue."
                         : disabledHelperText}
                     </p>
                   ) : null}
@@ -320,7 +333,67 @@ export function VerificationStep({
           </aside>
         </div>
       </section>
-
+      <AnimatePresence>
+        {pendingMethodDetails ? (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="verification-permission-title"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+          >
+            <motion.div
+              className="w-full max-w-xl rounded-xl bg-neutral-900 p-8 text-white shadow-xl"
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 30 }}
+            >
+              <div className="space-y-7">
+                <div className="flex justify-end text-2xl leading-none text-white">...</div>
+                <div className="space-y-6 text-center">
+                  <p className="font-newsreader text-hero leading-none text-white" aria-hidden="true">
+                    {pendingModalBrand}
+                  </p>
+                  <div className="space-y-5 text-left">
+                    <h3 id="verification-permission-title" className="text-2xl font-bold leading-tight text-white">
+                      {pendingModalTitle}
+                    </h3>
+                    <p className="text-2xl font-bold leading-tight text-white">
+                      {pendingModalPrompt}
+                    </p>
+                  </div>
+                  <p className="text-base font-medium leading-relaxed text-neutral-400">
+                    {pendingModalDescription}
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <Button
+                    size="lg"
+                    fullWidth
+                    onClick={() => onConfirmMethod?.(pendingMethodDetails.value)}
+                    data-ds-role="instagram-permission-allow"
+                  >
+                    Allow
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="black"
+                    fullWidth
+                    onClick={() => onCancelMethod?.()}
+                    data-ds-role="instagram-permission-cancel"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </>
   )
 }

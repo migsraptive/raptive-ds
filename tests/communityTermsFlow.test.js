@@ -10,12 +10,35 @@ const mobileFlowSource = readFileSync(new URL('../src/patterns/MobileOnboardingF
 const viewportDemoSource = readFileSync(new URL('../src/patterns/CreatorOnboardingViewportDemo/CreatorOnboardingViewportDemo.jsx', import.meta.url), 'utf8')
 
 test('desktop verification terms toggle directly without the modal', () => {
-  assert.match(verificationStepSource, /Community Terms/)
+  assert.match(verificationStepSource, /I have read and accepted/)
+  assert.match(verificationStepSource, /Raptive's Creator Agreement/)
   assert.doesNotMatch(verificationStepSource, /CommunityTermsModal/)
   assert.doesNotMatch(verificationStepSource, /setTermsModalOpen\(true\)/)
   assert.match(verificationStepSource, /href="#"/)
   assert.match(verificationStepSource, /text-action-primary underline underline-offset-2/)
   assert.match(verificationStepSource, /onTermsAcceptedChange\?\.\(event\.target\.checked\)/)
+})
+
+test('desktop verification uses action buttons before showing a completed state', () => {
+  assert.match(verificationStepSource, /completedMethod/)
+  assert.match(verificationStepSource, /pendingMethod/)
+  assert.match(verificationStepSource, /verification-method-action/)
+  assert.match(verificationStepSource, /facebookLoginButtonStyle/)
+  assert.match(verificationStepSource, /actionBrand === 'facebook'/)
+  assert.match(creatorApplicationSource, /Continue with Facebook/)
+  assert.match(creatorApplicationSource, /actionBrand: 'facebook'/)
+  assert.match(verificationStepSource, /You're all set!/)
+  assert.doesNotMatch(verificationStepSource, /data-ds-variant="radio"/)
+  assert.match(verificationStepSource, /verification-permission-title/)
+  assert.match(verificationStepSource, /community_verify-IG/)
+  assert.match(verificationStepSource, /instagram-permission-allow/)
+  assert.match(verificationStepSource, /onConfirmMethod\?\.\(pendingMethodDetails\.value\)/)
+  assert.match(verificationStepSource, /pendingMethodDetails\?\.modalTitle/)
+  assert.match(creatorApplicationSource, /modalTitle: 'Verify with Persona'/)
+  assert.match(creatorApplicationSource, /Your Persona verification has been completed\./)
+  assert.doesNotMatch(creatorApplicationSource, /window\.open\(/)
+  assert.match(creatorApplicationSource, /setVerificationPendingMethod\(value\)/)
+  assert.match(creatorApplicationSource, /setVerificationMethod\(value\)/)
 })
 
 test('mobile and viewport verification demos expose the Community Terms modal flow', () => {
@@ -53,10 +76,18 @@ test('mobile review matches the desktop staged loader before resolved rows', () 
   assert.match(mobileFlowSource, /setResolvedGatherRows\(\['identity', 'source'\]\)/)
 })
 
-test('desktop verification defaults to an available method before checkbox acceptance', () => {
+test('desktop verification starts without a completed method before checkbox acceptance', () => {
   for (const source of [creatorApplicationSource, componentLibrarySource]) {
-    assert.match(source, /useState\('meta-login'\)/)
+    assert.match(source, /const \[verificationMethod, setVerificationMethod\] = useState\(null\)/)
+    assert.doesNotMatch(source, /const \[verificationMethod, setVerificationMethod\] = useState\('meta-login'\)/)
   }
+})
 
-  assert.doesNotMatch(creatorApplicationSource, /setVerificationMethod\(null\)/)
+test('creator application step changes keep capture URLs in sync', () => {
+  assert.match(creatorApplicationSource, /const getCaptureStepFromIndex = \(stepIndex\) => flowStepIds\[stepIndex\]/)
+  assert.match(creatorApplicationSource, /const goToStep = \(stepIndex\) =>/)
+  assert.match(creatorApplicationSource, /url\.searchParams\.set\('captureStep', getCaptureStepFromIndex\(nextStep\)\)/)
+  assert.match(creatorApplicationSource, /window\.history\.replaceState\(\{\}, '', url\)/)
+  assert.match(creatorApplicationSource, /run: \(\) => goToStep\(3\)/)
+  assert.match(creatorApplicationSource, /goToStep\(0\)/)
 })

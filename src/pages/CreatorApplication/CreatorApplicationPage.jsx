@@ -22,6 +22,7 @@ const captureStepIndexes = {
   success: 4,
   submit: 4,
 }
+const getCaptureStepFromIndex = (stepIndex) => flowStepIds[stepIndex] ?? flowStepIds[0]
 const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
 
 const initialCreatorUrl = ''
@@ -152,7 +153,8 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const [activeStep, setActiveStep] = useState(initialCaptureStep)
   const [creatorUrl, setCreatorUrl] = useState(initialCaptureUrl)
   const [intakeLoading, setIntakeLoading] = useState(false)
-  const [verificationMethod, setVerificationMethod] = useState('meta-login')
+  const [verificationMethod, setVerificationMethod] = useState(null)
+  const [verificationPendingMethod, setVerificationPendingMethod] = useState(null)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
   const [gatherRowsResolved, setGatherRowsResolved] = useState(initialCaptureStep === 1)
@@ -166,12 +168,29 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
       icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
       title: 'Login with Meta to verify your Instagram account',
       description: `Use Login with Meta to verify ${instagramAccount.handle} without a manual message.`,
+      actionLabel: 'Continue with Facebook',
+      actionBrand: 'facebook',
+      pendingLabel: 'Opening Meta...',
+      successTitle: 'Your Instagram account has been verified.',
+      successDescription: "You're all set!",
+      modalBrand: 'Instagram',
+      modalTitle: 'You previously connected community_verify-IG to your instagram account.',
+      modalPrompt: 'Would you like to continue sharing information about @culturecrave to community_verify-IG?',
+      modalDescription: 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.',
     }] : []),
     {
       value: 'email-domain',
       icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
       title: "Verify with Persona",
       description: 'Use Persona when Meta login is not convenient today.',
+      actionLabel: 'Verify with Persona',
+      pendingLabel: 'Opening Persona...',
+      successTitle: 'Your Persona verification has been completed.',
+      successDescription: "You're all set!",
+      modalBrand: 'Persona',
+      modalTitle: 'Verify with Persona',
+      modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
+      modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
     },
   ], [instagramAccount])
 
@@ -185,12 +204,23 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
 
   useEffect(() => {
     if (verificationMethod && !verificationMethods.some((method) => method.value === verificationMethod)) {
-      setVerificationMethod(verificationMethods[0]?.value)
+      setVerificationMethod(null)
       setVerificationTermsAccepted(false)
     }
   }, [verificationMethod, verificationMethods])
 
   const activeStepId = flowStepIds[activeStep] ?? 'current-step'
+  const goToStep = (stepIndex) => {
+    const nextStep = Math.min(Math.max(stepIndex, 0), flowStepIds.length - 1)
+
+    setActiveStep(nextStep)
+
+    if (typeof window === 'undefined') return
+
+    const url = new URL(window.location.href)
+    url.searchParams.set('captureStep', getCaptureStepFromIndex(nextStep))
+    window.history.replaceState({}, '', url)
+  }
   const progressMeter = null
   const gatherRowRevealDelay = captureConfig.captureMode ? 0 : gatherVideoLeadInMs
   const stepMotionProps = captureConfig.captureMode
@@ -215,17 +245,27 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     window.setTimeout(() => {
       setIntakeLoading(false)
       setGatherRowsResolved(false)
-      setActiveStep(1)
+      goToStep(1)
     }, 800)
   }
 
   const handleVerificationMethodChange = (value) => {
+    if (verificationPendingMethod || verificationMethod) return
+
+    setVerificationPendingMethod(value)
+  }
+
+  const handleVerificationMethodConfirm = (value) => {
+    setVerificationPendingMethod(null)
     setVerificationMethod(value)
-    setVerificationTermsAccepted(false)
+  }
+
+  const handleVerificationMethodCancel = () => {
+    setVerificationPendingMethod(null)
   }
 
   const handleVerificationContinue = () => {
-    setActiveStep(4)
+    goToStep(4)
   }
 
   const updateFetchAccount = (accountId, patch) => {
@@ -292,9 +332,10 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     setCreatorUrl(initialCreatorUrl)
     setFetchAccounts(getInitialAccounts())
     setGatherRowsResolved(false)
-    setVerificationMethod(verificationMethods[0]?.value)
+    setVerificationMethod(null)
+    setVerificationPendingMethod(null)
     setVerificationTermsAccepted(false)
-    setActiveStep(0)
+    goToStep(0)
   }
 
   let content = null
@@ -351,7 +392,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
           successIcon: loadingSuccessIcon,
           onClick: () => triggerPrimaryAction({
             key: 'gather-primary',
-            run: () => setActiveStep(2),
+            run: () => goToStep(2),
           }),
         }}
       />
@@ -381,7 +422,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
                 variant: 'secondary',
                 onClick: () => {
                   setGatherRowsResolved(false)
-                  setActiveStep(1)
+                  goToStep(1)
                 },
               }}
               primaryAction={{
@@ -392,7 +433,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
                 successIcon: loadingSuccessIcon,
                 onClick: () => triggerPrimaryAction({
                   key: 'review-primary',
-                  run: () => setActiveStep(3),
+                  run: () => goToStep(3),
                 }),
               }}
             />
@@ -410,8 +451,11 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
           ? 'We found this creator on our known leads list, so you can skip channel verification.'
           : 'Complete verification for one of your channels to wrap up your application.'}
         methods={verificationMethods}
-        selectedMethod={verificationMethod}
+        completedMethod={verificationMethod}
+        pendingMethod={verificationPendingMethod}
         onSelectMethod={handleVerificationMethodChange}
+        onConfirmMethod={handleVerificationMethodConfirm}
+        onCancelMethod={handleVerificationMethodCancel}
         progressMeter={progressMeter}
         termsAccepted={verificationTermsAccepted}
         onTermsAcceptedChange={setVerificationTermsAccepted}
@@ -440,7 +484,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
           label: 'Back',
           variant: 'secondary',
           onClick: () => {
-            setActiveStep(2)
+            goToStep(2)
           },
         }}
         primaryAction={{

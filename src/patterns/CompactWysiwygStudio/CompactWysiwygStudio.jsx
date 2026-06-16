@@ -21,15 +21,15 @@ const defaultFields = {
   name: 'Culture Crave Community',
   topic: getClosestCommunityVertical('Pop Culture'),
   description: 'Pop culture community tracking movies, TV, music, celebrity moments, and the fandom conversations people cannot stop discussing.',
-  discoverText: 'React to the moments fans love most.',
+  discoverText: 'React to moments fans love most.',
 }
 
 const defaultColors = brandPreviewDefaults
 const defaultEditorColors = {
   brand: defaultColors.brand,
 }
-const descriptionCharacterLimit = 130
-const shortDescriptionCharacterLimit = 40
+const descriptionCharacterLimit = 700
+const shortDescriptionCharacterLimit = 35
 
 function getCharacterCountLabel(value, limit) {
   return `${value.length}/${limit} characters`
