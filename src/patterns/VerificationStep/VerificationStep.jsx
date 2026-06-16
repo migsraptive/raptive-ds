@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import { BadgeCheck } from 'lucide-react'
 import { motion } from 'motion/react'
 import verificationIllustrationUrl from '../../assets/verification-illustration.png'
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
-import { CommunityTermsModal } from '../CommunityTermsModal/CommunityTermsModal.jsx'
 
 export function VerificationStep({
   title,
@@ -31,7 +29,6 @@ export function VerificationStep({
   primaryAction = { label: 'Confirm identity' },
   secondaryAction = { label: 'Back', variant: 'ghost' },
 }) {
-  const [termsModalOpen, setTermsModalOpen] = useState(false)
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
   const illustrationFrameClasses = illustrationFrameClassName ?? (showAside ? 'aspect-square' : 'h-full min-h-[720px]')
   const needsMethodSelection = !alreadyVerified && methods.length > 0
@@ -48,7 +45,6 @@ export function VerificationStep({
       className="font-bold text-action-primary underline underline-offset-2"
       onClick={(event) => {
         event.preventDefault()
-        event.stopPropagation()
       }}
     >
       Community Terms
@@ -213,7 +209,7 @@ export function VerificationStep({
               <div className="grid gap-3">
                 <Checkbox
                   checked={termsAccepted}
-                  onChange={() => setTermsModalOpen(true)}
+                  onChange={(event) => onTermsAcceptedChange?.(event.target.checked)}
                   variant="plain"
                   label={simplified ? (
                     <>
@@ -325,11 +321,6 @@ export function VerificationStep({
         </div>
       </section>
 
-      <CommunityTermsModal
-        isOpen={termsModalOpen}
-        onDismiss={() => setTermsModalOpen(false)}
-        onAccept={() => onTermsAcceptedChange?.(true)}
-      />
     </>
   )
 }
