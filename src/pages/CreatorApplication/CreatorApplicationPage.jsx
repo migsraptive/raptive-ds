@@ -8,6 +8,7 @@ import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { getDetectedSocialAccountHelperText } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
 import { CompactWysiwygStudio } from '../../patterns/CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { DataGatheringReview } from '../../patterns/DataGatheringReview/DataGatheringReview.jsx'
+import { AppDownloadPrompt } from '../../patterns/AppDownloadPrompt/AppDownloadPrompt.jsx'
 import { SingleFieldIntake } from '../../patterns/SingleFieldIntake/SingleFieldIntake.jsx'
 import { SubmissionSuccess } from '../../patterns/SubmissionSuccess/SubmissionSuccess.jsx'
 import { VerificationStep } from '../../patterns/VerificationStep/VerificationStep.jsx'
@@ -71,6 +72,7 @@ const stepTransition = {
 
 const gatherVideoLeadInMs = 2000
 const gatherVideoPlaybackRate = 0.45
+const emailAddressPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function GatherVideoAside() {
   const videoRef = useRef(null)
@@ -155,6 +157,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const [intakeLoading, setIntakeLoading] = useState(false)
   const [verificationMethod, setVerificationMethod] = useState(null)
   const [verificationPendingMethod, setVerificationPendingMethod] = useState(null)
+  const [verificationEmail, setVerificationEmail] = useState('')
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [fetchAccounts, setFetchAccounts] = useState(getInitialAccounts)
   const [gatherRowsResolved, setGatherRowsResolved] = useState(initialCaptureStep === 1)
@@ -162,37 +165,48 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   const actionTimeoutRef = useRef(null)
   const instagramAccount = initialAccounts.find((account) => account.platform === 'Instagram')
   const creatorIsKnownLead = false
-  const verificationMethods = useMemo(() => [
-    ...(instagramAccount ? [{
-      value: 'meta-login',
-      icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
-      title: 'Login with Meta to verify your Instagram account',
-      description: `Use Login with Meta to verify ${instagramAccount.handle} without a manual message.`,
-      actionLabel: 'Continue with Facebook',
-      actionBrand: 'facebook',
-      pendingLabel: 'Opening Meta...',
-      successTitle: 'Your Instagram account has been verified.',
-      successDescription: "You're all set!",
-      modalBrand: 'Instagram',
-      modalTitle: 'You previously connected community_verify-IG to your instagram account.',
-      modalPrompt: 'Would you like to continue sharing information about @culturecrave to community_verify-IG?',
-      modalDescription: 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.',
-    }] : []),
-    {
-      value: 'email-domain',
-      icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
-      title: "Verify with Persona",
-      description: 'Use Persona when Meta login is not convenient today.',
-      actionLabel: 'Verify with Persona',
-      pendingLabel: 'Opening Persona...',
-      successTitle: 'Your Persona verification has been completed.',
-      successDescription: "You're all set!",
-      modalBrand: 'Persona',
-      modalTitle: 'Verify with Persona',
-      modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
-      modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
-    },
-  ], [instagramAccount])
+  const verificationMethods = useMemo(() => {
+    const trimmedVerificationEmail = verificationEmail.trim()
+    const emailIsReady = emailAddressPattern.test(trimmedVerificationEmail)
+
+    return [
+      ...(instagramAccount ? [{
+        value: 'meta-login',
+        icon: <LucideIcon icon={BadgeCheck} size="lg" stroke="display" />,
+        title: 'Login with Meta to verify your Instagram account',
+        description: `Use Login with Meta to verify ${instagramAccount.handle} without a manual message.`,
+        actionLabel: 'Continue with Facebook',
+        actionBrand: 'facebook',
+        pendingLabel: 'Opening Meta...',
+        successTitle: 'Your Instagram account has been verified.',
+        successDescription: "You're all set!",
+        modalBrand: 'Instagram',
+        modalTitle: 'You previously connected community_verify-IG to your instagram account.',
+        modalPrompt: 'Would you like to continue sharing information about @culturecrave to community_verify-IG?',
+        modalDescription: 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.',
+      }] : []),
+      {
+        value: 'email-domain',
+        icon: <LucideIcon icon={Mail} size="lg" stroke="display" />,
+        title: 'Submit with an email address',
+        description: 'Enter the email address you want us to use for this application.',
+        inlineCompletion: true,
+        hideAction: true,
+        isComplete: emailIsReady,
+        input: {
+          id: 'creator-application-verification-email',
+          type: 'email',
+          placeholder: 'you@example.com',
+          value: verificationEmail,
+          onChange: (event) => {
+            setVerificationEmail(event.target.value)
+            setVerificationMethod('email-domain')
+            setVerificationPendingMethod(null)
+          },
+        },
+      },
+    ]
+  }, [instagramAccount, verificationEmail])
 
   useEffect(() => (
     () => {
@@ -250,8 +264,14 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
   }
 
   const handleVerificationMethodChange = (value) => {
-    if (verificationPendingMethod || verificationMethod) return
+    if (verificationPendingMethod) return
 
+    if (value === 'email-domain') {
+      setVerificationMethod(value)
+      return
+    }
+
+    setVerificationMethod(null)
     setVerificationPendingMethod(value)
   }
 
@@ -334,6 +354,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
     setGatherRowsResolved(false)
     setVerificationMethod(null)
     setVerificationPendingMethod(null)
+    setVerificationEmail('')
     setVerificationTermsAccepted(false)
     goToStep(0)
   }
@@ -449,7 +470,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         title={creatorIsKnownLead ? "You're already verified!" : "One last check to know it's really you."}
         description={creatorIsKnownLead
           ? 'We found this creator on our known leads list, so you can skip channel verification.'
-          : 'Complete verification for one of your channels to wrap up your application.'}
+          : 'Use Meta to verify your Instagram account, or submit with an email address to wrap up your application.'}
         methods={verificationMethods}
         completedMethod={verificationMethod}
         pendingMethod={verificationPendingMethod}
@@ -529,6 +550,7 @@ export function CreatorApplicationPage({ onOpenLibrary, standalone = false }) {
         showAside={false}
         framed={!standalone}
         contentAlign="center"
+        footerContent={<AppDownloadPrompt mode="desktop" />}
         secondaryAction={null}
         primaryAction={{
           label: 'Close',

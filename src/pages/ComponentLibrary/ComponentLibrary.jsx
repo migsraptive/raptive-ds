@@ -62,6 +62,7 @@ import { HomeFeedPageTemplate } from '../../components/HomeFeedPageTemplate/Home
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { RightRailCommunityRulesCard } from '../../components/RightRailCommunityRulesCard/RightRailCommunityRulesCard.jsx'
 import { ApplicationEmailSet } from '../../patterns/ApplicationEmailSet/ApplicationEmailSet.jsx'
+import { AppDownloadPrompt } from '../../patterns/AppDownloadPrompt/AppDownloadPrompt.jsx'
 import { CategoryPicker } from '../../patterns/CategoryPicker/CategoryPicker.jsx'
 import { CelebrationModal } from '../../patterns/CelebrationModal/CelebrationModal.jsx'
 import { CommunityTermsModal } from '../../patterns/CommunityTermsModal/CommunityTermsModal.jsx'
@@ -82,15 +83,36 @@ import { COMMUNITY_VERTICAL_OPTIONS } from '../../utils/communityVerticals.js'
 const ComponentLibraryPrototypes = lazy(() => import('../../prototypes/ComponentLibraryPrototypes/ComponentLibraryPrototypes.jsx'))
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
-function Section({ title, description, children }) {
+const explorationNoticeLabel = 'exploration - do not use or refer'
+
+function Section({ title, description, children, titleBadge = null }) {
   return (
     <section className="space-y-4">
       <div className="space-y-0.5 pb-3 border-b border-border">
-        <h2 className="text-lg font-semibold text-text">{title}</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-lg font-semibold text-text">{title}</h2>
+          {titleBadge}
+        </div>
         {description && <p className="text-sm text-text-secondary">{description}</p>}
       </div>
       {children}
     </section>
+  )
+}
+
+function PatternSection({ title, description, children }) {
+  return (
+    <Section
+      title={title}
+      description={description}
+      titleBadge={(
+        <Badge variant="warning" size="sm">
+          {explorationNoticeLabel}
+        </Badge>
+      )}
+    >
+      {children}
+    </Section>
   )
 }
 
@@ -451,6 +473,7 @@ const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars
 
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
+const emailAddressPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
 const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
 const creatorShellStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
@@ -658,14 +681,17 @@ export function ComponentLibrary() {
   const [creatorShellHandleOverrides, setCreatorShellHandleOverrides] = useState({})
   const [creatorShellEditingHandlePlatform, setCreatorShellEditingHandlePlatform] = useState(null)
   const [creatorShellHandleDraft, setCreatorShellHandleDraft] = useState('')
+  const [creatorShellVerificationEmail, setCreatorShellVerificationEmail] = useState('')
+  const [creatorShellVerificationEmailSelected, setCreatorShellVerificationEmailSelected] = useState(false)
   const [fetchConfirmationDemoAccounts, setFetchConfirmationDemoAccounts] = useState(getFetchConfirmationDemoAccounts)
   const [fetchConfirmationEditingAccountId, setFetchConfirmationEditingAccountId] = useState(null)
   const [fetchConfirmationEditDraft, setFetchConfirmationEditDraft] = useState({ platform: '', handle: '', url: '' })
   const [verificationMethod, setVerificationMethod] = useState(null)
-  const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [verificationEmail, setVerificationEmail] = useState('')
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [simplifiedVerificationState, setSimplifiedVerificationState] = useState('standard')
   const [simplifiedVerificationMethod, setSimplifiedVerificationMethod] = useState(null)
+  const [simplifiedVerificationEmail, setSimplifiedVerificationEmail] = useState('')
   const [simplifiedVerificationTermsAccepted, setSimplifiedVerificationTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
   const [celebrationModalOpen, setCelebrationModalOpen] = useState(false)
@@ -803,7 +829,7 @@ export function ComponentLibrary() {
     },
     verify: {
       title: "One last check to know it's really you.",
-      description: 'Complete verification for one of your channels to wrap up your application.',
+      description: 'Use Meta to verify your Instagram account, or submit with an email address to wrap up your application.',
       primaryLabel: 'Submit application',
       primarySuccessLabel: 'Submitting...',
       primarySuccessIcon: loadingSuccessIcon,
@@ -837,23 +863,26 @@ export function ComponentLibrary() {
   }
   const handleVerificationMethodChange = (value) => {
     setVerificationMethod(value)
-    setVerificationConfirmed(false)
   }
   const handleSimplifiedVerificationStateChange = (value) => {
     setSimplifiedVerificationState(value)
     setSimplifiedVerificationMethod(null)
+    setSimplifiedVerificationEmail('')
     setSimplifiedVerificationTermsAccepted(false)
   }
+  const verificationEmailIsReady = emailAddressPattern.test(verificationEmail.trim())
+  const creatorShellVerificationEmailIsReady = emailAddressPattern.test(creatorShellVerificationEmail.trim())
+  const simplifiedVerificationEmailIsReady = emailAddressPattern.test(simplifiedVerificationEmail.trim())
   const simplifiedVerificationIsKnownLead = simplifiedVerificationState === 'known-lead'
   const simplifiedVerificationSelectedMethod = simplifiedVerificationIsKnownLead
     ? null
     : previewPatternCtaSuccess ? 'meta' : simplifiedVerificationMethod
   const simplifiedVerificationTermsValue = previewPatternCtaSuccess || simplifiedVerificationTermsAccepted
   const simplifiedVerificationFallbackMessage = simplifiedVerificationState === 'meta-fallback'
-    ? 'That didn’t work. You can try Meta again or use Persona instead.'
+    ? 'That didn’t work. You can try Meta again or submit with an email address instead.'
     : null
   const creatorShellVerificationIncomplete = creatorShellPreviewStep === 'verify'
-    && (!verificationConfirmed || !verificationTermsAccepted)
+    && (!creatorShellVerificationEmailIsReady || !verificationTermsAccepted)
   const handleCreatorShellNext = () => {
     if (creatorShellIsLastStep) {
       handleCreatorShellPreviewStepChange('entry')
@@ -1680,7 +1709,7 @@ export function ComponentLibrary() {
               <div className="max-w-sm">
                 <OptionTile
                   icon={tileIcon(Mail)}
-                  title="Verify with Persona"
+                  title="Submit with email"
                   description="Use an inline detail area when the selected tile needs a short next step."
                   selected
                   selectionStyle="radio"
@@ -2320,7 +2349,12 @@ export function ComponentLibrary() {
         {activeSection === 'Patterns' && (
           <>
             <div className="space-y-1">
-              <h3 className="text-base font-semibold text-text">Patterns are explorations</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-base font-semibold text-text">Patterns are explorations</h3>
+                <Badge variant="warning" size="sm">
+                  {explorationNoticeLabel}
+                </Badge>
+              </div>
               <p className="mt-1 text-sm leading-relaxed text-text-secondary">
                 These pattern examples are not the final design. To review the final Creator Application experience, use the Open creator application CTA in the top navigation.
               </p>
@@ -2336,7 +2370,7 @@ export function ComponentLibrary() {
               />
             </div>
 
-            <Section title="Creator Onboarding Shell" description="Stable guided-story frame for previewing onboarding height before wiring it into the live flow.">
+            <PatternSection title="Creator Onboarding Shell" description="Stable guided-story frame for previewing onboarding height before wiring it into the live flow.">
               <div className="space-y-4">
                 <SegmentedControl
                   label="Preview screen"
@@ -2436,17 +2470,29 @@ export function ComponentLibrary() {
                         <div className="grid gap-4">
                           {[
                             {
-                              icon: tileIcon(Mail),
+                              icon: tileIcon(BadgeCheck),
                               title: 'Login with Meta to verify your Instagram account',
                               description: 'Use Login with Meta to verify @culturecrave without a manual message.',
                             },
                             {
-                              icon: tileIcon(BadgeCheck),
-                              title: "Verify with Persona",
-                              description: 'Use Persona when Meta login is not convenient today.',
+                              icon: tileIcon(Mail),
+                              title: 'Submit with an email address',
+                              description: 'Enter the email address you want us to use for this application.',
+                              selected: creatorShellVerificationEmailSelected,
+                              email: true,
                             },
                           ].map((method) => (
-                            <div key={method.title} className="rounded-xl border border-border bg-surface px-5 py-4">
+                            <div
+                              key={method.title}
+                              className={[
+                                'rounded-xl border px-5 py-4 transition-[background-color,border-color,box-shadow,opacity] duration-150',
+                                method.selected
+                                  ? 'border-brand bg-brand-subtle shadow-brand-glow'
+                                  : 'border-border bg-surface',
+                                method.disabled ? 'opacity-50' : '',
+                              ].filter(Boolean).join(' ')}
+                              aria-disabled={method.disabled}
+                            >
                               <div className="flex min-h-36 flex-col items-start gap-3">
                                 <span className="flex w-full items-start justify-between gap-3">
                                   <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised text-xl">
@@ -2458,18 +2504,24 @@ export function ComponentLibrary() {
                                   <span className="block text-base font-medium text-text">{method.title}</span>
                                   <span className="block text-sm text-text-secondary">{method.description}</span>
                                 </span>
+                                {method.email ? (
+                                  <TextInput
+                                    id="creator-shell-verification-email"
+                                    type="email"
+                                    placeholder="you@example.com"
+                                    value={creatorShellVerificationEmail}
+                                    onFocus={() => setCreatorShellVerificationEmailSelected(true)}
+                                    onChange={(event) => {
+                                      setCreatorShellVerificationEmail(event.target.value)
+                                      setCreatorShellVerificationEmailSelected(true)
+                                    }}
+                                  />
+                                ) : null}
                               </div>
                             </div>
                           ))}
                         </div>
                         <div className="grid gap-3">
-                          <Checkbox
-                            checked={verificationConfirmed}
-                            onChange={(event) => setVerificationConfirmed(event.target.checked)}
-                            variant="plain"
-                            label="I control this creator account and want to continue with verification."
-                            description="This keeps the last step feeling intentional without adding a long security ceremony."
-                          />
                           <Checkbox
                             checked={verificationTermsAccepted}
                             onChange={() => setTermsModalOpen(true)}
@@ -2536,9 +2588,9 @@ export function ComponentLibrary() {
                   </>
                 </CreatorOnboardingShell>
               </div>
-            </Section>
+            </PatternSection>
 
-            <Section title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
+            <PatternSection title="Single Field Intake" description="Desktop-first opening step for the real creator application flow.">
               <SingleFieldIntake
                 title="Where do your fans live?"
                 description="Your Raptive community will be a new home for your fans. Paste a link to where we can find them: your main social account or website. We’ll do the rest!"
@@ -2562,9 +2614,9 @@ export function ComponentLibrary() {
                 showAside={false}
                 illustrationFrameClassName="h-96"
               />
-            </Section>
+            </PatternSection>
 
-            <Section title="Data Gathering Review" description="Exploratory staged loading state that resolves creator signals inline before the next confirmation step.">
+            <PatternSection title="Data Gathering Review" description="Exploratory staged loading state that resolves creator signals inline before the next confirmation step.">
               <DataGatheringReview
                 detectedSource="Instagram"
                 socialAccounts={fetchConfirmationDemoAccounts}
@@ -2584,9 +2636,9 @@ export function ComponentLibrary() {
                 }}
                 illustrationFrameClassName="h-96"
               />
-            </Section>
+            </PatternSection>
 
-            <Section title="Data Gathering Review: No Data Found" description="Variation for submitted sources that resolve without a matching identity or connected social accounts.">
+            <PatternSection title="Data Gathering Review: No Data Found" description="Variation for submitted sources that resolve without a matching identity or connected social accounts.">
               <DataGatheringReview
                 title="We’re finding your fans."
                 description="Give us a moment while we pull some details."
@@ -2604,9 +2656,9 @@ export function ComponentLibrary() {
                 }}
                 illustrationFrameClassName="h-96"
               />
-            </Section>
+            </PatternSection>
 
-            <Section title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before review.">
+            <PatternSection title="Fetch Confirmation" description="Fetched creator confirmation step with editable website and account handles before review.">
               <FetchConfirmation
                 loading={false}
                 creator={{
@@ -2632,9 +2684,9 @@ export function ComponentLibrary() {
                   successIcon: loadingSuccessIcon,
                 }}
               />
-            </Section>
+            </PatternSection>
 
-            <Section title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
+            <PatternSection title="Review Correction" description="Trust-recovery edit step for correcting fetched identity before the emotional preview stage.">
               <section className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
                 <div className="flex h-full flex-col p-8 lg:p-12">
                   <div className="space-y-8">
@@ -2660,12 +2712,12 @@ export function ComponentLibrary() {
                   </div>
                 </div>
               </section>
-            </Section>
+            </PatternSection>
 
-            <Section title="Verification Step" description="Identity confirmation step before the final submission moment, matching the creator onboarding flow.">
+            <PatternSection title="Verification Step" description="Identity confirmation step before the final submission moment, matching the creator onboarding flow.">
               <VerificationStep
                 title="One last check to know it's really you."
-                description="Complete verification for one of your channels to wrap up your application."
+                description="Use Meta to verify your Instagram account, or submit with an email address to wrap up your application."
                 methods={[
                   {
                     value: 'meta-login',
@@ -2685,16 +2737,21 @@ export function ComponentLibrary() {
                   {
                     value: 'email-domain',
                     icon: tileIcon(Mail),
-                    title: "Verify with Persona",
-                    description: 'Use Persona when Meta login is not convenient today.',
-                    actionLabel: 'Verify with Persona',
-                    pendingLabel: 'Opening Persona...',
-                    successTitle: 'Your Persona verification has been completed.',
-                    successDescription: "You're all set!",
-                    modalBrand: 'Persona',
-                    modalTitle: 'Verify with Persona',
-                    modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
-                    modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
+                    title: 'Submit with an email address',
+                    description: 'Enter the email address you want us to use for this application.',
+                    inlineCompletion: true,
+                    hideAction: true,
+                    isComplete: verificationEmailIsReady,
+                    input: {
+                      id: 'library-verification-email',
+                      type: 'email',
+                      placeholder: 'you@example.com',
+                      value: verificationEmail,
+                      onChange: (event) => {
+                        setVerificationEmail(event.target.value)
+                        setVerificationMethod('email-domain')
+                      },
+                    },
                   },
                 ]}
                 completedMethod={previewPatternCtaSuccess ? 'meta-login' : verificationMethod}
@@ -2711,9 +2768,9 @@ export function ComponentLibrary() {
                   successIcon: loadingSuccessIcon,
                 }}
               />
-            </Section>
+            </PatternSection>
 
-            <Section title="Verification Step: Simplified Option" description="Exploration for a lower-friction verification choice with known-lead and Meta fallback states.">
+            <PatternSection title="Verification Step: Simplified Option" description="Exploration for a lower-friction verification choice with known-lead and Meta fallback states.">
               <div className="space-y-4">
                 <SegmentedControl
                   label="Verification state"
@@ -2747,16 +2804,21 @@ export function ComponentLibrary() {
                     {
                       value: 'email',
                       icon: tileIcon(Mail),
-                      title: "Verify with Persona",
-                      description: 'Use Persona when Meta login is not convenient today.',
-                      actionLabel: 'Verify with Persona',
-                      pendingLabel: 'Opening Persona...',
-                      successTitle: 'Your Persona verification has been completed.',
-                      successDescription: "You're all set!",
-                      modalBrand: 'Persona',
-                      modalTitle: 'Verify with Persona',
-                      modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
-                      modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
+                      title: 'Submit with an email address',
+                      description: 'Enter the email address you want us to use for this application.',
+                      inlineCompletion: true,
+                      hideAction: true,
+                      isComplete: simplifiedVerificationEmailIsReady,
+                      input: {
+                        id: 'library-simplified-verification-email',
+                        type: 'email',
+                        placeholder: 'you@example.com',
+                        value: simplifiedVerificationEmail,
+                        onChange: (event) => {
+                          setSimplifiedVerificationEmail(event.target.value)
+                          setSimplifiedVerificationMethod('email')
+                        },
+                      },
                     },
                   ]}
                   completedMethod={simplifiedVerificationSelectedMethod}
@@ -2772,14 +2834,14 @@ export function ComponentLibrary() {
                   primaryAction={{
                     label: 'Continue',
                     success: previewPatternCtaSuccess,
-                    successLabel: simplifiedVerificationSelectedMethod === 'email' ? 'Manual pending' : 'Continuing...',
+                    successLabel: simplifiedVerificationSelectedMethod === 'email' ? 'Submitting...' : 'Continuing...',
                     successIcon: loadingSuccessIcon,
                   }}
                 />
               </div>
-            </Section>
+            </PatternSection>
 
-            <Section title="Verification Step: Known Lead" description="Known-lead variation that skips method selection because the creator is already verified.">
+            <PatternSection title="Verification Step: Known Lead" description="Known-lead variation that skips method selection because the creator is already verified.">
               <VerificationStep
                 title="You're already verified!"
                 description="We found this creator on our known leads list."
@@ -2798,9 +2860,9 @@ export function ComponentLibrary() {
                   successIcon: loadingSuccessIcon,
                 }}
               />
-            </Section>
+            </PatternSection>
 
-            <Section title="Submission Success: Cursor Burst" description="Completion state with confetti charged around the cursor before bursting from that point.">
+            <PatternSection title="Submission Success: Cursor Burst" description="Completion state with confetti charged around the cursor before bursting from that point.">
               <SubmissionSuccess
                 title="You’re on the list. We’ll take it from here."
                 summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
@@ -2816,7 +2878,45 @@ export function ComponentLibrary() {
                   successIcon: loadingSuccessIcon,
                 }}
               />
-            </Section>
+            </PatternSection>
+
+            <PatternSection title="Submission Success: App Download Prompt Desktop" description="Completion-state exploration with app store download actions and attribution hooks.">
+              <SubmissionSuccess
+                title="You’re on the list. We’ll take it from here."
+                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
+                timeline={submissionSuccessTimeline}
+                showAside={false}
+                illustrationFrameClassName="h-96"
+                footerContent={<AppDownloadPrompt mode="desktop" />}
+                secondaryAction={null}
+                primaryAction={{
+                  label: 'Close',
+                  variant: 'black',
+                  success: previewPatternCtaSuccess,
+                  successLabel: 'Close',
+                  successIcon: loadingSuccessIcon,
+                }}
+              />
+            </PatternSection>
+
+            <PatternSection title="Submission Success: App Download Prompt Mobile" description="Completion-state exploration for mobile browsers using direct app store actions instead of QR scanning.">
+              <SubmissionSuccess
+                title="You’re on the list. We’ll take it from here."
+                summary="We’ll review the setup across brand, audience, and community fit. If there’s a match, our team will reach out with next steps."
+                timeline={submissionSuccessTimeline}
+                showAside={false}
+                illustrationFrameClassName="h-96"
+                footerContent={<AppDownloadPrompt mode="mobile" />}
+                secondaryAction={null}
+                primaryAction={{
+                  label: 'Close',
+                  variant: 'black',
+                  success: previewPatternCtaSuccess,
+                  successLabel: 'Close',
+                  successIcon: loadingSuccessIcon,
+                }}
+              />
+            </PatternSection>
 
           </>
         )}

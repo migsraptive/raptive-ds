@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BadgeCheck, LoaderCircle, Mail, Rocket, ShieldCheck } from 'lucide-react'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
@@ -31,6 +32,7 @@ function DocumentationNote({ children }) {
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
 const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
+const emailAddressPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const submissionSuccessTimeline = [
   {
     step: 'submitted',
@@ -58,6 +60,9 @@ export default function ComponentLibraryPrototypes({
   verificationTermsAccepted,
   onVerificationTermsAcceptedChange,
 }) {
+  const [verificationEmail, setVerificationEmail] = useState('')
+  const verificationEmailIsReady = emailAddressPattern.test(verificationEmail.trim())
+
   return (
     <>
       <div className="rounded-xl border border-border bg-surface px-4 py-3 shadow-xs">
@@ -123,11 +128,11 @@ export default function ComponentLibraryPrototypes({
 
       <Section
         title="Verification Expansion"
-        description="Exploration area for the verification step where Meta login is primary and the Persona fallback path stays available."
+        description="Exploration area for the verification step where Meta login is primary and email submission is available when Meta is not convenient."
       >
         <VerificationStep
           title="One last check to know it's really you."
-          description="Complete verification for one of your channels to wrap up your application."
+          description="Use Meta to verify your Instagram account, or submit with an email address to wrap up your application."
           methods={[
             {
               value: 'meta-login',
@@ -147,16 +152,21 @@ export default function ComponentLibraryPrototypes({
             {
               value: 'email-domain',
               icon: tileIcon(Mail),
-              title: "Verify with Persona",
-              description: 'Use Persona when Meta login is not convenient today.',
-              actionLabel: 'Verify with Persona',
-              pendingLabel: 'Opening Persona...',
-              successTitle: 'Your Persona verification has been completed.',
-              successDescription: "You're all set!",
-              modalBrand: 'Persona',
-              modalTitle: 'Verify with Persona',
-              modalPrompt: 'Use Persona to confirm this creator account and continue your application.',
-              modalDescription: 'Persona will guide you through a secure identity check. This prototype completes verification when you allow the Persona check.',
+              title: 'Submit with an email address',
+              description: 'Enter the email address you want us to use for this application.',
+              inlineCompletion: true,
+              hideAction: true,
+              isComplete: verificationEmailIsReady,
+              input: {
+                id: 'prototype-verification-email',
+                type: 'email',
+                placeholder: 'you@example.com',
+                value: verificationEmail,
+                onChange: (event) => {
+                  setVerificationEmail(event.target.value)
+                  onVerificationMethodChange('email-domain')
+                },
+              },
             },
           ]}
           completedMethod={verificationMethod}

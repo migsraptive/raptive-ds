@@ -5,6 +5,7 @@ import verificationIllustrationUrl from '../../assets/verification-illustration.
 import { Badge } from '../../components/Badge/Badge.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
+import { TextInput } from '../../components/TextInput/TextInput.jsx'
 
 // no token available: third-party Facebook login brand color.
 const facebookLoginButtonStyle = {
@@ -44,17 +45,22 @@ export function VerificationStep({
   const centeredContentClassName = contentAlign === 'center' ? 'lg:mx-auto lg:w-full lg:max-w-3xl' : ''
   const illustrationFrameClasses = illustrationFrameClassName ?? (showAside ? 'aspect-square' : 'h-full min-h-[720px]')
   const completedMethodValue = completedMethod ?? selectedMethod
+  const visualSelectedMethodValue = pendingMethod ?? completedMethodValue
   const completedMethodDetails = methods.find((method) => method.value === completedMethodValue)
+  const selectedInlineMethodDetails = methods.find((method) => method.value === completedMethodValue && method.inlineCompletion)
   const pendingMethodDetails = methods.find((method) => method.value === pendingMethod)
   const pendingModalBrand = pendingMethodDetails?.modalBrand ?? 'Instagram'
   const pendingModalTitle = pendingMethodDetails?.modalTitle ?? 'You previously connected community_verify-IG to your instagram account.'
   const pendingModalPrompt = pendingMethodDetails?.modalPrompt ?? 'Would you like to continue sharing information about @culturecrave to community_verify-IG?'
   const pendingModalDescription = pendingMethodDetails?.modalDescription ?? 'By allowing, community_verify-IG will receive ongoing access to your information and Instagram will record when community_verify-IG accesses it. Learn More about this sharing and the settings you have. community_verify-IG Privacy Policy.'
-  const needsMethodCompletion = !alreadyVerified && methods.length > 0 && !completedMethodDetails
+  const shouldShowCompletedMethod = completedMethodDetails && !completedMethodDetails.inlineCompletion
+  const needsMethodCompletion = !alreadyVerified && methods.length > 0 && !completedMethodDetails && !selectedInlineMethodDetails
+  const selectedInlineMethodIncomplete = Boolean(selectedInlineMethodDetails && selectedInlineMethodDetails.isComplete === false)
   const hasNoMethodOptions = !alreadyVerified && methods.length === 0
   const primaryDisabled = (
     hasNoMethodOptions
     || needsMethodCompletion
+    || selectedInlineMethodIncomplete
     || !termsAccepted
     || primaryAction.disabled
   )
@@ -125,7 +131,7 @@ export function VerificationStep({
                   </div>
                 </div>
               </div>
-            ) : completedMethodDetails ? (
+            ) : shouldShowCompletedMethod ? (
               <motion.div
                 layout
                 transition={{ type: 'spring', stiffness: 260, damping: 28 }}
@@ -150,6 +156,14 @@ export function VerificationStep({
                 {methods.length > 0 ? methods.map((method) => {
                   const isPending = pendingMethod === method.value
                   const isFacebookAction = method.actionBrand === 'facebook'
+                  const isSelected = visualSelectedMethodValue === method.value
+                  const isMethodDisabled = Boolean(method.disabled || (pendingMethod && !isPending))
+                  const showMethodAction = !method.hideAction
+                  const handleMethodSelect = () => {
+                    if (isMethodDisabled || method.actionDisabled) return
+
+                    onSelectMethod?.(method.value)
+                  }
                   const actionIcon = method.actionIcon ?? (isFacebookAction ? (
                     <img src={facebookIconUrl} alt="" aria-hidden="true" className="h-4 w-4 invert" loading="eager" decoding="async" />
                   ) : null)
@@ -158,8 +172,32 @@ export function VerificationStep({
                       key={method.value}
                       layout
                       transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-                      className="rounded-xl border border-border bg-surface p-5 transition-[background-color,border-color,box-shadow] duration-150 hover:border-border-strong hover:bg-surface-raised"
+                      className={[
+                        'relative rounded-xl border p-5 transition-[background-color,border-color,box-shadow,opacity] duration-150',
+                        isSelected
+                          ? 'border-brand bg-brand-subtle shadow-brand-glow'
+                          : 'border-border bg-surface',
+                        isMethodDisabled
+                          ? 'opacity-50'
+                          : 'cursor-pointer hover:border-border-strong hover:bg-surface-raised',
+                      ].join(' ')}
+                      aria-disabled={isMethodDisabled}
+                      onClick={handleMethodSelect}
                     >
+                      <span
+                        aria-hidden="true"
+                        className={[
+                          'absolute right-5 top-5 flex h-6 w-6 items-center justify-center rounded-full border bg-surface transition-colors duration-150',
+                          isSelected ? 'border-brand' : 'border-border',
+                        ].join(' ')}
+                      >
+                        <span
+                          className={[
+                            'block h-3 w-3 rounded-full bg-brand transition-opacity duration-150',
+                            isSelected ? 'opacity-100' : 'opacity-0',
+                          ].join(' ')}
+                        />
+                      </span>
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex min-w-0 gap-3">
                           {method.icon ? (
@@ -178,7 +216,7 @@ export function VerificationStep({
                               {method.icon}
                             </motion.span>
                           ) : <span />}
-                          <span className="min-w-0 space-y-1">
+                          <div className="min-w-0 space-y-1">
                             {method.badge ? (
                               <Badge variant="brand" size="sm" className="mb-2">
                                 {method.badge}
@@ -188,24 +226,48 @@ export function VerificationStep({
                               {method.title}
                             </span>
                             {method.description && <span className="block text-sm leading-relaxed text-text-secondary">{method.description}</span>}
-                          </span>
+                            {method.input ? (
+                              <TextInput
+                                id={method.input.id}
+                                type={method.input.type ?? 'text'}
+                                label={method.input.label}
+                                description={method.input.description}
+                                placeholder={method.input.placeholder}
+                                value={method.input.value}
+                                onChange={method.input.onChange}
+                                onFocus={(event) => {
+                                  method.input.onFocus?.(event)
+                                  onSelectMethod?.(method.value)
+                                }}
+                                disabled={isMethodDisabled || method.input.disabled}
+                                inputClassName={method.input.inputClassName}
+                                data-ds-role="verification-email-input"
+                                data-ds-instance={`creator-application.verification.${method.value}.email`}
+                              />
+                            ) : null}
+                          </div>
                         </div>
-                        <div className="flex justify-end sm:w-52 sm:flex-shrink-0">
-                          <Button
-                            size="md"
-                            variant={isFacebookAction ? 'previewBrand' : method.actionVariant ?? 'secondary'}
-                            style={isFacebookAction ? facebookLoginButtonStyle : method.actionStyle}
-                            loading={isPending}
-                            loadingLabel={method.pendingLabel ?? 'Opening...'}
-                            disabled={Boolean(pendingMethod)}
-                            onClick={() => onSelectMethod?.(method.value)}
-                            iconBefore={actionIcon}
-                            data-ds-role="verification-method-action"
-                            data-ds-instance={`creator-application.verification.${method.value}`}
-                          >
-                            {method.actionLabel ?? method.title}
-                          </Button>
-                        </div>
+                        {showMethodAction ? (
+                          <div className="flex justify-end sm:w-52 sm:flex-shrink-0">
+                            <Button
+                              size="md"
+                              variant={isFacebookAction ? 'previewBrand' : method.actionVariant ?? 'secondary'}
+                              style={isFacebookAction ? facebookLoginButtonStyle : method.actionStyle}
+                              loading={isPending}
+                              loadingLabel={method.pendingLabel ?? 'Opening...'}
+                              disabled={isMethodDisabled || Boolean(method.actionDisabled)}
+                              onClick={(event) => {
+                                event.stopPropagation()
+                                handleMethodSelect()
+                              }}
+                              iconBefore={actionIcon}
+                              data-ds-role="verification-method-action"
+                              data-ds-instance={`creator-application.verification.${method.value}`}
+                            >
+                              {method.actionLabel ?? method.title}
+                            </Button>
+                          </div>
+                        ) : null}
                       </div>
                     </motion.div>
                   )

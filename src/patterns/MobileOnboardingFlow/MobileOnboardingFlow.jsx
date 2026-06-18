@@ -18,6 +18,7 @@ import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { OptionTile } from '../../components/OptionTile/OptionTile.jsx'
 import { RightRailWelcomeCard } from '../../components/RightRailWelcomeCard/RightRailWelcomeCard.jsx'
 import { SocialUrlInput, getDetectedSocialAccountHelperText } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
+import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { brandPreviewDefaults, compactWysiwygPalette } from '../../utils/brandPreviewDefaults.js'
 import { normalizeHexColor } from '../../utils/colorContrast.js'
 import { createPreviewThemeStyle } from '../../utils/previewTheme.js'
@@ -32,6 +33,7 @@ const mobilePrimaryActionDelayMs = 900
 const mobileGatherVideoLeadInMs = 2000
 const mobileGatherRowFetchMs = 700
 const mobileGatherResolvedPauseMs = 1000
+const emailAddressPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const shimmerTransition = {
   repeat: Infinity,
   duration: 1.45,
@@ -82,7 +84,7 @@ const mobileStepMeta = {
   verify: {
     label: 'Verify',
     title: "One last check to know it's really you.",
-    description: 'Complete verification for one of your channels to wrap up your application.',
+    description: 'Use Meta to verify your Instagram account, or submit with an email address to wrap up your application.',
     primaryLabel: 'Submit application',
     primarySuccessLabel: 'Submitting...',
     primarySuccessIcon: LoaderCircle,
@@ -256,6 +258,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
   const [editingSocialAccountId, setEditingSocialAccountId] = useState(null)
   const [socialAccountDraft, setSocialAccountDraft] = useState('')
   const [verificationMethod, setVerificationMethod] = useState('meta-login')
+  const [verificationEmail, setVerificationEmail] = useState('')
   const [verificationConfirmed, setVerificationConfirmed] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
@@ -267,13 +270,17 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
     : mobileStepMeta[activeStep]
   const previewThemeStyle = useMemo(() => createPreviewThemeStyle({ brandColor }), [brandColor])
   const isSuccessStep = activeStep === 'success'
+  const verificationEmailIsReady = emailAddressPattern.test(verificationEmail.trim())
+  const verificationMethodIncomplete = verificationMethod === 'email-domain'
+    ? !verificationEmailIsReady
+    : !verificationConfirmed
   const screenTransition = shouldReduceMotion
     ? { duration: 0.01 }
     : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }
 
   const primaryDisabled = (
     (activeStep === 'entry' && !creatorUrl.trim())
-    || (activeStep === 'verify' && (!verificationMethod || !verificationConfirmed || !verificationTermsAccepted))
+    || (activeStep === 'verify' && (!verificationMethod || verificationMethodIncomplete || !verificationTermsAccepted))
   )
   const primaryPending = pendingPrimaryStep === activeStep
   const primaryAction = {
@@ -704,23 +711,34 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
           />
           <OptionTile
             icon={mobileIcon(Mail)}
-            title="Verify with Persona"
-            description="Use Persona when Meta login is not convenient today."
+            title="Submit with an email address"
+            description="Enter the email address you want us to use for this application."
             selected={verificationMethod === 'email-domain'}
             selectionStyle="radio"
             onClick={() => handleVerificationMethodChange('email-domain')}
             className="min-h-24 px-4 py-3"
           />
+          {verificationMethod === 'email-domain' ? (
+            <TextInput
+              id="mobile-verification-email"
+              type="email"
+              placeholder="you@example.com"
+              value={verificationEmail}
+              onChange={(event) => setVerificationEmail(event.target.value)}
+            />
+          ) : null}
         </div>
 
         <div className="grid gap-3">
-          <Checkbox
-            checked={verificationConfirmed}
-            onChange={(event) => setVerificationConfirmed(event.target.checked)}
-            variant="plain"
-            label="I control this creator account and want to continue with verification."
-            description="This keeps the mobile step intentional without adding a long ceremony."
-          />
+          {verificationMethod === 'meta-login' ? (
+            <Checkbox
+              checked={verificationConfirmed}
+              onChange={(event) => setVerificationConfirmed(event.target.checked)}
+              variant="plain"
+              label="I control this creator account and want to continue with verification."
+              description="This keeps the mobile step intentional without adding a long ceremony."
+            />
+          ) : null}
           <Checkbox
             checked={verificationTermsAccepted}
             onChange={() => setTermsModalOpen(true)}

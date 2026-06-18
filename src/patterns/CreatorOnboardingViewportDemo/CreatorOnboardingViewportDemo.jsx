@@ -12,6 +12,7 @@ import { Checkbox } from '../../components/Checkbox/Checkbox.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
 import { getDetectedSocialAccountHelperText, SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
+import { TextInput } from '../../components/TextInput/TextInput.jsx'
 import { CommunityTermsModal } from '../CommunityTermsModal/CommunityTermsModal.jsx'
 import { CompactWysiwygStudio } from '../CompactWysiwygStudio/CompactWysiwygStudio.jsx'
 import { CreatorOnboardingViewportShell } from '../CreatorOnboardingViewportShell/CreatorOnboardingViewportShell.jsx'
@@ -31,6 +32,7 @@ const stepOptions = [
 ]
 const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
+const emailAddressPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const socialAccountDefaults = [
   {
     platform: 'Instagram',
@@ -99,7 +101,7 @@ const previewSteps = {
   },
   verify: {
     title: "One last check to know it's really you.",
-    description: 'Complete verification for one of your channels to wrap up your application.',
+    description: 'Use Meta to verify your Instagram account, or submit with an email address to wrap up your application.',
     primaryLabel: 'Submit application',
     primarySuccessLabel: 'Submitting...',
     primarySuccessIcon: loadingSuccessIcon,
@@ -232,7 +234,8 @@ export function CreatorOnboardingViewportDemo({
   const [handleOverrides, setHandleOverrides] = useState({})
   const [editingHandlePlatform, setEditingHandlePlatform] = useState(null)
   const [handleDraft, setHandleDraft] = useState('')
-  const [verificationConfirmed, setVerificationConfirmed] = useState(false)
+  const [verificationEmail, setVerificationEmail] = useState('')
+  const [verificationEmailSelected, setVerificationEmailSelected] = useState(false)
   const [verificationTermsAccepted, setVerificationTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
 
@@ -260,8 +263,9 @@ export function CreatorOnboardingViewportDemo({
   const previewIndex = Math.max(0, stepOrder.indexOf(previewStep))
   const isFirstStep = previewIndex === 0
   const isLastStep = previewIndex === stepOrder.length - 1
+  const verificationEmailIsReady = emailAddressPattern.test(verificationEmail.trim())
   const verificationIncomplete = previewStep === 'verify'
-    && (!verificationConfirmed || !verificationTermsAccepted)
+    && (!verificationEmailIsReady || !verificationTermsAccepted)
   const alignedPreviewStep = previewStep === 'preview'
   const wideContainerClassName = alignedPreviewStep ? 'max-w-5xl text-left' : ''
   const shellViewportClassName = framed ? undefined : 'min-h-[640px] lg:h-[calc(100vh-144px)]'
@@ -572,11 +576,23 @@ export function CreatorOnboardingViewportDemo({
                   },
                   {
                     icon: tileIcon(Mail),
-                    title: "Verify with Persona",
-                    description: 'Use Persona when Meta login is not convenient today.',
+                    title: 'Submit with an email address',
+                    description: 'Enter the email address you want us to use for this application.',
+                    selected: verificationEmailSelected,
+                    email: true,
                   },
                 ].map((method) => (
-                  <div key={method.title} className="rounded-xl border border-border bg-surface px-5 py-4">
+                  <div
+                    key={method.title}
+                    className={[
+                      'rounded-xl border px-5 py-4 transition-[background-color,border-color,box-shadow,opacity] duration-150',
+                      method.selected
+                        ? 'border-brand bg-brand-subtle shadow-brand-glow'
+                        : 'border-border bg-surface',
+                      method.disabled ? 'opacity-50' : '',
+                    ].filter(Boolean).join(' ')}
+                    aria-disabled={method.disabled}
+                  >
                     <div className="flex min-h-36 flex-col items-start gap-3">
                       <span className="flex w-full items-start justify-between gap-3">
                         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-raised text-xl">
@@ -588,18 +604,24 @@ export function CreatorOnboardingViewportDemo({
                         <span className="block text-base font-medium text-text">{method.title}</span>
                         <span className="block text-sm text-text-secondary">{method.description}</span>
                       </span>
+                      {method.email ? (
+                        <TextInput
+                          id="viewport-demo-verification-email"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={verificationEmail}
+                          onFocus={() => setVerificationEmailSelected(true)}
+                          onChange={(event) => {
+                            setVerificationEmail(event.target.value)
+                            setVerificationEmailSelected(true)
+                          }}
+                        />
+                      ) : null}
                     </div>
                   </div>
                 ))}
               </div>
               <div className="grid gap-3">
-                <Checkbox
-                  checked={verificationConfirmed}
-                  onChange={(event) => setVerificationConfirmed(event.target.checked)}
-                  variant="plain"
-                  label="I control this creator account and want to continue with verification."
-                  description="This keeps the last step feeling intentional without adding a long security ceremony."
-                />
                 <Checkbox
                   checked={verificationTermsAccepted}
                   onChange={() => setTermsModalOpen(true)}

@@ -324,9 +324,6 @@ export function ApplicationEmailSet({
             <header className="space-y-6">
               <BrandLogo size="md" />
               <div className="space-y-3">
-                <Badge variant={scenarioBadges[selectedTemplate.stage] ?? 'default'} size="sm">
-                  {selectedTemplate.status}
-                </Badge>
                 <h2 className="font-newsreader text-hero font-normal text-text">
                   {selectedTemplate.heading}
                 </h2>
