@@ -21,7 +21,7 @@ function StoreBadgeLink({ platform, href, deviceContext }) {
       tone="current"
       target="_blank"
       rel="noreferrer"
-      className="h-16 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/72 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950"
+      className="h-11 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/72 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950"
       aria-label={label}
       data-ds-role="app-download-action"
       data-ds-instance={`creator-application.completion.app-download.${platform}`}
@@ -34,7 +34,7 @@ function StoreBadgeLink({ platform, href, deviceContext }) {
       <img
         src={badgeSrc}
         alt={label}
-        className="h-16 w-auto"
+        className="h-11 w-auto"
         loading="eager"
         decoding="async"
       />
