@@ -438,8 +438,8 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
                   <div className="min-w-0">
                     {account.platform}:{' '}
                     {editingSocialAccountId === account.id ? (
-                      <input
-                        className="inline-block h-6 w-36 rounded-md border border-border bg-surface px-1.5 text-sm font-semibold leading-sm text-text outline-none transition-colors duration-150 focus:border-brand focus:ring-1 focus:ring-brand"
+                      <TextInput
+                        className="inline-block w-36 align-middle"
                         value={socialAccountDraft}
                         onChange={(event) => setSocialAccountDraft(event.target.value)}
                         onBlur={saveSocialAccountEdit}
@@ -450,30 +450,30 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
                         }}
                         autoFocus
                         aria-label={`${account.platform} handle`}
+                        data-ds-role="social-account-handle-edit"
                       />
                     ) : (
-                      <button
-                        type="button"
-                        className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                      <Button
+                        variant="link"
+                        size="xs"
                         onClick={() => startSocialAccountEdit(account)}
                         aria-label={`Edit ${account.platform} handle`}
+                        data-ds-role="social-account-handle-edit"
                       >
-                        <span>{account.handle}</span>
-                        <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
-                          Edit
-                        </span>
-                      </button>
+                        {account.handle} Edit
+                      </Button>
                     )}{' '}
                     · {account.followers}
                   </div>
-                  <button
-                    type="button"
-                    className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  <Button
+                    variant="link"
+                    size="xs"
                     onClick={() => removeSocialAccount(account.id)}
                     aria-label={`Remove ${account.platform} account`}
+                    data-ds-role="social-account-remove-action"
                   >
                     Remove
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -786,7 +786,7 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
                     current ? 'border-gamification-gold-light/30 bg-gamification-gold-light/15' : 'border-white/10 bg-white/5',
                   ].join(' ')}
                 >
-                  <span className={['h-2.5 w-2.5 rounded-full', current ? 'bg-gamification-gold-light' : 'bg-white/28'].join(' ')} />
+                  <span className={['h-2.5 w-2.5 rounded-full', current ? 'bg-gamification-gold-light' : 'bg-white/30'].join(' ')} />
                 </span>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-white">{title}</p>
@@ -802,93 +802,94 @@ export function MobileOnboardingFlow({ forceSuccess = false }) {
 
   return (
     <>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
       {/* no token available: mobile design review uses a fixed phone preview rail. */}
-      <div className="space-y-4">
-        <div className="rounded-xl border border-border bg-surface p-5 shadow-xs">
-          <div className="space-y-3">
-            <Badge variant="brand" size="sm" icon={<LucideIcon icon={ShieldCheck} size="sm" />}>
-              Mobile onboarding
-            </Badge>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-text">Creator flow, handset first</h3>
-              <p className="text-sm leading-relaxed text-text-secondary">
-                The mobile preview keeps the same onboarding story as desktop while moving media, fetched signals, editing, verification, and submission into a single stacked viewport.
-              </p>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="space-y-4">
+          <div className="rounded-xl border border-border bg-surface p-5 shadow-xs">
+            <div className="space-y-3">
+              <Badge variant="brand" size="sm" icon={<LucideIcon icon={ShieldCheck} size="sm" />}>
+                Mobile onboarding
+              </Badge>
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-text">Creator flow, handset first</h3>
+                <p className="text-sm leading-relaxed text-text-secondary">
+                  The mobile preview keeps the same onboarding story as desktop while moving media, fetched signals, editing, verification, and submission into a single stacked viewport.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {mobileStepOrder.map((stepId, index) => {
+              const isActive = stepId === activeStep
+              const stepMeta = mobileStepMeta[stepId]
+
+              return (
+                <div
+                  key={stepId}
+                  className={[
+                    'rounded-xl border p-4 transition-colors duration-150',
+                    isActive ? 'border-brand bg-brand-subtle' : 'border-border bg-surface',
+                  ].join(' ')}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{`0${index + 1}`}</p>
+                      <p className="text-sm font-semibold text-text">{stepMeta.label}</p>
+                    </div>
+                    {isActive ? <LucideIcon icon={Palette} size="sm" className="text-brand" /> : null}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-sm">
+          {/* no token available: fixed 390px-class handset frame for mobile review fidelity. */}
+          <div className="overflow-hidden rounded-2xl border border-border-strong bg-neutral-950 p-2 shadow-4">
+            {/* no token available: fixed height matches the handset review frame. */}
+            <div className={['relative flex h-[812px] flex-col overflow-hidden rounded-xl', isSuccessStep ? 'bg-neutral-950' : 'bg-surface'].join(' ')}>
+              <header className={['border-b px-4 py-s', isSuccessStep ? 'border-neutral-800 bg-neutral-950' : 'border-border bg-surface'].join(' ')}>
+                <div className="flex items-center justify-between gap-3">
+                  <BrandLogo size="sm" />
+                  <Badge variant="brand" size="xs">
+                    {activeMeta.label}
+                  </Badge>
+                </div>
+              </header>
+
+              <main className="scrollbar-hide flex-1 overflow-y-auto px-4 py-4">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={activeStep}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={screenTransition}
+                  >
+                    {content[activeStep]}
+                  </motion.div>
+                </AnimatePresence>
+              </main>
+
+              <MobileFooter
+                canGoBack={activeIndex > 0 && !isSuccessStep}
+                onBack={goToPreviousStep}
+                onPrimary={goToNextStep}
+                primaryAction={primaryAction}
+                forceSuccess={forceSuccess}
+                dark={isSuccessStep}
+              />
+              <CommunityTermsModal
+                isOpen={termsModalOpen}
+                onDismiss={() => setTermsModalOpen(false)}
+                onAccept={() => setVerificationTermsAccepted(true)}
+                presentation="mobile"
+              />
             </div>
           </div>
         </div>
-
-        <div className="grid gap-3 sm:grid-cols-2">
-          {mobileStepOrder.map((stepId, index) => {
-            const isActive = stepId === activeStep
-            const stepMeta = mobileStepMeta[stepId]
-
-            return (
-              <div
-                key={stepId}
-                className={[
-                  'rounded-xl border p-4 transition-colors duration-150',
-                  isActive ? 'border-brand bg-brand-subtle' : 'border-border bg-surface',
-                ].join(' ')}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium uppercase tracking-caps text-text-tertiary">{`0${index + 1}`}</p>
-                    <p className="text-sm font-semibold text-text">{stepMeta.label}</p>
-                  </div>
-                  {isActive ? <LucideIcon icon={Palette} size="sm" className="text-brand" /> : null}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-sm">
-        {/* no token available: fixed 390px-class handset frame for mobile review fidelity. */}
-        <div className="overflow-hidden rounded-[32px] border border-border-strong bg-neutral-950 p-2 shadow-4">
-          <div className={['relative flex h-[812px] flex-col overflow-hidden rounded-[24px]', isSuccessStep ? 'bg-neutral-950' : 'bg-surface'].join(' ')}>
-            <header className={['border-b px-4 py-s', isSuccessStep ? 'border-neutral-800 bg-neutral-950' : 'border-border bg-surface'].join(' ')}>
-              <div className="flex items-center justify-between gap-3">
-                <BrandLogo size="sm" />
-                <Badge variant="brand" size="xs">
-                  {activeMeta.label}
-                </Badge>
-              </div>
-            </header>
-
-            <main className="scrollbar-hide flex-1 overflow-y-auto px-4 py-4">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={activeStep}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={screenTransition}
-                >
-                  {content[activeStep]}
-                </motion.div>
-              </AnimatePresence>
-            </main>
-
-            <MobileFooter
-              canGoBack={activeIndex > 0 && !isSuccessStep}
-              onBack={goToPreviousStep}
-              onPrimary={goToNextStep}
-              primaryAction={primaryAction}
-              forceSuccess={forceSuccess}
-              dark={isSuccessStep}
-            />
-            <CommunityTermsModal
-              isOpen={termsModalOpen}
-              onDismiss={() => setTermsModalOpen(false)}
-              onAccept={() => setVerificationTermsAccepted(true)}
-              presentation="mobile"
-            />
-          </div>
-        </div>
-      </div>
       </div>
     </>
   )

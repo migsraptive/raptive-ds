@@ -295,8 +295,8 @@ function SocialAccountsEditor({
               <div className="min-w-0">
                 {account.platform}:{' '}
                 {editingAccountId === account.id ? (
-                  <input
-                    className="inline-block h-6 w-36 rounded-md border border-border bg-surface px-1.5 text-sm font-semibold leading-sm text-text outline-none transition-colors duration-150 focus:border-brand focus:ring-1 focus:ring-brand"
+                  <TextInput
+                    className="inline-block w-36 align-middle"
                     value={handleDraft}
                     onChange={(event) => setHandleDraft(event.target.value)}
                     onBlur={saveHandleEdit}
@@ -307,42 +307,31 @@ function SocialAccountsEditor({
                     }}
                     autoFocus
                     aria-label={`${account.platform} handle`}
-                    data-ds-component="TextInput"
-                    data-ds-variant="default"
                     data-ds-role="social-account-handle-edit"
                   />
                 ) : (
-                  <button
-                    type="button"
-                    className="group inline-flex items-center gap-1 rounded-md text-sm font-semibold leading-relaxed text-text transition-colors duration-150 hover:text-action-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  <Button
+                    variant="link"
+                    size="xs"
                     onClick={() => startHandleEdit(account)}
                     aria-label={`Edit ${account.platform} handle`}
-                    data-ds-component="Button"
-                    data-ds-variant="link"
-                    data-ds-size="xs"
                     data-ds-role="social-account-handle-edit"
                   >
-                    <span>{account.handle}</span>
-                    <span className="text-xs font-medium text-action-primary transition-colors duration-150 group-hover:text-action-primary-active group-focus-visible:text-action-primary-active">
-                      Edit
-                    </span>
-                  </button>
+                    {account.handle} Edit
+                  </Button>
                 )}{' '}
                 · {account.followers}
               </div>
               {accounts.length > 1 && onRemoveAccount ? (
-                <button
-                  type="button"
-                  className="flex-shrink-0 text-xs font-medium text-text-action-subtle transition-colors duration-150 hover:text-status-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                <Button
+                  variant="link"
+                  size="xs"
                   onClick={() => onRemoveAccount(account.id)}
                   aria-label={`Remove ${account.platform} account`}
-                  data-ds-component="Button"
-                  data-ds-variant="link"
-                  data-ds-size="xs"
                   data-ds-role="social-account-remove-action"
                 >
                   Remove
-                </button>
+                </Button>
               ) : null}
             </div>
           )

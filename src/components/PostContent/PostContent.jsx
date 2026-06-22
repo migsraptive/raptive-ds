@@ -1,4 +1,5 @@
 import { Avatar } from '../Avatar/Avatar.jsx'
+import { TextLink } from '../TextLink/TextLink.jsx'
 
 /**
  * PostContent
@@ -36,13 +37,12 @@ export function PostContent({
       {attachment && <AttachmentCard {...attachment} />}
 
       {readMore && (
-        <button
-          type="button"
+        <TextLink
           onClick={readMore.onClick}
-          className="text-sm font-bold leading-sm tracking-tight text-orange-600 hover:text-orange-700 transition-colors py-[7px]"
+          className="py-2 text-sm leading-sm tracking-tight"
         >
           {readMore.label || 'read more'}
-        </button>
+        </TextLink>
       )}
     </div>
   )

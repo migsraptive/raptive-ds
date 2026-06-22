@@ -1,0 +1,113 @@
+schema_version: 0.1
+name: SelectableRow
+status: draft
+source:
+  repo: community-ds
+  path: src/components/SelectableRow/SelectableRow.jsx
+purpose: >
+  SelectableRow presents a compact selectable row for dense lists where the user
+  chooses one item from a small set and a full visual tile would take too much
+  space.
+use_when:
+  - A compact list needs a persistent selected state.
+  - The option benefits from a short title, optional status line, and optional icon.
+  - The choice appears inside another review surface such as an accordion panel.
+do_not_use_for:
+  - Large visual onboarding choices; use OptionTile.
+  - Text-only radio sets; use RadioGroup.
+  - Immediate actions that do not persist selected state; use Button or TextLink.
+agent_rules:
+  - Use SelectableRow for compact single-select rows instead of hand-rolled buttons.
+  - Do not add local row styling in consumers.
+  - Escalate before adding variants, alternate icon positions, or multi-select behavior.
+governance:
+  component_contract:
+    - SelectableRow is a black-box compact selection component.
+    - Consumers may position SelectableRow from a parent layout only.
+    - Consumers may not style SelectableRow internals or target icon, title, description, or selected state with CSS.
+    - Consumers must not hard-code SelectableRow radius, spacing, typography, color, border, icon sizing, or state treatment.
+  api_compatibility:
+    - Existing implementation props are not automatically consumer-facing design contract options.
+    - className, when present in code, is a restricted compatibility escape hatch, not a styling API.
+  escalate_when:
+    - A row needs a new semantic variant, density, icon layout, or multi-select behavior.
+    - A consumer wants to override SelectableRow-owned visual styling.
+    - The interaction behaves like navigation or an immediate command instead of selection.
+anatomy:
+  - name: root
+    required: true
+    description: Button-like row that owns selected, hover, disabled, and focus states.
+  - name: icon
+    required: false
+    description: Optional leading icon held in a component-owned frame.
+  - name: title
+    required: true
+    description: Primary row label.
+  - name: description
+    required: false
+    description: Short secondary row status or supporting text.
+variants:
+  default:
+    description: Compact single-select row.
+    intent: compact_single_choice
+states:
+  unselected:
+    description: Row is available but not selected.
+  selected:
+    description: Row is selected.
+  hover:
+    description: Pointer feedback for enabled rows.
+  focus_visible:
+    description: Keyboard-visible focus state inherited from native button behavior.
+  disabled:
+    description: Row cannot be selected.
+props:
+  title:
+    type: node
+    required: true
+  description:
+    type: node
+    default: null
+  icon:
+    type: node
+    default: null
+  selected:
+    type: boolean
+    default: false
+  disabled:
+    type: boolean
+    default: false
+  onClick:
+    type: function
+    default: null
+  className:
+    type: string
+    default: ''
+    governance: restricted_compatibility_escape_hatch
+    description: Present in the React implementation but not a consumer styling contract.
+traceability:
+  root:
+    data-ds-component: SelectableRow
+    data-ds-variant: default
+    data-ds-size: sm
+  static_contract:
+    variants: [default]
+    sizes: [sm]
+  flow_correlation:
+    allowed:
+      - data-ds-role
+      - data-ds-instance
+content_guidelines:
+  - Titles should identify the selectable item.
+  - Descriptions should be short status or context text, not long body copy.
+  - Keep rows in a list parallel in structure and tone.
+accessibility:
+  role: button
+  keyboard:
+    - Enter and Space activate native button behavior.
+  requirements:
+    - Selected rows expose aria-pressed.
+    - Selection cannot be communicated by color alone in surrounding copy.
+translation_notes:
+  - Target frameworks should use a native button or equivalent accessible pressable primitive.
+  - Do not copy Tailwind classes as the contract.
