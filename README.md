@@ -159,6 +159,7 @@ High-priority primitives include:
 - `Checkbox`
 - `RadioGroup`
 - `OptionTile`
+- `SelectableRow`
 - `SegmentedControl`
 - `TextLink`
 - `Avatar`
@@ -239,7 +240,6 @@ Current flow and review patterns include:
 - `SingleFieldIntake`
 - `DataGatheringReview`
 - `FetchConfirmation`
-- `ReviewCorrection`
 - `CompactWysiwygStudio`
 - `VerificationStep`
 - `CommunityTermsModal`
@@ -255,11 +255,7 @@ Supporting and exploratory patterns include:
 - `CategoryPicker`
 - `StepLayout`
 - `CelebrationModal`
-- `CommunityPreviewCard`
-- `PreviewBuilderStudio`
-- `ProjectionPreview`
 - `ProjectionMotionShowcase`
-- `RecognitionState`
 
 ### Pattern Image Checks
 

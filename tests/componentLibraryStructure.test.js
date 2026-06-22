@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 
 const componentLibrarySource = readFileSync(new URL('../src/pages/ComponentLibrary/ComponentLibrary.jsx', import.meta.url), 'utf8')
+const componentLibraryDataSource = readFileSync(new URL('../src/pages/ComponentLibrary/ComponentLibraryData.js', import.meta.url), 'utf8')
+const componentLibraryIntentDocsSource = readFileSync(new URL('../src/pages/ComponentLibrary/ComponentLibraryIntentDocs.jsx', import.meta.url), 'utf8')
 const componentLibraryPrototypesSource = readFileSync(new URL('../src/prototypes/ComponentLibraryPrototypes/ComponentLibraryPrototypes.jsx', import.meta.url), 'utf8')
 const viteConfigSource = readFileSync(new URL('../vite.config.js', import.meta.url), 'utf8')
 
@@ -13,7 +15,7 @@ test('surfaces the celebration modal in the animation section', () => {
 })
 
 test('separates exploratory work into a prototypes section', () => {
-  assert.match(componentLibrarySource, /'Prototypes'/)
+  assert.match(componentLibraryDataSource, /'Prototypes'/)
   assert.match(componentLibrarySource, /activeSection === 'Prototypes'/)
   assert.doesNotMatch(componentLibrarySource, /activeSection === 'Mobile'/)
   assert.match(componentLibrarySource, /ComponentLibraryPrototypes/)
@@ -31,7 +33,8 @@ test('documents the current verification paths and known lead variant', () => {
 })
 
 test('lazy-loads prototype-only modules into a dedicated Vite chunk', () => {
-  assert.match(componentLibrarySource, /import \{ Suspense, lazy, useEffect, useRef, useState \} from 'react'/)
+  assert.match(componentLibrarySource, /import \{ Suspense, lazy, useEffect, useState \} from 'react'/)
+  assert.match(componentLibrarySource, /from '\.\/ComponentLibraryScaffold\.jsx'/)
   assert.match(componentLibrarySource, /lazy\(\(\) => import\('\.\.\/\.\.\/prototypes\/ComponentLibraryPrototypes\/ComponentLibraryPrototypes\.jsx'\)\)/)
   assert.doesNotMatch(componentLibrarySource, /import \{ MobileOnboardingFlow \}/)
   assert.doesNotMatch(componentLibrarySource, /import \{ CreatorOnboardingViewportDemo \}/)
@@ -44,7 +47,8 @@ test('lazy-loads prototype-only modules into a dedicated Vite chunk', () => {
 test('renders component intent guidance in the Button section', () => {
   assert.match(componentLibrarySource, /import\.meta\.glob\('\.\.\/\.\.\/components\/\*\/intent\.md'/)
   assert.match(componentLibrarySource, /const buttonIntentMarkdown = componentIntentDocs\['\.\.\/\.\.\/components\/Button\/intent\.md'\]/)
-  assert.match(componentLibrarySource, /function ComponentIntentDoc/)
+  assert.match(componentLibraryIntentDocsSource, /function ComponentIntentDoc/)
+  assert.match(componentLibrarySource, /from '\.\/ComponentLibraryIntentDocs\.jsx'/)
   assert.match(componentLibrarySource, /aria-label="Button Usage Guidance"/)
   assert.match(componentLibrarySource, /title="Action Hierarchy"/)
   assert.match(componentLibrarySource, /title="Composition"/)
@@ -63,8 +67,8 @@ test('renders color token intent guidance in the Colors section', () => {
 test('renders typography token intent guidance in the Typography section', () => {
   assert.match(componentLibrarySource, /const typographyIntentMarkdown = tokenIntentDocs\['\.\.\/\.\.\/tokens\/typography\.intent\.md'\]/)
   assert.match(componentLibrarySource, /activeSection === 'Typography'/)
-  assert.match(componentLibrarySource, /function IntentPurposePanel/)
-  assert.match(componentLibrarySource, /function IntentSectionPanel/)
+  assert.match(componentLibraryIntentDocsSource, /function IntentPurposePanel/)
+  assert.match(componentLibraryIntentDocsSource, /function IntentSectionPanel/)
   assert.match(componentLibrarySource, /title="Type Scale"/)
   assert.match(componentLibrarySource, /title="Text Color Roles"/)
   assert.match(componentLibrarySource, /title="Families And Metrics"/)
@@ -81,6 +85,7 @@ test('renders form intent guidance in the Forms section', () => {
   assert.match(componentLibrarySource, /title="Text Input"/)
   assert.match(componentLibrarySource, /title="Textarea And Select"/)
   assert.match(componentLibrarySource, /title="Option Tiles"/)
+  assert.match(componentLibrarySource, /title="Selectable Rows"/)
   assert.match(componentLibrarySource, /ariaLabel="Forms Use When Guidance"/)
   assert.match(componentLibrarySource, /ariaLabel="Forms Do Not Use When Guidance"/)
   assert.match(componentLibrarySource, /ariaLabel="Forms Control Families Guidance"/)

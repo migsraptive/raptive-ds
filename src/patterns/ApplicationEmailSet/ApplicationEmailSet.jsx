@@ -13,6 +13,7 @@ import { Badge } from '../../components/Badge/Badge.jsx'
 import { BrandLogo } from '../../components/BrandLogo/BrandLogo.jsx'
 import { Button } from '../../components/Button/Button.jsx'
 import { LucideIcon } from '../../components/Icon/LucideIcon.jsx'
+import { SelectableRow } from '../../components/SelectableRow/SelectableRow.jsx'
 import { TextLink } from '../../components/TextLink/TextLink.jsx'
 import { applicationEmailTemplates } from './applicationEmails.js'
 
@@ -250,31 +251,16 @@ export function ApplicationEmailSet({
             const isActive = template.id === selectedTemplate.id
 
             return (
-              <button
+              <SelectableRow
                 key={template.id}
-                type="button"
-                className={[
-                  'flex w-full items-start gap-3 rounded-md border px-3 py-2 text-left transition-colors duration-150',
-                  isActive
-                    ? 'border-brand bg-brand-subtle'
-                    : 'border-border bg-surface hover:bg-surface-sunken',
-                ].join(' ')}
+                title={template.label}
+                description={template.status}
+                icon={<LucideIcon icon={StageIcon} size="md" />}
+                selected={isActive}
                 onClick={() => setSelectedTemplateId(template.id)}
-                aria-pressed={isActive}
-              >
-                <span
-                  className={[
-                    'mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md',
-                    isActive ? 'bg-surface text-brand-dark' : 'bg-surface-sunken text-text-secondary',
-                  ].join(' ')}
-                >
-                  <LucideIcon icon={StageIcon} size="md" />
-                </span>
-                <span className="min-w-0 space-y-0.5">
-                  <span className="block text-sm font-semibold text-text">{template.label}</span>
-                  <span className="block text-xs leading-snug text-text-secondary">{template.status}</span>
-                </span>
-              </button>
+                data-ds-role="email-template-option"
+                data-ds-instance={`application-email.${template.id}`}
+              />
             )
           })}
         </div>

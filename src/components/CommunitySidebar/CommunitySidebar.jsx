@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Avatar } from '../Avatar/Avatar.jsx'
 import { LucideIcon } from '../Icon/LucideIcon.jsx'
+import { TextLink } from '../TextLink/TextLink.jsx'
 
 const primaryNav = [
   { label: 'Home', icon: House, active: true, unread: true },
@@ -172,7 +173,7 @@ function SectionHeader({ title, count, open, onToggle }) {
       onClick={onToggle}
       className="flex h-14 w-full items-center gap-2 rounded-2xl px-4 text-left"
     >
-      <span className="min-w-0 flex-1 text-sm font-bold uppercase tracking-[-0.2px] text-neutral-500">
+      <span className="min-w-0 flex-1 text-sm font-bold uppercase tracking-sm text-neutral-500">
         {title}
         {count != null ? <span className="ml-1 text-neutral-400">{count}</span> : null}
       </span>
@@ -188,7 +189,7 @@ function TagPill({ label, active = false }) {
     <button
       type="button"
       className={[
-        'rounded-full border px-4 py-2 text-sm font-bold tracking-[-0.2px] transition-colors',
+        'rounded-full border px-4 py-2 text-sm font-bold tracking-sm transition-colors',
         active
           ? 'border-gamification-gold-light bg-gamification-gold-light text-text'
           : 'border-text-placeholder bg-white text-text hover:bg-surface-sunken',
@@ -265,9 +266,9 @@ export function CommunitySidebar({
                   />
                 ))}
                 {!compact ? (
-                  <button type="button" className="px-4 py-3 text-sm font-bold tracking-[-0.2px] text-text">
+                  <TextLink tone="current" className="px-4 py-3 text-sm tracking-sm text-text">
                     See more
-                  </button>
+                  </TextLink>
                 ) : null}
               </div>
             ) : null}
@@ -298,9 +299,9 @@ export function CommunitySidebar({
                       label="Discover more"
                       leading={<DiscoverMoreBadge />}
                     />
-                    <button type="button" className="px-4 py-3 text-sm font-bold tracking-[-0.2px] text-text">
+                    <TextLink tone="current" className="px-4 py-3 text-sm tracking-sm text-text">
                       See more
-                    </button>
+                    </TextLink>
                   </>
                 ) : null}
               </div>
@@ -363,9 +364,9 @@ export function CommunitySidebar({
                         leading={<Avatar name={person.name} src={person.avatarSrc} size="xs" status={person.status ?? null} />}
                       />
                     ))}
-                    <button type="button" className="px-4 py-3 text-sm font-bold tracking-[-0.2px] text-text">
+                    <TextLink tone="current" className="px-4 py-3 text-sm tracking-sm text-text">
                       See more
-                    </button>
+                    </TextLink>
                   </div>
                 ) : null}
               </div>
@@ -388,12 +389,12 @@ export function CommunitySidebar({
             <SidebarDivider />
 
             <div className="px-4 py-4">
-              <p className="text-xs leading-[18px] text-neutral-500">
+              <p className="text-xs leading-sm text-neutral-500">
                 Information from your device can be used to personalize your ad experience.
               </p>
-              <button type="button" className="mt-3 text-left text-xs leading-[18px] text-neutral-500 underline">
+              <TextLink tone="current" underline className="mt-3 text-left text-xs leading-sm text-neutral-500">
                 Do not sell or share my personal information
-              </button>
+              </TextLink>
             </div>
           </>
         ) : null}

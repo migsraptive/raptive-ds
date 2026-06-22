@@ -1,5 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import {
   Award,
   Baby,
@@ -44,6 +43,7 @@ import { OptionTile, optionTileVariants } from '../../components/OptionTile/Opti
 import { RadioGroup } from '../../components/RadioGroup/RadioGroup.jsx'
 import { Select, selectVariants } from '../../components/Select/Select.jsx'
 import { SegmentedControl } from '../../components/SegmentedControl/SegmentedControl.jsx'
+import { SelectableRow, selectableRowSizes, selectableRowVariants } from '../../components/SelectableRow/SelectableRow.jsx'
 import { getDetectedSocialAccountHelperText, SocialUrlInput } from '../../components/SocialUrlInput/SocialUrlInput.jsx'
 import { StepIndicator } from '../../components/StepIndicator/StepIndicator.jsx'
 import { TextLink } from '../../components/TextLink/TextLink.jsx'
@@ -79,142 +79,44 @@ import { colors as colorTokens } from '../../tokens/colors.js'
 import { typography as typographyTokens } from '../../tokens/typography.js'
 import { brandPreviewDefaults, brandPreviewPalette } from '../../utils/brandPreviewDefaults.js'
 import { COMMUNITY_VERTICAL_OPTIONS } from '../../utils/communityVerticals.js'
+import {
+  ColorSwatch,
+  ColorSwatchGrid,
+  ColorSwatchGroup,
+  DocumentationNote,
+  FoundBadgeReveal,
+  PatternSection,
+  Row,
+  Section,
+  ShellRowShimmer,
+  TimedShellVideo,
+  explorationNoticeLabel,
+} from './ComponentLibraryScaffold.jsx'
+import {
+  avatarImageSet,
+  buildTraceabilityRows,
+  creatorShellGatherResolvedPauseMs,
+  creatorShellGatherRowFetchMs,
+  creatorShellGatherVideoLeadInMs,
+  creatorShellGatherVideoPlaybackRate,
+  creatorShellPreviewOptions,
+  creatorShellSocialAccountDefaults,
+  creatorShellStepOrder,
+  emailAddressPattern,
+  fetchConfirmationDemoAccountsSeed,
+  getFetchConfirmationDemoAccounts,
+  sections,
+  simplifiedVerificationOptions,
+  socialUrlExamples,
+  submissionSuccessTimeline,
+} from './ComponentLibraryData.js'
+import {
+  ComponentIntentDoc,
+  IntentPurposePanel,
+  IntentSectionPanel,
+} from './ComponentLibraryIntentDocs.jsx'
 
 const ComponentLibraryPrototypes = lazy(() => import('../../prototypes/ComponentLibraryPrototypes/ComponentLibraryPrototypes.jsx'))
-
-// ─── Section wrapper ──────────────────────────────────────────────────────────
-const explorationNoticeLabel = 'exploration - do not use or refer'
-
-function Section({ title, description, children, titleBadge = null }) {
-  return (
-    <section className="space-y-4">
-      <div className="space-y-0.5 pb-3 border-b border-border">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-lg font-semibold text-text">{title}</h2>
-          {titleBadge}
-        </div>
-        {description && <p className="text-sm text-text-secondary">{description}</p>}
-      </div>
-      {children}
-    </section>
-  )
-}
-
-function PatternSection({ title, description, children }) {
-  return (
-    <Section
-      title={title}
-      description={description}
-      titleBadge={(
-        <Badge variant="warning" size="sm">
-          {explorationNoticeLabel}
-        </Badge>
-      )}
-    >
-      {children}
-    </Section>
-  )
-}
-
-// ─── Token swatch ──────────────────────────────────────────────────────────────
-function ColorSwatch({ token, value, label }) {
-  return (
-    <div className="min-w-0">
-      <div
-        className="aspect-square w-full rounded-md border border-border shadow-xs"
-        style={{ backgroundColor: value }}
-        title={value}
-      />
-      <div className="mt-2 space-y-0.5">
-        <p className="break-words font-mono text-2xs leading-snug text-text-secondary">{token}</p>
-        {label && <p className="text-2xs leading-snug text-text-tertiary">{label}</p>}
-      </div>
-    </div>
-  )
-}
-
-function ColorSwatchGrid({ children }) {
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-      {children}
-    </div>
-  )
-}
-
-function ColorSwatchGroup({ title, children }) {
-  return (
-    <div className="space-y-3">
-      <p className="text-xs font-semibold text-text-secondary">{title}</p>
-      <ColorSwatchGrid>{children}</ColorSwatchGrid>
-    </div>
-  )
-}
-
-// ─── Row layout ───────────────────────────────────────────────────────────────
-function Row({ label, children, className = '' }) {
-  return (
-    <div className={`flex flex-col gap-2 ${className}`}>
-      {label && <p className="text-xs font-medium text-text-tertiary uppercase tracking-caps">{label}</p>}
-      <div className="flex flex-wrap items-center gap-2">{children}</div>
-    </div>
-  )
-}
-
-const shimmerTransition = {
-  repeat: Infinity,
-  duration: 1.45,
-  ease: 'easeInOut',
-}
-
-function FoundBadgeReveal() {
-  const shouldReduceMotion = useReducedMotion()
-  const motionProps = shouldReduceMotion
-    ? {
-        initial: { opacity: 1 },
-        animate: { opacity: 1 },
-        transition: { duration: 0 },
-      }
-    : {
-        initial: { opacity: 0, y: 4 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] },
-      }
-
-  return (
-    <motion.span {...motionProps}>
-      <Badge variant="success" size="sm">Found</Badge>
-    </motion.span>
-  )
-}
-
-function ShellRowShimmer({ label }) {
-  const shouldReduceMotion = useReducedMotion()
-
-  return (
-    <span
-      className="relative mt-1 block h-3 max-w-sm overflow-hidden rounded-full bg-border"
-      aria-label={label}
-    >
-      {!shouldReduceMotion ? (
-        <motion.span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent"
-          animate={{ x: ['0%', '420%'] }}
-          transition={shimmerTransition}
-        />
-      ) : null}
-      <span className="sr-only">{label}</span>
-    </span>
-  )
-}
-
-function DocumentationNote({ children }) {
-  return (
-    <aside className="rounded-xl border border-border bg-surface-sunken px-3 py-2 text-sm leading-relaxed text-text-secondary">
-      {children}
-    </aside>
-  )
-}
 
 const componentIntentDocs = import.meta.glob('../../components/*/intent.md', {
   query: '?raw',
@@ -231,412 +133,23 @@ const formIntentMarkdown = componentIntentDocs['../../components/FormField/inten
 const colorIntentMarkdown = tokenIntentDocs['../../tokens/colors.intent.md']
 const typographyIntentMarkdown = tokenIntentDocs['../../tokens/typography.intent.md']
 
-function parseIntentBlocks(lines) {
-  const blocks = []
-  let paragraphLines = []
-  let listBlock = null
-
-  const flushParagraph = () => {
-    if (!paragraphLines.length) return
-    blocks.push({ type: 'paragraph', text: paragraphLines.join(' ') })
-    paragraphLines = []
-  }
-
-  lines.forEach((rawLine) => {
-    const line = rawLine.trim()
-
-    if (!line) {
-      flushParagraph()
-      listBlock = null
-      return
-    }
-
-    if (line.startsWith('- ')) {
-      flushParagraph()
-      if (!listBlock) {
-        listBlock = { type: 'list', items: [] }
-        blocks.push(listBlock)
-      }
-      listBlock.items.push(line.slice(2))
-      return
-    }
-
-    if (listBlock && rawLine.startsWith('  ')) {
-      const lastIndex = listBlock.items.length - 1
-      listBlock.items[lastIndex] = `${listBlock.items[lastIndex]} ${line}`
-      return
-    }
-
-    listBlock = null
-    paragraphLines.push(line)
-  })
-
-  flushParagraph()
-  return blocks
-}
-
-function parseIntentMarkdown(markdown) {
-  const lines = markdown.split(/\r?\n/)
-  let title = 'Component'
-  let currentSection = null
-  const sections = []
-
-  lines.forEach((line) => {
-    if (line.startsWith('# ')) {
-      title = line.replace(/^#\s+/, '').trim()
-      return
-    }
-
-    if (line.startsWith('## ')) {
-      currentSection = {
-        title: line.replace(/^##\s+/, '').trim(),
-        lines: [],
-      }
-      sections.push(currentSection)
-      return
-    }
-
-    if (currentSection) {
-      currentSection.lines.push(line)
-    }
-  })
-
-  return {
-    title,
-    sections: sections.map((section) => ({
-      ...section,
-      blocks: parseIntentBlocks(section.lines),
-    })),
-  }
-}
-
-function InlineIntentText({ text }) {
-  return text.split(/(`[^`]+`)/g).filter(Boolean).map((part, index) => {
-    if (part.startsWith('`') && part.endsWith('`')) {
-      return (
-        <code key={`${part}-${index}`} className="rounded-sm bg-surface-sunken px-1 py-0.5 font-mono text-xs text-text">
-          {part.slice(1, -1)}
-        </code>
-      )
-    }
-
-    return <span key={`${part}-${index}`}>{part}</span>
-  })
-}
-
-function IntentSection({ section }) {
-  const listBlock = section.blocks.find((block) => block.type === 'list')
-  const paragraphBlocks = section.blocks.filter((block) => block.type === 'paragraph')
-  const markerClassName = section.title === 'Escalate When' ? 'bg-status-warning' : 'bg-brand'
-
-  return (
-    <section className="space-y-3">
-      <h3 className="text-sm font-semibold text-text">{section.title}</h3>
-      <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
-        {paragraphBlocks.map((block, index) => (
-          <p key={`${section.title}-paragraph-${index}`}>
-            <InlineIntentText text={block.text} />
-          </p>
-        ))}
-        {listBlock ? (
-          <ul className="space-y-2">
-            {listBlock.items.map((item) => (
-              <li key={item} className="flex gap-2">
-                <span className={['mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full', markerClassName].join(' ')} aria-hidden="true" />
-                <span><InlineIntentText text={item} /></span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
-    </section>
-  )
-}
-
-function ComponentIntentDoc({ markdown, eyebrow = 'Usage guidance' }) {
-  if (!markdown) return null
-
-  const intent = parseIntentMarkdown(markdown)
-  const purposeSection = intent.sections.find((section) => section.title === 'Purpose')
-  const guidanceSections = intent.sections.filter((section) => section.title !== 'Purpose')
-
-  return (
-    <div className="overflow-hidden rounded-xl border border-border bg-surface-raised shadow-xs">
-      <div className="border-b border-border bg-surface px-5 py-4">
-        <p className="text-xs font-semibold uppercase tracking-caps text-text-tertiary">{eyebrow}</p>
-        <h3 className="mt-1 text-lg font-semibold text-text">{intent.title}</h3>
-        {purposeSection ? (
-          <div className="mt-2 max-w-3xl space-y-2 text-sm leading-relaxed text-text-secondary">
-            {purposeSection.blocks.map((block, index) => (
-              block.type === 'paragraph' ? (
-                <p key={`purpose-${index}`}>
-                  <InlineIntentText text={block.text} />
-                </p>
-              ) : null
-            ))}
-          </div>
-        ) : null}
-      </div>
-      <div className="divide-y divide-border">
-        {guidanceSections.map((section) => (
-          <div key={section.title} className="px-5 py-4">
-            <IntentSection section={section} />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function IntentPurposePanel({ markdown, eyebrow = 'Usage guidance' }) {
-  if (!markdown) return null
-
-  const intent = parseIntentMarkdown(markdown)
-  const purposeSection = intent.sections.find((section) => section.title === 'Purpose')
-
-  return (
-    <section className="h-full rounded-xl border border-border bg-surface-raised p-5 shadow-xs">
-      <p className="text-xs font-semibold uppercase tracking-caps text-text-tertiary">{eyebrow}</p>
-      <h2 className="mt-1 text-lg font-semibold text-text">{intent.title}</h2>
-      {purposeSection ? (
-        <div className="mt-3 space-y-2 text-sm leading-relaxed text-text-secondary">
-          {purposeSection.blocks.map((block, index) => (
-            block.type === 'paragraph' ? (
-              <p key={`purpose-panel-${index}`}>
-                <InlineIntentText text={block.text} />
-              </p>
-            ) : null
-          ))}
-        </div>
-      ) : null}
-    </section>
-  )
-}
-
-function IntentSectionPanel({ markdown, sectionTitle, eyebrow, ariaLabel }) {
-  if (!markdown) return null
-
-  const intent = parseIntentMarkdown(markdown)
-  const section = intent.sections.find((item) => item.title === sectionTitle)
-
-  if (!section) return null
-
-  return (
-    <aside className="h-full rounded-xl border border-border bg-surface-raised p-5 shadow-xs" aria-label={ariaLabel}>
-      {eyebrow && <p className="mb-3 text-xs font-semibold uppercase tracking-caps text-text-tertiary">{eyebrow}</p>}
-      <IntentSection section={section} />
-    </aside>
-  )
-}
-
-function TimedShellVideo({ src, label, playbackRate = 1, pauseAfterMs = 3000 }) {
-  const videoRef = useRef(null)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return undefined
-
-    video.pause()
-    video.currentTime = 0
-    video.playbackRate = playbackRate
-
-    const playPromise = video.play()
-    if (playPromise) {
-      playPromise.catch(() => {})
-    }
-
-    const pauseTimer = window.setTimeout(() => {
-      video.pause()
-    }, pauseAfterMs)
-
-    return () => {
-      window.clearTimeout(pauseTimer)
-      video.pause()
-    }
-  }, [pauseAfterMs, playbackRate, src])
-
-  return (
-    <video
-      ref={videoRef}
-      src={src}
-      className="h-full w-full object-cover"
-      muted
-      playsInline
-      preload="metadata"
-      aria-label={label}
-    />
-  )
-}
-
-// ─── Nav ──────────────────────────────────────────────────────────────────────
-const sections = ['Colors', 'Typography', 'Forms', 'Buttons', 'Badges', 'Avatars', 'Navigation', 'Pages', 'Patterns', 'Emails', 'Prototypes', 'Animation']
-
 const tileIcon = (Icon) => <LucideIcon icon={Icon} size="lg" stroke="display" />
 const miniIcon = (Icon) => <LucideIcon icon={Icon} size="sm" />
-const emailAddressPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const affixIcon = (Icon) => <LucideIcon icon={Icon} size="md" stroke="display" />
 const loadingSuccessIcon = <LucideIcon icon={LoaderCircle} size="md" stroke="standard" className="animate-spin" />
-const creatorShellStepOrder = ['entry', 'gather', 'preview', 'verify', 'success']
-const creatorShellGatherVideoLeadInMs = 2000
-const creatorShellGatherVideoPlaybackRate = 0.45
-const creatorShellGatherRowFetchMs = 700
-const creatorShellGatherResolvedPauseMs = 1000
-const creatorShellPreviewOptions = [
-  { value: 'entry', label: 'Entry' },
-  { value: 'gather', label: 'Gather' },
-  { value: 'preview', label: 'Preview' },
-  { value: 'verify', label: 'Verify' },
-  { value: 'success', label: 'Success' },
-]
-const simplifiedVerificationOptions = [
-  { value: 'standard', label: 'Standard' },
-  { value: 'known-lead', label: 'Known lead' },
-  { value: 'meta-fallback', label: 'Meta fallback' },
-]
-const submissionSuccessTimeline = [
-  {
-    step: 'submitted',
-    title: 'Submitted',
-    description: 'Today your details move into review.',
-    current: true,
-  },
-  {
-    step: 'approved',
-    title: 'Approved',
-    description: "If there's a fit, we will reach out with next steps.",
-  },
-  {
-    step: 'live',
-    title: 'Live',
-    description: 'When you’re ready.',
-  },
-]
-const avatarImageSet = [
-  {
-    name: 'Culture Crave',
-    src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=128&q=80',
-  },
-  {
-    name: 'Nicole PM',
-    src: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=128&q=80',
-  },
-  {
-    name: 'Brynne B',
-    src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=128&q=80',
-  },
-  {
-    name: 'Cyle C',
-    src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=128&q=80',
-  },
-]
-const socialUrlExamples = [
-  { label: 'Empty state', value: '' },
-  { label: 'Instagram', value: 'https://instagram.com/culturecrave' },
-  { label: 'TikTok', value: 'https://www.tiktok.com/@culturecrave' },
-  { label: 'Pinterest', value: 'https://pinterest.com/culturecrave' },
-  { label: 'YouTube', value: 'https://youtube.com/@culturecrave' },
-  { label: 'Facebook', value: 'https://facebook.com/culturecrave' },
-  { label: 'Substack', value: 'https://culturecrave.substack.com' },
-  { label: 'Default website', value: 'https://www.culturecrave.com' },
-]
-const traceabilityRows = [
-  {
-    component: 'Button',
-    variants: buttonVariants.join(', '),
-    sizes: buttonSizes.join(', '),
-    example: 'data-ds-component="Button" data-ds-variant="primary"',
-  },
-  {
-    component: 'Badge',
-    variants: badgeVariants.join(', '),
-    sizes: badgeSizes.join(', '),
-    example: 'data-ds-component="Badge" data-ds-variant="success"',
-  },
-  {
-    component: 'TextInput',
-    variants: textInputVariants.join(', '),
-    sizes: 'md',
-    example: 'data-ds-component="TextInput" data-ds-variant="default"',
-  },
-  {
-    component: 'Select',
-    variants: selectVariants.join(', '),
-    sizes: 'md',
-    example: 'data-ds-component="Select" data-ds-variant="default"',
-  },
-  {
-    component: 'Textarea',
-    variants: textareaVariants.join(', '),
-    sizes: 'md',
-    example: 'data-ds-component="Textarea" data-ds-variant="default"',
-  },
-  {
-    component: 'Checkbox',
-    variants: checkboxVariants.join(', '),
-    sizes: 'md',
-    example: 'data-ds-component="Checkbox" data-ds-variant="plain"',
-  },
-  {
-    component: 'OptionTile',
-    variants: optionTileVariants.join(', '),
-    sizes: 'md',
-    example: 'data-ds-component="OptionTile" data-ds-variant="radio"',
-  },
-]
-const creatorShellSocialAccountDefaults = [
-  {
-    platform: 'Instagram',
-    handle: '@culturecrave',
-    followers: '318,000 followers',
-  },
-  {
-    platform: 'TikTok',
-    handle: '@culturecrave',
-    followers: '124,000 followers',
-  },
-  {
-    platform: 'Pinterest',
-    handle: '@culturecrave',
-    followers: '84,000 followers',
-  },
-  {
-    platform: 'YouTube',
-    handle: '@culturecrave',
-    followers: 'Followers unavailable',
-  },
-  {
-    platform: 'Facebook',
-    handle: '@culturecrave',
-    followers: 'Followers unavailable',
-  },
-]
-const fetchConfirmationDemoAccountsSeed = [
-  {
-    id: 'instagram',
-    platform: 'Instagram',
-    handle: '@culturecrave',
-    url: 'https://instagram.com/culturecrave',
-    followers: '318,000 followers',
-  },
-  {
-    id: 'tiktok',
-    platform: 'TikTok',
-    handle: '@culturecrave',
-    url: 'https://tiktok.com/@culturecrave',
-    followers: '124,000 followers',
-  },
-  {
-    id: 'pinterest',
-    platform: 'Pinterest',
-    handle: '@culturecrave',
-    url: 'https://pinterest.com/culturecrave',
-    followers: '84,000 followers',
-  },
-]
-
-function getFetchConfirmationDemoAccounts() {
-  return fetchConfirmationDemoAccountsSeed.map((account) => ({ ...account }))
-}
+const traceabilityRows = buildTraceabilityRows({
+  badgeSizes,
+  badgeVariants,
+  buttonSizes,
+  buttonVariants,
+  checkboxVariants,
+  optionTileVariants,
+  selectVariants,
+  selectableRowSizes,
+  selectableRowVariants,
+  textInputVariants,
+  textareaVariants,
+})
 
 function tokenTypographyLabel(tokenName) {
   const token = typographyTokens.fontSize[tokenName]
@@ -1727,6 +1240,24 @@ export function ComponentLibrary() {
               <DocumentationNote>
                 Hover, tap, and selection animations respect prefers-reduced-motion. Use the optional detail slot for selected radio tiles that need a short inline confirmation step.
               </DocumentationNote>
+                </Section>
+
+                <Section title="Selectable Rows" description="Compact selected-state rows for dense pickers inside accordions or review panels.">
+                  <div className="max-w-md space-y-2">
+                    <SelectableRow
+                      title="Dashboard setup"
+                      description="Ready to send"
+                      icon={<LucideIcon icon={Mail} size="md" />}
+                      selected
+                      onClick={() => {}}
+                    />
+                    <SelectableRow
+                      title="Community setup"
+                      description="Draft"
+                      icon={<LucideIcon icon={House} size="md" />}
+                      onClick={() => {}}
+                    />
+                  </div>
                 </Section>
 
                 <Section title="Goal Selection Grid" description="First onboarding pattern composed directly from OptionTile primitives.">
