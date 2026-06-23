@@ -31,7 +31,7 @@ export function CommunityAnswersCard({
   return (
     <article
       className={[
-        'preview-accent-soft-surface flex aspect-square w-full flex-col items-start overflow-hidden rounded-xl border pt-2 shadow-xs',
+        'preview-accent-answer-surface flex aspect-square w-full flex-col items-start overflow-hidden rounded-xl border pt-2 shadow-xs',
         className,
       ].join(' ')}
       style={mergedStyle}
